@@ -3,11 +3,13 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-#region FPSS_WeaponHUD
+/// <summary>
+/// Manages the weapon HUD, displaying the current weapon information.
+/// </summary>
 public class FPSS_WeaponHUD : MonoBehaviour
 {
-    private FPSS_Main main; //used to see what weapon slot is currently active
-    private FPSS_WeaponPool weaponPool; //used to see what gun is currently assigned to each slot
+    private FPSS_Main main; // Used to see what weapon slot is currently active
+    private FPSS_WeaponPool weaponPool; // Used to see what gun is currently assigned to each slot
     
     [Header("Primary Weapon Objects")]
     [Space(10)] 
@@ -21,7 +23,7 @@ public class FPSS_WeaponHUD : MonoBehaviour
     [Space(10)]
 
     [SerializeField] private TMP_Text secondaryNameText;
-    [SerializeField] private TMP_Text secondarySlotNumber; //DO NOT CHANGE THIS TEXT, only color
+    [SerializeField] private TMP_Text secondarySlotNumber; //DO NOT CHANGE THIS TEXT, only color 
     [SerializeField] private TMP_Text secondaryAmmoText;
     [SerializeField] private Image secondaryIconImg;
 
@@ -36,20 +38,22 @@ public class FPSS_WeaponHUD : MonoBehaviour
     [SerializeField] private Color color_AmmoInactiveText;
 
     [Header("DEV OPTIONS")]
-    [Space(10)]
+    [SerializeField] private bool debugMode; // Enable/Disable debug mode
+    [SerializeField] private float initDelay = 0.2f; // Used to pause execution between steps of initialization when needed
+    [SerializeField] private float initTimeout = 10f; // Initialization timeout
+    private bool initialized = false; // Flag used to stop Update() from running before initialization is complete
     
-    [SerializeField] private bool debugMode;            //Enable/Disable debug mode
-    [SerializeField] private float initDelay = 0.2f;    //used to pause execution between steps of initialization when needed
-    [SerializeField] private float initTimeout = 10f;   //initialization timeout
-    private bool initialized = false;                   //flag used to stop Update() from running before initialization is complete
-    
-    
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    /// <summary>
+    /// Called on the frame when a script is enabled just before any of the Update methods are called the first time.
+    /// </summary>
     void Start()
     {
         StartCoroutine(Init());
     }
 
+    /// <summary>
+    /// Initializes the weapon HUD by waiting for necessary instances and data to be available.
+    /// </summary>
     IEnumerator Init()
     {
         float elapsedTime = 0f;
@@ -101,6 +105,9 @@ public class FPSS_WeaponHUD : MonoBehaviour
         RefreshWeaponHUD();
     }
 
+    /// <summary>
+    /// Called once per frame.
+    /// </summary>
     void Update()
     {
         if (!initialized) 
@@ -113,11 +120,10 @@ public class FPSS_WeaponHUD : MonoBehaviour
         secondaryAmmoText.SetText($"{weaponPool.weaponPool[1][weaponPool.assignedSecondaryWeaponIndex].GetComponent<FPSS_WeaponSlotObject>().currentClip} / {weaponPool.weaponPool[1][weaponPool.assignedSecondaryWeaponIndex].GetComponent<FPSS_WeaponSlotObject>().clipSize}");
     }
 
-    #region Update Functions
     /// <summary>
     /// Refreshes the weapon HUD to display the currently active weapon slot and its respective weapon; do not call to refresh Icon Sprites, use 'UpdateIconSprite' directly instead
     /// </summary>
-    public void RefreshWeaponHUD() //do not call to refresh Icon Sprites, use 'UpdateIconSprite' directly instead
+    public void RefreshWeaponHUD()
     {
         FPSS_WeaponSlotObject primaryWeaponObject = weaponPool.weaponPool[0][weaponPool.assignedPrimaryWeaponIndex].GetComponent<FPSS_WeaponSlotObject>();
         FPSS_WeaponSlotObject secondaryWeaponObject =  weaponPool.weaponPool[1][weaponPool.assignedSecondaryWeaponIndex].GetComponent<FPSS_WeaponSlotObject>();             
@@ -165,8 +171,10 @@ public class FPSS_WeaponHUD : MonoBehaviour
         UpdateIconSprites();
     }
 
-    //implement this function in the future, once weapon slot assignment is implemented
-    void UpdateIconSprites() //call when weapon slot is assigned different weapon, not when active weapon slot is changed
+    /// <summary>
+    /// Updates the icon sprites for the weapon slots. Call when the WeaponSlot is assigned a different weapon, not when the WeaponSlot is changed.
+    /// </summary>
+    void UpdateIconSprites()
     {
         FPSS_WeaponSlotObject primaryWeaponObject = weaponPool.weaponPool[0][weaponPool.assignedPrimaryWeaponIndex].GetComponent<FPSS_WeaponSlotObject>();
         FPSS_WeaponSlotObject secondaryWeaponObject =  weaponPool.weaponPool[1][weaponPool.assignedSecondaryWeaponIndex].GetComponent<FPSS_WeaponSlotObject>();             
@@ -187,6 +195,4 @@ public class FPSS_WeaponHUD : MonoBehaviour
             secondaryIconImg.sprite = secondaryWeaponObject.img_inactiveIcon;
         }
     }
-    #endregion
 }
-#endregion

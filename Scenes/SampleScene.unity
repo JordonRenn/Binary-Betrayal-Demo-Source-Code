@@ -25,7 +25,7 @@ RenderSettings:
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
   m_AmbientIntensity: 3.22
   m_AmbientMode: 0
-  m_SubtractiveShadowColor: {r: 0.44552273, g: 0.371885, b: 0.5754717, a: 1}
+  m_SubtractiveShadowColor: {r: 0.29436633, g: 0.4245283, b: 0.40735668, a: 1}
   m_SkyboxMaterial: {fileID: 2100000, guid: cdb61d36572be834da25f6d625aaed42, type: 2}
   m_HaloStrength: 0.279
   m_FlareStrength: 0.761
@@ -14888,6 +14888,7 @@ GameObject:
   - component: {fileID: 2823090746777452850}
   - component: {fileID: 1587545474846418342}
   - component: {fileID: 17952597}
+  - component: {fileID: 8164078558346537796}
   m_Layer: 3
   m_Name: default
   m_TagString: Untagged
@@ -14895,6 +14896,38 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &8164078558346537796
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8164078558346537795}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90227922a867f9f4bbc2d595ae797ba3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  surfaceType: 0
+  isPenetrable: 0
+  bulletHolePrefab: {fileID: 8969788240430809876, guid: f54a11091cb17a740952cc5ea782735f,
+    type: 3}
+  impactEffect: {fileID: 6985514565178406630, guid: 2d14d835072d4784c8c01695e6e0e5c7,
+    type: 3}
+  sfx_Impact:
+    Guid:
+      Data1: 1180050731
+      Data2: 1101814479
+      Data3: 1701146278
+      Data4: -1936477181
+    Path: event:/impact_Concrete
+  sfx_ImpactTail:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

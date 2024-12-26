@@ -113,8 +113,9 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
     [Header("VFX")] 
     [Space(10)] 
 
-    [SerializeField] private Sprite muzzleFlash;
     [SerializeField] private GameObject bullettrail;
+    [SerializeField] private MuzzleFlash mFlash;
+
 
     private bool isActive = false;
     private bool canFire = true;
@@ -392,6 +393,8 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
 
     private IEnumerator ApplyBulletVisualEffects(Vector3 targetPos)
     {
+        mFlash.Flash();
+        
         GameObject bulletTrail = Instantiate(bullettrail, pos_Muzzle.position, Quaternion.identity);
 
         while (bulletTrail != null && Vector3.Distance(bulletTrail.transform.position, targetPos) > 0.1f)

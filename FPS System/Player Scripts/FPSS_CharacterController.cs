@@ -4,7 +4,9 @@ using DG.Tweening;
 using FMODUnity;
 using System;
 
-#region CharacterController
+/// <summary>
+/// Character controller for the FPS system.
+/// </summary>
 public class FPSS_CharacterController : MonoBehaviour
 {
     public static FPSS_CharacterController Instance { get; private set; }
@@ -59,19 +61,20 @@ public class FPSS_CharacterController : MonoBehaviour
 
     [SerializeField] private Transform defaultAudioPosition;
     [SerializeField] private EventReference sfx_player_footstep;
-    private float baseFootStepRate = 1f; //time between footsteps at slow walk speed
+    private float baseFootStepRate = 1f;
     [SerializeField] private Transform leftFootstepPosition;
     [SerializeField] private Transform rightFootstepPosition;
     [SerializeField] private EventReference sfx_player_jump;
     [SerializeField] private EventReference sfx_player_land;
 
-    //private variables
     private Rigidbody playerRigidbody;
-    private Vector2 moveInput; // From FPS_InputHandler
+    private Vector2 moveInput;
     private bool footToggle;
     private bool nextStep;
 
-    #region Init
+    /// <summary>
+    /// Initializes the character controller.
+    /// </summary>
     void Start()
     {
         Instance = this;
@@ -85,12 +88,10 @@ public class FPSS_CharacterController : MonoBehaviour
         playerCollider = GetComponentInChildren<CapsuleCollider>();
         initialColliderCenter = playerCollider.center;
 
-        // Initialize moveSpeed to a valid value
         moveSpeed = walkSpeed;
         footToggle = true;
         nextStep = true;
     }
-    #endregion
 
     void Update()
     {
@@ -98,7 +99,6 @@ public class FPSS_CharacterController : MonoBehaviour
         GroundCheck();
         CalculateDrag();
         CheckSlope();
-
         CalculateFootSteps();
         
         moveInput = FPS_InputHandler.Instance.MoveInput;
@@ -110,15 +110,14 @@ public class FPSS_CharacterController : MonoBehaviour
         MovePlayer();
     }
     
-    #region MOVEMENT
+    /// <summary>
+    /// Moves the player based on input and physics.
+    /// </summary>
     private void MovePlayer()
     {
-        // Calculate movement direction
         Vector3 moveDirection = orientation.forward * moveInput.y + orientation.right * moveInput.x;
-        // Apply movement force
         Vector3 forceDirection = moveDirection.normalized * moveSpeed * forceMultiplier;
 
-        //if on a slope
         if (onSlope)
         {
             slopeMoveDirection = Vector3.ProjectOnPlane(moveDirection, slopeHit.normal);
@@ -132,9 +131,10 @@ public class FPSS_CharacterController : MonoBehaviour
 
         playerRigidbody.AddForce(forceDirection, ForceMode.Force);
     }
-    #endregion
 
-    #region jump
+    /// <summary>
+    /// Makes the player jump if they are grounded and ready to jump.
+    /// </summary>
     public void Jump()
     {
         if (readyToJump && grounded)
@@ -147,30 +147,37 @@ public class FPSS_CharacterController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Resets the jump after a delay.
+    /// </summary>
     private IEnumerator ResetJumpAfterDelay()
     {
         yield return new WaitForSeconds(jumpCooldown);
         readyToJump = true;
     }
-    #endregion
 
-    #region crouch
-    public void Crouch()
+    /// <summary>
+    /// Toggles the crouch state of the player.
+    /// </summary>
+    /* public void Crouch()
     {
         if (isCrouching)
         {
-            StopCrouch();
+            return;
         }
         else
         {
             StartCrouch();
         }
-    }
+    } */
 
-    private void StartCrouch()
+    /// <summary>
+    /// Starts the crouch state.
+    /// </summary>
+    public void StartCrouch()
     {
         isCrouching = true;
-        playerCollider.DOComplete(); // Complete any ongoing tweens
+        playerCollider.DOComplete();
         DOVirtual.Float(playerCollider.height, crouchHeight, crouchTransitionSpeed, value =>
         {
             playerCollider.height = value;
@@ -187,10 +194,13 @@ public class FPSS_CharacterController : MonoBehaviour
         }
     }
 
-    private void StopCrouch()
+    /// <summary>
+    /// Stops the crouch state.
+    /// </summary>
+    public void StopCrouch()
     {
         isCrouching = false;
-        playerCollider.DOComplete(); // Complete any ongoing tweens
+        playerCollider.DOComplete();
         DOVirtual.Float(playerCollider.height, playerHeight, crouchTransitionSpeed, value =>
         {
             playerCollider.height = value;
@@ -202,6 +212,9 @@ public class FPSS_CharacterController : MonoBehaviour
         moveSpeed = walkSpeed;
     }
 
+    /// <summary>
+    /// Applies a downward force while crouching.
+    /// </summary>
     private IEnumerator ApplyDownwardForce()
     {
         while (isCrouching && grounded)
@@ -210,15 +223,19 @@ public class FPSS_CharacterController : MonoBehaviour
             yield return null;
         }
     }
-    #endregion
 
-    #region physhics
+    /// <summary>
+    /// Calculates the drag based on whether the player is grounded.
+    /// </summary>
     void CalculateDrag()
     {
-        float targetDrag = grounded ? groundDrag : 0f;                                                                  // If grounded, use groundDrag, otherwise use 0
-        playerRigidbody.linearDamping = Mathf.Lerp(playerRigidbody.linearDamping, targetDrag, Time.deltaTime * 10f);    // Smoothly transition to the target drag value
+        float targetDrag = grounded ? groundDrag : 0f;
+        playerRigidbody.linearDamping = Mathf.Lerp(playerRigidbody.linearDamping, targetDrag, Time.deltaTime * 10f);
     }
 
+    /// <summary>
+    /// Checks if the player is on a slope.
+    /// </summary>
     void CheckSlope()
     {
         if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight * 0.5f + groundCheckBuffer, whatIsGround))
@@ -232,6 +249,9 @@ public class FPSS_CharacterController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Controls the player's speed to ensure it does not exceed the maximum speed.
+    /// </summary>
     void SpeedControl()
     {
         Vector3 flatVelocity = new Vector3(playerRigidbody.linearVelocity.x, 0f, playerRigidbody.linearVelocity.z);
@@ -242,9 +262,8 @@ public class FPSS_CharacterController : MonoBehaviour
             playerRigidbody.linearVelocity = new Vector3(limitedVelocity.x, playerRigidbody.linearVelocity.y, limitedVelocity.z);
         }
     }
-    #endregion
 
-    #region ground check
+    
     void GroundCheck()
     {
         float checkHeight = isCrouching ? crouchHeight : playerHeight;                                                                  // Check height based on crouching state
@@ -252,9 +271,9 @@ public class FPSS_CharacterController : MonoBehaviour
         //TODO: Implement gound type check
         Debug.DrawLine(transform.position, transform.position + Vector3.down * (checkHeight * 0.5f + groundCheckBuffer), Color.red);    // Draw a line to visualize the ground check
     }
-    #endregion
+    
 
-    #region AUDIO
+    
 
     void CalculateFootSteps() //used to calculate speed of footstep sounds and play back and forth between left and right foot
     {
@@ -263,8 +282,6 @@ public class FPSS_CharacterController : MonoBehaviour
         if (playerRigidbody.linearVelocity.magnitude > 0.1f && grounded)
         {
             isMovingOnGround = true;
-
-            //Debug.Log("Player is moving on ground");
 
             if (isMovingOnGround && nextStep)
             {
@@ -279,18 +296,18 @@ public class FPSS_CharacterController : MonoBehaviour
                     StartCoroutine(FootStep(baseFootStepRate / 2));
                 }
             }
-
         }
 
         isMovingOnGround = false;
     }
 
+    /// <summary>
+    /// Plays the footstep sound with a delay.
+    /// </summary>
     private IEnumerator FootStep(float stepDelay)
     {
         if (footToggle)
         {
-            Debug.Log("Playing right footstep");
-            
             PlaySfx(sfx_player_footstep, rightFootstepPosition);
             footToggle = !footToggle;
             yield return new WaitForSeconds(stepDelay);
@@ -298,8 +315,6 @@ public class FPSS_CharacterController : MonoBehaviour
         }
         else
         {
-            Debug.Log("Playing left footstep");
-            
             PlaySfx(sfx_player_footstep, leftFootstepPosition);
             footToggle = !footToggle;
             yield return new WaitForSeconds(stepDelay);
@@ -307,12 +322,13 @@ public class FPSS_CharacterController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Plays a sound effect at the specified position.
+    /// </summary>
+    /// <param name="eventRef">The sound effect to play.</param>
+    /// <param name="audioPos">The position to play the sound effect at.</param>
     public void PlaySfx(EventReference eventRef, Transform audioPos)
     {
         RuntimeManager.PlayOneShot(eventRef, audioPos.position);
-        Debug.Log("AUDIO: Playing " + eventRef);
     }
-
-    #endregion
 }
-#endregion

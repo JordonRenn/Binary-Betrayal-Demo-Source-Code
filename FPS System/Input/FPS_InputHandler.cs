@@ -107,6 +107,9 @@ public class FPS_InputHandler : MonoBehaviour
     public UnityEvent activateUtilRightTriggered;
     public UnityEvent activateUnarmedTriggered;
 
+    /// <summary>
+    /// Initializes the input handler.
+    /// </summary>
     void Awake()
     {
         if (Instance != null && Instance != this)
@@ -163,6 +166,9 @@ public class FPS_InputHandler : MonoBehaviour
         RegisterInputActions();
     }
 
+    /// <summary>
+    /// Registers the input actions.
+    /// </summary>
     private void RegisterInputActions()
     {
         moveAction.performed += context => MoveInput = context.ReadValue<Vector2>();
@@ -175,9 +181,10 @@ public class FPS_InputHandler : MonoBehaviour
         slowWalkAction.performed += context => SlowWalkInput = true;
         slowWalkAction.canceled += context => SlowWalkInput = false;
 
-        crouchAction.started += context => FPSS_CharacterController.Instance.Crouch();
+        crouchAction.started += context => FPSS_CharacterController.Instance.StartCrouch();
         crouchAction.started += context => crouchTriggered.Invoke();
         crouchAction.performed += context => CrouchInput = true;
+        crouchAction.canceled += context => FPSS_CharacterController.Instance.StopCrouch();
         crouchAction.canceled += context => CrouchInput = false;
 
         jumpAction.started += context => FPSS_CharacterController.Instance.Jump();
@@ -201,7 +208,7 @@ public class FPS_InputHandler : MonoBehaviour
         menuEquipAction.performed += context => EquipmentMenuButtonInput = true;
         menuEquipAction.canceled += context => EquipmentMenuButtonInput = false;
 
-        aimAction.started += context => aimTriggered.Invoke();
+        //aimAction.started += context => FPSS_WeaponPool.Instance.CurrentWeapon.Aim();
         aimAction.performed += context => AimInput = true;
         aimAction.canceled += context => AimInput = false;
 
@@ -221,28 +228,34 @@ public class FPS_InputHandler : MonoBehaviour
         swapSlotAction.canceled += context => SwapSlotInput = false;
 
         weaponPrimaryAction.started += context => FPSS_WeaponPool.Instance.SelectPrimary();
-        activatePrimaryTriggered.Invoke();
+
         weaponPrimaryAction.performed += context => ActivatePrimaryWeaponSlotInput = true;
         weaponPrimaryAction.canceled += context => ActivatePrimaryWeaponSlotInput = false;
-
+        //utilLeftAction.started += context => FPSS_WeaponPool.Instance.SelectUtility();
         weaponSecondaryAction.started += context => FPSS_WeaponPool.Instance.SelectSecondary();
-        weaponSecondaryAction.started += context => activateSecondaryTriggered.Invoke();
+
         weaponSecondaryAction.performed += context => ActivateSecondaryWeaponSlotInput = true;
         weaponSecondaryAction.canceled += context => ActivateSecondaryWeaponSlotInput = false;
-
+        //utilLeftAction.started += context => FPSS_WeaponPool.Instance.SelectUtility();
         utilLeftAction.started += context => activateUtilLeftTriggered.Invoke();
+
         utilLeftAction.performed += context => UseUtilLeftInput = true;
         utilLeftAction.canceled += context => UseUtilLeftInput = false;
 
-        utilRightAction.started += context => activateUtilRightTriggered.Invoke();
+        utilRightAction.started += context => FPSS_WeaponPool.Instance.SelectUtility();
+        //utilRightAction.started += context => FPSS_WeaponPool.Instance.SelectUtility();
         utilRightAction.performed += context => UseUtilRightInput = true;
         utilRightAction.canceled += context => UseUtilRightInput = false;
 
-        unarmedAction.started += context => activateUnarmedTriggered.Invoke();
+        unarmedAction.started += context => FPSS_WeaponPool.Instance.SelectUnarmed();
+        //unarmedAction.started += context => FPSS_WeaponPool.Instance.SelectUnarmed();
         unarmedAction.performed += context => ActivateUnarmedInput = true;
         unarmedAction.canceled += context => ActivateUnarmedInput = false;
     }
 
+    /// <summary>
+    /// Enables the input actions.
+    /// </summary>
     void OnEnable()
     {   
         foreach (var action in inputActions)
@@ -251,6 +264,9 @@ public class FPS_InputHandler : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Disables the input actions.
+    /// </summary>
     void OnDisable()
     {
         foreach (var action in inputActions)
