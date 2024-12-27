@@ -157,21 +157,6 @@ public class FPSS_CharacterController : MonoBehaviour
     }
 
     /// <summary>
-    /// Toggles the crouch state of the player.
-    /// </summary>
-    /* public void Crouch()
-    {
-        if (isCrouching)
-        {
-            return;
-        }
-        else
-        {
-            StartCrouch();
-        }
-    } */
-
-    /// <summary>
     /// Starts the crouch state.
     /// </summary>
     public void StartCrouch()
@@ -186,10 +171,10 @@ public class FPSS_CharacterController : MonoBehaviour
         {
             playerCollider.center = new Vector3(initialColliderCenter.x, value, initialColliderCenter.z);
         });
-        moveSpeed = walkSpeed;
 
         if (grounded)
         {
+            moveSpeed = walkSpeed;
             StartCoroutine(ApplyDownwardForce());
         }
     }

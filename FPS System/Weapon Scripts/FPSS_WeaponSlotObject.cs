@@ -248,14 +248,14 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
             weaponPool.canReload = false;
 
             yield return new WaitForSeconds(clipOutSFXDelay);
-            playSfx(sfx_ClipOut);
+            playSfx(sfx_ClipOut, pos_GunAudio.position);
 
             yield return new WaitForSeconds(clipInSFXDelay);
-            playSfx(sfx_ClipIn);
+            playSfx(sfx_ClipIn, pos_GunAudio.position);
             currentClip = clipSize;
 
             yield return new WaitForSeconds(slideSFXDelay);
-            playSfx(sfx_Slide);
+            playSfx(sfx_Slide, pos_GunAudio.position);
 
             animator.SetTrigger("Idle");
         }
@@ -280,7 +280,7 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
         {
             canFire = false;
             
-            playSfx(sfx_Fire);
+            playSfx(sfx_Fire, pos_GunAudio.position);
             animator.Play(fireAnimStateName, -1, 0f);
             reticleSystem.GunFire(reticleFallOffSpeed);
             
@@ -307,7 +307,7 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
         }
         else
         {
-            playSfx(sfx_Empty);
+            playSfx(sfx_Empty, pos_GunAudio.position);
         }
     }
 
@@ -384,7 +384,7 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
             GameObject impactDecal = surfaceInfo.bulletHolePrefab;
             Instantiate(impactDecal, hit.point, Quaternion.LookRotation(hit.normal));
 
-            playSfx(surfaceInfo.sfx_Impact, hit.transform);
+            playSfx(surfaceInfo.sfx_Impact, hit.point);
 
             ParticleSystem impactEffect = surfaceInfo.impactEffect;
             Instantiate(impactEffect, hit.point, Quaternion.LookRotation(hit.normal));
@@ -410,24 +410,24 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
     {
         Debug.Log("Ejecting shell");
 
-        StartCoroutine(PlaySfxDelay(sfx_gun_shell, sfx_ShellDelay));
+        StartCoroutine(PlaySfxDelay(sfx_gun_shell, sfx_ShellDelay, pos_GunAudio.position)); //??? Posittioning will need to get fixed, lazy temp fix
         GameObject shell = Instantiate(shellObject, pos_ShellEject.position, pos_ShellEject.rotation);
     }
 
-    private IEnumerator PlaySfxDelay(EventReference sfx, float delay)
+    private IEnumerator PlaySfxDelay(EventReference sfx, float delay, Vector3 position)
     {
         yield return new WaitForSeconds(delay);
-        playSfx(sfx);
+        playSfx(sfx, position);
     }
 
     #region AUDIO
-    public void playSfx(EventReference eventRef, Transform position = null)
+    public void playSfx(EventReference eventRef, Vector3 position)
     {
         if (position == null)
         {
-            position = pos_GunAudio;
+            position = pos_GunAudio.position;
         }
-        RuntimeManager.PlayOneShot(eventRef, position.position);
+        RuntimeManager.PlayOneShot(eventRef, position);
     }
     #endregion
 }

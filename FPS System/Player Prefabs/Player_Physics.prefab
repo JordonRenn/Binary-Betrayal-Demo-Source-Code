@@ -113,7 +113,7 @@ MonoBehaviour:
   sprintSpeed: 6
   walkSpeed: 2
   groundDrag: 8
-  jumpForce: 6
+  jumpForce: 7
   jumpCooldown: 0.1
   airMultiplier: 0.4
   playerHeight: 2
