@@ -62,7 +62,7 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
     [SerializeField] private float spread;
     [SerializeField] private float spreadPatternRandomization;
     [SerializeField] private Vector2[] spreadPattern;
-    [SerializeField] private int spreadPatternArrayLength;
+    private int spreadPatternArrayLength;
     [SerializeField] private float spreadRecoveryRate;
     private int spreadIndex = 0;
     private float currentSpread = 0f;
@@ -138,6 +138,8 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
         ConstructSpreadPattern();
         OnFire.AddListener(Fire);
         OnReload.AddListener(() => StartCoroutine(Reload()));
+
+        spreadPatternArrayLength = spreadPattern.Length;
     }
 
     IEnumerator Init()
@@ -288,7 +290,7 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
             
             ApplySpread();
             
-            camShake.Shake(camShakeIntensity);
+            camShake.Shake(camShakeIntensity, 2f);
 
             currentClip--;
 

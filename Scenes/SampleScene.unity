@@ -217,120 +217,12 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 32259523}
   m_CullTransparentMesh: 1
---- !u!1 &38202819
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 8072214133476545047, guid: b1f6b5648908aac4392f61a9b929d744,
-    type: 3}
-  m_PrefabInstance: {fileID: 6155433868366625918}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 38202824}
-  - component: {fileID: 38202826}
-  - component: {fileID: 38202825}
-  - component: {fileID: 38202823}
-  m_Layer: 10
-  m_Name: default
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!64 &38202823
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 5968415101014383567, guid: b1f6b5648908aac4392f61a9b929d744,
-    type: 3}
-  m_PrefabInstance: {fileID: 6155433868366625918}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 38202819}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: -2432090755550338912, guid: e9980215623ea804eb9b82b2422f0c0e, type: 3}
---- !u!4 &38202824
+--- !u!4 &38202824 stripped
 Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 1058465218253799724, guid: b1f6b5648908aac4392f61a9b929d744,
+  m_CorrespondingSourceObject: {fileID: 612601497595731232, guid: b1f6b5648908aac4392f61a9b929d744,
     type: 3}
-  m_PrefabInstance: {fileID: 6155433868366625918}
+  m_PrefabInstance: {fileID: 4630771686814264492}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 38202819}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1969961072}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!23 &38202825
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 1676176886031375602, guid: b1f6b5648908aac4392f61a9b929d744,
-    type: 3}
-  m_PrefabInstance: {fileID: 6155433868366625918}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 38202819}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!33 &38202826
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 2767255118251161702, guid: b1f6b5648908aac4392f61a9b929d744,
-    type: 3}
-  m_PrefabInstance: {fileID: 6155433868366625918}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 38202819}
-  m_Mesh: {fileID: -2432090755550338912, guid: e9980215623ea804eb9b82b2422f0c0e, type: 3}
 --- !u!4 &42356100 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: a2076805b9c05164c951bbc29735d00d,
@@ -345,6 +237,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 143567798}
     m_Modifications:
+    - target: {fileID: 393577646294745723, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
+    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
     - target: {fileID: 8336267932510052376, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_RootOrder
@@ -420,27 +327,12 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
-    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: 'm_Materials.Array.data[1]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
     - target: {fileID: 8717718909946280610, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_Name
       value: RoadSign_Stop (4)
       objectReference: {fileID: 0}
     - target: {fileID: 8717718909946280610, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: m_Layer
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 393577646294745723, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_Layer
       value: 10
@@ -895,6 +787,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 143567798}
     m_Modifications:
+    - target: {fileID: 393577646294745723, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
+    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
     - target: {fileID: 8336267932510052376, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_RootOrder
@@ -970,27 +877,12 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
-    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: 'm_Materials.Array.data[1]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
     - target: {fileID: 8717718909946280610, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_Name
       value: RoadSign_Stop (7)
       objectReference: {fileID: 0}
     - target: {fileID: 8717718909946280610, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: m_Layer
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 393577646294745723, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_Layer
       value: 10
@@ -1374,7 +1266,7 @@ Transform:
   - {fileID: 2028951567}
   - {fileID: 2013766761}
   - {fileID: 1365223983}
-  - {fileID: 1969961072}
+  - {fileID: 38202824}
   - {fileID: 1362708522}
   m_Father: {fileID: 1734569400}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1748,6 +1640,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 143567798}
     m_Modifications:
+    - target: {fileID: 393577646294745723, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
+    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
     - target: {fileID: 8336267932510052376, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_RootOrder
@@ -1823,27 +1730,12 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
-    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: 'm_Materials.Array.data[1]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
     - target: {fileID: 8717718909946280610, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_Name
       value: RoadSign_Stop (18)
       objectReference: {fileID: 0}
     - target: {fileID: 8717718909946280610, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: m_Layer
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 393577646294745723, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_Layer
       value: 10
@@ -2595,6 +2487,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 143567798}
     m_Modifications:
+    - target: {fileID: 393577646294745723, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
+    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
     - target: {fileID: 8336267932510052376, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_RootOrder
@@ -2670,27 +2577,12 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
-    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: 'm_Materials.Array.data[1]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
     - target: {fileID: 8717718909946280610, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_Name
       value: RoadSign_Stop (20)
       objectReference: {fileID: 0}
     - target: {fileID: 8717718909946280610, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: m_Layer
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 393577646294745723, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_Layer
       value: 10
@@ -3724,6 +3616,169 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 7050554034711142142}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &488261382
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 663ca592b36362b4abb61e629e4b405f,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -38.023857
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 663ca592b36362b4abb61e629e4b405f,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.17
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 663ca592b36362b4abb61e629e4b405f,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 1.8045733
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 663ca592b36362b4abb61e629e4b405f,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 663ca592b36362b4abb61e629e4b405f,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 663ca592b36362b4abb61e629e4b405f,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 663ca592b36362b4abb61e629e4b405f,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 663ca592b36362b4abb61e629e4b405f,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 663ca592b36362b4abb61e629e4b405f,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 180
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 663ca592b36362b4abb61e629e4b405f,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -6107728955651767388, guid: 663ca592b36362b4abb61e629e4b405f,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 75e88ab27b72dcb41bacf00309200c7a, type: 2}
+    - target: {fileID: -5247331735142210242, guid: 663ca592b36362b4abb61e629e4b405f,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 45098a04293eb114b96039b4ac6f3868, type: 2}
+    - target: {fileID: -4396642182433536433, guid: 663ca592b36362b4abb61e629e4b405f,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 00cf3edeec66cad48b8e23810c3997a3, type: 2}
+    - target: {fileID: -3961924590887368813, guid: 663ca592b36362b4abb61e629e4b405f,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.00006
+      objectReference: {fileID: 0}
+    - target: {fileID: -3961924590887368813, guid: 663ca592b36362b4abb61e629e4b405f,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.00787
+      objectReference: {fileID: 0}
+    - target: {fileID: -3961924590887368813, guid: 663ca592b36362b4abb61e629e4b405f,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.00215
+      objectReference: {fileID: 0}
+    - target: {fileID: -3781616778248329655, guid: 663ca592b36362b4abb61e629e4b405f,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.00004
+      objectReference: {fileID: 0}
+    - target: {fileID: -3781616778248329655, guid: 663ca592b36362b4abb61e629e4b405f,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.00741
+      objectReference: {fileID: 0}
+    - target: {fileID: -3781616778248329655, guid: 663ca592b36362b4abb61e629e4b405f,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.00285
+      objectReference: {fileID: 0}
+    - target: {fileID: -1260132733798280466, guid: 663ca592b36362b4abb61e629e4b405f,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.00004
+      objectReference: {fileID: 0}
+    - target: {fileID: -1260132733798280466, guid: 663ca592b36362b4abb61e629e4b405f,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.00741
+      objectReference: {fileID: 0}
+    - target: {fileID: -1260132733798280466, guid: 663ca592b36362b4abb61e629e4b405f,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.00285
+      objectReference: {fileID: 0}
+    - target: {fileID: -779086602007609746, guid: 663ca592b36362b4abb61e629e4b405f,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 00cf3edeec66cad48b8e23810c3997a3, type: 2}
+    - target: {fileID: -567171894049776154, guid: 663ca592b36362b4abb61e629e4b405f,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 70dfa6e7b6436734ab94cd21c7928322, type: 2}
+    - target: {fileID: 919132149155446097, guid: 663ca592b36362b4abb61e629e4b405f,
+        type: 3}
+      propertyPath: m_Name
+      value: char1_testHead
+      objectReference: {fileID: 0}
+    - target: {fileID: 5406526189387273623, guid: 663ca592b36362b4abb61e629e4b405f,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 45098a04293eb114b96039b4ac6f3868, type: 2}
+    - target: {fileID: 6874219067769078145, guid: 663ca592b36362b4abb61e629e4b405f,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 70dfa6e7b6436734ab94cd21c7928322, type: 2}
+    - target: {fileID: 7295996709957424453, guid: 663ca592b36362b4abb61e629e4b405f,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.00006
+      objectReference: {fileID: 0}
+    - target: {fileID: 7295996709957424453, guid: 663ca592b36362b4abb61e629e4b405f,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.00787
+      objectReference: {fileID: 0}
+    - target: {fileID: 7295996709957424453, guid: 663ca592b36362b4abb61e629e4b405f,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.00215
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 663ca592b36362b4abb61e629e4b405f, type: 3}
 --- !u!1 &493732135 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -4036230651494044812, guid: 6049a7c265a598f469a807826d0b4309,
@@ -3850,6 +3905,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 143567798}
     m_Modifications:
+    - target: {fileID: 393577646294745723, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
+    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
     - target: {fileID: 8336267932510052376, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_RootOrder
@@ -3925,27 +3995,12 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
-    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: 'm_Materials.Array.data[1]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
     - target: {fileID: 8717718909946280610, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_Name
       value: RoadSign_Stop (9)
       objectReference: {fileID: 0}
     - target: {fileID: 8717718909946280610, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: m_Layer
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 393577646294745723, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_Layer
       value: 10
@@ -4126,6 +4181,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 143567798}
     m_Modifications:
+    - target: {fileID: 393577646294745723, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
+    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
     - target: {fileID: 8336267932510052376, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_RootOrder
@@ -4201,27 +4271,12 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
-    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: 'm_Materials.Array.data[1]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
     - target: {fileID: 8717718909946280610, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_Name
       value: RoadSign_Stop (11)
       objectReference: {fileID: 0}
     - target: {fileID: 8717718909946280610, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: m_Layer
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 393577646294745723, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_Layer
       value: 10
@@ -4682,6 +4737,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 143567798}
     m_Modifications:
+    - target: {fileID: 393577646294745723, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
+    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
     - target: {fileID: 8336267932510052376, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_RootOrder
@@ -4757,27 +4827,12 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
-    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: 'm_Materials.Array.data[1]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
     - target: {fileID: 8717718909946280610, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_Name
       value: RoadSign_Stop (17)
       objectReference: {fileID: 0}
     - target: {fileID: 8717718909946280610, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: m_Layer
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 393577646294745723, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_Layer
       value: 10
@@ -5236,6 +5291,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 143567798}
     m_Modifications:
+    - target: {fileID: 393577646294745723, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
+    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
     - target: {fileID: 8336267932510052376, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_RootOrder
@@ -5311,27 +5381,12 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
-    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: 'm_Materials.Array.data[1]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
     - target: {fileID: 8717718909946280610, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_Name
       value: RoadSign_Stop (2)
       objectReference: {fileID: 0}
     - target: {fileID: 8717718909946280610, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: m_Layer
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 393577646294745723, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_Layer
       value: 10
@@ -5508,6 +5563,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 143567798}
     m_Modifications:
+    - target: {fileID: 393577646294745723, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
+    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
     - target: {fileID: 8336267932510052376, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_RootOrder
@@ -5583,27 +5653,12 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
-    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: 'm_Materials.Array.data[1]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
     - target: {fileID: 8717718909946280610, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_Name
       value: RoadSign_Stop (12)
       objectReference: {fileID: 0}
     - target: {fileID: 8717718909946280610, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: m_Layer
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 393577646294745723, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_Layer
       value: 10
@@ -5818,6 +5873,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 143567798}
     m_Modifications:
+    - target: {fileID: 393577646294745723, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
+    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
     - target: {fileID: 8336267932510052376, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_RootOrder
@@ -5893,27 +5963,12 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
-    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: 'm_Materials.Array.data[1]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
     - target: {fileID: 8717718909946280610, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_Name
       value: RoadSign_Stop (6)
       objectReference: {fileID: 0}
     - target: {fileID: 8717718909946280610, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: m_Layer
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 393577646294745723, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_Layer
       value: 10
@@ -5935,6 +5990,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 143567798}
     m_Modifications:
+    - target: {fileID: 393577646294745723, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
+    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
     - target: {fileID: 8336267932510052376, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_RootOrder
@@ -6010,27 +6080,12 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
-    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: 'm_Materials.Array.data[1]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
     - target: {fileID: 8717718909946280610, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_Name
       value: RoadSign_Stop (10)
       objectReference: {fileID: 0}
     - target: {fileID: 8717718909946280610, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: m_Layer
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 393577646294745723, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_Layer
       value: 10
@@ -6282,6 +6337,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 143567798}
     m_Modifications:
+    - target: {fileID: 393577646294745723, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
+    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
     - target: {fileID: 8336267932510052376, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_RootOrder
@@ -6357,27 +6427,12 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
-    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: 'm_Materials.Array.data[1]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
     - target: {fileID: 8717718909946280610, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_Name
       value: RoadSign_Stop (21)
       objectReference: {fileID: 0}
     - target: {fileID: 8717718909946280610, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: m_Layer
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 393577646294745723, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_Layer
       value: 10
@@ -6460,6 +6515,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 143567798}
     m_Modifications:
+    - target: {fileID: 393577646294745723, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
+    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
     - target: {fileID: 8336267932510052376, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_RootOrder
@@ -6535,27 +6605,12 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
-    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: 'm_Materials.Array.data[1]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
     - target: {fileID: 8717718909946280610, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_Name
       value: RoadSign_Stop (8)
       objectReference: {fileID: 0}
     - target: {fileID: 8717718909946280610, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: m_Layer
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 393577646294745723, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_Layer
       value: 10
@@ -6879,23 +6934,6 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -1504796380388827707, guid: 6049a7c265a598f469a807826d0b4309, type: 3}
---- !u!1 &1045472589
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 976023398652226254, guid: b1f6b5648908aac4392f61a9b929d744,
-    type: 3}
-  m_PrefabInstance: {fileID: 6155433868366625918}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1969961072}
-  m_Layer: 10
-  m_Name: RoadSign_noparking
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
 --- !u!1 &1050864255
 GameObject:
   m_ObjectHideFlags: 0
@@ -7589,34 +7627,6 @@ MonoBehaviour:
   debugMode: 0
   initDelay: 0.1
   initTimeout: 2
---- !u!1 &1222334408 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8164078558771037576, guid: e9980215623ea804eb9b82b2422f0c0e,
-    type: 3}
-  m_PrefabInstance: {fileID: 1958059152}
-  m_PrefabAsset: {fileID: 0}
---- !u!64 &1222334412
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1222334408}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: -2432090755550338912, guid: e9980215623ea804eb9b82b2422f0c0e, type: 3}
 --- !u!4 &1226717864 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2000640446976612416, guid: eac70e81391f8274790b015583da8a5b,
@@ -9380,7 +9390,7 @@ MeshCollider:
   m_Mesh: {fileID: -1504796380388827707, guid: 6049a7c265a598f469a807826d0b4309, type: 3}
 --- !u!4 &1362708522 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: e9980215623ea804eb9b82b2422f0c0e,
+  m_CorrespondingSourceObject: {fileID: 612601497595731232, guid: b1f6b5648908aac4392f61a9b929d744,
     type: 3}
   m_PrefabInstance: {fileID: 1958059152}
   m_PrefabAsset: {fileID: 0}
@@ -10439,6 +10449,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 143567798}
     m_Modifications:
+    - target: {fileID: 393577646294745723, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
+    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
     - target: {fileID: 8336267932510052376, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_RootOrder
@@ -10514,27 +10539,12 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
-    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: 'm_Materials.Array.data[1]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
     - target: {fileID: 8717718909946280610, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_Name
       value: RoadSign_Stop (13)
       objectReference: {fileID: 0}
     - target: {fileID: 8717718909946280610, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: m_Layer
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 393577646294745723, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_Layer
       value: 10
@@ -10556,6 +10566,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 143567798}
     m_Modifications:
+    - target: {fileID: 393577646294745723, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
+    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
     - target: {fileID: 8336267932510052376, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_RootOrder
@@ -10631,27 +10656,12 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
-    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: 'm_Materials.Array.data[1]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
     - target: {fileID: 8717718909946280610, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_Name
       value: RoadSign_Stop (16)
       objectReference: {fileID: 0}
     - target: {fileID: 8717718909946280610, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: m_Layer
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 393577646294745723, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_Layer
       value: 10
@@ -10729,6 +10739,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 143567798}
     m_Modifications:
+    - target: {fileID: 393577646294745723, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
+    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
     - target: {fileID: 8336267932510052376, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_RootOrder
@@ -10804,27 +10829,12 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
-    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: 'm_Materials.Array.data[1]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
     - target: {fileID: 8717718909946280610, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_Name
       value: RoadSign_Stop (3)
       objectReference: {fileID: 0}
     - target: {fileID: 8717718909946280610, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: m_Layer
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 393577646294745723, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_Layer
       value: 10
@@ -10958,6 +10968,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 143567798}
     m_Modifications:
+    - target: {fileID: 393577646294745723, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
+    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
     - target: {fileID: 8336267932510052376, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_RootOrder
@@ -11033,27 +11058,12 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
-    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: 'm_Materials.Array.data[1]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
     - target: {fileID: 8717718909946280610, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_Name
       value: RoadSign_Stop (1)
       objectReference: {fileID: 0}
     - target: {fileID: 8717718909946280610, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: m_Layer
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 393577646294745723, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_Layer
       value: 10
@@ -11789,6 +11799,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 143567798}
     m_Modifications:
+    - target: {fileID: 393577646294745723, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
+    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
     - target: {fileID: 8336267932510052376, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_RootOrder
@@ -11864,27 +11889,12 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
-    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: 'm_Materials.Array.data[1]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
     - target: {fileID: 8717718909946280610, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_Name
       value: RoadSign_Stop (14)
       objectReference: {fileID: 0}
     - target: {fileID: 8717718909946280610, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: m_Layer
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 393577646294745723, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_Layer
       value: 10
@@ -12261,6 +12271,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 143567798}
     m_Modifications:
+    - target: {fileID: 393577646294745723, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
+    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
     - target: {fileID: 8336267932510052376, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_RootOrder
@@ -12336,27 +12361,12 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
-    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: 'm_Materials.Array.data[1]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
     - target: {fileID: 8717718909946280610, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_Name
       value: RoadSign_Stop (19)
       objectReference: {fileID: 0}
     - target: {fileID: 8717718909946280610, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: m_Layer
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 393577646294745723, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_Layer
       value: 10
@@ -12406,6 +12416,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 143567798}
     m_Modifications:
+    - target: {fileID: 393577646294745723, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
+    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
     - target: {fileID: 8336267932510052376, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_RootOrder
@@ -12481,27 +12506,12 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
-    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: 'm_Materials.Array.data[1]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
     - target: {fileID: 8717718909946280610, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_Name
       value: RoadSign_Stop (22)
       objectReference: {fileID: 0}
     - target: {fileID: 8717718909946280610, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: m_Layer
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 393577646294745723, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_Layer
       value: 10
@@ -12741,6 +12751,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 143567798}
     m_Modifications:
+    - target: {fileID: 393577646294745723, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
+    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
     - target: {fileID: 8336267932510052376, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_RootOrder
@@ -12816,27 +12841,12 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
-    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: 'm_Materials.Array.data[1]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
     - target: {fileID: 8717718909946280610, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_Name
       value: RoadSign_Stop (15)
       objectReference: {fileID: 0}
     - target: {fileID: 8717718909946280610, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: m_Layer
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 393577646294745723, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_Layer
       value: 10
@@ -12917,91 +12927,91 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 143567798}
     m_Modifications:
-    - target: {fileID: -8679921383154817045, guid: e9980215623ea804eb9b82b2422f0c0e,
+    - target: {fileID: 612601497595731232, guid: b1f6b5648908aac4392f61a9b929d744,
         type: 3}
       propertyPath: m_LocalScale.x
       value: 1.3
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: e9980215623ea804eb9b82b2422f0c0e,
+    - target: {fileID: 612601497595731232, guid: b1f6b5648908aac4392f61a9b929d744,
         type: 3}
       propertyPath: m_LocalScale.y
       value: 1.3
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: e9980215623ea804eb9b82b2422f0c0e,
+    - target: {fileID: 612601497595731232, guid: b1f6b5648908aac4392f61a9b929d744,
         type: 3}
       propertyPath: m_LocalScale.z
       value: 1.3
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: e9980215623ea804eb9b82b2422f0c0e,
+    - target: {fileID: 612601497595731232, guid: b1f6b5648908aac4392f61a9b929d744,
         type: 3}
       propertyPath: m_LocalPosition.x
       value: -5.3848352
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: e9980215623ea804eb9b82b2422f0c0e,
+    - target: {fileID: 612601497595731232, guid: b1f6b5648908aac4392f61a9b929d744,
         type: 3}
       propertyPath: m_LocalPosition.y
       value: 0.10000181
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: e9980215623ea804eb9b82b2422f0c0e,
+    - target: {fileID: 612601497595731232, guid: b1f6b5648908aac4392f61a9b929d744,
         type: 3}
       propertyPath: m_LocalPosition.z
       value: 34.28403
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: e9980215623ea804eb9b82b2422f0c0e,
+    - target: {fileID: 612601497595731232, guid: b1f6b5648908aac4392f61a9b929d744,
         type: 3}
       propertyPath: m_LocalRotation.w
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: e9980215623ea804eb9b82b2422f0c0e,
+    - target: {fileID: 612601497595731232, guid: b1f6b5648908aac4392f61a9b929d744,
         type: 3}
       propertyPath: m_LocalRotation.x
       value: -0
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: e9980215623ea804eb9b82b2422f0c0e,
+    - target: {fileID: 612601497595731232, guid: b1f6b5648908aac4392f61a9b929d744,
         type: 3}
       propertyPath: m_LocalRotation.y
       value: -0
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: e9980215623ea804eb9b82b2422f0c0e,
+    - target: {fileID: 612601497595731232, guid: b1f6b5648908aac4392f61a9b929d744,
         type: 3}
       propertyPath: m_LocalRotation.z
       value: -0
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: e9980215623ea804eb9b82b2422f0c0e,
+    - target: {fileID: 612601497595731232, guid: b1f6b5648908aac4392f61a9b929d744,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: e9980215623ea804eb9b82b2422f0c0e,
+    - target: {fileID: 612601497595731232, guid: b1f6b5648908aac4392f61a9b929d744,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: e9980215623ea804eb9b82b2422f0c0e,
+    - target: {fileID: 612601497595731232, guid: b1f6b5648908aac4392f61a9b929d744,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: e9980215623ea804eb9b82b2422f0c0e,
+    - target: {fileID: 612601497595731232, guid: b1f6b5648908aac4392f61a9b929d744,
         type: 3}
       propertyPath: m_ConstrainProportionsScale
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5969871020946821123, guid: b1f6b5648908aac4392f61a9b929d744,
+        type: 3}
+      propertyPath: m_Name
+      value: RoadSign_noparking (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5969871020946821123, guid: b1f6b5648908aac4392f61a9b929d744,
+        type: 3}
+      propertyPath: m_Layer
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: -7635826562936255635, guid: e9980215623ea804eb9b82b2422f0c0e,
         type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
-    - target: {fileID: 919132149155446097, guid: e9980215623ea804eb9b82b2422f0c0e,
-        type: 3}
-      propertyPath: m_Name
-      value: RoadSign_noparking (1)
-      objectReference: {fileID: 0}
-    - target: {fileID: 919132149155446097, guid: e9980215623ea804eb9b82b2422f0c0e,
-        type: 3}
-      propertyPath: m_Layer
-      value: 10
-      objectReference: {fileID: 0}
     - target: {fileID: 8164078558771037576, guid: e9980215623ea804eb9b82b2422f0c0e,
         type: 3}
       propertyPath: m_Layer
@@ -13010,12 +13020,8 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 8164078558771037576, guid: e9980215623ea804eb9b82b2422f0c0e,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1222334412}
-  m_SourcePrefab: {fileID: 100100000, guid: e9980215623ea804eb9b82b2422f0c0e, type: 3}
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: b1f6b5648908aac4392f61a9b929d744, type: 3}
 --- !u!1 &1966154849 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -2800518492647066080, guid: 6049a7c265a598f469a807826d0b4309,
@@ -13075,23 +13081,6 @@ Transform:
   m_Children:
   - {fileID: 410087041}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &1969961072
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 486486275840471156, guid: b1f6b5648908aac4392f61a9b929d744,
-    type: 3}
-  m_PrefabInstance: {fileID: 6155433868366625918}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1045472589}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -17.8325, y: 0.10000181, z: 34.28403}
-  m_LocalScale: {x: 1.3, y: 1.3, z: 1.3}
-  m_ConstrainProportionsScale: 1
-  m_Children:
-  - {fileID: 38202824}
-  m_Father: {fileID: 143567798}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1987314828 stripped
 GameObject:
@@ -14060,6 +14049,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 143567798}
     m_Modifications:
+    - target: {fileID: 393577646294745723, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
+    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
     - target: {fileID: 8336267932510052376, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_RootOrder
@@ -14135,27 +14139,12 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
-    - target: {fileID: 7075998115046739102, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: 'm_Materials.Array.data[1]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 4698937231b289443a4ab23e01571b17, type: 2}
     - target: {fileID: 8717718909946280610, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_Name
       value: RoadSign_Stop (5)
       objectReference: {fileID: 0}
     - target: {fileID: 8717718909946280610, guid: 382b3109522f1774188fcb355ba14ca5,
-        type: 3}
-      propertyPath: m_Layer
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 393577646294745723, guid: 382b3109522f1774188fcb355ba14ca5,
         type: 3}
       propertyPath: m_Layer
       value: 10
@@ -14368,7 +14357,7 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8164078558346537795}
   m_Mesh: {fileID: -2432090755550338912, guid: 861534242faa3474da119613f15237e8, type: 3}
---- !u!1001 &6155433868366625918
+--- !u!1001 &4630771686814264492
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -14376,57 +14365,72 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 143567798}
     m_Modifications:
-    - target: {fileID: 486486275840471156, guid: b1f6b5648908aac4392f61a9b929d744,
+    - target: {fileID: 612601497595731232, guid: b1f6b5648908aac4392f61a9b929d744,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 612601497595731232, guid: b1f6b5648908aac4392f61a9b929d744,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 612601497595731232, guid: b1f6b5648908aac4392f61a9b929d744,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 612601497595731232, guid: b1f6b5648908aac4392f61a9b929d744,
         type: 3}
       propertyPath: m_LocalPosition.x
       value: -17.8325
       objectReference: {fileID: 0}
-    - target: {fileID: 486486275840471156, guid: b1f6b5648908aac4392f61a9b929d744,
+    - target: {fileID: 612601497595731232, guid: b1f6b5648908aac4392f61a9b929d744,
         type: 3}
       propertyPath: m_LocalPosition.y
       value: 0.10000181
       objectReference: {fileID: 0}
-    - target: {fileID: 486486275840471156, guid: b1f6b5648908aac4392f61a9b929d744,
+    - target: {fileID: 612601497595731232, guid: b1f6b5648908aac4392f61a9b929d744,
         type: 3}
       propertyPath: m_LocalPosition.z
       value: 34.28403
       objectReference: {fileID: 0}
-    - target: {fileID: 486486275840471156, guid: b1f6b5648908aac4392f61a9b929d744,
+    - target: {fileID: 612601497595731232, guid: b1f6b5648908aac4392f61a9b929d744,
         type: 3}
       propertyPath: m_LocalRotation.w
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 486486275840471156, guid: b1f6b5648908aac4392f61a9b929d744,
+    - target: {fileID: 612601497595731232, guid: b1f6b5648908aac4392f61a9b929d744,
         type: 3}
       propertyPath: m_LocalRotation.x
       value: -0
       objectReference: {fileID: 0}
-    - target: {fileID: 486486275840471156, guid: b1f6b5648908aac4392f61a9b929d744,
+    - target: {fileID: 612601497595731232, guid: b1f6b5648908aac4392f61a9b929d744,
         type: 3}
       propertyPath: m_LocalRotation.y
       value: -0
       objectReference: {fileID: 0}
-    - target: {fileID: 486486275840471156, guid: b1f6b5648908aac4392f61a9b929d744,
+    - target: {fileID: 612601497595731232, guid: b1f6b5648908aac4392f61a9b929d744,
         type: 3}
       propertyPath: m_LocalRotation.z
       value: -0
       objectReference: {fileID: 0}
-    - target: {fileID: 486486275840471156, guid: b1f6b5648908aac4392f61a9b929d744,
+    - target: {fileID: 612601497595731232, guid: b1f6b5648908aac4392f61a9b929d744,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 486486275840471156, guid: b1f6b5648908aac4392f61a9b929d744,
+    - target: {fileID: 612601497595731232, guid: b1f6b5648908aac4392f61a9b929d744,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 486486275840471156, guid: b1f6b5648908aac4392f61a9b929d744,
+    - target: {fileID: 612601497595731232, guid: b1f6b5648908aac4392f61a9b929d744,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 976023398652226254, guid: b1f6b5648908aac4392f61a9b929d744,
+    - target: {fileID: 5969871020946821123, guid: b1f6b5648908aac4392f61a9b929d744,
         type: 3}
       propertyPath: m_Name
       value: RoadSign_noparking
@@ -14575,3 +14579,4 @@ SceneRoots:
   - {fileID: 1684152505}
   - {fileID: 1374099637}
   - {fileID: 1025558720}
+  - {fileID: 488261382}

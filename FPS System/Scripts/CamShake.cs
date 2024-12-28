@@ -4,18 +4,19 @@ using UnityEngine;
 
 public class CamShake : MonoBehaviour
 {
-    [SerializeField] float shakeDuration = 0.5f;
+    [SerializeField] float shakeDuration = 0.3f;
     [Tooltip("Intensity multiplier")]
     [SerializeField][Range(0,1)] float shakeIntensity;
+    [SerializeField] float rotationIntensity;
     [SerializeField] AnimationCurve curve;
 
-    public void Shake(float intensity)
+    public void Shake(float intensity, float rotationIntensity = 0f)
     {
         
-        StartCoroutine(Shaking(intensity));
+        StartCoroutine(Shaking(intensity, rotationIntensity));
     }
 
-    IEnumerator Shaking(float intensity)
+    IEnumerator Shaking(float intensity, float rotationIntensity)
     {
         shakeIntensity = intensity;
         Vector3 startPosition = transform.localPosition;
@@ -26,9 +27,12 @@ public class CamShake : MonoBehaviour
             elapsedTime += Time.deltaTime;
             float strengthCurve = curve.Evaluate(elapsedTime / shakeDuration);
             transform.localPosition = startPosition + Random.insideUnitSphere * strengthCurve * shakeIntensity;
+            float zRotation = Random.Range(-1f, 1f) * strengthCurve * rotationIntensity;
+            transform.localRotation = Quaternion.Euler(transform.localRotation.eulerAngles.x, transform.localRotation.eulerAngles.y, zRotation);
             yield return null;
         }
 
-        this.transform.localPosition = Vector3.zero;
+        transform.localPosition = Vector3.zero;
+        transform.localRotation = Quaternion.Euler(transform.localRotation.eulerAngles.x, transform.localRotation.eulerAngles.y, 0);
     }
 }

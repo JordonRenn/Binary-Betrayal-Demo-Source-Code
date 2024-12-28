@@ -19134,7 +19134,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   reticleSystem: {fileID: 0}
   camShake: {fileID: 3602990529017667809}
-  camShakeIntensity: 0.125
+  camShakeIntensity: 0.1
   cam: {fileID: 6582632113409007607}
   weaponName: AK-47
   weaponSlot: 0
@@ -19153,21 +19153,36 @@ MonoBehaviour:
   spreadPatternRandomization: 0.12
   spreadPattern:
   - {x: 0, y: 0}
-  - {x: 0, y: 3}
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  - {x: -1, y: 1}
+  - {x: 1, y: -1}
+  - {x: -1, y: 1}
+  - {x: 1, y: -1}
+  - {x: -1, y: 1}
+  - {x: 1, y: -1}
   - {x: 0, y: 5}
-  - {x: -1, y: 5}
-  - {x: 1, y: 5}
-  - {x: -1, y: 5}
-  - {x: 1, y: 5}
-  - {x: -1, y: 3}
-  - {x: 1, y: 1}
-  - {x: -2, y: 1}
-  - {x: -3, y: 1}
-  - {x: -3, y: 1}
-  - {x: 3, y: 1}
-  - {x: 3, y: 1}
-  - {x: 3, y: 1}
-  spreadPatternArrayLength: 15
+  - {x: 0, y: 10}
+  - {x: 0, y: 10}
+  - {x: 0, y: 10}
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  spreadPatternArrayLength: 30
   spreadRecoveryRate: 1.2
   fireAnimStateName: ak_fire
   infiniteAmmo: 1
@@ -24368,6 +24383,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   shakeDuration: 0.25
   shakeIntensity: 0.3
+  rotationIntensity: 0
   curve:
     serializedVersion: 2
     m_Curve:
