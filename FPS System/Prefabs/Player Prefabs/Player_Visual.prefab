@@ -4787,36 +4787,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3452bc9a382046c479e46269a7942da7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  reticleSystem: {fileID: 0}
-  camShake: {fileID: 3602990529017667809}
   camShakeIntensity: 0
   cam: {fileID: 6582632113409007607}
-  weaponName: Knife
   weaponSlot: 2
-  fireMode: 0
-  isScoped: 0
   img_activeIcon: {fileID: 0}
   img_inactiveIcon: {fileID: 0}
   weaponObject: {fileID: 5211686386604617828}
   weaponArms: {fileID: 4508437155438712273}
   armSpeed: 0
   disarmSpeed: 0
-  shellObject: {fileID: 0}
-  sfx_ShellDelay: 0
-  spread: 0
-  spreadPatternRandomization: 0
-  spreadPattern: []
-  spreadPatternArrayLength: 0
-  spreadRecoveryRate: 0
   fireAnimStateName: 
-  infiniteAmmo: 0
-  fireRate: 0
-  bulletSpeed: 0
-  reticleFallOffSpeed: 0
-  clipSize: 0
-  currentClip: 0
-  maxAmmo: 69420
-  currentAmmo: 0
   damagePerShot: 0
   headshotMultiplier: 0
   armourPenetration: 0
@@ -4827,72 +4807,10 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  sfx_Fire:
-    Guid:
-      Data1: -532146725
-      Data2: 1165909710
-      Data3: -1133808208
-      Data4: 374508275
-    Path: event:/handgun_Fire
-  sfx_Empty:
-    Guid:
-      Data1: -1236388759
-      Data2: 1173658554
-      Data3: 1159330985
-      Data4: -1059968308
-    Path: event:/handgun_DryShot
-  sfx_ClipOut:
-    Guid:
-      Data1: 916684497
-      Data2: 1235090573
-      Data3: -594995526
-      Data4: 1918983918
-    Path: event:/handgun_ClipOut
-  clipOutSFXDelay: 0
-  sfx_ClipIn:
-    Guid:
-      Data1: -1494270
-      Data2: 1151870421
-      Data3: 1062005157
-      Data4: -1944870218
-    Path: event:/handgun_ClipIn
-  clipInSFXDelay: 0
-  sfx_Slide:
-    Guid:
-      Data1: 143355715
-      Data2: 1130584521
-      Data3: -20123472
-      Data4: -143324844
-    Path: event:/handgun_Slide
-  slideSFXDelay: 0
-  sfx_gun_shell:
-    Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
-  sfx_AdsLayerIn:
-    Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
-  pos_Muzzle: {fileID: 0}
-  pos_ShellEject: {fileID: 0}
   pos_GunAudio: {fileID: 8234690083877858679}
-  bullettrail: {fileID: 0}
-  mFlash: {fileID: 0}
   debugMode: 0
   initDelay: 0.2
   initTimeout: 10
-  OnFire:
-    m_PersistentCalls:
-      m_Calls: []
-  OnReload:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!95 &7677041755095446855
 Animator:
   serializedVersion: 7
@@ -5249,36 +5167,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3452bc9a382046c479e46269a7942da7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  reticleSystem: {fileID: 0}
-  camShake: {fileID: 3602990529017667809}
   camShakeIntensity: 0
   cam: {fileID: 6582632113409007607}
-  weaponName: Fists
   weaponSlot: 4
-  fireMode: 0
-  isScoped: 0
   img_activeIcon: {fileID: 0}
   img_inactiveIcon: {fileID: 0}
   weaponObject: {fileID: 8818831485571233530}
   weaponArms: {fileID: 8844507917041452025}
   armSpeed: 0
   disarmSpeed: 0
-  shellObject: {fileID: 0}
-  sfx_ShellDelay: 0
-  spread: 0
-  spreadPatternRandomization: 0
-  spreadPattern: []
-  spreadPatternArrayLength: 0
-  spreadRecoveryRate: 0
   fireAnimStateName: 
-  infiniteAmmo: 0
-  fireRate: 0
-  bulletSpeed: 0
-  reticleFallOffSpeed: 0
-  clipSize: 0
-  currentClip: 0
-  maxAmmo: 69420
-  currentAmmo: 0
   damagePerShot: 0
   headshotMultiplier: 0
   armourPenetration: 0
@@ -5289,72 +5187,10 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  sfx_Fire:
-    Guid:
-      Data1: -532146725
-      Data2: 1165909710
-      Data3: -1133808208
-      Data4: 374508275
-    Path: event:/handgun_Fire
-  sfx_Empty:
-    Guid:
-      Data1: -1236388759
-      Data2: 1173658554
-      Data3: 1159330985
-      Data4: -1059968308
-    Path: event:/handgun_DryShot
-  sfx_ClipOut:
-    Guid:
-      Data1: 916684497
-      Data2: 1235090573
-      Data3: -594995526
-      Data4: 1918983918
-    Path: event:/handgun_ClipOut
-  clipOutSFXDelay: 0
-  sfx_ClipIn:
-    Guid:
-      Data1: -1494270
-      Data2: 1151870421
-      Data3: 1062005157
-      Data4: -1944870218
-    Path: event:/handgun_ClipIn
-  clipInSFXDelay: 0
-  sfx_Slide:
-    Guid:
-      Data1: 143355715
-      Data2: 1130584521
-      Data3: -20123472
-      Data4: -143324844
-    Path: event:/handgun_Slide
-  slideSFXDelay: 0
-  sfx_gun_shell:
-    Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
-  sfx_AdsLayerIn:
-    Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
-  pos_Muzzle: {fileID: 0}
-  pos_ShellEject: {fileID: 0}
   pos_GunAudio: {fileID: 8234690083877858679}
-  bullettrail: {fileID: 0}
-  mFlash: {fileID: 0}
   debugMode: 0
   initDelay: 0.2
   initTimeout: 10
-  OnFire:
-    m_PersistentCalls:
-      m_Calls: []
-  OnReload:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!95 &912074645788610815
 Animator:
   serializedVersion: 7
@@ -6010,36 +5846,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3452bc9a382046c479e46269a7942da7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  reticleSystem: {fileID: 0}
-  camShake: {fileID: 3602990529017667809}
   camShakeIntensity: 0
   cam: {fileID: 6582632113409007607}
-  weaponName: Shotgun
   weaponSlot: 1
-  fireMode: 0
-  isScoped: 0
   img_activeIcon: {fileID: 21300000, guid: c0b775135947b814d990a5d4dda801c1, type: 3}
   img_inactiveIcon: {fileID: 21300000, guid: b39df6b5c21b748419823030a1cfdb4c, type: 3}
   weaponObject: {fileID: 4632836007158880585}
   weaponArms: {fileID: 3063374759272960898}
   armSpeed: 0
   disarmSpeed: 0
-  shellObject: {fileID: 0}
-  sfx_ShellDelay: 0
-  spread: 0
-  spreadPatternRandomization: 0
-  spreadPattern: []
-  spreadPatternArrayLength: 0
-  spreadRecoveryRate: 0
   fireAnimStateName: 
-  infiniteAmmo: 0
-  fireRate: 0
-  bulletSpeed: 0
-  reticleFallOffSpeed: 0
-  clipSize: 0
-  currentClip: 0
-  maxAmmo: 69420
-  currentAmmo: 0
   damagePerShot: 0
   headshotMultiplier: 0
   armourPenetration: 0
@@ -6050,72 +5866,10 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  sfx_Fire:
-    Guid:
-      Data1: -532146725
-      Data2: 1165909710
-      Data3: -1133808208
-      Data4: 374508275
-    Path: event:/handgun_Fire
-  sfx_Empty:
-    Guid:
-      Data1: -1236388759
-      Data2: 1173658554
-      Data3: 1159330985
-      Data4: -1059968308
-    Path: event:/handgun_DryShot
-  sfx_ClipOut:
-    Guid:
-      Data1: 916684497
-      Data2: 1235090573
-      Data3: -594995526
-      Data4: 1918983918
-    Path: event:/handgun_ClipOut
-  clipOutSFXDelay: 0
-  sfx_ClipIn:
-    Guid:
-      Data1: -1494270
-      Data2: 1151870421
-      Data3: 1062005157
-      Data4: -1944870218
-    Path: event:/handgun_ClipIn
-  clipInSFXDelay: 0
-  sfx_Slide:
-    Guid:
-      Data1: 143355715
-      Data2: 1130584521
-      Data3: -20123472
-      Data4: -143324844
-    Path: event:/handgun_Slide
-  slideSFXDelay: 0
-  sfx_gun_shell:
-    Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
-  sfx_AdsLayerIn:
-    Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
-  pos_Muzzle: {fileID: 0}
-  pos_ShellEject: {fileID: 0}
   pos_GunAudio: {fileID: 8234690083877858679}
-  bullettrail: {fileID: 0}
-  mFlash: {fileID: 0}
   debugMode: 0
   initDelay: 0.2
   initTimeout: 10
-  OnFire:
-    m_PersistentCalls:
-      m_Calls: []
-  OnReload:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!111 &8929213069954325698
 Animation:
   m_ObjectHideFlags: 0
@@ -7340,7 +7094,7 @@ GameObject:
   - component: {fileID: 7677196063238803256}
   - component: {fileID: 8486335434082723266}
   m_Layer: 8
-  m_Name: Quad
+  m_Name: MuzzleFlash
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9884,36 +9638,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3452bc9a382046c479e46269a7942da7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  reticleSystem: {fileID: 0}
-  camShake: {fileID: 3602990529017667809}
   camShakeIntensity: 0
   cam: {fileID: 6582632113409007607}
-  weaponName: Smoke Grenade
   weaponSlot: 3
-  fireMode: 0
-  isScoped: 0
   img_activeIcon: {fileID: 0}
   img_inactiveIcon: {fileID: 0}
   weaponObject: {fileID: 5332590917441388359}
   weaponArms: {fileID: 3630400903869432617}
   armSpeed: 0
   disarmSpeed: 0
-  shellObject: {fileID: 0}
-  sfx_ShellDelay: 0
-  spread: 0
-  spreadPatternRandomization: 0
-  spreadPattern: []
-  spreadPatternArrayLength: 0
-  spreadRecoveryRate: 0
   fireAnimStateName: 
-  infiniteAmmo: 0
-  fireRate: 0
-  bulletSpeed: 0
-  reticleFallOffSpeed: 0
-  clipSize: 0
-  currentClip: 0
-  maxAmmo: 69420
-  currentAmmo: 0
   damagePerShot: 0
   headshotMultiplier: 0
   armourPenetration: 0
@@ -9924,72 +9658,10 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  sfx_Fire:
-    Guid:
-      Data1: -532146725
-      Data2: 1165909710
-      Data3: -1133808208
-      Data4: 374508275
-    Path: event:/handgun_Fire
-  sfx_Empty:
-    Guid:
-      Data1: -1236388759
-      Data2: 1173658554
-      Data3: 1159330985
-      Data4: -1059968308
-    Path: event:/handgun_DryShot
-  sfx_ClipOut:
-    Guid:
-      Data1: 916684497
-      Data2: 1235090573
-      Data3: -594995526
-      Data4: 1918983918
-    Path: event:/handgun_ClipOut
-  clipOutSFXDelay: 0
-  sfx_ClipIn:
-    Guid:
-      Data1: -1494270
-      Data2: 1151870421
-      Data3: 1062005157
-      Data4: -1944870218
-    Path: event:/handgun_ClipIn
-  clipInSFXDelay: 0
-  sfx_Slide:
-    Guid:
-      Data1: 143355715
-      Data2: 1130584521
-      Data3: -20123472
-      Data4: -143324844
-    Path: event:/handgun_Slide
-  slideSFXDelay: 0
-  sfx_gun_shell:
-    Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
-  sfx_AdsLayerIn:
-    Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
-  pos_Muzzle: {fileID: 0}
-  pos_ShellEject: {fileID: 0}
   pos_GunAudio: {fileID: 8234690083877858679}
-  bullettrail: {fileID: 0}
-  mFlash: {fileID: 0}
   debugMode: 0
   initDelay: 0.2
   initTimeout: 10
-  OnFire:
-    m_PersistentCalls:
-      m_Calls: []
-  OnReload:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!95 &2850282307281468864
 Animator:
   serializedVersion: 7
@@ -12270,7 +11942,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6874421922769275702}
   - component: {fileID: 4384000750707516}
-  - component: {fileID: 6822130800124770441}
+  - component: {fileID: 6408734661877135272}
   - component: {fileID: 3772605801500479561}
   m_Layer: 8
   m_Name: 1_0_HandGun
@@ -12308,36 +11980,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3452bc9a382046c479e46269a7942da7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  reticleSystem: {fileID: 0}
-  camShake: {fileID: 3602990529017667809}
   camShakeIntensity: 0
   cam: {fileID: 6582632113409007607}
-  weaponName: Hansgun
   weaponSlot: 1
-  fireMode: 0
-  isScoped: 0
   img_activeIcon: {fileID: 21300000, guid: 55ac23c0bc41c50429f7ec4bd1a7e09c, type: 3}
   img_inactiveIcon: {fileID: 21300000, guid: 8d9dcf35618726e46a640be4c0eafacd, type: 3}
   weaponObject: {fileID: 4478336908280002932}
   weaponArms: {fileID: 3640659486134970922}
   armSpeed: 0
   disarmSpeed: 0
-  shellObject: {fileID: 0}
-  sfx_ShellDelay: 0
-  spread: 0
-  spreadPatternRandomization: 0
-  spreadPattern: []
-  spreadPatternArrayLength: 0
-  spreadRecoveryRate: 0
   fireAnimStateName: 
-  infiniteAmmo: 0
-  fireRate: 0
-  bulletSpeed: 0
-  reticleFallOffSpeed: 0
-  clipSize: 0
-  currentClip: 0
-  maxAmmo: 69420
-  currentAmmo: 0
   damagePerShot: 0
   headshotMultiplier: 0
   armourPenetration: 0
@@ -12348,43 +12000,102 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  pos_GunAudio: {fileID: 8234690083877858679}
+  debugMode: 0
+  initDelay: 0.2
+  initTimeout: 10
+--- !u!114 &6408734661877135272
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4127535412787632316}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e11734b6246bf1c48b4bf9e8b00eb2b3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  camShakeIntensity: 0
+  cam: {fileID: 0}
+  weaponSlot: 0
+  img_activeIcon: {fileID: 0}
+  img_inactiveIcon: {fileID: 0}
+  weaponObject: {fileID: 0}
+  weaponArms: {fileID: 0}
+  armSpeed: 0
+  disarmSpeed: 0
+  fireAnimStateName: 
+  damagePerShot: 0
+  headshotMultiplier: 0
+  armourPenetration: 0
+  range: 0
+  damageFalloff:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  pos_GunAudio: {fileID: 0}
+  debugMode: 0
+  initDelay: 0.2
+  initTimeout: 10
+  weaponName: 
+  fireMode: 0
+  isScoped: 0
+  infiniteAmmo: 0
+  fireRate: 0
+  bulletSpeed: 0
+  reticleFallOffSpeed: 0
+  clipSize: 0
+  currentClip: 0
+  maxAmmo: 69420
+  currentAmmo: 0
+  shellObject: {fileID: 0}
+  sfx_ShellDelay: 0
+  spread: 0
+  spreadPatternRandomization: 0
+  spreadPattern: []
+  spreadRecoveryRate: 0
+  pos_Muzzle: {fileID: 0}
+  pos_ShellEject: {fileID: 0}
   sfx_Fire:
     Guid:
-      Data1: -532146725
-      Data2: 1165909710
-      Data3: -1133808208
-      Data4: 374508275
-    Path: event:/handgun_Fire
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
   sfx_Empty:
     Guid:
-      Data1: -1236388759
-      Data2: 1173658554
-      Data3: 1159330985
-      Data4: -1059968308
-    Path: event:/handgun_DryShot
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
   sfx_ClipOut:
     Guid:
-      Data1: 916684497
-      Data2: 1235090573
-      Data3: -594995526
-      Data4: 1918983918
-    Path: event:/handgun_ClipOut
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
   clipOutSFXDelay: 0
   sfx_ClipIn:
     Guid:
-      Data1: -1494270
-      Data2: 1151870421
-      Data3: 1062005157
-      Data4: -1944870218
-    Path: event:/handgun_ClipIn
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
   clipInSFXDelay: 0
   sfx_Slide:
     Guid:
-      Data1: 143355715
-      Data2: 1130584521
-      Data3: -20123472
-      Data4: -143324844
-    Path: event:/handgun_Slide
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
   slideSFXDelay: 0
   sfx_gun_shell:
     Guid:
@@ -12400,36 +12111,8 @@ MonoBehaviour:
       Data3: 0
       Data4: 0
     Path: 
-  pos_Muzzle: {fileID: 0}
-  pos_ShellEject: {fileID: 0}
-  pos_GunAudio: {fileID: 8234690083877858679}
   bullettrail: {fileID: 0}
   mFlash: {fileID: 0}
-  debugMode: 0
-  initDelay: 0.2
-  initTimeout: 10
-  OnFire:
-    m_PersistentCalls:
-      m_Calls: []
-  OnReload:
-    m_PersistentCalls:
-      m_Calls: []
---- !u!111 &6822130800124770441
-Animation:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4127535412787632316}
-  m_Enabled: 1
-  serializedVersion: 4
-  m_Animation: {fileID: 0}
-  m_Animations: []
-  m_WrapMode: 0
-  m_PlayAutomatically: 1
-  m_AnimatePhysics: 0
-  m_UpdateMode: 0
-  m_CullingType: 0
 --- !u!95 &3772605801500479561
 Animator:
   serializedVersion: 7
@@ -14426,36 +14109,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3452bc9a382046c479e46269a7942da7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  reticleSystem: {fileID: 0}
-  camShake: {fileID: 3602990529017667809}
   camShakeIntensity: 0
   cam: {fileID: 6582632113409007607}
-  weaponName: Sniper Rifle
   weaponSlot: 0
-  fireMode: 0
-  isScoped: 0
   img_activeIcon: {fileID: 21300000, guid: a237e59b981f0e54c8a2c70b0fc21994, type: 3}
   img_inactiveIcon: {fileID: 21300000, guid: 01d2226b4df224644bb8a1b35f3df365, type: 3}
   weaponObject: {fileID: 3161421070149079971}
   weaponArms: {fileID: 2512582571711841369}
   armSpeed: 0
   disarmSpeed: 0
-  shellObject: {fileID: 0}
-  sfx_ShellDelay: 0
-  spread: 0
-  spreadPatternRandomization: 0
-  spreadPattern: []
-  spreadPatternArrayLength: 0
-  spreadRecoveryRate: 0
   fireAnimStateName: 
-  infiniteAmmo: 0
-  fireRate: 0
-  bulletSpeed: 0
-  reticleFallOffSpeed: 0
-  clipSize: 0
-  currentClip: 0
-  maxAmmo: 69420
-  currentAmmo: 0
   damagePerShot: 0
   headshotMultiplier: 0
   armourPenetration: 0
@@ -14466,72 +14129,10 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  sfx_Fire:
-    Guid:
-      Data1: -532146725
-      Data2: 1165909710
-      Data3: -1133808208
-      Data4: 374508275
-    Path: event:/handgun_Fire
-  sfx_Empty:
-    Guid:
-      Data1: -1236388759
-      Data2: 1173658554
-      Data3: 1159330985
-      Data4: -1059968308
-    Path: event:/handgun_DryShot
-  sfx_ClipOut:
-    Guid:
-      Data1: 916684497
-      Data2: 1235090573
-      Data3: -594995526
-      Data4: 1918983918
-    Path: event:/handgun_ClipOut
-  clipOutSFXDelay: 0
-  sfx_ClipIn:
-    Guid:
-      Data1: -1494270
-      Data2: 1151870421
-      Data3: 1062005157
-      Data4: -1944870218
-    Path: event:/handgun_ClipIn
-  clipInSFXDelay: 0
-  sfx_Slide:
-    Guid:
-      Data1: 143355715
-      Data2: 1130584521
-      Data3: -20123472
-      Data4: -143324844
-    Path: event:/handgun_Slide
-  slideSFXDelay: 0
-  sfx_gun_shell:
-    Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
-  sfx_AdsLayerIn:
-    Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
-  pos_Muzzle: {fileID: 0}
-  pos_ShellEject: {fileID: 0}
   pos_GunAudio: {fileID: 8234690083877858679}
-  bullettrail: {fileID: 0}
-  mFlash: {fileID: 0}
   debugMode: 0
   initDelay: 0.2
   initTimeout: 10
-  OnFire:
-    m_PersistentCalls:
-      m_Calls: []
-  OnReload:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!111 &5271129127818837780
 Animation:
   m_ObjectHideFlags: 0
@@ -16591,36 +16192,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3452bc9a382046c479e46269a7942da7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  reticleSystem: {fileID: 0}
-  camShake: {fileID: 3602990529017667809}
   camShakeIntensity: 0
   cam: {fileID: 6582632113409007607}
-  weaponName: Grenade
   weaponSlot: 3
-  fireMode: 0
-  isScoped: 0
   img_activeIcon: {fileID: 0}
   img_inactiveIcon: {fileID: 0}
   weaponObject: {fileID: 3013910865544104604}
   weaponArms: {fileID: 2551306167405867559}
   armSpeed: 0
   disarmSpeed: 0
-  shellObject: {fileID: 0}
-  sfx_ShellDelay: 0
-  spread: 0
-  spreadPatternRandomization: 0
-  spreadPattern: []
-  spreadPatternArrayLength: 0
-  spreadRecoveryRate: 0
   fireAnimStateName: 
-  infiniteAmmo: 0
-  fireRate: 0
-  bulletSpeed: 0
-  reticleFallOffSpeed: 0
-  clipSize: 0
-  currentClip: 0
-  maxAmmo: 69420
-  currentAmmo: 0
   damagePerShot: 0
   headshotMultiplier: 0
   armourPenetration: 0
@@ -16631,72 +16212,10 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  sfx_Fire:
-    Guid:
-      Data1: -532146725
-      Data2: 1165909710
-      Data3: -1133808208
-      Data4: 374508275
-    Path: event:/handgun_Fire
-  sfx_Empty:
-    Guid:
-      Data1: -1236388759
-      Data2: 1173658554
-      Data3: 1159330985
-      Data4: -1059968308
-    Path: event:/handgun_DryShot
-  sfx_ClipOut:
-    Guid:
-      Data1: 916684497
-      Data2: 1235090573
-      Data3: -594995526
-      Data4: 1918983918
-    Path: event:/handgun_ClipOut
-  clipOutSFXDelay: 0
-  sfx_ClipIn:
-    Guid:
-      Data1: -1494270
-      Data2: 1151870421
-      Data3: 1062005157
-      Data4: -1944870218
-    Path: event:/handgun_ClipIn
-  clipInSFXDelay: 0
-  sfx_Slide:
-    Guid:
-      Data1: 143355715
-      Data2: 1130584521
-      Data3: -20123472
-      Data4: -143324844
-    Path: event:/handgun_Slide
-  slideSFXDelay: 0
-  sfx_gun_shell:
-    Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
-  sfx_AdsLayerIn:
-    Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
-  pos_Muzzle: {fileID: 0}
-  pos_ShellEject: {fileID: 0}
   pos_GunAudio: {fileID: 8234690083877858679}
-  bullettrail: {fileID: 0}
-  mFlash: {fileID: 0}
   debugMode: 0
   initDelay: 0.2
   initTimeout: 10
-  OnFire:
-    m_PersistentCalls:
-      m_Calls: []
-  OnReload:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!95 &2749703930900432670
 Animator:
   serializedVersion: 7
@@ -18998,7 +18517,7 @@ MonoBehaviour:
   unarmedWeapons:
   - {fileID: 1842678199370427709}
   assignedUnarmedWeaponIndex: 0
-  currentWeaponSlotObject: {fileID: 0}
+  currentWeaponSlotObject: {fileID: 6516407566393146031}
   currentWeaponSlot: 0
   WeaponSwitched:
     m_PersistentCalls:
@@ -19094,7 +18613,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8819634937255111185}
-  - component: {fileID: 7718413779482935892}
+  - component: {fileID: 6516407566393146031}
   - component: {fileID: 1487504274152876646}
   m_Layer: 8
   m_Name: 0_0_Ak-47
@@ -19120,7 +18639,7 @@ Transform:
   - {fileID: 7347600896871914844}
   m_Father: {fileID: 3926840557056373184}
   m_LocalEulerAnglesHint: {x: -2.6, y: 0, z: 0}
---- !u!114 &7718413779482935892
+--- !u!114 &6516407566393146031
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -19129,70 +18648,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 6973269391090873634}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3452bc9a382046c479e46269a7942da7, type: 3}
+  m_Script: {fileID: 11500000, guid: 4fafb95daf1c87d42a84ed0bc396aafb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  reticleSystem: {fileID: 0}
-  camShake: {fileID: 3602990529017667809}
   camShakeIntensity: 0.1
   cam: {fileID: 6582632113409007607}
-  weaponName: AK-47
   weaponSlot: 0
-  fireMode: 0
-  isScoped: 0
   img_activeIcon: {fileID: 21300000, guid: 6634dbea045f18c4ab8a29e15e971af4, type: 3}
   img_inactiveIcon: {fileID: 21300000, guid: d31a1c9db94336b4fb2e6d5e91354193, type: 3}
   weaponObject: {fileID: 5162786760402148105}
   weaponArms: {fileID: 4942790410310564861}
   armSpeed: 0.3
   disarmSpeed: 0.3
-  shellObject: {fileID: 4464816924479763129, guid: 8a4f40aecca03794dbb57f1948ffd0d3,
-    type: 3}
-  sfx_ShellDelay: 0.8
-  spread: 0.19
-  spreadPatternRandomization: 0.12
-  spreadPattern:
-  - {x: 0, y: 0}
-  - {x: 0, y: 0}
-  - {x: 0, y: 0}
-  - {x: -1, y: 1}
-  - {x: 1, y: -1}
-  - {x: -1, y: 1}
-  - {x: 1, y: -1}
-  - {x: -1, y: 1}
-  - {x: 1, y: -1}
-  - {x: 0, y: 5}
-  - {x: 0, y: 10}
-  - {x: 0, y: 10}
-  - {x: 0, y: 10}
-  - {x: 0, y: 0}
-  - {x: 0, y: 0}
-  - {x: 0, y: 0}
-  - {x: 0, y: 0}
-  - {x: 0, y: 0}
-  - {x: 0, y: 0}
-  - {x: 0, y: 0}
-  - {x: 0, y: 0}
-  - {x: 0, y: 0}
-  - {x: 0, y: 0}
-  - {x: 0, y: 0}
-  - {x: 0, y: 0}
-  - {x: 0, y: 0}
-  - {x: 0, y: 0}
-  - {x: 0, y: 0}
-  - {x: 0, y: 0}
-  - {x: 0, y: 0}
-  spreadPatternArrayLength: 30
-  spreadRecoveryRate: 1.2
   fireAnimStateName: ak_fire
-  infiniteAmmo: 1
-  fireRate: 0.15
-  bulletSpeed: 100
-  reticleFallOffSpeed: 0.5
-  clipSize: 30
-  currentClip: 30
-  maxAmmo: 69420
-  currentAmmo: 30
   damagePerShot: 30
   headshotMultiplier: 6
   armourPenetration: 10
@@ -19202,63 +18670,117 @@ MonoBehaviour:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0.99997795
-      inSlope: -0.030988347
-      outSlope: -0.030988347
+      value: 0.9976415
+      inSlope: 0.0000010728827
+      outSlope: 0.0000010728827
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
-      outWeight: 0.6875
+      outWeight: 0.1666668
     - serializedVersion: 3
-      time: 1
-      value: 0.000022113323
-      inSlope: -3.2226758
-      outSlope: -3.2226758
+      time: 0.9645729
+      value: -0.000000011175871
+      inSlope: 0
+      outSlope: 0
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.037500024
+      inWeight: 0
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  pos_GunAudio: {fileID: 8234690083877858679}
+  debugMode: 0
+  initDelay: 0.2
+  initTimeout: 10
+  weaponName: AK_47
+  fireMode: 0
+  isScoped: 0
+  infiniteAmmo: 1
+  fireRate: 0.15
+  bulletSpeed: 300
+  reticleFallOffSpeed: 2
+  clipSize: 30
+  currentClip: 30
+  maxAmmo: 69420
+  currentAmmo: 30
+  shellObject: {fileID: 4464816924479763129, guid: 8a4f40aecca03794dbb57f1948ffd0d3,
+    type: 3}
+  sfx_ShellDelay: 0.7
+  spread: 1
+  spreadPatternRandomization: 0.015
+  spreadPattern:
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  spreadRecoveryRate: 1
+  pos_Muzzle: {fileID: 8049315626726169246}
+  pos_ShellEject: {fileID: 7083632389532895818}
   sfx_Fire:
     Guid:
-      Data1: -532146725
-      Data2: 1165909710
-      Data3: -1133808208
-      Data4: 374508275
-    Path: event:/handgun_Fire
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
   sfx_Empty:
     Guid:
-      Data1: -1236388759
-      Data2: 1173658554
-      Data3: 1159330985
-      Data4: -1059968308
-    Path: event:/handgun_DryShot
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
   sfx_ClipOut:
     Guid:
-      Data1: 916684497
-      Data2: 1235090573
-      Data3: -594995526
-      Data4: 1918983918
-    Path: event:/handgun_ClipOut
-  clipOutSFXDelay: 0.4
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  clipOutSFXDelay: 0.15
   sfx_ClipIn:
     Guid:
-      Data1: -1494270
-      Data2: 1151870421
-      Data3: 1062005157
-      Data4: -1944870218
-    Path: event:/handgun_ClipIn
-  clipInSFXDelay: 0.75
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  clipInSFXDelay: 0.45
   sfx_Slide:
     Guid:
-      Data1: 143355715
-      Data2: 1130584521
-      Data3: -20123472
-      Data4: -143324844
-    Path: event:/handgun_Slide
-  slideSFXDelay: 1.25
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  slideSFXDelay: 1
   sfx_gun_shell:
     Guid:
       Data1: -828608440
@@ -19273,21 +18795,9 @@ MonoBehaviour:
       Data3: 0
       Data4: 0
     Path: 
-  pos_Muzzle: {fileID: 8049315626726169246}
-  pos_ShellEject: {fileID: 7083632389532895818}
-  pos_GunAudio: {fileID: 8234690083877858679}
   bullettrail: {fileID: 8030691421440258305, guid: 590ffb6979735504b89188b9126ef37e,
     type: 3}
   mFlash: {fileID: 8486335434082723266}
-  debugMode: 0
-  initDelay: 0.2
-  initTimeout: 10
-  OnFire:
-    m_PersistentCalls:
-      m_Calls: []
-  OnReload:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!95 &1487504274152876646
 Animator:
   serializedVersion: 7
@@ -20206,36 +19716,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3452bc9a382046c479e46269a7942da7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  reticleSystem: {fileID: 0}
-  camShake: {fileID: 3602990529017667809}
   camShakeIntensity: 0
   cam: {fileID: 6582632113409007607}
-  weaponName: Flash Grenade
   weaponSlot: 3
-  fireMode: 0
-  isScoped: 0
   img_activeIcon: {fileID: 0}
   img_inactiveIcon: {fileID: 0}
   weaponObject: {fileID: 1663811306889131869}
   weaponArms: {fileID: 3670305933239398323}
   armSpeed: 0
   disarmSpeed: 0
-  shellObject: {fileID: 0}
-  sfx_ShellDelay: 0
-  spread: 0
-  spreadPatternRandomization: 0
-  spreadPattern: []
-  spreadPatternArrayLength: 0
-  spreadRecoveryRate: 0
   fireAnimStateName: 
-  infiniteAmmo: 0
-  fireRate: 0
-  bulletSpeed: 0
-  reticleFallOffSpeed: 0
-  clipSize: 0
-  currentClip: 0
-  maxAmmo: 69420
-  currentAmmo: 0
   damagePerShot: 0
   headshotMultiplier: 0
   armourPenetration: 0
@@ -20246,72 +19736,10 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  sfx_Fire:
-    Guid:
-      Data1: -532146725
-      Data2: 1165909710
-      Data3: -1133808208
-      Data4: 374508275
-    Path: event:/handgun_Fire
-  sfx_Empty:
-    Guid:
-      Data1: -1236388759
-      Data2: 1173658554
-      Data3: 1159330985
-      Data4: -1059968308
-    Path: event:/handgun_DryShot
-  sfx_ClipOut:
-    Guid:
-      Data1: 916684497
-      Data2: 1235090573
-      Data3: -594995526
-      Data4: 1918983918
-    Path: event:/handgun_ClipOut
-  clipOutSFXDelay: 0
-  sfx_ClipIn:
-    Guid:
-      Data1: -1494270
-      Data2: 1151870421
-      Data3: 1062005157
-      Data4: -1944870218
-    Path: event:/handgun_ClipIn
-  clipInSFXDelay: 0
-  sfx_Slide:
-    Guid:
-      Data1: 143355715
-      Data2: 1130584521
-      Data3: -20123472
-      Data4: -143324844
-    Path: event:/handgun_Slide
-  slideSFXDelay: 0
-  sfx_gun_shell:
-    Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
-  sfx_AdsLayerIn:
-    Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
-  pos_Muzzle: {fileID: 0}
-  pos_ShellEject: {fileID: 0}
   pos_GunAudio: {fileID: 8234690083877858679}
-  bullettrail: {fileID: 0}
-  mFlash: {fileID: 0}
   debugMode: 0
   initDelay: 0.2
   initTimeout: 10
-  OnFire:
-    m_PersistentCalls:
-      m_Calls: []
-  OnReload:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!95 &8466171843157081399
 Animator:
   serializedVersion: 7
@@ -25533,7 +24961,7 @@ Transform:
   m_GameObject: {fileID: 9006090301186056073}
   serializedVersion: 2
   m_LocalRotation: {x: 0.022684941, y: 0.000000023698115, z: 0.000000059082254, w: 0.9997427}
-  m_LocalPosition: {x: -0, y: -0.068, z: 14.243}
+  m_LocalPosition: {x: 0, y: -0.068, z: 14.243}
   m_LocalScale: {x: 29.271349, y: 29.271358, z: 29.271355}
   m_ConstrainProportionsScale: 0
   m_Children: []

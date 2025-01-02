@@ -212,12 +212,12 @@ public class FPS_InputHandler : MonoBehaviour
         aimAction.performed += context => AimInput = true;
         aimAction.canceled += context => AimInput = false;
 
-        fireAction.started += context => FPSS_WeaponPool.Instance.FireWeapon();
+        fireAction.started += context => FPSS_WeaponPool.Instance.Fire();
         fireAction.started += context => fireTriggered.Invoke();
         fireAction.performed += context => FireInput = true;
         fireAction.canceled += context => FireInput = false;
 
-        reloadAction.started += context => FPSS_WeaponPool.Instance.ReloadWeapon();
+        reloadAction.started += context => FPSS_WeaponPool.Instance.Reload();
         reloadAction.started += context => reloadTriggered.Invoke();
         reloadAction.performed += context => ReloadInput = true;
         reloadAction.canceled += context => ReloadInput = false;

@@ -23,24 +23,18 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
     [Header("References")]
     [Space(10)]
     
-    private FPSS_WeaponPool weaponPool;
+    protected FPSS_WeaponPool weaponPool;
     private FPSS_Main main;
-    private FPS_InputHandler inputHandler;
-    [SerializeField] private FPSS_ReticleSystem reticleSystem;
-    [SerializeField] private CamShake camShake;
+    protected FPS_InputHandler inputHandler;
+    protected FPSS_ReticleSystem reticleSystem;
+    protected CamShake camShake;
     [Tooltip("Intensity of camera shake, 0-1 (1 being the most intense)")]
-    [SerializeField] private float camShakeIntensity;
-    [SerializeField] private Camera cam;
+    [SerializeField] protected float camShakeIntensity;
+    [SerializeField] protected Camera cam;
     public Animator animator { get; private set; } 
-    private FPSS_PlayerCamController camController;
+    protected FPSS_PlayerCamController camController;
 
-    [Header("Weapon Properties")]
-    [Space(10)]
-
-    public string weaponName;
     [SerializeField] private WeaponSlot weaponSlot;
-    [SerializeField] public WeaponFireMode fireMode;
-    [SerializeField] private bool isScoped;
     
     [Header("Objects")]
     [Space(10)]
@@ -53,32 +47,7 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
 
     [SerializeField] private float armSpeed;
     [SerializeField] private float disarmSpeed;
-    [SerializeField] private GameObject shellObject;
-    [SerializeField] private float sfx_ShellDelay;
-    
-    [Header("Spread")]
-    [Space(10)]
-    
-    [SerializeField] private float spread;
-    [SerializeField] private float spreadPatternRandomization;
-    [SerializeField] private Vector2[] spreadPattern;
-    private int spreadPatternArrayLength;
-    [SerializeField] private float spreadRecoveryRate;
-    private int spreadIndex = 0;
-    private float currentSpread = 0f;
-    [SerializeField] private string fireAnimStateName;
-    
-    [Header("Ammunition")]
-    [Space(10)]
-    
-    [SerializeField] private bool infiniteAmmo;
-    [SerializeField] private float fireRate;
-    [SerializeField] private float bulletSpeed;
-    [SerializeField] private float reticleFallOffSpeed;
-    [SerializeField] public int clipSize;
-    [SerializeField] public int currentClip;
-    [SerializeField] private int maxAmmo = 69420;
-    [SerializeField] public int currentAmmo;
+    [SerializeField] protected string fireAnimStateName;
 
     [Header("Range and Damage")]
     [Space(10)]
@@ -86,39 +55,13 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
     [SerializeField] private int damagePerShot;
     [SerializeField] private float headshotMultiplier;
     [SerializeField] private float armourPenetration;
-    [SerializeField] private float range;
+    [SerializeField] protected float range;
     [SerializeField] private AnimationCurve damageFalloff;
 
-    [Header("WEAPON SFX")]
-    [Space(10)]
+    [SerializeField] protected Transform pos_GunAudio;
 
-    [SerializeField] private EventReference sfx_Fire;
-    [SerializeField] private EventReference sfx_Empty;
-    [SerializeField] private EventReference sfx_ClipOut;
-    [SerializeField] private float clipOutSFXDelay;
-    [SerializeField] private EventReference sfx_ClipIn;
-    [SerializeField] private float clipInSFXDelay;
-    [SerializeField] private EventReference sfx_Slide;
-    [SerializeField] private float slideSFXDelay;
-    [SerializeField] private EventReference sfx_gun_shell;
-    [SerializeField] private EventReference sfx_AdsLayerIn;
-
-    [Header("Positio Targets")]
-    [Space(10)]
-
-    [SerializeField] private Transform pos_Muzzle;
-    [SerializeField] private Transform pos_ShellEject;
-    [SerializeField] private Transform pos_GunAudio;
-    
-    [Header("VFX")] 
-    [Space(10)] 
-
-    [SerializeField] private GameObject bullettrail;
-    [SerializeField] private MuzzleFlash mFlash;
-
-
-    private bool isActive = false;
-    private bool canFire = true;
+    protected bool isActive = false;
+    protected bool canFire = true;
 
     [Header("DEV OPTIONS")]
     [Space(10)]
@@ -126,22 +69,15 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
     [SerializeField] private bool debugMode;
     [SerializeField] private float initDelay = 0.2f;
     [SerializeField] private float initTimeout = 10f;
-    private bool initialized = false;
-
-    public UnityEvent OnFire = new UnityEvent();
-    public UnityEvent OnReload = new UnityEvent();
+    public bool initialized  { get; private set; }
     
-    #region Init
-    void Start()
+    void Awake()
     {
+        initialized = false;
         StartCoroutine(Init());
-        ConstructSpreadPattern();
-        OnFire.AddListener(Fire);
-        OnReload.AddListener(() => StartCoroutine(Reload()));
-
-        spreadPatternArrayLength = spreadPattern.Length;
     }
 
+    #region Init
     IEnumerator Init()
     {
         float elapsedTime = 0;
@@ -165,10 +101,12 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
 
         yield return new WaitForSeconds(initDelay);
 
-        while (reticleSystem == null || camController == null)
+        while (reticleSystem == null || camController == null || cam == null)
         {
+            cam = Camera.main;
             reticleSystem = GameObject.FindAnyObjectByType<FPSS_ReticleSystem>();
             camController = cam.GetComponent<FPSS_PlayerCamController>();
+            camShake = cam.GetComponent<CamShake>();
 
             elapsedTime += Time.deltaTime;
             if (elapsedTime >= initTimeout)
@@ -181,27 +119,6 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
 
         initialized = true;
     }
-    #endregion
-
-    void Update()
-    {
-        if (!initialized) 
-        {
-            Debug.LogWarning("WEAPON SLOT OBJECT: Initializing...");
-            return;
-        }
-        
-        if (isActive)
-        {
-            CalculateSpread();
-        }
-
-        if (!inputHandler.FireInput)
-        {
-            spreadIndex = 0;
-        }
-    }
-    
     #endregion
 
     #region WEAPON ACTIONS
@@ -239,100 +156,10 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
 
         isActive = false;
     }
-
-    #region reloading
-    public IEnumerator Reload()
-    {
-        if (currentClip < clipSize)
-        {
-            animator.SetTrigger("Reload");
-            weaponPool.isReloading = true;
-            weaponPool.canReload = false;
-
-            yield return new WaitForSeconds(clipOutSFXDelay);
-            playSfx(sfx_ClipOut, pos_GunAudio.position);
-
-            yield return new WaitForSeconds(clipInSFXDelay);
-            playSfx(sfx_ClipIn, pos_GunAudio.position);
-            currentClip = clipSize;
-
-            yield return new WaitForSeconds(slideSFXDelay);
-            playSfx(sfx_Slide, pos_GunAudio.position);
-
-            animator.SetTrigger("Idle");
-        }
-
-        weaponPool.isReloading = false;
-        weaponPool.canReload = true;
-    }
-    #endregion
-
-    #region firing
-    public void Fire()
-    {
-        if (isActive && !weaponPool.isReloading) 
-        {
-            StartCoroutine(FireBullet());
-        }
-    }
-
-    private IEnumerator FireBullet()
-    {
-        if (currentClip > 0 && canFire)
-        {
-            canFire = false;
-            
-            playSfx(sfx_Fire, pos_GunAudio.position);
-            animator.Play(fireAnimStateName, -1, 0f);
-            reticleSystem.GunFire(reticleFallOffSpeed);
-            
-            FireHitScan();
-            
-            ApplySpread();
-            
-            camShake.Shake(camShakeIntensity, 2f);
-
-            currentClip--;
-
-            if (fireMode == WeaponFireMode.BoltAction)
-            {
-                // TODO: Implement bolt action
-            }
-
-            yield return new WaitForSeconds(fireRate);
-            canFire = true;
-
-            if (fireMode == WeaponFireMode.Automatic && inputHandler.FireInput && !weaponPool.isReloading)
-            {
-                StartCoroutine(FireBullet());
-            }
-        }
-        else
-        {
-            playSfx(sfx_Empty, pos_GunAudio.position);
-        }
-    }
-
-    private void FireHitScan()
-    {
-        Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
-        RaycastHit hit; 
-
-        if (Physics.Raycast(ray, out hit, range))
-        {
-            Vector3 targetPos = hit.point;
-
-            StartCoroutine(ApplyBulletVisualEffects(targetPos)); 
-
-            CalculateDamage(hit.point, hit.normal);
-
-            ApplyBulletSurfaceEffects(ray, out hit);  
-        }
-    }
     #endregion
 
     #region damage
-    void CalculateDamage(Vector3 hitPoint, Vector3 hitNormal)
+    protected void CalculateDamage(Vector3 hitPoint)
     {
         float distance = Vector3.Distance(cam.transform.position, hitPoint);
         float damageMultiplier = damageFalloff.Evaluate(distance / range);
@@ -340,38 +167,8 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
     }
     #endregion
 
-    #region spread
-    private void ConstructSpreadPattern()
-    {
-        Vector2[] randomizedSpreadPattern = new Vector2[spreadPatternArrayLength];
-        for (int i = 0; i < spreadPatternArrayLength; i++)
-        {
-            spreadPattern[i] = spreadPattern[i] + new Vector2(Random.Range(-spreadPatternRandomization, spreadPatternRandomization), Random.Range(-spreadPatternRandomization, spreadPatternRandomization));
-        }
-    }
-
-    private void CalculateSpread()
-    {
-        currentSpread = Mathf.Clamp(currentSpread - spreadRecoveryRate * Time.deltaTime, 0, spreadPatternArrayLength);
-    }
-
-    private void ApplySpread()
-    {
-        if (spreadIndex >= spreadPatternArrayLength)
-        {
-            spreadIndex = 0;
-        }
-
-        Vector2 spreadOffset = spreadPattern[spreadIndex] * currentSpread;
-        camController.ApplySpread(spreadOffset);
-
-        currentSpread = Mathf.Clamp(currentSpread + spread, 0, spreadPatternArrayLength);
-        spreadIndex++;
-    }
-    #endregion
-
     #region VFX    
-    private void ApplyBulletSurfaceEffects(Ray ray, out RaycastHit hit)
+    protected void ApplyHitSurfaceEffects(Ray ray, out RaycastHit hit)
     {
         if (Physics.Raycast(ray, out hit, range))
         {
@@ -393,34 +190,12 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
         }
     }
 
-    private IEnumerator ApplyBulletVisualEffects(Vector3 targetPos)
-    {
-        mFlash.Flash();
-        
-        GameObject bulletTrail = Instantiate(bullettrail, pos_Muzzle.position, Quaternion.identity);
-
-        while (bulletTrail != null && Vector3.Distance(bulletTrail.transform.position, targetPos) > 0.1f)
-        {
-            bulletTrail.transform.position = Vector3.MoveTowards(bulletTrail.transform.position, targetPos, bulletSpeed * Time.deltaTime);
-            yield return null;
-        }
-        Destroy(bulletTrail);
-    }
-    #endregion
-
-    public void EjectShell()
-    {
-        Debug.Log("Ejecting shell");
-
-        StartCoroutine(PlaySfxDelay(sfx_gun_shell, sfx_ShellDelay, pos_GunAudio.position)); //??? Posittioning will need to get fixed, lazy temp fix
-        GameObject shell = Instantiate(shellObject, pos_ShellEject.position, pos_ShellEject.rotation);
-    }
-
-    private IEnumerator PlaySfxDelay(EventReference sfx, float delay, Vector3 position)
+    protected IEnumerator PlaySfxDelay(EventReference sfx, float delay, Vector3 position)
     {
         yield return new WaitForSeconds(delay);
         playSfx(sfx, position);
     }
+    #endregion
 
     #region AUDIO
     public void playSfx(EventReference eventRef, Vector3 position)
@@ -430,6 +205,18 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
             position = pos_GunAudio.position;
         }
         RuntimeManager.PlayOneShot(eventRef, position);
+    }
+    #endregion
+
+    #region virtual methods
+    public virtual void Fire()
+    {
+        //
+    }
+
+    public virtual void Reload()
+    {
+        //
     }
     #endregion
 }

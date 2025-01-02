@@ -17,7 +17,6 @@ public class FPSS_Interaction : MonoBehaviour
             return;
         }
         Instance = this;
-        DontDestroyOnLoad(gameObject);
     }
 
     void Start()

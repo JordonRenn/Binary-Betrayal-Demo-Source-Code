@@ -272,7 +272,7 @@ public class FPSS_WeaponPool : MonoBehaviour
     #endregion
 
     #region Weapon Actions
-    public void ReloadWeapon()
+    /* public void ReloadWeapon()
     {
         if (isReloading) return;
         if (!canReload) return;
@@ -285,11 +285,23 @@ public class FPSS_WeaponPool : MonoBehaviour
         yield return currentWeaponSlotObject.Reload();
         isReloading = false;
         canReload = true;
-    }
+    } */
 
-    public void FireWeapon()
+    /* public void FireWeapon()
     {
         currentWeaponSlotObject.Fire();
+    } */
+
+    public void Fire()
+    {
+        Debug.Log("Fire");
+        currentWeaponSlotObject.Fire();
+    }
+
+    public void Reload()
+    {
+        Debug.Log("Reload");
+        currentWeaponSlotObject.Reload();
     }
     #endregion
 }

@@ -116,8 +116,8 @@ public class FPSS_WeaponHUD : MonoBehaviour
             return;
         }
         
-        primaryAmmoText.SetText($"{weaponPool.weaponPool[0][weaponPool.assignedPrimaryWeaponIndex].GetComponent<FPSS_WeaponSlotObject>().currentClip} / {weaponPool.weaponPool[0][weaponPool.assignedPrimaryWeaponIndex].GetComponent<FPSS_WeaponSlotObject>().clipSize}");
-        secondaryAmmoText.SetText($"{weaponPool.weaponPool[1][weaponPool.assignedSecondaryWeaponIndex].GetComponent<FPSS_WeaponSlotObject>().currentClip} / {weaponPool.weaponPool[1][weaponPool.assignedSecondaryWeaponIndex].GetComponent<FPSS_WeaponSlotObject>().clipSize}");
+        primaryAmmoText.SetText($"{weaponPool.weaponPool[0][weaponPool.assignedPrimaryWeaponIndex].GetComponent<WPO_Gun>().currentClip} / {weaponPool.weaponPool[0][weaponPool.assignedPrimaryWeaponIndex].GetComponent<WPO_Gun>().clipSize}");
+        secondaryAmmoText.SetText($"{weaponPool.weaponPool[1][weaponPool.assignedSecondaryWeaponIndex].GetComponent<WPO_Gun>().currentClip} / {weaponPool.weaponPool[1][weaponPool.assignedSecondaryWeaponIndex].GetComponent<WPO_Gun>().clipSize}");
     }
 
     /// <summary>
@@ -125,8 +125,8 @@ public class FPSS_WeaponHUD : MonoBehaviour
     /// </summary>
     public void RefreshWeaponHUD()
     {
-        FPSS_WeaponSlotObject primaryWeaponObject = weaponPool.weaponPool[0][weaponPool.assignedPrimaryWeaponIndex].GetComponent<FPSS_WeaponSlotObject>();
-        FPSS_WeaponSlotObject secondaryWeaponObject =  weaponPool.weaponPool[1][weaponPool.assignedSecondaryWeaponIndex].GetComponent<FPSS_WeaponSlotObject>();             
+        WPO_Gun primaryWeaponObject = weaponPool.weaponPool[0][weaponPool.assignedPrimaryWeaponIndex].GetComponent<WPO_Gun>();
+        WPO_Gun secondaryWeaponObject =  weaponPool.weaponPool[1][weaponPool.assignedSecondaryWeaponIndex].GetComponent<WPO_Gun>();             
         
         switch (main.currentWeaponSlot)
         {
