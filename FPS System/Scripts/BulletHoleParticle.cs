@@ -1,6 +1,4 @@
 using UnityEngine;
-using DG.Tweening;
-using UnityEngine.Rendering.Universal;
 using System.Collections;
 
 public class BulletHoleParticle : MonoBehaviour

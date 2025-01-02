@@ -426,7 +426,7 @@ MonoBehaviour:
       Data2: 1167785492
       Data3: -143236701
       Data4: -1409430171
-    Path: event:/impact_Metal
+    Path: event:/Impacts/impact_Metal
   sfx_ImpactTail:
     Guid:
       Data1: 0
@@ -1012,28 +1012,28 @@ MonoBehaviour:
       Data2: 1276296008
       Data3: -70499657
       Data4: 1838319204
-    Path: event:/notifNormal
+    Path: event:/Notifications/notifNormal
   sfx_Reward:
     Guid:
       Data1: 1869587669
       Data2: 1207747283
       Data3: -1288166493
       Data4: -633177654
-    Path: event:/notifReward
+    Path: event:/Notifications/notifReward
   sfx_Warning:
     Guid:
       Data1: -637010818
       Data2: 1116286617
       Data3: 1990373283
       Data4: -1025389975
-    Path: event:/notifWarning
+    Path: event:/Notifications/notifWarning
   sfx_Error:
     Guid:
       Data1: 1696793735
       Data2: 1080868018
       Data3: 293756340
       Data4: -1045623953
-    Path: event:/notifError
+    Path: event:/Notifications/notifError
   sfx_Volume: 80
   consoleInput: {fileID: 286339297}
 --- !u!1001 &128427046
@@ -3089,7 +3089,7 @@ MonoBehaviour:
       Data2: 1167785492
       Data3: -143236701
       Data4: -1409430171
-    Path: event:/impact_Metal
+    Path: event:/Impacts/impact_Metal
   sfx_ImpactTail:
     Guid:
       Data1: 0
@@ -3270,7 +3270,7 @@ MonoBehaviour:
       Data2: 1167785492
       Data3: -143236701
       Data4: -1409430171
-    Path: event:/impact_Metal
+    Path: event:/Impacts/impact_Metal
   sfx_ImpactTail:
     Guid:
       Data1: 0
@@ -4632,7 +4632,7 @@ MonoBehaviour:
       Data2: 1167785492
       Data3: -143236701
       Data4: -1409430171
-    Path: event:/impact_Metal
+    Path: event:/Impacts/impact_Metal
   sfx_ImpactTail:
     Guid:
       Data1: 0
@@ -6870,7 +6870,7 @@ MonoBehaviour:
       Data2: 1167785492
       Data3: -143236701
       Data4: -1409430171
-    Path: event:/impact_Metal
+    Path: event:/Impacts/impact_Metal
   sfx_ImpactTail:
     Guid:
       Data1: 0
@@ -7713,7 +7713,7 @@ MonoBehaviour:
       Data2: 1167785492
       Data3: -143236701
       Data4: -1409430171
-    Path: event:/impact_Metal
+    Path: event:/Impacts/impact_Metal
   sfx_ImpactTail:
     Guid:
       Data1: 0
@@ -14552,7 +14552,7 @@ MonoBehaviour:
       Data2: 1101814479
       Data3: 1701146278
       Data4: -1936477181
-    Path: event:/impact_Concrete
+    Path: event:/Impacts/impact_Concrete
   sfx_ImpactTail:
     Guid:
       Data1: 0

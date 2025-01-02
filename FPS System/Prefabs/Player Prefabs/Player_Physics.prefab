@@ -132,7 +132,7 @@ MonoBehaviour:
       Data2: 1321626087
       Data3: -395324004
       Data4: 249774873
-    Path: event:/player_Footstep
+    Path: event:/Player/player_Footstep
   leftFootstepPosition: {fileID: 6316851493305625867}
   rightFootstepPosition: {fileID: 8509851228767384487}
   sfx_player_jump:
@@ -141,14 +141,14 @@ MonoBehaviour:
       Data2: 1263844548
       Data3: 1800385701
       Data4: 826119989
-    Path: event:/player_Jump
+    Path: event:/Player/player_Jump
   sfx_player_land:
     Guid:
       Data1: -388053957
       Data2: 1172891194
       Data3: -565269096
       Data4: -489921617
-    Path: event:/player_Land
+    Path: event:/Player/player_Land
 --- !u!1 &3652631475473545081
 GameObject:
   m_ObjectHideFlags: 0

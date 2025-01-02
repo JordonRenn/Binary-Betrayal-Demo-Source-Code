@@ -18745,56 +18745,56 @@ MonoBehaviour:
   pos_ShellEject: {fileID: 7083632389532895818}
   sfx_Fire:
     Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
+      Data1: 1316242033
+      Data2: 1339439051
+      Data3: 543785117
+      Data4: 1968602626
+    Path: event:/AK47/AK47_Fire
   sfx_Empty:
     Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
+      Data1: 1990207138
+      Data2: 1133010039
+      Data3: -738157387
+      Data4: -1276316087
+    Path: event:/AK47/AK47_Empty
   sfx_ClipOut:
     Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
-  clipOutSFXDelay: 0.15
+      Data1: 1556110819
+      Data2: 1201596371
+      Data3: 1549123770
+      Data4: -2074033118
+    Path: event:/AK47/AK47_ClipOut
+  clipOutSFXDelay: 0.2
   sfx_ClipIn:
     Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
-  clipInSFXDelay: 0.45
+      Data1: 1785547405
+      Data2: 1217739031
+      Data3: -1624199540
+      Data4: 275111203
+    Path: event:/AK47/AK47_ClipIn
+  clipInSFXDelay: 0.6
   sfx_Slide:
     Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
-  slideSFXDelay: 1
+      Data1: 1158063800
+      Data2: 1125631882
+      Data3: 2077981081
+      Data4: -1449136905
+    Path: event:/AK47/AK47_Cock
+  slideSFXDelay: 1.55
   sfx_gun_shell:
     Guid:
-      Data1: -828608440
-      Data2: 1306904609
-      Data3: -1049344093
-      Data4: -158664208
-    Path: event:/handgun_Shell
+      Data1: -2004034051
+      Data2: 1154447506
+      Data3: 1676404911
+      Data4: 623534709
+    Path: event:/AK47/AK47_Shell
   sfx_AdsLayerIn:
     Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
+      Data1: -17615194
+      Data2: 1216619175
+      Data3: -547157608
+      Data4: 375039409
+    Path: event:/AK47/AK47_AdsLAyer
   bullettrail: {fileID: 8030691421440258305, guid: 590ffb6979735504b89188b9126ef37e,
     type: 3}
   mFlash: {fileID: 8486335434082723266}

@@ -1,7 +1,5 @@
-using System;
 using System.Collections;
 using UnityEngine;
-using DG.Tweening;
 
 /// <summary>
 /// Manages the muzzle flash effect for a weapon.
