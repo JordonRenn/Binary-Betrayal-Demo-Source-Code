@@ -1,26 +1,12 @@
 
-Animations.meta
-Audio/Impacts Sounds.meta
-Audio.meta
-Audio/Impacts Sounds/Concrete.meta
-Audio/Impacts Sounds/Concrete/impact_Concrete_01.mp3.meta
-Audio/Impacts Sounds/Concrete/impact_Concrete_02.mp3.meta
-Audio/Impacts Sounds/Concrete/impact_Concrete_03.mp3.meta
-Audio/Impacts Sounds/Metal/impact_Metal_01.mp3.meta
 *.meta
+*.asset
 /Models
 /Plugins
 /Samples
 /TextMesh Pro
 /Fonts
-/Resources/Models
-/Resources/Fonts
-Resources/Fonts/atwriter SDF.asset
-Resources/Fonts/Roadway SDF.asset
 /Resources
-/Resources
-/Resources
-/Resources/Audio
-/Resources/Audio/Weapons/AK47
 /Packages
 /Scenes
+/Settings
