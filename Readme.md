@@ -1,6 +1,13 @@
 # Binary Bentral Source Code
 
-## This is not a complete unity project, it is missing dependancies, settings and config files, and probably more. This repository is to share the code, and all the code is there. 
+## This is not a complete unity project, this repository was created to share the code. 
+### Things that are missing:
+- Audio Files
+- Fonts
+- Materials
+- Models
+- Textures
+- config and settings files
 
 Code is formatted to be used with Doxygen. 
 Doxygen Unity Intergration ["Doxygen Generator"](https://github.com/CaseyHofland/DoxygenGenerator) by Casey Hofland, JacobPennock, and Brogrammar.
@@ -9,5 +16,5 @@ Doxygen Unity Intergration ["Doxygen Generator"](https://github.com/CaseyHofland
 - Unity 6000.0.23f
 - Input System 1.11.1 (Unity)
 - GraphView (Unity)
-- DOTween (HOTween v2) 1.2.765
+- DOTween Pro 1.0.380
 - FMOD for Unity 2.02.24
