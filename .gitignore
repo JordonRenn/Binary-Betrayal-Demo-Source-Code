@@ -1,12 +1,11 @@
 
 *.meta
 *.asset
-/Models
 /Plugins
-/Samples
 /TextMesh Pro
 /Fonts
 /Resources
 /Packages
+/Prefabs
 /Scenes
 /Settings
