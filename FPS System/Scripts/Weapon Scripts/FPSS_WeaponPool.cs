@@ -43,10 +43,9 @@ public class FPSS_WeaponPool : MonoBehaviour
     public FPSS_WeaponSlotObject currentWeaponSlotObject;
     [HideInInspector] public WeaponSlot currentWeaponSlot;
     WeaponSlot nextWeaponSlot;
+
+    //SUB STATES
     private bool isSwitching = false;
-
-    public UnityEvent WeaponSwitched = new UnityEvent();
-
     public bool isReloading = false;
     public bool canReload = true;
 
@@ -110,6 +109,7 @@ public class FPSS_WeaponPool : MonoBehaviour
         assignedUnarmedWeaponIndex = 0;
 
         yield return new WaitForSeconds(initDelay);
+        elapsedTime += initDelay;
 
         while (weaponPool[0] == null || weaponPool[1] == null || weaponPool[2] == null || weaponPool[3] == null || weaponPool[4] == null)
         {
@@ -125,6 +125,7 @@ public class FPSS_WeaponPool : MonoBehaviour
         StartCoroutine(UpdateActiveWeaponSlot(WeaponSlot.Primary));
         
         initialized = true;
+        Debug.Log($"WEAPON POOL: Initialization time: {elapsedTime} seconds.");
     }
     #endregion
 
@@ -189,7 +190,6 @@ public class FPSS_WeaponPool : MonoBehaviour
         }
         currentWeaponSlotObject = weaponPool[(int)slot][weaponIndex].GetComponent<FPSS_WeaponSlotObject>();
         yield return currentWeaponSlotObject.SetWeaponActive();
-        WeaponSwitched.Invoke();
     }
     #endregion
 

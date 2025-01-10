@@ -207,7 +207,7 @@
                     "id": "9244232f-063e-406e-8b09-15e5048a0818",
                     "path": "<Gamepad>/rightTrigger",
                     "interactions": "",
-                    "processors": "",
+                    "processors": "AxisDeadzone",
                     "groups": "",
                     "action": "Fire",
                     "isComposite": false,

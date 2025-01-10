@@ -7,11 +7,10 @@ public class FPSS_Main : MonoBehaviour
 {
     public static FPSS_Main Instance {get ; private set;}
     
-    [SerializeField] [Tooltip("Empty Object used to instantiate weapons")]
-    private FPSS_WeaponPool weaponPool;
+    [SerializeField] private FPSS_WeaponPool weaponPool;
     private FPS_InputHandler input;
     private FPSS_Interaction interaction;
-    [HideInInspector] public WeaponSlot currentWeaponSlot; //Current weapon slot
+    /* [HideInInspector] */ public WeaponSlot currentWeaponSlot; //Current weapon slot
 
     [Header("DEV OPTIONS")]
     [Space(10)]

@@ -7185,8 +7185,8 @@ MonoBehaviour:
   muzzleFlashLight: {fileID: 5808263236627976704}
   defaultScale: {x: 10, y: 10, z: 10}
   defaultIntensity: 1.5
-  flashDecay: 0.125
-  flashHold: 0.075
+  flashDecay: 0.1
+  flashHold: 0.055
 --- !u!1 &2586600907901659668
 GameObject:
   m_ObjectHideFlags: 0
@@ -14379,7 +14379,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7347600896871914844
 Transform:
   m_ObjectHideFlags: 0
@@ -18519,21 +18519,6 @@ MonoBehaviour:
   assignedUnarmedWeaponIndex: 0
   currentWeaponSlotObject: {fileID: 6516407566393146031}
   currentWeaponSlot: 0
-  WeaponSwitched:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: FPSS_WeaponHUD, Assembly-CSharp
-        m_MethodName: RefreshWeaponHUD
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
   isReloading: 0
   canReload: 1
   debugMode: 0
@@ -25806,6 +25791,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Layer
       value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 3132448545555216107, guid: 8e74f2907415b4344a20dd64626e49a6,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 2955254300812969364, guid: 8e74f2907415b4344a20dd64626e49a6, type: 3}

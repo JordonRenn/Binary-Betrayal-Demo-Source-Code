@@ -1,8 +1,6 @@
 using System.Collections;
 using FMODUnity;
 using UnityEngine;
-using DG.Tweening;
-using UnityEngine.Events;
 
 /// <summary>
 /// Enum representing the fire mode of the weapon.
@@ -27,6 +25,9 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
     private FPSS_Main main;
     protected FPS_InputHandler inputHandler;
     protected FPSS_ReticleSystem reticleSystem;
+    private FPSS_WeaponHUD hud;
+
+
     protected CamShake camShake;
     [Tooltip("Intensity of camera shake, 0-1 (1 being the most intense)")]
     [SerializeField] protected float camShakeIntensity;
@@ -100,13 +101,15 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
         inputHandler = FPS_InputHandler.Instance;
 
         yield return new WaitForSeconds(initDelay);
+        elapsedTime += initDelay;
 
-        while (reticleSystem == null || camController == null || cam == null)
+        while (reticleSystem == null || camController == null || cam == null || hud == null)
         {
             cam = Camera.main;
             reticleSystem = GameObject.FindAnyObjectByType<FPSS_ReticleSystem>();
             camController = cam.GetComponent<FPSS_PlayerCamController>();
             camShake = cam.GetComponent<CamShake>();
+            hud = GameObject.FindAnyObjectByType<FPSS_WeaponHUD>();
 
             elapsedTime += Time.deltaTime;
             if (elapsedTime >= initTimeout)
@@ -118,6 +121,8 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
         }
 
         initialized = true;
+
+        Debug.Log($"WEAPON SLOT OBJECT: Initialization time: {elapsedTime} seconds.");
     }
     #endregion
 
@@ -143,6 +148,8 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
         
         weaponPool.currentWeaponSlot = weaponSlot;
         main.currentWeaponSlot = weaponSlot;
+        hud.RefreshWeaponHUD();
+        
     }
 
     public IEnumerator SetWeaponInactive()
@@ -180,7 +187,7 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
                 return;
             }
 
-            GameObject impactDecal = surfaceInfo.bulletHolePrefab;
+            GameObject impactDecal = surfaceInfo.bulletHolePrefab[Random.Range(0, surfaceInfo.bulletHolePrefab.Length)];
             Instantiate(impactDecal, hit.point, Quaternion.LookRotation(hit.normal));
 
             playSfx(surfaceInfo.sfx_Impact, hit.point);
@@ -198,13 +205,13 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
     #endregion
 
     #region AUDIO
-    public void playSfx(EventReference eventRef, Vector3 position)
+    public void playSfx(EventReference eventRef, Vector3 position) //fix this
     {
         if (position == null)
         {
             position = pos_GunAudio.position;
         }
-        RuntimeManager.PlayOneShot(eventRef, position);
+        RuntimeManager.PlayOneShotAttached(eventRef, pos_GunAudio.gameObject);
     }
     #endregion
 

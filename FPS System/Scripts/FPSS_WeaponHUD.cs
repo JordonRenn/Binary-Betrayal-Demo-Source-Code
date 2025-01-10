@@ -73,6 +73,7 @@ public class FPSS_WeaponHUD : MonoBehaviour
         weaponPool = FPSS_WeaponPool.Instance;
 
         yield return new WaitForSeconds(initDelay);
+        elapsedTime += initDelay;
 
         while (weaponPool.weaponPool[0] == null || weaponPool.weaponPool[1] == null)
         {
@@ -86,6 +87,7 @@ public class FPSS_WeaponHUD : MonoBehaviour
         }
 
         yield return new WaitForSeconds(initDelay);
+        elapsedTime += initDelay;
 
         while (weaponPool.weaponPool[0][weaponPool.assignedPrimaryWeaponIndex] == null || weaponPool.weaponPool[1][weaponPool.assignedSecondaryWeaponIndex] == null)
         {
@@ -101,6 +103,8 @@ public class FPSS_WeaponHUD : MonoBehaviour
         yield return new WaitForSeconds(initDelay);
 
         initialized = true;
+
+        Debug.Log($"WEAPON HUD: Initialization time: {elapsedTime} seconds.");
 
         RefreshWeaponHUD();
     }
@@ -125,12 +129,15 @@ public class FPSS_WeaponHUD : MonoBehaviour
     /// </summary>
     public void RefreshWeaponHUD()
     {
+        Debug.Log("WEAPON HUD: Refreshing elements...");
         WPO_Gun primaryWeaponObject = weaponPool.weaponPool[0][weaponPool.assignedPrimaryWeaponIndex].GetComponent<WPO_Gun>();
         WPO_Gun secondaryWeaponObject =  weaponPool.weaponPool[1][weaponPool.assignedSecondaryWeaponIndex].GetComponent<WPO_Gun>();             
         
         switch (main.currentWeaponSlot)
         {
             case WeaponSlot.Primary:
+                Debug.Log("WEAPON HUD: Current Weapon Slot: " + main.currentWeaponSlot);
+                
                 primaryNameText.color = color_NameActiveText;
                 primarySlotNumber.color = color_SlotActiveText;
                 primaryAmmoText.color = color_AmmoActiveText;
@@ -143,6 +150,8 @@ public class FPSS_WeaponHUD : MonoBehaviour
                 //primaryAmmoText.text = weaponPool.primaryWeaponSlot.currentAmmo.ToString(); //no ammo, yet
                 break;
             case WeaponSlot.Secondary:
+                Debug.Log("WEAPON HUD: Current Weapon Slot: " + main.currentWeaponSlot);
+                
                 primaryNameText.color = color_NameInactiveText;
                 primarySlotNumber.color = color_SlotInactiveText;
                 primaryAmmoText.color = color_AmmoInactiveText;
@@ -155,6 +164,8 @@ public class FPSS_WeaponHUD : MonoBehaviour
                 //secondaryAmmoText.text = weaponPool.secondaryWeaponSlot.currentAmmo.ToString(); //no ammo, yet
                 break;
             case WeaponSlot.Unarmed:
+                Debug.Log("WEAPON HUD: Current Weapon Slot: " + main.currentWeaponSlot);
+                
                 primaryNameText.color = color_NameInactiveText;
                 primarySlotNumber.color = color_SlotInactiveText;
                 primaryAmmoText.color = color_AmmoInactiveText;
