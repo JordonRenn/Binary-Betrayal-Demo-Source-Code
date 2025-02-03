@@ -8,10 +8,12 @@ public class FPSS_PlayerCamPositioning : MonoBehaviour
     [Header("DEV OPTIONS")]
     [Space(10)]
     
-    [SerializeField] private bool debugMode;            //Enable/Disable debug mode
     [SerializeField] private float initDelay = 0.2f;    //used to pause execution between steps of initialization when needed
     [SerializeField] private float initTimeout = 10f;   //initialization timeout
+    
     private bool initialized = false;                   //flag used to stop Update() from running before initialization is complete
+    private bool isOverridden = false;
+    //[SerializeField] private bool debugMode;            //Enable/Disable debug mode
 
     void Start()
     {
@@ -32,7 +34,7 @@ public class FPSS_PlayerCamPositioning : MonoBehaviour
 
     void Update()
     {
-        if (!initialized) {return;}
+        if (!initialized || isOverridden) {return;}
 
         UpdateCameraPosition();
     }
@@ -40,5 +42,10 @@ public class FPSS_PlayerCamPositioning : MonoBehaviour
     public void UpdateCameraPosition()
     {
         transform.position = targetPosition.position;
+    }
+
+    public void OverridePosition()
+    {
+        isOverridden = !isOverridden;
     }
 }

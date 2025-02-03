@@ -23,7 +23,7 @@ public class Gun_AK47 : WPO_Gun, IWPO_Gun //inherits from FPSS_WeaponSlotObject 
         {
             canFire = false;
             
-            playSfx(sfx_Fire, pos_GunAudio.position);
+            PlaySfx(sfx_Fire, pos_GunAudio.position);
             animator.Play(fireAnimStateName, -1, 0f);
             
             FireHitScan();
@@ -46,7 +46,7 @@ public class Gun_AK47 : WPO_Gun, IWPO_Gun //inherits from FPSS_WeaponSlotObject 
         }
         else
         {
-            playSfx(sfx_Empty, pos_GunAudio.position);
+            PlaySfx(sfx_Empty, pos_GunAudio.position);
         }
     }
 

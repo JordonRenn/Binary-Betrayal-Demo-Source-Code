@@ -3,25 +3,24 @@ using UnityEngine;
 
 public class FPSS_PlayerCamController : MonoBehaviour
 {
-    [SerializeField] Transform orientation;
+    public static FPSS_PlayerCamController Instance { get; private set; }
+    
+    [SerializeField] public Transform orientation;
     [SerializeField] public static float sensX = 50f;
     [SerializeField] public static float sensY = 50f;
 
     private Vector2 lookInput;
     float xRotation;
     float yRotation; 
-
-    private bool cursorLocked = false;
-
-    //
-
-    [Header("DEV OPTIONS")]
-    [Space(10)]
     
-    [SerializeField] private bool debugMode;            //Enable/Disable debug mode
-    [SerializeField] private float initDelay = 0.2f;    //used to pause execution between steps of initialization when needed
-    [SerializeField] private float initTimeout = 10f;   //initialization timeout
+    private float initDelay = 0.2f;    //used to pause execution between steps of initialization when needed
+    private float initTimeout = 10f;   //initialization timeout
     private bool initialized = false;                   //flag used to stop Update() from running before initialization is complete
+
+    private bool cursorLocked = true;
+    private bool isOverridden = false;
+
+    //private bool debugMode = false;            //Enable/Disable debug mode
 
     void Start()
     {
@@ -29,6 +28,7 @@ public class FPSS_PlayerCamController : MonoBehaviour
         
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        Instance = this;
     }
 
     IEnumerator Init()
@@ -42,7 +42,7 @@ public class FPSS_PlayerCamController : MonoBehaviour
 
     void Update()
     {
-        if (!initialized) {return;}
+        if (!initialized || isOverridden) {return;}
         
         lookInput = FPS_InputHandler.Instance.LookInput;
 
@@ -64,8 +64,6 @@ public class FPSS_PlayerCamController : MonoBehaviour
     {
         xRotation -= spreadOffset.y;
         yRotation += spreadOffset.x;
-        
-        //xRotation = Mathf.Clamp(xRotation, -90f, 90f);
     }
 
     public void ToggleCursorLock()
@@ -73,5 +71,16 @@ public class FPSS_PlayerCamController : MonoBehaviour
         cursorLocked = !cursorLocked;
         Cursor.lockState = cursorLocked ? CursorLockMode.Locked : CursorLockMode.None;
         Cursor.visible = !cursorLocked;
+    }
+
+    public void SetRotation(Vector3 rotation)
+    {
+        xRotation = rotation.x;
+        yRotation = rotation.y;
+    }
+
+    public void AllowOverride(bool toggle)
+    {
+        isOverridden = toggle;
     }
 }

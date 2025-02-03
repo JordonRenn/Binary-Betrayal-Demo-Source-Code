@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.Events;
 using FMODUnity;
+using Unity.Cinemachine;
 
 public class WPO_Gun : FPSS_WeaponSlotObject
 {
@@ -18,8 +19,8 @@ public class WPO_Gun : FPSS_WeaponSlotObject
     
     [SerializeField] private bool infiniteAmmo;
     [SerializeField] protected float fireRate;
-    [SerializeField] private float bulletSpeed;
-    [SerializeField] protected float reticleFallOffSpeed;
+    [SerializeField] private float bulletSpeed = 300f;
+    [SerializeField] protected float reticleFallOffSpeed = 2;
     [SerializeField] public int clipSize;
     [SerializeField] public int currentClip;
     [SerializeField] private int maxAmmo = 69420;
@@ -34,11 +35,11 @@ public class WPO_Gun : FPSS_WeaponSlotObject
     [Header("Spread")]
     [Space(10)]
 
-    [SerializeField] private float spread;
-    [SerializeField] private float spreadPatternRandomization;
+    [SerializeField] private float spread = 3; //additional randomization applied
+    [SerializeField] private float spreadPatternRandomization = 0.015f; //small amount of randomization to be applied to the predefined spread pattern array values at start up
     [SerializeField] private Vector2[] spreadPattern;
     private int spreadPatternArrayLength;
-    [SerializeField] private float spreadRecoveryRate;
+    [SerializeField] private float spreadRecoveryRate = 0.25f;
     private int spreadIndex = 0;
     private float currentSpread = 0f;
 
@@ -86,12 +87,12 @@ public class WPO_Gun : FPSS_WeaponSlotObject
             return;
         }
 
-        if (isActive)
+        if (isActive && (fireMode == WeaponFireMode.Automatic || fireMode == WeaponFireMode.SemiAutomatic))
         {
             CalculateSpread(); //find a way to get this the hell out of the Update loop
         }
 
-        if (!inputHandler.FireInput) //can we also get this out of here?
+        if (!inputHandler.FireInput) //seems jank but works, i guess..
         {
             spreadIndex = 0;
         }
@@ -103,12 +104,13 @@ public class WPO_Gun : FPSS_WeaponSlotObject
         for (int i = 0; i < spreadPatternArrayLength; i++)
         {
             spreadPattern[i] = spreadPattern[i] + new Vector2(Random.Range(-spreadPatternRandomization, spreadPatternRandomization), Random.Range(-spreadPatternRandomization, spreadPatternRandomization));
+            Debug.Log($"Spread Index {i} = {spreadPattern[i]}");
         }
     }
 
     protected void CalculateSpread()
     {
-        currentSpread = Mathf.Clamp(currentSpread - spreadRecoveryRate * Time.deltaTime, 0, spreadPatternArrayLength);
+        currentSpread = Mathf.Clamp(currentSpread - (spreadRecoveryRate * Time.deltaTime), spread, spreadPatternArrayLength);
     }
 
     protected void ApplySpread()
@@ -121,13 +123,17 @@ public class WPO_Gun : FPSS_WeaponSlotObject
         Vector2 spreadOffset = spreadPattern[spreadIndex] * currentSpread;
         camController.ApplySpread(spreadOffset);
 
-        currentSpread = Mathf.Clamp(currentSpread + spread, 0, spreadPatternArrayLength);
+        currentSpread = Mathf.Clamp(currentSpread + spread, spread, spreadPatternArrayLength);
         spreadIndex++;
     }
 
     protected void FireHitScan()
     {
-        Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
+        //Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));     //old
+
+        Transform camTransform = cam.transform;                             //new
+        Ray ray = new Ray(camTransform.position, camTransform.forward);     //new
+
         RaycastHit hit; 
 
         if (Physics.Raycast(ray, out hit, range))
@@ -151,14 +157,14 @@ public class WPO_Gun : FPSS_WeaponSlotObject
             canReload = false;
 
             yield return new WaitForSeconds(clipOutSFXDelay);
-            playSfx(sfx_ClipOut, pos_GunAudio.position);
+            PlaySfx(sfx_ClipOut, pos_GunAudio.position);
 
             yield return new WaitForSeconds(clipInSFXDelay);
-            playSfx(sfx_ClipIn, pos_GunAudio.position);
+            PlaySfx(sfx_ClipIn, pos_GunAudio.position);
             currentClip = clipSize;
 
             yield return new WaitForSeconds(slideSFXDelay);
-            playSfx(sfx_Slide, pos_GunAudio.position);
+            PlaySfx(sfx_Slide, pos_GunAudio.position);
 
             animator.SetTrigger("Idle");
         }

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Unity.Cinemachine;
 
 public class FPSS_ReticleSystem : MonoBehaviour
 {
@@ -22,6 +23,7 @@ public class FPSS_ReticleSystem : MonoBehaviour
     Image[] reticleimages;
     
     Rigidbody playerRb;
+    private bool hidden = false;
 
     void Start()
     {
@@ -185,5 +187,27 @@ public class FPSS_ReticleSystem : MonoBehaviour
     void ResetGFM()
     {
         gunFireMultiplier = 1f;
+    }
+
+    public void Hide()
+    {
+        if (!hidden)
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                reticleimages[i].enabled = false;
+            }
+
+            hidden = true;
+        }
+        else
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                reticleimages[i].enabled = true;
+            }
+
+            hidden = false;
+        }
     }
 }

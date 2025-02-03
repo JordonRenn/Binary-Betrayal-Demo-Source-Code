@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
@@ -20,35 +21,35 @@ public class FPS_InputHandler : MonoBehaviour
 
     [SerializeField] private const string actionMapName = "fpsControls";
 
-    [Header("Locomotion Action Name Refs")]
-    [Space(5)]
-    [SerializeField] private const string move = "Move";
-    [SerializeField] private const string look = "Look";
-    [SerializeField] private const string slowWalk = "Slow Walk";
-    [SerializeField] private const string crouch = "Crouch";
-    [SerializeField] private const string jump = "Jump";
+    //[Header("Locomotion Action Name Refs")]
+    
+    private const string move = "Move";
+    private const string look = "Look";
+    private const string slowWalk = "Slow Walk";
+    private const string crouch = "Crouch";
+    private const string jump = "Jump";
 
-    [Header("Interaction Action Name Refs")]
-    [Space(5)]
-    [SerializeField] private const string interact = "Interact";
-    [SerializeField] private const string cancel = "Cancel";
+    //[Header("Interaction Action Name Refs")]
+    
+    private const string interact = "Interact";
+    private const string cancel = "Cancel";
 
-    [Header("Menu Action Name Refs")]
-    [Space(5)]
-    [SerializeField] private const string menuEquip = "Equipment Menu";
-    [SerializeField] private const string menuPause = "Pause Menu";
+    //[Header("Menu Action Name Refs")]
 
-    [Header("FPS Action Name Refs")]
-    [Space(5)]
-    [SerializeField] private const string aim = "Aim";
-    [SerializeField] private const string fire = "Fire";
-    [SerializeField] private const string reload = "Reload";
-    [SerializeField] private const string swapSlot = "Switch Weapon Slot";
-    [SerializeField] private const string weaponPrimary = "Equip Weapon Slot 1";
-    [SerializeField] private const string weaponSecondary = "Equip Weapon Slot 2";
-    [SerializeField] private const string utilLeft = "use Util Slot 1";
-    [SerializeField] private const string utilRight = "use Util Slot 2";
-    [SerializeField] private const string unarmed = "Equip Unarmed";
+    private const string menuEquip = "Equipment Menu";
+    private const string menuPause = "Pause Menu";
+
+    //[Header("FPS Action Name Refs")]
+
+    private const string aim = "Aim";
+    private const string fire = "Fire";
+    private const string reload = "Reload";
+    private const string swapSlot = "Switch Weapon Slot";
+    private const string weaponPrimary = "Equip Weapon Slot 1";
+    private const string weaponSecondary = "Equip Weapon Slot 2";
+    private const string utilLeft = "use Util Slot 1";
+    private const string utilRight = "use Util Slot 2";
+    private const string unarmed = "Equip Unarmed";
 
     private InputAction[] inputActions;
 
@@ -90,6 +91,9 @@ public class FPS_InputHandler : MonoBehaviour
     public bool UseUtilRightInput {get ; private set;}
     public bool ActivateUnarmedInput {get ; private set;}
 
+    [Header("FPS Unity Events")]
+    [Space(10)]
+    
     public UnityEvent slowWalkTriggered;
     public UnityEvent crouchTriggered;
     public UnityEvent jumpTriggered;
@@ -208,7 +212,7 @@ public class FPS_InputHandler : MonoBehaviour
         menuEquipAction.performed += context => EquipmentMenuButtonInput = true;
         menuEquipAction.canceled += context => EquipmentMenuButtonInput = false;
 
-        //aimAction.started += context => FPSS_WeaponPool.Instance.CurrentWeapon.Aim();
+        //aimAction.started += context => FPSS_WeaponPool.Instance.urrentWeapon.Aim();
         aimAction.performed += context => AimInput = true;
         aimAction.canceled += context => AimInput = false;
 
@@ -228,27 +232,20 @@ public class FPS_InputHandler : MonoBehaviour
         swapSlotAction.canceled += context => SwapSlotInput = false;
 
         weaponPrimaryAction.started += context => FPSS_WeaponPool.Instance.SelectPrimary();
-
         weaponPrimaryAction.performed += context => ActivatePrimaryWeaponSlotInput = true;
         weaponPrimaryAction.canceled += context => ActivatePrimaryWeaponSlotInput = false;
-        //utilLeftAction.started += context => FPSS_WeaponPool.Instance.SelectUtility();
+        
         weaponSecondaryAction.started += context => FPSS_WeaponPool.Instance.SelectSecondary();
-
         weaponSecondaryAction.performed += context => ActivateSecondaryWeaponSlotInput = true;
         weaponSecondaryAction.canceled += context => ActivateSecondaryWeaponSlotInput = false;
-        //utilLeftAction.started += context => FPSS_WeaponPool.Instance.SelectUtility();
-        utilLeftAction.started += context => activateUtilLeftTriggered.Invoke();
 
         utilLeftAction.performed += context => UseUtilLeftInput = true;
         utilLeftAction.canceled += context => UseUtilLeftInput = false;
 
-        utilRightAction.started += context => FPSS_WeaponPool.Instance.SelectUtility();
-        //utilRightAction.started += context => FPSS_WeaponPool.Instance.SelectUtility();
         utilRightAction.performed += context => UseUtilRightInput = true;
         utilRightAction.canceled += context => UseUtilRightInput = false;
 
         unarmedAction.started += context => FPSS_WeaponPool.Instance.SelectUnarmed();
-        //unarmedAction.started += context => FPSS_WeaponPool.Instance.SelectUnarmed();
         unarmedAction.performed += context => ActivateUnarmedInput = true;
         unarmedAction.canceled += context => ActivateUnarmedInput = false;
     }
@@ -272,6 +269,54 @@ public class FPS_InputHandler : MonoBehaviour
         foreach (var action in inputActions)
         {
             action.Disable();
+        }
+    }
+
+    public void ToggleMovement(bool state)
+    {
+        if (!state)
+        {
+            moveAction.Disable();
+            lookAction.Disable();
+            slowWalkAction.Disable();
+            crouchAction.Disable();
+            jumpAction.Disable();
+        }
+        else
+        {
+            moveAction.Enable();
+            lookAction.Enable();
+            slowWalkAction.Enable();
+            crouchAction.Enable();
+            jumpAction.Enable();
+        }
+    }
+
+    public void ToggleFPSActions(bool state)
+    {
+        if (!state)
+        {
+            aimAction.Disable();
+            fireAction.Disable();
+            reloadAction.Disable();
+            swapSlotAction.Disable();
+            weaponPrimaryAction.Disable();
+            weaponSecondaryAction.Disable();
+            utilLeftAction.Disable();
+            utilRightAction.Disable();
+            unarmedAction.Disable();
+        }
+        else
+        {
+            aimAction.Enable();
+            fireAction.Enable();
+            reloadAction.Enable();
+            swapSlotAction.Enable();
+            weaponPrimaryAction.Enable();
+            weaponSecondaryAction.Enable();
+            utilLeftAction.Enable();
+            utilRightAction.Enable();
+            unarmedAction.Enable();
         }
     }
 }

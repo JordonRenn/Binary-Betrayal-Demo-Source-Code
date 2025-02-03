@@ -2,6 +2,7 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 /// <summary>
 /// Manages the weapon HUD, displaying the current weapon information.
@@ -42,6 +43,7 @@ public class FPSS_WeaponHUD : MonoBehaviour
     [SerializeField] private float initDelay = 0.2f; // Used to pause execution between steps of initialization when needed
     [SerializeField] private float initTimeout = 10f; // Initialization timeout
     private bool initialized = false; // Flag used to stop Update() from running before initialization is complete
+    private bool hidden = false;
     
     /// <summary>
     /// Called on the frame when a script is enabled just before any of the Update methods are called the first time.
@@ -204,6 +206,23 @@ public class FPSS_WeaponHUD : MonoBehaviour
         {
             primaryIconImg.sprite = primaryWeaponObject.img_inactiveIcon;
             secondaryIconImg.sprite = secondaryWeaponObject.img_inactiveIcon;
+        }
+    }
+
+    public void Hide()
+    {
+        RectTransform rectTransform = GetComponent<RectTransform>();
+        if (!hidden)
+        {
+            // Move the entire HUD downwards to hide it
+            rectTransform.DOAnchorPos(new Vector2(0, -80), 0);
+            hidden = true;
+        }
+        else
+        {
+            // Move the entire HUD upwards to show it
+            rectTransform.DOAnchorPos(new Vector2(0, 0), 0);
+            hidden = false;
         }
     }
 }

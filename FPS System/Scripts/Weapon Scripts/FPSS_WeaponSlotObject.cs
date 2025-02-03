@@ -1,6 +1,7 @@
 using System.Collections;
 using FMODUnity;
 using UnityEngine;
+using Unity.Cinemachine;
 
 /// <summary>
 /// Enum representing the fire mode of the weapon.
@@ -31,7 +32,7 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
     protected CamShake camShake;
     [Tooltip("Intensity of camera shake, 0-1 (1 being the most intense)")]
     [SerializeField] protected float camShakeIntensity;
-    [SerializeField] protected Camera cam;
+    [SerializeField] protected CinemachineCamera cam;
     public Animator animator { get; private set; } 
     protected FPSS_PlayerCamController camController;
 
@@ -105,7 +106,7 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
 
         while (reticleSystem == null || camController == null || cam == null || hud == null)
         {
-            cam = Camera.main;
+            //cam = Camera.main;
             reticleSystem = GameObject.FindAnyObjectByType<FPSS_ReticleSystem>();
             camController = cam.GetComponent<FPSS_PlayerCamController>();
             camShake = cam.GetComponent<CamShake>();
@@ -163,6 +164,18 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
 
         isActive = false;
     }
+
+    public void ToggleWeaponActive()
+    {
+        if (isActive)
+        {
+            StartCoroutine(SetWeaponInactive());
+        }
+        else
+        {
+            StartCoroutine(SetWeaponActive());
+        }
+    }
     #endregion
 
     #region damage
@@ -190,7 +203,7 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
             GameObject impactDecal = surfaceInfo.bulletHolePrefab[Random.Range(0, surfaceInfo.bulletHolePrefab.Length)];
             Instantiate(impactDecal, hit.point, Quaternion.LookRotation(hit.normal));
 
-            playSfx(surfaceInfo.sfx_Impact, hit.point);
+            PlaySfx(surfaceInfo.sfx_Impact, hit.point, true);
 
             ParticleSystem impactEffect = surfaceInfo.impactEffect;
             Instantiate(impactEffect, hit.point, Quaternion.LookRotation(hit.normal));
@@ -200,18 +213,26 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
     protected IEnumerator PlaySfxDelay(EventReference sfx, float delay, Vector3 position)
     {
         yield return new WaitForSeconds(delay);
-        playSfx(sfx, position);
+        PlaySfx(sfx, position);
     }
     #endregion
 
     #region AUDIO
-    public void playSfx(EventReference eventRef, Vector3 position) //fix this
+    public void PlaySfx(EventReference eventRef, Vector3 position, bool surfaceSFX = false)
     {
-        if (position == null)
+        if (surfaceSFX == false)
         {
-            position = pos_GunAudio.position;
+            RuntimeManager.PlayOneShotAttached(eventRef, pos_GunAudio.gameObject);
         }
-        RuntimeManager.PlayOneShotAttached(eventRef, pos_GunAudio.gameObject);
+        else
+        {
+            if (position == null) // if no position is provided, use the gun audio position
+            {
+                position = pos_GunAudio.position;
+            }
+            
+            RuntimeManager.PlayOneShot(eventRef, position);
+        }
     }
     #endregion
 
