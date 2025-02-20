@@ -1,4 +1,6 @@
 using UnityEngine;
+using FMODUnity;
+using FMOD.Studio;
 
 public class PS_Keypad : MonoBehaviour
 {
@@ -15,12 +17,26 @@ public class PS_Keypad : MonoBehaviour
     [SerializeField] private Collider NUM8;
     [SerializeField] private Collider NUM9;
 
+    [Header("FMOD")]
+
+    [SerializeField] public EventReference phoneDialSound;
+    [SerializeField] public EventReference phoneButtonSound;
+
+    [SerializeField] private EventInstance dialSoundInstance;
+    private bool dialTonePlaying = false;
+
     private string phoneNumber = "";
 
     void Update()
     {
         if (Input.GetMouseButtonDown(0))
         {
+            if (dialTonePlaying)
+            {
+                dialSoundInstance.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
+                dialTonePlaying = false;
+            }
+            
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit))
@@ -29,16 +45,56 @@ public class PS_Keypad : MonoBehaviour
                 {
                     ResetInput();
                 }
-                else if (hit.collider == NUM0) AddDigit("0");
-                else if (hit.collider == NUM1) AddDigit("1");
-                else if (hit.collider == NUM2) AddDigit("2");
-                else if (hit.collider == NUM3) AddDigit("3");
-                else if (hit.collider == NUM4) AddDigit("4");
-                else if (hit.collider == NUM5) AddDigit("5");
-                else if (hit.collider == NUM6) AddDigit("6");
-                else if (hit.collider == NUM7) AddDigit("7");
-                else if (hit.collider == NUM8) AddDigit("8");
-                else if (hit.collider == NUM9) AddDigit("9");
+                else if (hit.collider == NUM0) 
+                {
+                    AddDigit("0");
+                    RuntimeManager.PlayOneShot(phoneButtonSound, gameObject.transform.position);
+                }
+                else if (hit.collider == NUM1) 
+                {
+                    AddDigit("1");
+                    RuntimeManager.PlayOneShot(phoneButtonSound, gameObject.transform.position);
+                }
+                else if (hit.collider == NUM2) 
+                {
+                    AddDigit("2");
+                    RuntimeManager.PlayOneShot(phoneButtonSound, gameObject.transform.position);
+                }
+                else if (hit.collider == NUM3) 
+                {
+                    AddDigit("3");
+                    RuntimeManager.PlayOneShot(phoneButtonSound, gameObject.transform.position);
+                }
+                else if (hit.collider == NUM4) 
+                {
+                    AddDigit("4");
+                    RuntimeManager.PlayOneShot(phoneButtonSound, gameObject.transform.position);
+                }
+                else if (hit.collider == NUM5) 
+                {
+                    AddDigit("5");
+                    RuntimeManager.PlayOneShot(phoneButtonSound, gameObject.transform.position);
+                }
+                else if (hit.collider == NUM6) 
+                {
+                    AddDigit("6");
+                    RuntimeManager.PlayOneShot(phoneButtonSound, gameObject.transform.position);
+                }
+                else if (hit.collider == NUM7) 
+                {
+                    AddDigit("7");
+                    RuntimeManager.PlayOneShot(phoneButtonSound, gameObject.transform.position);
+                }
+                else if (hit.collider == NUM8) 
+                {
+                    AddDigit("8");
+                    RuntimeManager.PlayOneShot(phoneButtonSound, gameObject.transform.position);
+                }
+                else if (hit.collider == NUM9) 
+                {
+                    AddDigit("9");
+                    RuntimeManager.PlayOneShot(phoneButtonSound, gameObject.transform.position);
+                }
             }
         }
     }
@@ -58,5 +114,23 @@ public class PS_Keypad : MonoBehaviour
     private void ResetInput()
     {
         phoneNumber = "";
+    }
+
+    private void OnEnable()
+    {
+        ResetInput();
+        dialSoundInstance = RuntimeManager.CreateInstance(phoneDialSound);
+        dialSoundInstance.set3DAttributes(RuntimeUtils.To3DAttributes(gameObject.transform));
+        dialSoundInstance.start();
+        dialTonePlaying = true;
+    }
+
+    private void OnDisable()
+    {
+        if (dialTonePlaying)
+        {
+            dialSoundInstance.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
+            dialTonePlaying = false;
+        }
     }
 }

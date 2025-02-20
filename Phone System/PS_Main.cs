@@ -1,7 +1,7 @@
-
 using System.Collections;
 using UnityEngine;
 using Unity.Cinemachine;
+using FMODUnity;
 
 public class PS_Main : Interactable
 {
@@ -9,53 +9,118 @@ public class PS_Main : Interactable
     private FPSS_ReticleSystem c_ReticleSystem;    
     private FPS_InputHandler c_InputHandler;
     private GameObject playerObj;
+    private NotificationSystem c_NotificationSystem;
+    [SerializeField] private GameObject fauxArms;
     private int phoneID = 0;
     [SerializeField] private CinemachineCamera c_PhoneCam;
     [SerializeField] private PS_Keypad c_Keypad;
     [SerializeField] private Collider interactCollider;
     [SerializeField] private Transform playerTeleportPoint;
+
+    [SerializeField] private Animator payphoneAnimator;
     private bool usingPhone = false;
+
+    [Header("FMOD")]
+    [SerializeField] public EventReference phonePickupSound;
+    [SerializeField] public EventReference phoneHangupSound;
+    
 
     void Start()
     {
         phoneID = Random.Range(1000, 9999); //debugging?
+        StartCoroutine(DelayedInit());
+    }
 
+    private IEnumerator DelayedInit()
+    {
+        yield return new WaitForSeconds(0.25f);
         Init();
     }
 
     private void Init()
     {
-        while (c_WeaponHud == null)                 // WEAPON HUD
+        try
         {
-            c_WeaponHud = FindFirstObjectByType<FPSS_WeaponHUD>();
-            Debug.Log($"PHONE SYSTEM {phoneID}: Waiting for WeaponHUD");
+            float timeout = 10f; // 5 seconds timeout
+            float startTime = Time.time;
+
+            while (c_WeaponHud == null && Time.time - startTime < timeout) // WEAPON HUD
+            {
+                c_WeaponHud = FindFirstObjectByType<FPSS_WeaponHUD>();
+                Debug.Log($"PHONE SYSTEM {phoneID}: Waiting for WeaponHUD");
+            }
+
+            if (c_WeaponHud == null)
+            {
+                Debug.LogError($"PHONE SYSTEM {phoneID}: WeaponHUD not found within timeout");
+                return;
+            }
+
+            Debug.Log($"PHONE SYSTEM {phoneID}: {c_WeaponHud} found");
+
+            startTime = Time.time;
+            while (c_ReticleSystem == null && Time.time - startTime < timeout) // RETICLE SYSTEM
+            {
+                c_ReticleSystem = FindFirstObjectByType<FPSS_ReticleSystem>();
+                Debug.Log($"PHONE SYSTEM {phoneID}: Waiting for ReticleSystem");
+            }
+
+            if (c_ReticleSystem == null)
+            {
+                Debug.LogError($"PHONE SYSTEM {phoneID}: ReticleSystem not found within timeout");
+                return;
+            }
+
+            Debug.Log($"PHONE SYSTEM {phoneID}: {c_ReticleSystem} found");
+
+            startTime = Time.time;
+            while (playerObj == null && Time.time - startTime < timeout) // PLAYER OBJECT
+            {
+                playerObj = GameObject.FindWithTag("Player");
+                Debug.Log($"PHONE SYSTEM {phoneID}: Waiting for Player Object");
+            }
+
+            if (playerObj == null)
+            {
+                Debug.LogError($"PHONE SYSTEM {phoneID}: Player Object not found within timeout");
+                return;
+            }
+
+            Debug.Log($"PHONE SYSTEM {phoneID}: {playerObj} found");
+
+            startTime = Time.time;
+            while (c_InputHandler == null && Time.time - startTime < timeout) // INPUT HANDLER
+            {
+                c_InputHandler = FPS_InputHandler.Instance;
+                Debug.Log($"PHONE SYSTEM {phoneID}: Waiting for InputHandler");
+            }
+
+            if (c_InputHandler == null)
+            {
+                Debug.LogError($"PHONE SYSTEM {phoneID}: InputHandler not found within timeout");
+                return;
+            }
+
+            Debug.Log($"PHONE SYSTEM {phoneID}: {c_InputHandler} found");
+
+            while (c_NotificationSystem == null && Time.time - startTime < timeout) // NOTIFICATION SYSTEM
+            {
+                c_NotificationSystem = FindFirstObjectByType<NotificationSystem>();
+                Debug.Log($"PHONE SYSTEM {phoneID}: Waiting for NotificationSystem");
+            }
+
+            if (c_NotificationSystem == null)
+            {
+                Debug.LogError($"PHONE SYSTEM {phoneID}: NotificationSystem not found within timeout");
+                return;
+            }
+
+            Debug.Log($"PHONE SYSTEM {phoneID}: {c_NotificationSystem} found");
         }
-
-        Debug.Log($"PHONE SYSTEM {phoneID}: {c_WeaponHud} found");
-
-        while (c_ReticleSystem == null)             // RETICLE SYSTEM
+        catch (System.Exception ex)
         {
-            c_ReticleSystem = FindFirstObjectByType<FPSS_ReticleSystem>();
-            Debug.Log($"PHONE SYSTEM {phoneID}: Waiting for ReticleSystem");
+            Debug.LogError($"PHONE SYSTEM {phoneID}: Exception occurred during initialization: {ex.Message}");
         }
-
-        Debug.Log($"PHONE SYSTEM {phoneID}: {c_ReticleSystem} found");
-        
-        while (playerObj == null)                   // PLAYER OBJECT
-        {
-            playerObj = GameObject.FindWithTag("Player");
-            Debug.Log($"PHONE SYSTEM {phoneID}: Waiting for Player Object");
-        }
-
-        Debug.Log($"PHONE SYSTEM {phoneID}: {playerObj} found");
-        
-        while (c_InputHandler == null)              // INPUT HANDLER
-        {
-            c_InputHandler = FPS_InputHandler.Instance;
-            Debug.Log($"PHONE SYSTEM {phoneID}: Waiting for InputHandler");
-        }
-
-        Debug.Log($"PHONE SYSTEM {phoneID}: {c_InputHandler} found");
     }
 
     public override void Interact()
@@ -84,12 +149,22 @@ public class PS_Main : Interactable
         
         c_PhoneCam.Priority = 300;
 
-        c_Keypad.enabled = true;
-        FPSS_PlayerCamController.Instance.ToggleCursorLock();
-        
         yield return new WaitForSeconds(0.5f); //allow time for the camera to fully transistion
 
+        c_NotificationSystem.DisplayNotification(new Notification("Dial 616-6174 to save your progress", NotificationType.Normal));
+        
+        fauxArms.SetActive(true);
+        payphoneAnimator.SetTrigger("payphone_pickup");
         StartCoroutine(TeleportPlayer());
+
+        yield return new WaitForSeconds(0.45f);
+
+        RuntimeManager.PlayOneShot(phonePickupSound, transform.position);
+
+        yield return new WaitForSeconds(0.85f); 
+
+        c_Keypad.enabled = true;
+        FPSS_PlayerCamController.Instance.ToggleCursorLock();
     }
 
     private void DeactivePhone()
@@ -99,14 +174,25 @@ public class PS_Main : Interactable
 
     private IEnumerator DeactivePhoneRoutine()
     {
+        payphoneAnimator.SetTrigger("payphone_hangup");
+
+        yield return new WaitForSeconds(0.85f);
+
+        c_Keypad.enabled = false;
+        RuntimeManager.PlayOneShot(phoneHangupSound, transform.position);
+
+        yield return new WaitForSeconds(0.45f);
+        
+        fauxArms.SetActive(false);
+        
         c_PhoneCam.Priority = 0;
         c_InputHandler.cancelTriggered.RemoveListener(DeactivePhone);
-        c_Keypad.enabled = false;
+        
         FPSS_PlayerCamController.Instance.AllowOverride(false);
         FPSS_PlayerCamController.Instance.ToggleCursorLock();
         
-        usingPhone = false;
         interactCollider.enabled = true;
+        usingPhone = false;
 
         FPSS_WeaponPool.Instance.currentWeaponSlotObject.ToggleWeaponActive();
 
