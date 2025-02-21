@@ -33,7 +33,7 @@ public class PS_Main : Interactable
 
     private IEnumerator DelayedInit()
     {
-        yield return new WaitForSeconds(0.25f);
+        yield return new WaitForSeconds(1f);
         Init();
     }
 
@@ -215,16 +215,18 @@ public class PS_Main : Interactable
     {
         
         FPSS_PlayerCamController.Instance.AllowOverride(true);
-        FPSS_PlayerCamController.Instance.SetRotation(new Vector2(playerTeleportPoint.transform.localRotation.x, playerTeleportPoint.transform.localRotation.y + 90f));
         
         CharacterController characterController = playerObj.GetComponent<CharacterController>();
         Rigidbody playerRigidbody = playerObj.GetComponent<Rigidbody>();
+
+        FPSS_PlayerCamController.Instance.SetRotation(new Vector2(playerTeleportPoint.transform.eulerAngles.x, playerTeleportPoint.transform.eulerAngles.y + 90f));
 
         if (characterController != null)
         {
             characterController.enabled = false; // Disable the CharacterController to change the position
             yield return new WaitForSeconds(0.05f);
             playerObj.transform.position = playerTeleportPoint.position;
+            yield return new WaitForSeconds(0.05f);
             characterController.enabled = true; // Re-enable the CharacterController
         }
         else
@@ -238,6 +240,8 @@ public class PS_Main : Interactable
         {
             playerRigidbody.linearVelocity = Vector3.zero; // Reset the Rigidbody velocity
         }
+
+        FPSS_PlayerCamController.Instance.AllowOverride(false);
 
         Debug.Log("Player teleported to: " + playerTeleportPoint.position);
     }   
