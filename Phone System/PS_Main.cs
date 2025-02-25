@@ -137,9 +137,8 @@ public class PS_Main : Interactable
 
         FPSS_WeaponPool.Instance.currentWeaponSlotObject.ToggleWeaponActive();
 
-        c_InputHandler.ToggleMovement(false);
-        c_InputHandler.ToggleFPSActions(false);
-        c_InputHandler.cancelTriggered.AddListener(DeactivePhone);
+        c_InputHandler.SetInputState(InputState.LockedInteraction);
+        c_InputHandler.lint_CancelTriggered.AddListener(DeactivePhone);
         interactCollider.enabled = false;
 
         c_WeaponHud.Hide();
@@ -174,11 +173,13 @@ public class PS_Main : Interactable
 
     private IEnumerator DeactivePhoneRoutine()
     {
+        c_Keypad.enabled = false;
+        c_InputHandler.lint_CancelTriggered.RemoveListener(DeactivePhone);
+
         payphoneAnimator.SetTrigger("payphone_hangup");
 
         yield return new WaitForSeconds(0.85f);
-
-        c_Keypad.enabled = false;
+        
         RuntimeManager.PlayOneShot(phoneHangupSound, transform.position);
 
         yield return new WaitForSeconds(0.45f);
@@ -186,7 +187,6 @@ public class PS_Main : Interactable
         fauxArms.SetActive(false);
         
         c_PhoneCam.Priority = 0;
-        c_InputHandler.cancelTriggered.RemoveListener(DeactivePhone);
         
         FPSS_PlayerCamController.Instance.AllowOverride(false);
         FPSS_PlayerCamController.Instance.ToggleCursorLock();
@@ -198,8 +198,7 @@ public class PS_Main : Interactable
 
         yield return new WaitForSeconds(0.2f); //allow time for weapon to be re-enabled
         
-        c_InputHandler.ToggleMovement(true);
-        c_InputHandler.ToggleFPSActions(true);
+        c_InputHandler.SetInputState(InputState.FirstPerson);
 
         c_WeaponHud.Hide();
         c_ReticleSystem.Hide();
@@ -233,8 +232,6 @@ public class PS_Main : Interactable
         {
             playerObj.transform.position = playerTeleportPoint.position;
         }
-
-
 
         if (playerRigidbody != null)
         {

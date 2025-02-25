@@ -4,12 +4,9 @@ public class FPSS_Interaction : MonoBehaviour
 {
     public static FPSS_Interaction Instance {get ; private set;}
 
-    //[SerializeField] Camera cam;
     [SerializeField] float interactionCooldown = 0.25f;
     [SerializeField] float reachDistance = 3f;
     private FPS_InputHandler input;
-    //private FMOD_FPSS_PlayerAudio audio;
-    private NotificationSystem notify;
     private float lastInteractionTime = 0f;
     
     void Awake()
@@ -25,11 +22,9 @@ public class FPSS_Interaction : MonoBehaviour
     void Start()
     {
         input = FPS_InputHandler.Instance;
-        //audio = FMOD_FPSS_PlayerAudio.Instance;
-        notify = NotificationSystem.Instance;
     }
 
-    void Update()
+    void Update() //why tf am i using the Update method??
     {
         if (input.InteractInput && Time.time >= lastInteractionTime + interactionCooldown)
         {
@@ -55,6 +50,19 @@ public class FPSS_Interaction : MonoBehaviour
             {
                 //Interact with the object
                 interactable.Interact();
+            }
+            else
+            {
+                interactable = hit.collider.GetComponentInParent<Interactable>(); //Check parent object... might break something? idk maybe...
+                if (interactable != null)
+                {
+                    interactable.Interact();
+                }
+                else
+                {
+                    //notify.Notify("Nothing to interact with");
+                    Debug.Log("Nothing to interact with");
+                }
             }
         }
     }

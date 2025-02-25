@@ -568,11 +568,11 @@
             ]
         },
         {
-            "name": "focusView",
+            "name": "lockedInteraction",
             "id": "4d22bfb5-8a7a-4e26-8801-f3db9b3fe9ed",
             "actions": [
                 {
-                    "name": "CursorMove",
+                    "name": "lint_CursorMove",
                     "type": "Value",
                     "id": "b669d278-9dd1-490b-bd7a-41452b9b34de",
                     "expectedControlType": "Vector2",
@@ -581,7 +581,7 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Click",
+                    "name": "lint_Click",
                     "type": "Button",
                     "id": "b6e3bf6b-be95-4e14-92fd-132df9b74d2b",
                     "expectedControlType": "",
@@ -590,7 +590,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Cancel",
+                    "name": "lint_Cancel",
                     "type": "Button",
                     "id": "9d81c8f0-5ef2-4718-9617-ce5c26eb3320",
                     "expectedControlType": "",
@@ -599,7 +599,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Num_1",
+                    "name": "lint_Num_1",
                     "type": "Button",
                     "id": "a2d607e7-176b-4fb4-b4fe-dc4f0be6808e",
                     "expectedControlType": "",
@@ -608,7 +608,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Num_2",
+                    "name": "lint_Num_2",
                     "type": "Button",
                     "id": "fc378136-bf13-41d8-aa1a-6078d3dbb0a9",
                     "expectedControlType": "",
@@ -617,7 +617,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Num_3",
+                    "name": "lint_Num_3",
                     "type": "Button",
                     "id": "6131b668-bea6-4101-9be3-e273e37116a6",
                     "expectedControlType": "",
@@ -626,7 +626,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Num_4",
+                    "name": "lint_Num_4",
                     "type": "Button",
                     "id": "07fb9d12-0cc1-459a-ace2-b16353dab1ca",
                     "expectedControlType": "",
@@ -635,7 +635,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Num_5",
+                    "name": "lint_Num_5",
                     "type": "Button",
                     "id": "7a6e0948-1213-4814-86d4-df466627b5b2",
                     "expectedControlType": "",
@@ -644,7 +644,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Num_6",
+                    "name": "lint_Num_6",
                     "type": "Button",
                     "id": "6759c427-7f6a-47df-9d32-e140a9cf5705",
                     "expectedControlType": "",
@@ -653,7 +653,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Num_7",
+                    "name": "lint_Num_7",
                     "type": "Button",
                     "id": "16dbd008-3ab6-4f18-b0f7-1ee169e84186",
                     "expectedControlType": "",
@@ -662,7 +662,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Num_8",
+                    "name": "lint_Num_8",
                     "type": "Button",
                     "id": "cfba16bf-1513-4a8f-839d-ebdbdc7da33c",
                     "expectedControlType": "",
@@ -671,7 +671,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Num_9",
+                    "name": "lint_Num_9",
                     "type": "Button",
                     "id": "afeeceb1-1a62-4747-962c-51f4f6cb2af2",
                     "expectedControlType": "",
@@ -680,7 +680,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Num_0",
+                    "name": "lint_Num_0",
                     "type": "Button",
                     "id": "b699e80d-cb74-4bbc-8855-3b1a8f2d1706",
                     "expectedControlType": "",
@@ -697,7 +697,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Click",
+                    "action": "lint_Click",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -708,7 +708,7 @@
                     "interactions": "",
                     "processors": "AxisDeadzone",
                     "groups": "",
-                    "action": "Click",
+                    "action": "lint_Click",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -719,7 +719,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Cancel",
+                    "action": "lint_Cancel",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -730,7 +730,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Cancel",
+                    "action": "lint_Cancel",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -741,7 +741,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "CursorMove",
+                    "action": "lint_CursorMove",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -752,7 +752,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "CursorMove",
+                    "action": "lint_CursorMove",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -763,7 +763,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Num_1",
+                    "action": "lint_Num_1",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -774,7 +774,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Num_1",
+                    "action": "lint_Num_1",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -785,7 +785,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Num_2",
+                    "action": "lint_Num_2",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -796,7 +796,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Num_2",
+                    "action": "lint_Num_2",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -807,7 +807,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Num_3",
+                    "action": "lint_Num_3",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -818,7 +818,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Num_3",
+                    "action": "lint_Num_3",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -829,7 +829,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Num_4",
+                    "action": "lint_Num_4",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -840,7 +840,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Num_4",
+                    "action": "lint_Num_4",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -851,7 +851,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Num_5",
+                    "action": "lint_Num_5",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -862,7 +862,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Num_5",
+                    "action": "lint_Num_5",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -873,7 +873,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Num_6",
+                    "action": "lint_Num_6",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -884,7 +884,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Num_6",
+                    "action": "lint_Num_6",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -895,7 +895,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Num_7",
+                    "action": "lint_Num_7",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -906,7 +906,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Num_7",
+                    "action": "lint_Num_7",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -917,7 +917,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Num_8",
+                    "action": "lint_Num_8",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -928,7 +928,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Num_8",
+                    "action": "lint_Num_8",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -939,7 +939,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Num_9",
+                    "action": "lint_Num_9",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -950,7 +950,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Num_9",
+                    "action": "lint_Num_9",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -961,7 +961,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Num_0",
+                    "action": "lint_Num_0",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -972,7 +972,156 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Num_0",
+                    "action": "lint_Num_0",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "menuNav",
+            "id": "046542b2-d11c-48d0-97b9-ca768b239e5d",
+            "actions": [
+                {
+                    "name": "menu_CursorMove",
+                    "type": "Value",
+                    "id": "123641a2-c1d8-46ed-89e9-d439d95695c7",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "menu_Click",
+                    "type": "Button",
+                    "id": "940a9287-dd53-400b-be75-946326b20dcb",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "menu_Cancel",
+                    "type": "Button",
+                    "id": "7238d84d-24b1-446e-b623-ea639e8c68b0",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "1e9fa434-471b-4484-a498-13ebd9b58e69",
+                    "path": "<Gamepad>/rightStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "menu_CursorMove",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "27e207f5-c5a6-44db-bf75-a7ce886d40fe",
+                    "path": "<Mouse>/delta",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "menu_CursorMove",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "fa6384be-40b1-41df-80b4-ef3b3f0d7219",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "menu_Cancel",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "737da7fc-d433-4233-8179-b7f3c45c40bf",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "menu_Cancel",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ddd70c87-28f0-45c6-96ce-4d46809fe158",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "menu_Click",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "bfbb4b8d-b7b3-442c-9c86-64743a5c7990",
+                    "path": "<Gamepad>/rightTrigger",
+                    "interactions": "",
+                    "processors": "AxisDeadzone",
+                    "groups": "",
+                    "action": "menu_Click",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "cutscene",
+            "id": "6a5eeff1-04c7-47e3-bf54-62403103ad01",
+            "actions": [
+                {
+                    "name": "cut_Skip",
+                    "type": "Button",
+                    "id": "16bfaabe-dbc4-43fc-b23f-71a0c19f317d",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "cut_Next",
+                    "type": "Button",
+                    "id": "2f83b223-9d80-4714-963d-d886102a1228",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "4ecce0dc-9d7f-4d8d-88e6-7c6a6b34b4a6",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "cut_Skip",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6465c65b-cd59-4bad-af4a-ec1f58ea45e5",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "cut_Next",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -1,7 +1,14 @@
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
+
+public enum InputState
+{
+    FirstPerson,
+    MenuNavigation,
+    LockedInteraction,
+    Cutscene,
+}
 
 /// <summary>
 /// Singleton class to handle all the input actions for the FPS system.
@@ -19,28 +26,22 @@ public class FPS_InputHandler : MonoBehaviour
     [Header("Action Map Name Ref")]
     [Space(5)]
 
-    [SerializeField] private const string actionMapName = "fpsControls";
+    [SerializeField] private const string actionMapName_FPS = "fpsControls";
+    [SerializeField] private const string actionMapName_LockedInteraction = "lockedInteraction";
+    [SerializeField] private const string actionMapName_MenuNav = "menuNav";
+    [SerializeField] private const string actionMapName_Cutscene = "cutscene";
 
-    //[Header("Locomotion Action Name Refs")]
+    //FPS Action Name Refs
     
     private const string move = "Move";
     private const string look = "Look";
     private const string slowWalk = "Slow Walk";
     private const string crouch = "Crouch";
     private const string jump = "Jump";
-
-    //[Header("Interaction Action Name Refs")]
-    
     private const string interact = "Interact";
     private const string cancel = "Cancel";
-
-    //[Header("Menu Action Name Refs")]
-
     private const string menuEquip = "Equipment Menu";
     private const string menuPause = "Pause Menu";
-
-    //[Header("FPS Action Name Refs")]
-
     private const string aim = "Aim";
     private const string fire = "Fire";
     private const string reload = "Reload";
@@ -51,8 +52,30 @@ public class FPS_InputHandler : MonoBehaviour
     private const string utilRight = "use Util Slot 2";
     private const string unarmed = "Equip Unarmed";
 
-    private InputAction[] inputActions;
+    //Locked Interaction Action Name Refs
 
+    private const string lint_CursorMove = "lint_CursorMove";
+    private const string lint_Click = "lint_Click";
+    private const string lint_Cancel = "lint_Cancel";
+    private const string lint_Num_1 = "lint_Num_1";
+    private const string lint_Num_2 = "lint_Num_2";
+    private const string lint_Num_3 = "lint_Num_3";
+    private const string lint_Num_4 = "lint_Num_4";
+    private const string lint_Num_5 = "lint_Num_5";
+    private const string lint_Num_6 = "lint_Num_6";
+    private const string lint_Num_7 = "lint_Num_7";
+    private const string lint_Num_8 = "lint_Num_8";
+    private const string lint_Num_9 = "lint_Num_9";
+    private const string lint_Num_0 = "lint_Num_0";
+
+    //Menu Navigation Action Name Refs
+
+    private InputAction[] inputActions_FPS;
+    private InputAction[] inputActions_LockedInteraction;
+    private InputAction[] inputActions_MenuNav;
+    private InputAction[] inputActions_Cutscene;
+
+    //FPS input actions
     private InputAction moveAction;
     private InputAction lookAction;
     private InputAction slowWalkAction;
@@ -72,6 +95,27 @@ public class FPS_InputHandler : MonoBehaviour
     private InputAction utilRightAction;
     private InputAction unarmedAction;
 
+    //Locked Interaction input actions
+    private InputAction lint_CursorMoveAction;
+    private InputAction lint_ClickAction;
+    private InputAction lint_CancelAction;
+    private InputAction lint_Num_1Action;
+    private InputAction lint_Num_2Action;
+    private InputAction lint_Num_3Action;
+    private InputAction lint_Num_4Action;
+    private InputAction lint_Num_5Action;
+    private InputAction lint_Num_6Action;
+    private InputAction lint_Num_7Action;
+    private InputAction lint_Num_8Action;
+    private InputAction lint_Num_9Action;
+    private InputAction lint_Num_0Action;
+
+    //Menu Navigation input actions
+
+    //Cutscene input actions
+
+
+    //FPS
     public Vector2 MoveInput {get ; private set;}
     public Vector2 LookInput {get ; private set;}
     public bool SlowWalkInput {get ; private set;}
@@ -90,6 +134,21 @@ public class FPS_InputHandler : MonoBehaviour
     public bool UseUtilLeftInput {get ; private set;}
     public bool UseUtilRightInput {get ; private set;}
     public bool ActivateUnarmedInput {get ; private set;}
+
+    //locked interaction
+    public Vector2 Lint_CursorMoveInput {get ; private set;}
+    public bool Lint_ClickInput {get ; private set;}
+    public bool Lint_CancelInput {get ; private set;}
+    public bool Lint_Num_1Input {get ; private set;}
+    public bool Lint_Num_2Input {get ; private set;}
+    public bool Lint_Num_3Input {get ; private set;}
+    public bool Lint_Num_4Input {get ; private set;}
+    public bool Lint_Num_5Input {get ; private set;}
+    public bool Lint_Num_6Input {get ; private set;}
+    public bool Lint_Num_7Input {get ; private set;}
+    public bool Lint_Num_8Input {get ; private set;}
+    public bool Lint_Num_9Input {get ; private set;}
+    public bool Lint_Num_0Input {get ; private set;}
 
     [Header("FPS Unity Events")]
     [Space(10)]
@@ -111,11 +170,33 @@ public class FPS_InputHandler : MonoBehaviour
     public UnityEvent activateUtilRightTriggered;
     public UnityEvent activateUnarmedTriggered;
 
+    [Header("Locked Interaction Unity Events")]
+    [Space(10)]
+
+    public UnityEvent lint_CursorMoveTriggered;
+    public UnityEvent lint_ClickTriggered;
+    public UnityEvent lint_CancelTriggered;
+    public UnityEvent lint_Num_1Triggered;
+    public UnityEvent lint_Num_2Triggered;
+    public UnityEvent lint_Num_3Triggered;
+    public UnityEvent lint_Num_4Triggered;
+    public UnityEvent lint_Num_5Triggered;
+    public UnityEvent lint_Num_6Triggered;
+    public UnityEvent lint_Num_7Triggered;
+    public UnityEvent lint_Num_8Triggered;
+    public UnityEvent lint_Num_9Triggered;
+    public UnityEvent lint_Num_0Triggered;
+
+    private InputState currentState;
+    [SerializeField] private InputState defaultState = InputState.FirstPerson;
+
     /// <summary>
     /// Initializes the input handler.
     /// </summary>
     void Awake()
     {
+        currentState = defaultState;
+        
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -124,28 +205,53 @@ public class FPS_InputHandler : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-        InputActionMap actionMap = playerControls.FindActionMap(actionMapName);
+        InputActionMap actionMap_FPS = playerControls.FindActionMap(actionMapName_FPS);
+        InputActionMap actionMap_LockedInteraction = playerControls.FindActionMap(actionMapName_LockedInteraction);
+        InputActionMap actionMap_MenuNav = playerControls.FindActionMap(actionMapName_MenuNav);
+        InputActionMap actionMap_Cutscene = playerControls.FindActionMap(actionMapName_Cutscene);
 
-        moveAction = actionMap.FindAction(move);
-        lookAction = actionMap.FindAction(look);
-        slowWalkAction = actionMap.FindAction(slowWalk);
-        crouchAction = actionMap.FindAction(crouch);
-        jumpAction = actionMap.FindAction(jump);
-        interactAction = actionMap.FindAction(interact);
-        cancelAction = actionMap.FindAction(cancel);
-        menuPauseAction = actionMap.FindAction(menuPause);
-        menuEquipAction = actionMap.FindAction(menuEquip);
-        aimAction = actionMap.FindAction(aim);
-        fireAction = actionMap.FindAction(fire);
-        reloadAction = actionMap.FindAction(reload);
-        swapSlotAction = actionMap.FindAction(swapSlot);
-        weaponPrimaryAction = actionMap.FindAction(weaponPrimary);
-        weaponSecondaryAction = actionMap.FindAction(weaponSecondary);
-        utilLeftAction = actionMap.FindAction(utilLeft);
-        utilRightAction = actionMap.FindAction(utilRight);
-        unarmedAction = actionMap.FindAction(unarmed);
+        //FPS actions
+        moveAction = actionMap_FPS.FindAction(move);
+        lookAction = actionMap_FPS.FindAction(look);
+        slowWalkAction = actionMap_FPS.FindAction(slowWalk);
+        crouchAction = actionMap_FPS.FindAction(crouch);
+        jumpAction = actionMap_FPS.FindAction(jump);
+        interactAction = actionMap_FPS.FindAction(interact);
+        cancelAction = actionMap_FPS.FindAction(cancel);
+        menuPauseAction = actionMap_FPS.FindAction(menuPause);
+        menuEquipAction = actionMap_FPS.FindAction(menuEquip);
+        aimAction = actionMap_FPS.FindAction(aim);
+        fireAction = actionMap_FPS.FindAction(fire);
+        reloadAction = actionMap_FPS.FindAction(reload);
+        swapSlotAction = actionMap_FPS.FindAction(swapSlot);
+        weaponPrimaryAction = actionMap_FPS.FindAction(weaponPrimary);
+        weaponSecondaryAction = actionMap_FPS.FindAction(weaponSecondary);
+        utilLeftAction = actionMap_FPS.FindAction(utilLeft);
+        utilRightAction = actionMap_FPS.FindAction(utilRight);
+        unarmedAction = actionMap_FPS.FindAction(unarmed);
 
-        inputActions = new InputAction[]
+        //Locked Interaction actions
+
+        lint_CursorMoveAction = actionMap_LockedInteraction.FindAction(lint_CursorMove);
+        lint_ClickAction = actionMap_LockedInteraction.FindAction(lint_Click);
+        lint_CancelAction = actionMap_LockedInteraction.FindAction(lint_Cancel);
+        lint_Num_1Action = actionMap_LockedInteraction.FindAction(lint_Num_1);
+        lint_Num_2Action = actionMap_LockedInteraction.FindAction(lint_Num_2);
+        lint_Num_3Action = actionMap_LockedInteraction.FindAction(lint_Num_3);
+        lint_Num_4Action = actionMap_LockedInteraction.FindAction(lint_Num_4);
+        lint_Num_5Action = actionMap_LockedInteraction.FindAction(lint_Num_5);
+        lint_Num_6Action = actionMap_LockedInteraction.FindAction(lint_Num_6);
+        lint_Num_7Action = actionMap_LockedInteraction.FindAction(lint_Num_7);
+        lint_Num_8Action = actionMap_LockedInteraction.FindAction(lint_Num_8);
+        lint_Num_9Action = actionMap_LockedInteraction.FindAction(lint_Num_9);
+        lint_Num_0Action = actionMap_LockedInteraction.FindAction(lint_Num_0);
+
+        //Menu Navigation actions
+
+        //Cutscene actions
+        
+
+        inputActions_FPS = new InputAction[]
         {
             moveAction, 
             lookAction, 
@@ -167,6 +273,33 @@ public class FPS_InputHandler : MonoBehaviour
             reloadAction
         };
 
+        inputActions_LockedInteraction = new InputAction[]
+        {
+            lint_CursorMoveAction,
+            lint_ClickAction,
+            lint_CancelAction,
+            lint_Num_1Action,
+            lint_Num_2Action,
+            lint_Num_3Action,
+            lint_Num_4Action,
+            lint_Num_5Action,
+            lint_Num_6Action,
+            lint_Num_7Action,
+            lint_Num_8Action,
+            lint_Num_9Action,
+            lint_Num_0Action
+        };
+
+        inputActions_MenuNav = new InputAction[]
+        {
+           //
+        };
+
+        inputActions_Cutscene = new InputAction[]
+        {
+            //
+        };
+
         RegisterInputActions();
     }
 
@@ -175,6 +308,8 @@ public class FPS_InputHandler : MonoBehaviour
     /// </summary>
     private void RegisterInputActions()
     {
+        //FPS Actions
+        
         moveAction.performed += context => MoveInput = context.ReadValue<Vector2>();
         moveAction.canceled += context => MoveInput = Vector2.zero;
 
@@ -248,29 +383,128 @@ public class FPS_InputHandler : MonoBehaviour
         unarmedAction.started += context => FPSS_WeaponPool.Instance.SelectUnarmed();
         unarmedAction.performed += context => ActivateUnarmedInput = true;
         unarmedAction.canceled += context => ActivateUnarmedInput = false;
+
+        //LOCKED INTERACTION ACTIONS
+
+        lint_CursorMoveAction.performed += context => Lint_CursorMoveInput = context.ReadValue<Vector2>();
+        lint_CursorMoveAction.canceled += context => Lint_CursorMoveInput = Vector2.zero;
+
+        lint_ClickAction.started += context => lint_ClickTriggered.Invoke();
+        lint_ClickAction.performed += context => Lint_ClickInput = true;
+        lint_ClickAction.canceled += context => Lint_ClickInput = false;
+
+        lint_CancelAction.started += context => lint_CancelTriggered.Invoke();
+        lint_CancelAction.performed += context => Lint_CancelInput = true;
+        lint_CancelAction.canceled += context => Lint_CancelInput = false;
+
+        lint_Num_1Action.started += context => lint_Num_1Triggered.Invoke();
+        lint_Num_1Action.performed += context => Lint_Num_1Input = true;
+        lint_Num_1Action.canceled += context => Lint_Num_1Input = false;
+
+        lint_Num_2Action.started += context => lint_Num_2Triggered.Invoke();
+        lint_Num_2Action.performed += context => Lint_Num_2Input = true;
+        lint_Num_2Action.canceled += context => Lint_Num_2Input = false;
+
+        lint_Num_3Action.started += context => lint_Num_3Triggered.Invoke();
+        lint_Num_3Action.performed += context => Lint_Num_3Input = true;
+        lint_Num_3Action.canceled += context => Lint_Num_3Input = false;
+
+        lint_Num_4Action.started += context => lint_Num_4Triggered.Invoke();
+        lint_Num_4Action.performed += context => Lint_Num_4Input = true;
+        lint_Num_4Action.canceled += context => Lint_Num_4Input = false;
+
+        lint_Num_5Action.started += context => lint_Num_5Triggered.Invoke();
+        lint_Num_5Action.performed += context => Lint_Num_5Input = true;
+        lint_Num_5Action.canceled += context => Lint_Num_5Input = false;
+
+        lint_Num_6Action.started += context => lint_Num_6Triggered.Invoke();
+        lint_Num_6Action.performed += context => Lint_Num_6Input = true;
+        lint_Num_6Action.canceled += context => Lint_Num_6Input = false;
+
+        lint_Num_7Action.started += context => lint_Num_7Triggered.Invoke();
+        lint_Num_7Action.performed += context => Lint_Num_7Input = true;
+        lint_Num_7Action.canceled += context => Lint_Num_7Input = false;
+
+        lint_Num_8Action.started += context => lint_Num_8Triggered.Invoke();
+        lint_Num_8Action.performed += context => Lint_Num_8Input = true;
+        lint_Num_8Action.canceled += context => Lint_Num_8Input = false;
+
+        lint_Num_9Action.started += context => lint_Num_9Triggered.Invoke();
+        lint_Num_9Action.performed += context => Lint_Num_9Input = true;
+        lint_Num_9Action.canceled += context => Lint_Num_9Input = false;
+
+        lint_Num_0Action.started += context => lint_Num_0Triggered.Invoke();
+        lint_Num_0Action.performed += context => Lint_Num_0Input = true;
+        lint_Num_0Action.canceled += context => Lint_Num_0Input = false;
+
+        //MENU NAVIGATION ACTIONS
+
+        //CUTSCENE ACTIONS
+
+        //
     }
 
     /// <summary>
-    /// Enables the input actions.
+    /// Set the input state on enable.
     /// </summary>
     void OnEnable()
     {   
-        foreach (var action in inputActions)
-        {
-            action.Enable();
-        }
+        SetInputState(currentState); //maybe need to use default state here????
     }
 
     /// <summary>
-    /// Disables the input actions.
+    /// Disables all input actions on disable.
     /// </summary>
     void OnDisable()
     {
-        foreach (var action in inputActions)
+        playerControls.FindActionMap(actionMapName_FPS).Disable();
+        playerControls.FindActionMap(actionMapName_LockedInteraction).Disable();
+        playerControls.FindActionMap(actionMapName_MenuNav).Disable();
+        playerControls.FindActionMap(actionMapName_Cutscene).Disable();
+    }
+
+    /// <summary>
+    /// Pubic method to set the InputState "currentState" and disable/enable the appropriate input actions.
+    /// </summary>
+    public void SetInputState(InputState state)
+    {
+        switch (state)
         {
-            action.Disable();
+            case InputState.FirstPerson:
+                playerControls.FindActionMap(actionMapName_MenuNav).Disable();
+                playerControls.FindActionMap(actionMapName_LockedInteraction).Disable();
+                playerControls.FindActionMap(actionMapName_Cutscene).Disable();
+                playerControls.FindActionMap(actionMapName_FPS).Enable();
+                currentState = state;
+                break;
+            case InputState.MenuNavigation:
+                playerControls.FindActionMap(actionMapName_FPS).Disable();
+                playerControls.FindActionMap(actionMapName_LockedInteraction).Disable();
+                playerControls.FindActionMap(actionMapName_Cutscene).Disable();
+                playerControls.FindActionMap(actionMapName_MenuNav).Enable();
+                currentState = state;
+                break;
+            case InputState.LockedInteraction:
+                playerControls.FindActionMap(actionMapName_FPS).Disable();
+                playerControls.FindActionMap(actionMapName_MenuNav).Disable();
+                playerControls.FindActionMap(actionMapName_Cutscene).Disable();
+                playerControls.FindActionMap(actionMapName_LockedInteraction).Enable();
+                currentState = state;
+                break;
+            case InputState.Cutscene:
+                playerControls.FindActionMap(actionMapName_FPS).Disable();
+                playerControls.FindActionMap(actionMapName_MenuNav).Disable();
+                playerControls.FindActionMap(actionMapName_LockedInteraction).Disable();
+                playerControls.FindActionMap(actionMapName_Cutscene).Enable();
+                currentState = state;
+                break;
         }
     }
+
+    //OBSOLETED LEGACY CODE, DO NOT EDIT BELOW THIS LINE
+    //OBSOLETED LEGACY CODE, DO NOT EDIT BELOW THIS LINE
+    //OBSOLETED LEGACY CODE, DO NOT EDIT BELOW THIS LINE
+    //OBSOLETED LEGACY CODE, DO NOT EDIT BELOW THIS LINE  
 
     public void ToggleMovement(bool state)
     {
