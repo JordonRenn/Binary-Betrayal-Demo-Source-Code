@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -85,6 +84,8 @@ public class NotificationSystem : MonoBehaviour
 
     private NotificationDisplayState currentNotificationDisplayState;
 
+    private bool paused = false;
+
     void Awake()
     {
         if (Instance != null && Instance != this)
@@ -136,7 +137,7 @@ public class NotificationSystem : MonoBehaviour
 
         notificationQueue.Enqueue(notification);
         
-        if (currentNotificationDisplayState != NotificationDisplayState.Active)
+        if (currentNotificationDisplayState != NotificationDisplayState.Active && !paused)
         {
             //StartCoroutine(DisplayNotificationSequence(message, type));
             ProcessNextNotification();
@@ -209,6 +210,17 @@ public class NotificationSystem : MonoBehaviour
                 currentNotificationDisplayState = NotificationDisplayState.Hidden;
                 break;
         }
+    }
+
+    public void Pause()
+    {
+        paused = true;
+    }
+
+    public void Resume()
+    {
+        paused = false;
+        ProcessNextNotification();
     }
 
     void PlayNotificationSFX(NotificationType type)

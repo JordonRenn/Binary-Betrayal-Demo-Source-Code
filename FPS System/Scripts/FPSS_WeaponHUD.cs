@@ -11,6 +11,9 @@ public class FPSS_WeaponHUD : MonoBehaviour
 {
     private FPSS_Main main; // Used to see what weapon slot is currently active
     private FPSS_WeaponPool weaponPool; // Used to see what gun is currently assigned to each slot
+
+    private WPO_Gun primaryWeaponComponent;
+    private WPO_Gun secondaryWeaponComponent;
     
     [Header("Primary Weapon Objects")]
     [Space(10)] 
@@ -102,11 +105,16 @@ public class FPSS_WeaponHUD : MonoBehaviour
             yield return null;
         }
 
+        CacheWeaponComponents();   
+
         yield return new WaitForSeconds(initDelay);
 
         initialized = true;
 
-        Debug.Log($"WEAPON HUD: Initialization time: {elapsedTime} seconds.");
+        Debug.Log($"WEAPON HUD: Initialization time: {elapsedTime} seconds. ({initDelay}s initialization delay applied)");
+
+        primaryWeaponComponent.AmmoChange.AddListener(UpdateAmmoCount);
+        secondaryWeaponComponent.AmmoChange.AddListener(UpdateAmmoCount);
 
         RefreshWeaponHUD();
     }
@@ -121,9 +129,18 @@ public class FPSS_WeaponHUD : MonoBehaviour
             Debug.LogWarning("WEAPON HUD: Initializing...");
             return;
         }
-        
-        primaryAmmoText.SetText($"{weaponPool.weaponPool[0][weaponPool.assignedPrimaryWeaponIndex].GetComponent<WPO_Gun>().currentClip} / {weaponPool.weaponPool[0][weaponPool.assignedPrimaryWeaponIndex].GetComponent<WPO_Gun>().clipSize}");
-        secondaryAmmoText.SetText($"{weaponPool.weaponPool[1][weaponPool.assignedSecondaryWeaponIndex].GetComponent<WPO_Gun>().currentClip} / {weaponPool.weaponPool[1][weaponPool.assignedSecondaryWeaponIndex].GetComponent<WPO_Gun>().clipSize}");
+    }
+
+    private void UpdateAmmoCount()
+    {
+        primaryAmmoText.SetText($"{primaryWeaponComponent.currentClip} / {primaryWeaponComponent.clipSize}");
+        secondaryAmmoText.SetText($"{secondaryWeaponComponent.currentClip} / {secondaryWeaponComponent.clipSize}");
+    }
+
+    private void CacheWeaponComponents()
+    {
+        primaryWeaponComponent = weaponPool.weaponPool[0][weaponPool.assignedPrimaryWeaponIndex].GetComponent<WPO_Gun>();
+        secondaryWeaponComponent = weaponPool.weaponPool[1][weaponPool.assignedSecondaryWeaponIndex].GetComponent<WPO_Gun>();
     }
 
     /// <summary>
@@ -132,8 +149,7 @@ public class FPSS_WeaponHUD : MonoBehaviour
     public void RefreshWeaponHUD()
     {
         Debug.Log("WEAPON HUD: Refreshing elements...");
-        WPO_Gun primaryWeaponObject = weaponPool.weaponPool[0][weaponPool.assignedPrimaryWeaponIndex].GetComponent<WPO_Gun>();
-        WPO_Gun secondaryWeaponObject =  weaponPool.weaponPool[1][weaponPool.assignedSecondaryWeaponIndex].GetComponent<WPO_Gun>();             
+        CacheWeaponComponents();            
         
         switch (main.currentWeaponSlot)
         {
@@ -148,8 +164,7 @@ public class FPSS_WeaponHUD : MonoBehaviour
                 secondarySlotNumber.color = color_SlotInactiveText;
                 secondaryAmmoText.color = color_AmmoInactiveText;
                 
-                primaryNameText.text = primaryWeaponObject.weaponName;
-                //primaryAmmoText.text = weaponPool.primaryWeaponSlot.currentAmmo.ToString(); //no ammo, yet
+                primaryNameText.text = primaryWeaponComponent.weaponName;
                 break;
             case WeaponSlot.Secondary:
                 Debug.Log("WEAPON HUD: Current Weapon Slot: " + main.currentWeaponSlot);
@@ -162,8 +177,7 @@ public class FPSS_WeaponHUD : MonoBehaviour
                 secondarySlotNumber.color = color_SlotActiveText;
                 secondaryAmmoText.color = color_AmmoActiveText;
                 
-                secondaryNameText.text = secondaryWeaponObject.weaponName;
-                //secondaryAmmoText.text = weaponPool.secondaryWeaponSlot.currentAmmo.ToString(); //no ammo, yet
+                secondaryNameText.text = secondaryWeaponComponent.weaponName;
                 break;
             case WeaponSlot.Unarmed:
                 Debug.Log("WEAPON HUD: Current Weapon Slot: " + main.currentWeaponSlot);

@@ -73,6 +73,8 @@ public class WPO_Gun : FPSS_WeaponSlotObject
     protected bool isReloading = false;
     protected bool canReload = true;
 
+    public UnityEvent AmmoChange;
+
     void Start()
     {
         spreadPatternArrayLength = spreadPattern.Length;
@@ -146,6 +148,8 @@ public class WPO_Gun : FPSS_WeaponSlotObject
 
             ApplyHitSurfaceEffects(ray, out hit);  
         }
+
+        AmmoChange.Invoke();
     }
 
     public IEnumerator ReloadWeapon()
@@ -168,6 +172,8 @@ public class WPO_Gun : FPSS_WeaponSlotObject
 
             animator.SetTrigger("Idle");
         }
+
+        AmmoChange.Invoke();
 
         isReloading = false;
         canReload = true;
