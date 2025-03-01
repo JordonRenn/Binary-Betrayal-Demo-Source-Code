@@ -1,11 +1,11 @@
-using System.Collections;
 using UnityEngine;
+using System.Collections;
 
-public class FPSS_PlayerCamController : MonoBehaviour
+public class FirstPersonCamController : MonoBehaviour
 {
-    public static FPSS_PlayerCamController Instance { get; private set; }
-    
-    [SerializeField] public Transform orientation;
+    public static FirstPersonCamController Instance { get; private set; }
+
+    [SerializeField] public GameObject playerObject;
     [SerializeField] public static float sensX = 50f;
     [SerializeField] public static float sensY = 50f;
 
@@ -41,7 +41,7 @@ public class FPSS_PlayerCamController : MonoBehaviour
     {
         yield return new WaitForSeconds(initDelay);
 
-        yield return orientation = GameObject.FindWithTag("cam_Orientation").transform;
+        //yield return orientation = GameObject.FindWithTag("cam_Orientation").transform;
 
         initialized = true;
     }
@@ -63,7 +63,7 @@ public class FPSS_PlayerCamController : MonoBehaviour
 
         //rotate using input values
         transform.rotation = Quaternion.Euler(xRotation, yRotation, 0);
-        orientation.rotation = Quaternion.Euler(0, yRotation, 0);
+        playerObject.transform.rotation = Quaternion.Euler(0, yRotation, 0);
     }
 
     public void ApplySpread(Vector2 spreadOffset)

@@ -67,6 +67,18 @@ public class FPSS_WeaponPool : MonoBehaviour
         Instance = this;
     }
 
+    void SubscribeToEvents()
+    {
+        FPS_InputHandler.Instance.fireTriggered.AddListener(Fire);
+        FPS_InputHandler.Instance.reloadTriggered.AddListener(Reload);
+        
+        FPS_InputHandler.Instance.activatePrimaryTriggered.AddListener(SelectPrimary);
+        FPS_InputHandler.Instance.activateSecondaryTriggered.AddListener(SelectSecondary);
+        //FPS_InputHandler.Instance.weaponSlotKnifeTriggered.AddListener(SelectKnife);
+
+        FPS_InputHandler.Instance.swapTriggered.AddListener(SwapPrimarySecondary);
+    }
+
     void Start()
     {
         StartCoroutine(Init());
@@ -121,6 +133,8 @@ public class FPSS_WeaponPool : MonoBehaviour
             }
             yield return null;
         }
+
+        SubscribeToEvents();
         
         StartCoroutine(UpdateActiveWeaponSlot(WeaponSlot.Primary));
         

@@ -17,7 +17,7 @@ public class FPS_InputHandler : MonoBehaviour
 {
     public static FPS_InputHandler Instance {get ; private set;} 
 
-    [Header("Input Action Class")]
+    [Header("Input Action Asset")]
     [Space(10)]
     
     [SerializeField] private InputActionAsset playerControls;
@@ -70,10 +70,14 @@ public class FPS_InputHandler : MonoBehaviour
 
     //Menu Navigation Action Name Refs
 
-    private InputAction[] inputActions_FPS;
+    private const string menu_CursorMove = "menu_CursorMove";
+    private const string menu_Click = "menu_Click";
+    private const string menu_Cancel = "menu_Cancel";
+
+    /* private InputAction[] inputActions_FPS;
     private InputAction[] inputActions_LockedInteraction;
     private InputAction[] inputActions_MenuNav;
-    private InputAction[] inputActions_Cutscene;
+    private InputAction[] inputActions_Cutscene; */
 
     //FPS input actions
     private InputAction moveAction;
@@ -111,6 +115,10 @@ public class FPS_InputHandler : MonoBehaviour
     private InputAction lint_Num_0Action;
 
     //Menu Navigation input actions
+
+    private InputAction menu_CursorMoveAction;
+    private InputAction menu_ClickAction;
+    private InputAction menu_CancelAction;
 
     //Cutscene input actions
 
@@ -150,44 +158,59 @@ public class FPS_InputHandler : MonoBehaviour
     public bool Lint_Num_9Input {get ; private set;}
     public bool Lint_Num_0Input {get ; private set;}
 
+    //Menu Navigation
+
+    public Vector2 Menu_CursorMoveInput {get ; private set;}
+    public bool Menu_ClickInput {get ; private set;}
+    public bool Menu_CancelInput {get ; private set;}
+
+    //Cutscene
+
     [Header("FPS Unity Events")]
     [Space(10)]
     
-    public UnityEvent slowWalkTriggered;
-    public UnityEvent crouchTriggered;
-    public UnityEvent jumpTriggered;
-    public UnityEvent interactTriggered;
-    public UnityEvent cancelTriggered;
-    public UnityEvent pauseMenuButtonTriggered;
-    public UnityEvent equipMenuButtonTriggered;
-    public UnityEvent aimTriggered;
-    public UnityEvent fireTriggered;
-    public UnityEvent reloadTriggered;
-    public UnityEvent swapTriggered;
-    public UnityEvent activatePrimaryTriggered;
-    public UnityEvent activateSecondaryTriggered;
-    public UnityEvent activateUtilLeftTriggered;
-    public UnityEvent activateUtilRightTriggered;
-    public UnityEvent activateUnarmedTriggered;
+   [HideInInspector]  public UnityEvent slowWalkTriggered;
+    [HideInInspector] public UnityEvent crouchTriggered;
+    [HideInInspector] public UnityEvent crouchReleased;
+    [HideInInspector] public UnityEvent jumpTriggered;
+    [HideInInspector] public UnityEvent interactTriggered;
+    [HideInInspector] public UnityEvent cancelTriggered;
+    [HideInInspector] public UnityEvent pauseMenuButtonTriggered;
+    [HideInInspector] public UnityEvent equipMenuButtonTriggered;
+    [HideInInspector] public UnityEvent aimTriggered;
+    [HideInInspector] public UnityEvent fireTriggered;
+    [HideInInspector] public UnityEvent reloadTriggered;
+    [HideInInspector] public UnityEvent swapTriggered;
+    [HideInInspector] public UnityEvent activatePrimaryTriggered;
+    [HideInInspector] public UnityEvent activateSecondaryTriggered;
+    [HideInInspector] public UnityEvent activateUtilLeftTriggered;
+    [HideInInspector] public UnityEvent activateUtilRightTriggered;
+    [HideInInspector] public UnityEvent activateUnarmedTriggered;
 
     [Header("Locked Interaction Unity Events")]
     [Space(10)]
 
-    public UnityEvent lint_CursorMoveTriggered;
-    public UnityEvent lint_ClickTriggered;
-    public UnityEvent lint_CancelTriggered;
-    public UnityEvent lint_Num_1Triggered;
-    public UnityEvent lint_Num_2Triggered;
-    public UnityEvent lint_Num_3Triggered;
-    public UnityEvent lint_Num_4Triggered;
-    public UnityEvent lint_Num_5Triggered;
-    public UnityEvent lint_Num_6Triggered;
-    public UnityEvent lint_Num_7Triggered;
-    public UnityEvent lint_Num_8Triggered;
-    public UnityEvent lint_Num_9Triggered;
-    public UnityEvent lint_Num_0Triggered;
+    [HideInInspector] public UnityEvent lint_CursorMoveTriggered;
+    [HideInInspector] public UnityEvent lint_ClickTriggered;
+    [HideInInspector] public UnityEvent lint_CancelTriggered;
+    [HideInInspector] public UnityEvent lint_Num_1Triggered;
+    [HideInInspector] public UnityEvent lint_Num_2Triggered;
+    [HideInInspector] public UnityEvent lint_Num_3Triggered;
+    [HideInInspector] public UnityEvent lint_Num_4Triggered;
+    [HideInInspector] public UnityEvent lint_Num_5Triggered;
+    [HideInInspector] public UnityEvent lint_Num_6Triggered;
+    [HideInInspector] public UnityEvent lint_Num_7Triggered;
+    [HideInInspector] public UnityEvent lint_Num_8Triggered;
+    [HideInInspector] public UnityEvent lint_Num_9Triggered;
+    [HideInInspector] public UnityEvent lint_Num_0Triggered;
 
-    private InputState currentState;
+    [Header("Menu Navigation Unity Events")]
+    [Space(10)]
+
+    [HideInInspector] public UnityEvent menu_ClickTriggered;
+    [HideInInspector] public UnityEvent menu_CancelTriggered;
+
+    public InputState currentState {get ; private set;}
     [SerializeField] private InputState defaultState = InputState.FirstPerson;
 
     /// <summary>
@@ -248,10 +271,14 @@ public class FPS_InputHandler : MonoBehaviour
 
         //Menu Navigation actions
 
+        menu_CursorMoveAction = actionMap_MenuNav.FindAction(menu_CursorMove);
+        menu_ClickAction = actionMap_MenuNav.FindAction(menu_Click);
+        menu_CancelAction = actionMap_MenuNav.FindAction(menu_Cancel);
+
         //Cutscene actions
         
 
-        inputActions_FPS = new InputAction[]
+        /* inputActions_FPS = new InputAction[]
         {
             moveAction, 
             lookAction, 
@@ -292,13 +319,15 @@ public class FPS_InputHandler : MonoBehaviour
 
         inputActions_MenuNav = new InputAction[]
         {
-           //
+            menu_CursorMoveAction,
+            menu_ClickAction,
+            menu_CancelAction
         };
 
         inputActions_Cutscene = new InputAction[]
         {
             //
-        };
+        }; */
 
         RegisterInputActions();
     }
@@ -320,13 +349,14 @@ public class FPS_InputHandler : MonoBehaviour
         slowWalkAction.performed += context => SlowWalkInput = true;
         slowWalkAction.canceled += context => SlowWalkInput = false;
 
-        crouchAction.started += context => FPSS_CharacterController.Instance.StartCrouch();
+        //crouchAction.started += context => FPSS_CharacterController.Instance.StartCrouch();
         crouchAction.started += context => crouchTriggered.Invoke();
         crouchAction.performed += context => CrouchInput = true;
-        crouchAction.canceled += context => FPSS_CharacterController.Instance.StopCrouch();
+        //crouchAction.canceled += context => FPSS_CharacterController.Instance.StopCrouch();
+        crouchAction.canceled += context => crouchReleased.Invoke();
         crouchAction.canceled += context => CrouchInput = false;
 
-        jumpAction.started += context => FPSS_CharacterController.Instance.Jump();
+        //jumpAction.started += context => FPSS_CharacterController.Instance.Jump();
         jumpAction.started += context => jumpTriggered.Invoke();
         jumpAction.performed += context => JumpInput = true;
         jumpAction.canceled += context => JumpInput = false;
@@ -351,26 +381,28 @@ public class FPS_InputHandler : MonoBehaviour
         aimAction.performed += context => AimInput = true;
         aimAction.canceled += context => AimInput = false;
 
-        fireAction.started += context => FPSS_WeaponPool.Instance.Fire();
+        //fireAction.started += context => FPSS_WeaponPool.Instance.Fire();
         fireAction.started += context => fireTriggered.Invoke();
         fireAction.performed += context => FireInput = true;
         fireAction.canceled += context => FireInput = false;
 
-        reloadAction.started += context => FPSS_WeaponPool.Instance.Reload();
+        //reloadAction.started += context => FPSS_WeaponPool.Instance.Reload();
         reloadAction.started += context => reloadTriggered.Invoke();
         reloadAction.performed += context => ReloadInput = true;
         reloadAction.canceled += context => ReloadInput = false;
 
-        swapSlotAction.started += context => FPSS_WeaponPool.Instance.SwapPrimarySecondary();
+        //swapSlotAction.started += context => FPSS_WeaponPool.Instance.SwapPrimarySecondary();
         swapSlotAction.started += context => swapTriggered.Invoke();
         swapSlotAction.performed += context => SwapSlotInput = true;
         swapSlotAction.canceled += context => SwapSlotInput = false;
 
-        weaponPrimaryAction.started += context => FPSS_WeaponPool.Instance.SelectPrimary();
+        //weaponPrimaryAction.started += context => FPSS_WeaponPool.Instance.SelectPrimary();
+        weaponPrimaryAction.started += context => activatePrimaryTriggered.Invoke();
         weaponPrimaryAction.performed += context => ActivatePrimaryWeaponSlotInput = true;
         weaponPrimaryAction.canceled += context => ActivatePrimaryWeaponSlotInput = false;
         
-        weaponSecondaryAction.started += context => FPSS_WeaponPool.Instance.SelectSecondary();
+        //weaponSecondaryAction.started += context => FPSS_WeaponPool.Instance.SelectSecondary();
+        weaponSecondaryAction.started += context => activateSecondaryTriggered.Invoke();
         weaponSecondaryAction.performed += context => ActivateSecondaryWeaponSlotInput = true;
         weaponSecondaryAction.canceled += context => ActivateSecondaryWeaponSlotInput = false;
 
@@ -380,7 +412,7 @@ public class FPS_InputHandler : MonoBehaviour
         utilRightAction.performed += context => UseUtilRightInput = true;
         utilRightAction.canceled += context => UseUtilRightInput = false;
 
-        unarmedAction.started += context => FPSS_WeaponPool.Instance.SelectUnarmed();
+        //unarmedAction.started += context => FPSS_WeaponPool.Instance.SelectUnarmed();
         unarmedAction.performed += context => ActivateUnarmedInput = true;
         unarmedAction.canceled += context => ActivateUnarmedInput = false;
 
@@ -439,6 +471,17 @@ public class FPS_InputHandler : MonoBehaviour
 
         //MENU NAVIGATION ACTIONS
 
+        menu_CursorMoveAction.performed += context => Menu_CursorMoveInput = context.ReadValue<Vector2>();
+        menu_CursorMoveAction.canceled += context => Menu_CursorMoveInput = Vector2.zero;
+
+        menu_ClickAction.started += context => menu_ClickTriggered.Invoke();
+        menu_ClickAction.performed += context => Menu_ClickInput = true;
+        menu_ClickAction.canceled += context => Menu_ClickInput = false;
+
+        menu_CancelAction.started += context => menu_CancelTriggered.Invoke();
+        menu_CancelAction.performed += context => Menu_CancelInput = true;
+        menu_CancelAction.canceled += context => Menu_CancelInput = false;
+
         //CUTSCENE ACTIONS
 
         //
@@ -449,7 +492,7 @@ public class FPS_InputHandler : MonoBehaviour
     /// </summary>
     void OnEnable()
     {   
-        SetInputState(currentState); //maybe need to use default state here????
+        SetInputState(defaultState); //maybe need to use default state here????
     }
 
     /// <summary>
@@ -471,6 +514,7 @@ public class FPS_InputHandler : MonoBehaviour
         switch (state)
         {
             case InputState.FirstPerson:
+                CursorLock(true);
                 playerControls.FindActionMap(actionMapName_MenuNav).Disable();
                 playerControls.FindActionMap(actionMapName_LockedInteraction).Disable();
                 playerControls.FindActionMap(actionMapName_Cutscene).Disable();
@@ -478,6 +522,7 @@ public class FPS_InputHandler : MonoBehaviour
                 currentState = state;
                 break;
             case InputState.MenuNavigation:
+                CursorLock(false);
                 playerControls.FindActionMap(actionMapName_FPS).Disable();
                 playerControls.FindActionMap(actionMapName_LockedInteraction).Disable();
                 playerControls.FindActionMap(actionMapName_Cutscene).Disable();
@@ -485,6 +530,7 @@ public class FPS_InputHandler : MonoBehaviour
                 currentState = state;
                 break;
             case InputState.LockedInteraction:
+                CursorLock(false);
                 playerControls.FindActionMap(actionMapName_FPS).Disable();
                 playerControls.FindActionMap(actionMapName_MenuNav).Disable();
                 playerControls.FindActionMap(actionMapName_Cutscene).Disable();
@@ -492,6 +538,7 @@ public class FPS_InputHandler : MonoBehaviour
                 currentState = state;
                 break;
             case InputState.Cutscene:
+                CursorLock(false);
                 playerControls.FindActionMap(actionMapName_FPS).Disable();
                 playerControls.FindActionMap(actionMapName_MenuNav).Disable();
                 playerControls.FindActionMap(actionMapName_LockedInteraction).Disable();
@@ -501,56 +548,17 @@ public class FPS_InputHandler : MonoBehaviour
         }
     }
 
-    //OBSOLETED LEGACY CODE, DO NOT EDIT BELOW THIS LINE
-    //OBSOLETED LEGACY CODE, DO NOT EDIT BELOW THIS LINE
-    //OBSOLETED LEGACY CODE, DO NOT EDIT BELOW THIS LINE
-    //OBSOLETED LEGACY CODE, DO NOT EDIT BELOW THIS LINE  
-
-    public void ToggleMovement(bool state)
+    public void CursorLock(bool state)
     {
-        if (!state)
+        if (state)
         {
-            moveAction.Disable();
-            lookAction.Disable();
-            slowWalkAction.Disable();
-            crouchAction.Disable();
-            jumpAction.Disable();
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
         }
         else
         {
-            moveAction.Enable();
-            lookAction.Enable();
-            slowWalkAction.Enable();
-            crouchAction.Enable();
-            jumpAction.Enable();
-        }
-    }
-
-    public void ToggleFPSActions(bool state)
-    {
-        if (!state)
-        {
-            aimAction.Disable();
-            fireAction.Disable();
-            reloadAction.Disable();
-            swapSlotAction.Disable();
-            weaponPrimaryAction.Disable();
-            weaponSecondaryAction.Disable();
-            utilLeftAction.Disable();
-            utilRightAction.Disable();
-            unarmedAction.Disable();
-        }
-        else
-        {
-            aimAction.Enable();
-            fireAction.Enable();
-            reloadAction.Enable();
-            swapSlotAction.Enable();
-            weaponPrimaryAction.Enable();
-            weaponSecondaryAction.Enable();
-            utilLeftAction.Enable();
-            utilRightAction.Enable();
-            unarmedAction.Enable();
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
         }
     }
 }

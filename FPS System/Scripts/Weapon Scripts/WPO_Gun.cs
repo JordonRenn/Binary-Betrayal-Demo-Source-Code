@@ -123,6 +123,7 @@ public class WPO_Gun : FPSS_WeaponSlotObject
         }
 
         Vector2 spreadOffset = spreadPattern[spreadIndex] * currentSpread;
+
         camController.ApplySpread(spreadOffset);
 
         currentSpread = Mathf.Clamp(currentSpread + spread, spread, spreadPatternArrayLength);

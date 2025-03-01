@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
@@ -9,8 +10,11 @@ using DG.Tweening;
 /// </summary>
 public class FPSS_WeaponHUD : MonoBehaviour
 {
-    private FPSS_Main main; // Used to see what weapon slot is currently active
-    private FPSS_WeaponPool weaponPool; // Used to see what gun is currently assigned to each slot
+    public static FPSS_WeaponHUD Instance { get; private set; }
+    
+    //private FPSS_Main FPSS_Main.Instance; // Used to see what weapon slot is currently active
+    //private FPSS_WeaponPool weaponPool; // Used to see what gun is currently assigned to each slot
+    private GameObject player;
 
     private WPO_Gun primaryWeaponComponent;
     private WPO_Gun secondaryWeaponComponent;
@@ -47,6 +51,18 @@ public class FPSS_WeaponHUD : MonoBehaviour
     [SerializeField] private float initTimeout = 10f; // Initialization timeout
     private bool initialized = false; // Flag used to stop Update() from running before initialization is complete
     private bool hidden = false;
+
+    void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
     
     /// <summary>
     /// Called on the frame when a script is enabled just before any of the Update methods are called the first time.
@@ -61,74 +77,50 @@ public class FPSS_WeaponHUD : MonoBehaviour
     /// </summary>
     IEnumerator Init()
     {
-        float elapsedTime = 0f;
+        float initTime = Time.time;
 
-        while (FPSS_Main.Instance == null || FPSS_WeaponPool.Instance == null)
+        while (player == null && Time.time - initTime < initTimeout)
         {
-            elapsedTime += Time.deltaTime;
-            if (elapsedTime >= initTimeout)
+            //Debug.Log("WEAPON HUD | looking for Player");
+
+            player = GameObject.FindWithTag("Player");
+            yield return null;
+        }
+
+        while (FPSS_WeaponPool.Instance.weaponPool[0] == null || FPSS_WeaponPool.Instance.weaponPool[1] == null)
+        {
+            if (Time.time - initTime < initTimeout)
             {
-                Debug.LogError("Weapon HUD initialization timed out: Main or WeaponPool instance not found.");
+                Debug.LogError("WEAPON HUD | Initialization timed out: Weapon pool arrays not initialized.");
                 yield break;
             }
             yield return null;
         }
 
-        main = FPSS_Main.Instance;
-        weaponPool = FPSS_WeaponPool.Instance;
+        while (FPSS_WeaponPool.Instance.weaponPool[0][FPSS_WeaponPool.Instance.assignedPrimaryWeaponIndex] == null || FPSS_WeaponPool.Instance.weaponPool[1][FPSS_WeaponPool.Instance.assignedSecondaryWeaponIndex] == null)
 
-        yield return new WaitForSeconds(initDelay);
-        elapsedTime += initDelay;
-
-        while (weaponPool.weaponPool[0] == null || weaponPool.weaponPool[1] == null)
         {
-            elapsedTime += Time.deltaTime;
-            if (elapsedTime >= initTimeout)
+            if (Time.time - initTime < initTimeout)
             {
-                Debug.LogError("Weapon HUD initialization timed out: Weapon pool arrays not initialized.");
+                Debug.LogError("WEAPON HUD | Initialization timed out: Primary or Secondary weapon not assigned.");
                 yield break;
             }
             yield return null;
         }
 
-        yield return new WaitForSeconds(initDelay);
-        elapsedTime += initDelay;
+        CacheWeaponComponents();
 
-        while (weaponPool.weaponPool[0][weaponPool.assignedPrimaryWeaponIndex] == null || weaponPool.weaponPool[1][weaponPool.assignedSecondaryWeaponIndex] == null)
-        {
-            elapsedTime += Time.deltaTime;
-            if (elapsedTime >= initTimeout)
-            {
-                Debug.LogError("Weapon HUD initialization timed out: Primary or Secondary weapon not assigned.");
-                yield break;
-            }
-            yield return null;
-        }
-
-        CacheWeaponComponents();   
-
-        yield return new WaitForSeconds(initDelay);
-
-        initialized = true;
-
-        Debug.Log($"WEAPON HUD: Initialization time: {elapsedTime} seconds. ({initDelay}s initialization delay applied)");
+        Debug.Log($"WEAPON HUD: Initialization time: {Time.time - initTime} seconds.");
 
         primaryWeaponComponent.AmmoChange.AddListener(UpdateAmmoCount);
         secondaryWeaponComponent.AmmoChange.AddListener(UpdateAmmoCount);
 
-        RefreshWeaponHUD();
-    }
+        initialized = true;
 
-    /// <summary>
-    /// Called once per frame.
-    /// </summary>
-    void Update()
-    {
-        if (!initialized) 
-        {
-            Debug.LogWarning("WEAPON HUD: Initializing...");
-            return;
-        }
+        //yield return new WaitForSeconds(initDelay);
+
+        RefreshWeaponHUD();
+        //GameMaster.Instance.gm_PlayerSpawned.AddListener(RefreshWeaponHUD);
     }
 
     private void UpdateAmmoCount()
@@ -139,8 +131,8 @@ public class FPSS_WeaponHUD : MonoBehaviour
 
     private void CacheWeaponComponents()
     {
-        primaryWeaponComponent = weaponPool.weaponPool[0][weaponPool.assignedPrimaryWeaponIndex].GetComponent<WPO_Gun>();
-        secondaryWeaponComponent = weaponPool.weaponPool[1][weaponPool.assignedSecondaryWeaponIndex].GetComponent<WPO_Gun>();
+        primaryWeaponComponent = FPSS_WeaponPool.Instance.weaponPool[0][FPSS_WeaponPool.Instance.assignedPrimaryWeaponIndex].GetComponent<WPO_Gun>();
+        secondaryWeaponComponent = FPSS_WeaponPool.Instance.weaponPool[1][FPSS_WeaponPool.Instance.assignedSecondaryWeaponIndex].GetComponent<WPO_Gun>();
     }
 
     /// <summary>
@@ -151,10 +143,10 @@ public class FPSS_WeaponHUD : MonoBehaviour
         Debug.Log("WEAPON HUD: Refreshing elements...");
         CacheWeaponComponents();            
         
-        switch (main.currentWeaponSlot)
+        switch (FPSS_Main.Instance.currentWeaponSlot)
         {
             case WeaponSlot.Primary:
-                Debug.Log("WEAPON HUD: Current Weapon Slot: " + main.currentWeaponSlot);
+                Debug.Log("WEAPON HUD: Current Weapon Slot: " + FPSS_Main.Instance.currentWeaponSlot);
                 
                 primaryNameText.color = color_NameActiveText;
                 primarySlotNumber.color = color_SlotActiveText;
@@ -167,7 +159,7 @@ public class FPSS_WeaponHUD : MonoBehaviour
                 primaryNameText.text = primaryWeaponComponent.weaponName;
                 break;
             case WeaponSlot.Secondary:
-                Debug.Log("WEAPON HUD: Current Weapon Slot: " + main.currentWeaponSlot);
+                Debug.Log("WEAPON HUD: Current Weapon Slot: " + FPSS_Main.Instance.currentWeaponSlot);
                 
                 primaryNameText.color = color_NameInactiveText;
                 primarySlotNumber.color = color_SlotInactiveText;
@@ -180,7 +172,7 @@ public class FPSS_WeaponHUD : MonoBehaviour
                 secondaryNameText.text = secondaryWeaponComponent.weaponName;
                 break;
             case WeaponSlot.Unarmed:
-                Debug.Log("WEAPON HUD: Current Weapon Slot: " + main.currentWeaponSlot);
+                Debug.Log("WEAPON HUD: Current Weapon Slot: " + FPSS_Main.Instance.currentWeaponSlot);
                 
                 primaryNameText.color = color_NameInactiveText;
                 primarySlotNumber.color = color_SlotInactiveText;
@@ -203,15 +195,15 @@ public class FPSS_WeaponHUD : MonoBehaviour
     /// </summary>
     void UpdateIconSprites()
     {
-        FPSS_WeaponSlotObject primaryWeaponObject = weaponPool.weaponPool[0][weaponPool.assignedPrimaryWeaponIndex].GetComponent<FPSS_WeaponSlotObject>();
-        FPSS_WeaponSlotObject secondaryWeaponObject =  weaponPool.weaponPool[1][weaponPool.assignedSecondaryWeaponIndex].GetComponent<FPSS_WeaponSlotObject>();             
+        FPSS_WeaponSlotObject primaryWeaponObject = FPSS_WeaponPool.Instance.weaponPool[0][FPSS_WeaponPool.Instance.assignedPrimaryWeaponIndex].GetComponent<FPSS_WeaponSlotObject>();
+        FPSS_WeaponSlotObject secondaryWeaponObject =  FPSS_WeaponPool.Instance.weaponPool[1][FPSS_WeaponPool.Instance.assignedSecondaryWeaponIndex].GetComponent<FPSS_WeaponSlotObject>();             
 
-        if (main.currentWeaponSlot == WeaponSlot.Primary)
+        if (FPSS_Main.Instance.currentWeaponSlot == WeaponSlot.Primary)
         {
             primaryIconImg.sprite = primaryWeaponObject.img_activeIcon;
             secondaryIconImg.sprite = secondaryWeaponObject.img_inactiveIcon;
         }
-        else if (main.currentWeaponSlot == WeaponSlot.Secondary)
+        else if (FPSS_Main.Instance.currentWeaponSlot == WeaponSlot.Secondary)
         {
             primaryIconImg.sprite = primaryWeaponObject.img_inactiveIcon;
             secondaryIconImg.sprite = secondaryWeaponObject.img_activeIcon;
@@ -223,16 +215,17 @@ public class FPSS_WeaponHUD : MonoBehaviour
         }
     }
 
-    public void Hide()
+    public void Hide(bool hide)
     {
         RectTransform rectTransform = GetComponent<RectTransform>();
-        if (!hidden)
+        
+        if (hide && !hidden)
         {
             // Move the entire HUD downwards to hide it
             rectTransform.DOAnchorPos(new Vector2(0, -80), 0);
             hidden = true;
         }
-        else
+        else if (!hide && hidden)
         {
             // Move the entire HUD upwards to show it
             rectTransform.DOAnchorPos(new Vector2(0, 0), 0);

@@ -25,8 +25,6 @@ public struct Notification
     }
 }
 
-
-
 public class NotificationSystem : MonoBehaviour
 {
     public static NotificationSystem Instance { get; private set; }
@@ -212,17 +210,6 @@ public class NotificationSystem : MonoBehaviour
         }
     }
 
-    public void Pause()
-    {
-        paused = true;
-    }
-
-    public void Resume()
-    {
-        paused = false;
-        ProcessNextNotification();
-    }
-
     void PlayNotificationSFX(NotificationType type)
     {
         EventReference eventRef = type switch
@@ -238,5 +225,16 @@ public class NotificationSystem : MonoBehaviour
         instance.setVolume(sfx_Volume / 100f);
         instance.start();
         instance.release();
+    }
+
+    public void Pause()
+    {
+        paused = true;
+    }
+
+    public void Resume()
+    {
+        paused = false;
+        ProcessNextNotification();
     }
 }

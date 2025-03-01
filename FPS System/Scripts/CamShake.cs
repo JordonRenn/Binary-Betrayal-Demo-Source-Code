@@ -31,7 +31,7 @@ public class CamShake : MonoBehaviour
             yield return null;
         }
 
-        transform.localPosition = Vector3.zero;
+        transform.localPosition = new Vector3(0,1,0);
         transform.localRotation = Quaternion.Euler(transform.localRotation.eulerAngles.x, transform.localRotation.eulerAngles.y, 0);
     }
 }

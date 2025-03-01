@@ -34,7 +34,7 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
     [SerializeField] protected float camShakeIntensity;
     [SerializeField] protected CinemachineCamera cam;
     public Animator animator { get; private set; } 
-    protected FPSS_PlayerCamController camController;
+    [SerializeField] protected FirstPersonCamController camController;
 
     [SerializeField] private WeaponSlot weaponSlot;
     
@@ -104,11 +104,13 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
         yield return new WaitForSeconds(initDelay);
         elapsedTime += initDelay;
 
-        while (reticleSystem == null || camController == null || cam == null || hud == null)
+        while (reticleSystem == null ||  cam == null || hud == null)
         {
             //cam = Camera.main;
             reticleSystem = GameObject.FindAnyObjectByType<FPSS_ReticleSystem>();
-            camController = cam.GetComponent<FPSS_PlayerCamController>();
+
+            //camController = cam.GetComponentInParent<FirstPersonCamController>();
+
             camShake = cam.GetComponent<CamShake>();
             hud = GameObject.FindAnyObjectByType<FPSS_WeaponHUD>();
 

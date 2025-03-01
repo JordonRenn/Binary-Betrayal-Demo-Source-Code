@@ -72,6 +72,18 @@ public class FPSS_CharacterController : MonoBehaviour
     private bool footToggle;
     private bool nextStep;
 
+    void Awake()
+    {
+        SubscribeToEvents();
+    }
+
+    void SubscribeToEvents()
+    {
+        FPS_InputHandler.Instance.crouchTriggered.AddListener(StartCrouch);
+        FPS_InputHandler.Instance.menu_CancelTriggered.AddListener(StopCrouch);
+        FPS_InputHandler.Instance.jumpTriggered.AddListener(Jump);
+    }
+
     /// <summary>
     /// Initializes the character controller.
     /// </summary>

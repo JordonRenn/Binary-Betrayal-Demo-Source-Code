@@ -1,12 +1,14 @@
 using System.Collections;
-using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
-using Unity.Cinemachine;
 
 public class FPSS_ReticleSystem : MonoBehaviour
 {
-    
+    public static FPSS_ReticleSystem Instance { get; private set; }
+
+    private CharacterMovement characterMovement = null;
+
     [SerializeField][Range(10,100)] float size;
     float calculatedSize;
     [SerializeField] float adsRetTargetSizeMultiplier;
@@ -22,23 +24,79 @@ public class FPSS_ReticleSystem : MonoBehaviour
     GameObject[] reticleElements;
     Image[] reticleimages;
     
-    Rigidbody playerRb;
+    //Rigidbody playerRb;
+    CharacterController playerController;
+    GameObject player;
     private bool hidden = false;
+
+    [Header("Dev  Options")]
+    [Space(10)]
+
+    [SerializeField] private float initTimeout = 5f;
+    private bool initizalized = false;
+
+    void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(this.gameObject);
+        }
+        else
+        {
+            Instance = this;
+        }
+    }
 
     void Start()
     {
         reticlePanel = GetComponent<RectTransform>();
-        FetchPlayerRigidbody();
         FetchReticleElements();
 
         if (reticlePanel == null)
         {
             Debug.LogError("Reticle panel is not assigned.");
         }
+
+        StartCoroutine(Init());
     }
+
+    IEnumerator Init()
+        {
+            float initTime = Time.time;
+
+            while (player == null && Time.time - initTime < initTimeout)
+            {
+                player = GameObject.FindWithTag("Player");
+                yield return null;
+            }
+
+            if (player == null)
+            {
+                Debug.LogError($"RETICLE SYSTEM | Player object not found. Initialization failed.");
+                yield break;
+            }
+
+            while (characterMovement == null && Time.time - initTime < initTimeout)
+            {
+                characterMovement = player.GetComponent<CharacterMovement>();
+                yield return null;
+            }
+
+            if (characterMovement == null)
+            {
+                Debug.LogError("$RETICLE SYSTEM | CharacterMovement component not found. Initialization failed.");
+                yield break;
+            }
+
+            playerController = player.GetComponent<CharacterController>();
+
+            initizalized = true;
+        }
     
     void Update()
     {
+        if (!initizalized) {return;}
+
         if (reticlePanel != null)
         {
             float velocityMultiplier = CalculateVelocityMultiplier();
@@ -61,12 +119,6 @@ public class FPSS_ReticleSystem : MonoBehaviour
         {
             Debug.LogError("Reticle panel is not assigned.");
         }
-    }
-
-    void FetchPlayerRigidbody()
-    {
-        GameObject playerObj = GameObject.FindWithTag("Player");
-        playerRb = playerObj.GetComponent<Rigidbody>();
     }
 
     void FetchReticleElements()
@@ -122,8 +174,8 @@ public class FPSS_ReticleSystem : MonoBehaviour
 
     float CalculateVelocityMultiplier()
     {
-        float rbv = playerRb.linearVelocity.magnitude;
-        float rbms = FPSS_CharacterController.moveSpeed;
+        float rbv = playerController.velocity.magnitude;  //possible source of error
+        float rbms = characterMovement.moveSpeed; //possible source of error
 
         if (rbms > 0.0f)
         {
@@ -189,9 +241,9 @@ public class FPSS_ReticleSystem : MonoBehaviour
         gunFireMultiplier = 1f;
     }
 
-    public void Hide()
+    public void Hide(bool hide)
     {
-        if (!hidden)
+        if (hide && !hidden)
         {
             for (int i = 0; i < 4; i++)
             {
@@ -200,7 +252,7 @@ public class FPSS_ReticleSystem : MonoBehaviour
 
             hidden = true;
         }
-        else
+        else if (!hide && hidden)
         {
             for (int i = 0; i < 4; i++)
             {
