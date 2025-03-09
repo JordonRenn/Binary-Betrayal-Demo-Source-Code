@@ -6,4 +6,5 @@ public interface IDoor
 {
     IEnumerator OpenDoor();
     void CloseDoor();
+    void LockDoor(bool locked);
 }

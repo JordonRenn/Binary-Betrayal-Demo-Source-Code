@@ -1,5 +1,4 @@
 using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -58,6 +57,7 @@ public class FPSS_ReticleSystem : MonoBehaviour
         }
 
         StartCoroutine(Init());
+        GameMaster.Instance.gm_ReticleSystemSpawned.Invoke();
     }
 
     IEnumerator Init()

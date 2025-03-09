@@ -1,11 +1,13 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 public class PauseMenu : MonoBehaviour
 {
     [SerializeField] private float pauseCooldown = 0.5f;
     [SerializeField] private GameObject pauseMenuCanvas;
+    [SerializeField] private Button b_Resume;
     
     private InputState previousState;
     private bool isPaused = false;
@@ -14,6 +16,7 @@ public class PauseMenu : MonoBehaviour
     {
         FPS_InputHandler.Instance.pauseMenuButtonTriggered.AddListener(Pause);
         previousState = FPS_InputHandler.Instance.currentState;
+        b_Resume.onClick.AddListener(ResumeGame);
     }
 
     private void Pause()
@@ -26,6 +29,7 @@ public class PauseMenu : MonoBehaviour
         if (!isPaused)
         {
             FPS_InputHandler.Instance.pauseMenuButtonTriggered.RemoveListener(Pause);
+            FPS_InputHandler.Instance.pauseMenuButtonTriggered.AddListener(ResumeGame);
             
             previousState = FPS_InputHandler.Instance.currentState;
 
@@ -33,8 +37,6 @@ public class PauseMenu : MonoBehaviour
             
             VolumeManager.Instance.SetVolume(VolumeType.PauseMenu);
             UI_Master.Instance.HideAllHUD();
-
-            FPS_InputHandler.Instance.pauseMenuButtonTriggered.AddListener(ResumeGame);
 
             StartCoroutine(TimeStopWaitTime(0.15f, showMenu));
         }
@@ -70,8 +72,6 @@ public class PauseMenu : MonoBehaviour
             VolumeManager.Instance.SetVolume(VolumeType.Default);
             UI_Master.Instance.ShowAllHUD();
 
-            FPS_InputHandler.Instance.pauseMenuButtonTriggered.AddListener(Pause);
-
             StartCoroutine(PauseCooldown());
         }
     }
@@ -79,6 +79,7 @@ public class PauseMenu : MonoBehaviour
     private IEnumerator PauseCooldown()
     {
         yield return new WaitForSecondsRealtime(pauseCooldown);
+        FPS_InputHandler.Instance.pauseMenuButtonTriggered.AddListener(Pause);
         isPaused = false;
     }
 

@@ -15,7 +15,7 @@ public class FPSS_WeaponHUD : MonoBehaviour
     //private FPSS_Main FPSS_Main.Instance; // Used to see what weapon slot is currently active
     //private FPSS_WeaponPool weaponPool; // Used to see what gun is currently assigned to each slot
     private GameObject player;
-
+    private FPSS_Pool c_WeaponPool;
     private WPO_Gun primaryWeaponComponent;
     private WPO_Gun secondaryWeaponComponent;
     
@@ -45,6 +45,11 @@ public class FPSS_WeaponHUD : MonoBehaviour
     [SerializeField] private Color color_AmmoActiveText;
     [SerializeField] private Color color_AmmoInactiveText;
 
+    [Header("Scriptable Objects")]
+    [Space(10)]
+
+    [SerializeField] private WeaponHUDData[] weaponData;
+
     [Header("DEV OPTIONS")]
     [SerializeField] private bool debugMode; // Enable/Disable debug mode
     [SerializeField] private float initDelay = 0.2f; // Used to pause execution between steps of initialization when needed
@@ -52,8 +57,11 @@ public class FPSS_WeaponHUD : MonoBehaviour
     private bool initialized = false; // Flag used to stop Update() from running before initialization is complete
     private bool hidden = false;
 
+    #region Initialization
     void Awake()
     {
+        Debug.Log("FPSS_WEAPONHUD | Instantiated");
+        
         if (Instance == null)
         {
             Instance = this;
@@ -62,14 +70,15 @@ public class FPSS_WeaponHUD : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        
+        GameMaster.Instance.gm_PlayerSpawned.AddListener(GetPlayer);
+        GameMaster.Instance.gm_WeaponPoolSpawned.AddListener(GetWeaponPool);
     }
     
-    /// <summary>
-    /// Called on the frame when a script is enabled just before any of the Update methods are called the first time.
-    /// </summary>
     void Start()
     {
         StartCoroutine(Init());
+        GameMaster.Instance.gm_WeaponHudSpawned.Invoke();
     }
 
     /// <summary>
@@ -77,51 +86,48 @@ public class FPSS_WeaponHUD : MonoBehaviour
     /// </summary>
     IEnumerator Init()
     {
+        Debug.Log("FPSS_WEAPONHUD | Initialization started");
         float initTime = Time.time;
 
         while (player == null && Time.time - initTime < initTimeout)
         {
-            //Debug.Log("WEAPON HUD | looking for Player");
-
-            player = GameObject.FindWithTag("Player");
             yield return null;
         }
 
-        while (FPSS_WeaponPool.Instance.weaponPool[0] == null || FPSS_WeaponPool.Instance.weaponPool[1] == null)
+        while (c_WeaponPool == null && Time.time - initTime < initTimeout)
         {
-            if (Time.time - initTime < initTimeout)
-            {
-                Debug.LogError("WEAPON HUD | Initialization timed out: Weapon pool arrays not initialized.");
-                yield break;
-            }
             yield return null;
         }
 
-        while (FPSS_WeaponPool.Instance.weaponPool[0][FPSS_WeaponPool.Instance.assignedPrimaryWeaponIndex] == null || FPSS_WeaponPool.Instance.weaponPool[1][FPSS_WeaponPool.Instance.assignedSecondaryWeaponIndex] == null)
-
-        {
-            if (Time.time - initTime < initTimeout)
-            {
-                Debug.LogError("WEAPON HUD | Initialization timed out: Primary or Secondary weapon not assigned.");
-                yield break;
-            }
-            yield return null;
-        }
+        yield return new WaitForSeconds(initDelay);
 
         CacheWeaponComponents();
 
-        Debug.Log($"WEAPON HUD: Initialization time: {Time.time - initTime} seconds.");
+        Debug.Log($"FPSS_WEAPONHUD | Initialization time: {Time.time - initTime} seconds.");
 
         primaryWeaponComponent.AmmoChange.AddListener(UpdateAmmoCount);
         secondaryWeaponComponent.AmmoChange.AddListener(UpdateAmmoCount);
 
         initialized = true;
 
-        //yield return new WaitForSeconds(initDelay);
-
         RefreshWeaponHUD();
         //GameMaster.Instance.gm_PlayerSpawned.AddListener(RefreshWeaponHUD);
     }
+
+    void GetPlayer()
+    {
+        player = GameObject.FindWithTag("Player");
+        GameMaster.Instance.gm_PlayerSpawned.RemoveListener(GetPlayer);
+        Debug.Log("WEAPON HUD | Player object cached");
+    }
+
+    void GetWeaponPool()
+    {
+        c_WeaponPool = FPSS_Pool.Instance;
+        GameMaster.Instance.gm_WeaponPoolSpawned.RemoveListener(GetWeaponPool);
+        Debug.Log("WEAPON HUD | Weapon pool instance cached");
+    }
+    #endregion
 
     private void UpdateAmmoCount()
     {
@@ -131,8 +137,8 @@ public class FPSS_WeaponHUD : MonoBehaviour
 
     private void CacheWeaponComponents()
     {
-        primaryWeaponComponent = FPSS_WeaponPool.Instance.weaponPool[0][FPSS_WeaponPool.Instance.assignedPrimaryWeaponIndex].GetComponent<WPO_Gun>();
-        secondaryWeaponComponent = FPSS_WeaponPool.Instance.weaponPool[1][FPSS_WeaponPool.Instance.assignedSecondaryWeaponIndex].GetComponent<WPO_Gun>();
+        primaryWeaponComponent = c_WeaponPool.assignedPrimaryWPO.gameObject.GetComponent<WPO_Gun>();
+        secondaryWeaponComponent = c_WeaponPool.assignedSecondaryWPO.gameObject.GetComponent<WPO_Gun>();
     }
 
     /// <summary>
@@ -147,40 +153,22 @@ public class FPSS_WeaponHUD : MonoBehaviour
         {
             case WeaponSlot.Primary:
                 Debug.Log("WEAPON HUD: Current Weapon Slot: " + FPSS_Main.Instance.currentWeaponSlot);
+
+                UpdateHUDTextColors(0);
                 
-                primaryNameText.color = color_NameActiveText;
-                primarySlotNumber.color = color_SlotActiveText;
-                primaryAmmoText.color = color_AmmoActiveText;
-                
-                secondaryNameText.color = color_NameInactiveText;
-                secondarySlotNumber.color = color_SlotInactiveText;
-                secondaryAmmoText.color = color_AmmoInactiveText;
-                
-                primaryNameText.text = primaryWeaponComponent.weaponName;
+                primaryNameText.text = primaryWeaponComponent.HUDData.weaponDisplayName;
                 break;
             case WeaponSlot.Secondary:
                 Debug.Log("WEAPON HUD: Current Weapon Slot: " + FPSS_Main.Instance.currentWeaponSlot);
+
+                UpdateHUDTextColors(1);
                 
-                primaryNameText.color = color_NameInactiveText;
-                primarySlotNumber.color = color_SlotInactiveText;
-                primaryAmmoText.color = color_AmmoInactiveText;
-                
-                secondaryNameText.color = color_NameActiveText;
-                secondarySlotNumber.color = color_SlotActiveText;
-                secondaryAmmoText.color = color_AmmoActiveText;
-                
-                secondaryNameText.text = secondaryWeaponComponent.weaponName;
+                secondaryNameText.text = secondaryWeaponComponent.HUDData.weaponDisplayName;
                 break;
-            case WeaponSlot.Unarmed:
+            case WeaponSlot.Melee:
                 Debug.Log("WEAPON HUD: Current Weapon Slot: " + FPSS_Main.Instance.currentWeaponSlot);
-                
-                primaryNameText.color = color_NameInactiveText;
-                primarySlotNumber.color = color_SlotInactiveText;
-                primaryAmmoText.color = color_AmmoInactiveText;
-                
-                secondaryNameText.color = color_NameInactiveText;
-                secondarySlotNumber.color = color_SlotInactiveText;
-                secondaryAmmoText.color = color_AmmoInactiveText;
+
+                UpdateHUDTextColors(2);
                 
                 primaryNameText.text = "Unarmed";
                 secondaryNameText.text = "Unarmed";
@@ -195,25 +183,82 @@ public class FPSS_WeaponHUD : MonoBehaviour
     /// </summary>
     void UpdateIconSprites()
     {
-        FPSS_WeaponSlotObject primaryWeaponObject = FPSS_WeaponPool.Instance.weaponPool[0][FPSS_WeaponPool.Instance.assignedPrimaryWeaponIndex].GetComponent<FPSS_WeaponSlotObject>();
-        FPSS_WeaponSlotObject secondaryWeaponObject =  FPSS_WeaponPool.Instance.weaponPool[1][FPSS_WeaponPool.Instance.assignedSecondaryWeaponIndex].GetComponent<FPSS_WeaponSlotObject>();             
+        FPSS_WeaponSlotObject primaryWeaponObject = c_WeaponPool.assignedPrimaryWPO;
+        FPSS_WeaponSlotObject secondaryWeaponObject =  c_WeaponPool.assignedSecondaryWPO;             
 
         if (FPSS_Main.Instance.currentWeaponSlot == WeaponSlot.Primary)
         {
-            primaryIconImg.sprite = primaryWeaponObject.img_activeIcon;
-            secondaryIconImg.sprite = secondaryWeaponObject.img_inactiveIcon;
+            primaryIconImg.sprite = primaryWeaponObject.HUDData.weaponActiveImg;
+            secondaryIconImg.sprite = secondaryWeaponObject.HUDData.weaponInactiveImg;
         }
         else if (FPSS_Main.Instance.currentWeaponSlot == WeaponSlot.Secondary)
         {
-            primaryIconImg.sprite = primaryWeaponObject.img_inactiveIcon;
-            secondaryIconImg.sprite = secondaryWeaponObject.img_activeIcon;
+            primaryIconImg.sprite = primaryWeaponObject.HUDData.weaponInactiveImg;
+            secondaryIconImg.sprite = secondaryWeaponObject.HUDData.weaponActiveImg;
         }
         else
         {
-            primaryIconImg.sprite = primaryWeaponObject.img_inactiveIcon;
-            secondaryIconImg.sprite = secondaryWeaponObject.img_inactiveIcon;
+            primaryIconImg.sprite = primaryWeaponObject.HUDData.weaponInactiveImg;
+            secondaryIconImg.sprite = secondaryWeaponObject.HUDData.weaponInactiveImg;
         }
     }
+
+
+
+
+
+
+
+
+    private void UpdateWeaponDisplayData()
+    {
+        //
+    }
+
+    /// <summary>
+    /// 0 = Primary active; 1 = Secondary active; 2 = both inactive
+    /// </summary>
+    /// <param name="slot"></param>
+    private void UpdateHUDTextColors(int slot)
+    {
+        if (slot == 0) //primary active
+        {
+            primaryNameText.color = color_NameActiveText;
+            primarySlotNumber.color = color_SlotActiveText;
+            primaryAmmoText.color = color_AmmoActiveText;
+            
+            secondaryNameText.color = color_NameInactiveText;
+            secondarySlotNumber.color = color_SlotInactiveText;
+            secondaryAmmoText.color = color_AmmoInactiveText;
+        }
+        else if (slot == 1) //secondary active
+        {
+            primaryNameText.color = color_NameInactiveText;
+            primarySlotNumber.color = color_SlotInactiveText;
+            primaryAmmoText.color = color_AmmoInactiveText;
+            
+            secondaryNameText.color = color_NameActiveText;
+            secondarySlotNumber.color = color_SlotActiveText;
+            secondaryAmmoText.color = color_AmmoActiveText;
+        }
+        else //unarmed?? why not just hide HUD?
+        {
+            primaryNameText.color = color_NameInactiveText;
+            primarySlotNumber.color = color_SlotInactiveText;
+            primaryAmmoText.color = color_AmmoInactiveText;
+            
+            secondaryNameText.color = color_NameInactiveText;
+            secondarySlotNumber.color = color_SlotInactiveText;
+            secondaryAmmoText.color = color_AmmoInactiveText;
+        }
+    }
+
+
+
+
+
+
+
 
     public void Hide(bool hide)
     {

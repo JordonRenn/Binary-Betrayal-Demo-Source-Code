@@ -4,7 +4,7 @@ using FMODUnity;
 public class FMOD_FPSS_PlayerAudio : MonoBehaviour
 {
     public static FMOD_FPSS_PlayerAudio Instance {get ; private set;}
-    private FPSS_WeaponPool weaponPool;
+    private FPSS_Pool weaponPool;
     [SerializeField] private Transform pos_GunAudio;
 
     [Header("PLAYER SFX")] 
@@ -30,7 +30,7 @@ public class FMOD_FPSS_PlayerAudio : MonoBehaviour
 
     void Start()
     {
-        weaponPool = FPSS_WeaponPool.Instance;
+        weaponPool = FPSS_Pool.Instance;
     }
     
     public void Fire()

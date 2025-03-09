@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 /// <summary>
@@ -10,9 +11,12 @@ public class PlayerSpawner : MonoBehaviour
     
     [SerializeField] private GameObject player;
     [SerializeField] private Transform spawnPoint;
+    float spawnDelay = 0.1f;
 
     void Awake()
     {
+        Debug.Log("PLAYER SPAWNER | Instantiated");
+        
         if (Instance == null)
         {
             Instance = this;
@@ -29,6 +33,7 @@ public class PlayerSpawner : MonoBehaviour
     /// </summary>
     public void SpawnPlayer()
     {
+        Debug.Log("PLAYER SPAWNER | Spawning player");
         Instantiate(player, spawnPoint.position, spawnPoint.rotation);
     }
 }

@@ -2,13 +2,6 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using DG.Tweening;
 
-public enum VolumeType
-{
-    PauseMenu,
-    Cutscene,
-    Default
-}
-
 public class VolumeManager : MonoBehaviour
 {
     public static VolumeManager Instance { get; private set; }
@@ -26,8 +19,16 @@ public class VolumeManager : MonoBehaviour
     [Space(10)]
 
     [SerializeField] private VolumeProfile profileCutscene;
+
     [SerializeField] private float cutsceneWeight;
     [SerializeField] private float cutsceneTransitionTime;
+
+    [Header("LockPick Volume")]
+    [Space(10)]
+
+    [SerializeField] private VolumeProfile profileLockPick;
+    [SerializeField] private float lockPickWeight;
+    [SerializeField] private float lockPickTransitionTime;
 
     [Header("Default Volume")]
     [Space(10)]
@@ -36,17 +37,7 @@ public class VolumeManager : MonoBehaviour
 
     void Awake()
     {
-        if (Instance != null)
-        {
-            if (Instance != this)
-            {
-                Destroy(Instance.gameObject);
-            }
-        }
-        else
-        {
-            Instance = this;
-        }
+        Instance = this;
     }
 
     public void SetVolume(VolumeType volumeType)
@@ -60,6 +51,10 @@ public class VolumeManager : MonoBehaviour
             case VolumeType.Cutscene:
                 volume.profile = profileCutscene;
                 LerpWeight(cutsceneWeight, cutsceneTransitionTime);
+                break;
+            case VolumeType.LockPick:
+                volume.profile = profileLockPick;
+                LerpWeight(lockPickWeight, lockPickTransitionTime);
                 break;
             case VolumeType.Default:
                 LerpWeight(0, defaultTransitionTime);

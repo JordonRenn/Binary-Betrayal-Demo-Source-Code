@@ -1,9 +1,7 @@
 using System.Collections;
 using UnityEngine;
-using DG.Tweening;
 using FMODUnity;
-
-public class DoorGeneric : Interactable, IDoor
+public class DoorGeneric : Door
 {
     [SerializeField] private Animator doorAnimator;
     
@@ -12,28 +10,35 @@ public class DoorGeneric : Interactable, IDoor
 
     [SerializeField] private bool alwaysOpenToExt = false;
     [SerializeField] private float doorSpeed = 1f;
+    [SerializeField] private float unlockTime = 2f;
 
     [SerializeField] private LayerMask playerLayer;
+
+    [Header("Door and Lock States")]
+    [Space(10)]
+
+    [SerializeField] private DoorLockState defaultLockState;
+    public new DoorLockState doorLockState {get; private set;}
+    
     [SerializeField] private  DoorState defaultDoorState = DoorState.Closed;
+    public new DoorState doorState {get ; private set;}
+
+    [Header("FMOD")]
+    [Space(10)]
 
     [SerializeField] private EventReference sfx_Open;
     [SerializeField] private EventReference sfx_Close;
+    [SerializeField] private EventReference sfx_Locked;
+    [SerializeField] private EventReference sfx_Unlock;
     [SerializeField] private Transform audioPosition;
-    [SerializeField] private float unlockTime = 0.4f;
 
+    //SUBSTATES
     private bool playerInside = false; //is player on the interior side of the door
-    public DoorState doorState {get ; private set;}
-
-    public enum DoorState
-    {
-        OpenExt, //door swung open to the outside
-        OpenInt, //door swung open to the inside
-        Closed
-    }
 
     void Awake() 
     {
        doorState = defaultDoorState;
+       doorLockState = defaultLockState;
     }
     
     public override void Interact()
@@ -48,81 +53,99 @@ public class DoorGeneric : Interactable, IDoor
         }
     }
 
-    public IEnumerator OpenDoor()
+    private void HandleDoorOpen(bool isPlayerInside)
     {
-        if (playerInside) //opening from the inside
+        if (isPlayerInside)
         {
-            if (int_Locked)
+            switch (doorLockState)
             {
-                //play locked sound
-                Debug.Log("Door is locked from the outside");
-                yield break;
+                case DoorLockState.Unlocked:
+                    OpenDoor(true);
+                    doorState = DoorState.OpenExt;
+                    break;
+                case DoorLockState.Locked:
+                    PlayLocked_SFX();
+                    Debug.Log("DOORGENERIC | Door is locked from both sides");
+                    break;
+                case DoorLockState.LockedInteriorOnly:
+                    PlayLocked_SFX();
+                    Debug.Log("DOORGENERIC | Door is locked from the outside");
+                    break;
             }
-            else if (ext_Locked && !int_Locked)
-            {
-                //play unlock sound
-                ext_Locked = false;
-                Debug.Log("Door has been unlocked from the inside");
-
-                try
-                {
-                    NotificationSystem.Instance.DisplayNotification(new Notification("Door unlocked", NotificationType.Normal));
-                }
-                catch (System.Exception e)
-                {
-                    Debug.LogError($"DOORGENERIC.CS | Error: {e}");
-                }
-
-                yield return new WaitForSeconds(unlockTime);
-            }
-            
-            //play open sound
-            Debug.Log("Door is opening");
-            doorState = DoorState.OpenExt;
-            doorAnimator.SetTrigger("OpenExt");
         }
-        else //openinh from the outside
+        else
         {
-            if (ext_Locked)
+            switch(doorLockState)
             {
-                //play locked sound
-                Debug.Log("Door is locked from the inside");
-                yield break;
-            }
-            else if (int_Locked && !ext_Locked)
-            {
-                //play unlock sound
-                int_Locked = false;
-                Debug.Log("Door has been unlocked from the outside");
-
-                try
-                {
-                    NotificationSystem.Instance.DisplayNotification(new Notification("Door unlocked", NotificationType.Normal));
-                }
-                catch (System.Exception e)
-                {
-                    Debug.LogError($"DOORGENERIC.CS | Error: {e}");
-                }
-
-                yield return new WaitForSeconds(unlockTime);
-            }
-
-            //play open sound
-            Debug.Log("Door is opening");
-            if (alwaysOpenToExt)
-            {
-                doorState = DoorState.OpenExt;
-                doorAnimator.SetTrigger("OpenExt");
-            }
-            else
-            {
-                doorState = DoorState.OpenInt;
-                doorAnimator.SetTrigger("OpenInt");
+                case DoorLockState.Unlocked:
+                    Debug.Log("DOORGENERIC | Door is opening");
+                    if (alwaysOpenToExt)
+                    {
+                        OpenDoor(true);
+                        doorState = DoorState.OpenExt;
+                    }
+                    else 
+                    {
+                        OpenDoor(false);
+                        doorState = DoorState.OpenInt;
+                    }
+                    doorState = DoorState.OpenExt;
+                    break;
+                case DoorLockState.Locked:
+                    PlayLocked_SFX();
+                    Debug.Log("DOORGENERIC | Door is locked from both sides");
+                    break;
+                case DoorLockState.LockedExteriorOnly:
+                    PlayLocked_SFX();
+                    Debug.Log("DOORGENERIC | Door is locked from the inside");
+                    break;
             }
         }
     }
 
-    public void CloseDoor()
+    public override IEnumerator OpenDoor()
+    {
+        if (playerInside && doorLockState == DoorLockState.LockedExteriorOnly ||
+            !playerInside && doorLockState == DoorLockState.LockedInteriorOnly)
+        {
+            PlayUnlock_SFX();
+            yield return new WaitForSeconds(unlockTime);
+            
+            Debug.Log($"DOORGENERIC | Door has been unlocked from the {(playerInside ? "inside" : "outside")}");
+            doorLockState = DoorLockState.Unlocked;
+
+            if (alwaysOpenToExt)
+            {
+                OpenDoor(true);
+                doorState = DoorState.OpenExt;
+            }
+            else 
+            {
+                OpenDoor(!playerInside);
+                doorState = playerInside ? DoorState.OpenExt : DoorState.OpenInt;
+            }
+        }
+        else
+        {
+            HandleDoorOpen(playerInside);
+        }
+    }
+
+    private void OpenDoor(bool exterior)
+    {
+        if (exterior)
+        {
+            doorAnimator.SetTrigger("OpenExt");
+            doorState = DoorState.OpenExt;
+        }
+        else
+        {
+            doorAnimator.SetTrigger("OpenInt");
+            doorState = DoorState.OpenInt;
+        }
+    }
+
+    public override void CloseDoor()
     {
         //play close sound
         Debug.Log("Door is closing");
@@ -139,10 +162,20 @@ public class DoorGeneric : Interactable, IDoor
         }
     }
 
-    public void LockDoor(bool locked)
+    public override void LockDoor(bool locked)
     {
-        int_Locked = locked;
-        ext_Locked = locked;
+        //int_Locked = locked;
+        //ext_Locked = locked;
+
+        if (locked)
+        {
+            doorLockState = DoorLockState.Locked;
+        }
+        else
+        {
+            PlayUnlock_SFX();
+            doorLockState = DoorLockState.Unlocked;
+        }
     }
 
     //TRIGGER TO DETECT PLAYER SIDE OF THE DOOR
@@ -171,7 +204,7 @@ public class DoorGeneric : Interactable, IDoor
         }
         catch (System.Exception e)
         {
-            Debug.LogError($"Error playing open sfx: {e}");
+            Debug.LogError($"DOORGENERIC | Error playing open sfx: {e}");
         }
     }
 
@@ -183,7 +216,31 @@ public class DoorGeneric : Interactable, IDoor
         }
         catch (System.Exception e)
         {
-            Debug.LogError($"Error playing close sfx: {e}");
+            Debug.LogError($"DOORGENERIC | Error playing close sfx: {e}");
+        }
+    }
+
+    public void PlayLocked_SFX()
+    {
+        try
+        {
+            RuntimeManager.PlayOneShot(sfx_Locked, audioPosition.position);
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"DOORGENERIC | Error playing close sfx: {e}");
+        }
+    }
+
+    public void PlayUnlock_SFX()
+    {
+        try
+        {
+            RuntimeManager.PlayOneShot(sfx_Unlock, audioPosition.position);
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"DOORGENERIC | Error playing close sfx: {e}");
         }
     }
 }

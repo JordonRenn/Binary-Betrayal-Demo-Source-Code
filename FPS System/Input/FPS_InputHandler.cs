@@ -57,6 +57,7 @@ public class FPS_InputHandler : MonoBehaviour
     private const string lint_CursorMove = "lint_CursorMove";
     private const string lint_Click = "lint_Click";
     private const string lint_Cancel = "lint_Cancel";
+    private const string lint_Interact = "lint_Interact";  // Add this line
     private const string lint_Num_1 = "lint_Num_1";
     private const string lint_Num_2 = "lint_Num_2";
     private const string lint_Num_3 = "lint_Num_3";
@@ -73,11 +74,7 @@ public class FPS_InputHandler : MonoBehaviour
     private const string menu_CursorMove = "menu_CursorMove";
     private const string menu_Click = "menu_Click";
     private const string menu_Cancel = "menu_Cancel";
-
-    /* private InputAction[] inputActions_FPS;
-    private InputAction[] inputActions_LockedInteraction;
-    private InputAction[] inputActions_MenuNav;
-    private InputAction[] inputActions_Cutscene; */
+    private const string menu_Dev = "menu_Dev";
 
     //FPS input actions
     private InputAction moveAction;
@@ -103,6 +100,7 @@ public class FPS_InputHandler : MonoBehaviour
     private InputAction lint_CursorMoveAction;
     private InputAction lint_ClickAction;
     private InputAction lint_CancelAction;
+    private InputAction lint_InteractAction;  // Add this line
     private InputAction lint_Num_1Action;
     private InputAction lint_Num_2Action;
     private InputAction lint_Num_3Action;
@@ -119,6 +117,7 @@ public class FPS_InputHandler : MonoBehaviour
     private InputAction menu_CursorMoveAction;
     private InputAction menu_ClickAction;
     private InputAction menu_CancelAction;
+    private InputAction menu_DevAction;
 
     //Cutscene input actions
 
@@ -147,6 +146,7 @@ public class FPS_InputHandler : MonoBehaviour
     public Vector2 Lint_CursorMoveInput {get ; private set;}
     public bool Lint_ClickInput {get ; private set;}
     public bool Lint_CancelInput {get ; private set;}
+    public bool Lint_InteractInput {get ; private set;}  // Add this line
     public bool Lint_Num_1Input {get ; private set;}
     public bool Lint_Num_2Input {get ; private set;}
     public bool Lint_Num_3Input {get ; private set;}
@@ -163,6 +163,7 @@ public class FPS_InputHandler : MonoBehaviour
     public Vector2 Menu_CursorMoveInput {get ; private set;}
     public bool Menu_ClickInput {get ; private set;}
     public bool Menu_CancelInput {get ; private set;}
+    public bool Menu_DevInput {get ; private set;}
 
     //Cutscene
 
@@ -193,6 +194,8 @@ public class FPS_InputHandler : MonoBehaviour
     [HideInInspector] public UnityEvent lint_CursorMoveTriggered;
     [HideInInspector] public UnityEvent lint_ClickTriggered;
     [HideInInspector] public UnityEvent lint_CancelTriggered;
+    [HideInInspector] public UnityEvent lint_InteractTriggered; 
+    [HideInInspector] public UnityEvent lint_InteractReleased;
     [HideInInspector] public UnityEvent lint_Num_1Triggered;
     [HideInInspector] public UnityEvent lint_Num_2Triggered;
     [HideInInspector] public UnityEvent lint_Num_3Triggered;
@@ -209,6 +212,7 @@ public class FPS_InputHandler : MonoBehaviour
 
     [HideInInspector] public UnityEvent menu_ClickTriggered;
     [HideInInspector] public UnityEvent menu_CancelTriggered;
+    [HideInInspector] public UnityEvent menu_DevTriggered;
 
     public InputState currentState {get ; private set;}
     [SerializeField] private InputState defaultState = InputState.FirstPerson;
@@ -258,6 +262,7 @@ public class FPS_InputHandler : MonoBehaviour
         lint_CursorMoveAction = actionMap_LockedInteraction.FindAction(lint_CursorMove);
         lint_ClickAction = actionMap_LockedInteraction.FindAction(lint_Click);
         lint_CancelAction = actionMap_LockedInteraction.FindAction(lint_Cancel);
+        lint_InteractAction = actionMap_LockedInteraction.FindAction(lint_Interact);  // Add this line
         lint_Num_1Action = actionMap_LockedInteraction.FindAction(lint_Num_1);
         lint_Num_2Action = actionMap_LockedInteraction.FindAction(lint_Num_2);
         lint_Num_3Action = actionMap_LockedInteraction.FindAction(lint_Num_3);
@@ -274,60 +279,7 @@ public class FPS_InputHandler : MonoBehaviour
         menu_CursorMoveAction = actionMap_MenuNav.FindAction(menu_CursorMove);
         menu_ClickAction = actionMap_MenuNav.FindAction(menu_Click);
         menu_CancelAction = actionMap_MenuNav.FindAction(menu_Cancel);
-
-        //Cutscene actions
-        
-
-        /* inputActions_FPS = new InputAction[]
-        {
-            moveAction, 
-            lookAction, 
-            slowWalkAction, 
-            crouchAction, 
-            jumpAction,
-            interactAction, 
-            cancelAction, 
-            menuPauseAction, 
-            menuEquipAction,
-            aimAction, 
-            fireAction, 
-            swapSlotAction, 
-            weaponPrimaryAction,
-            weaponSecondaryAction, 
-            utilLeftAction, 
-            utilRightAction, 
-            unarmedAction,
-            reloadAction
-        };
-
-        inputActions_LockedInteraction = new InputAction[]
-        {
-            lint_CursorMoveAction,
-            lint_ClickAction,
-            lint_CancelAction,
-            lint_Num_1Action,
-            lint_Num_2Action,
-            lint_Num_3Action,
-            lint_Num_4Action,
-            lint_Num_5Action,
-            lint_Num_6Action,
-            lint_Num_7Action,
-            lint_Num_8Action,
-            lint_Num_9Action,
-            lint_Num_0Action
-        };
-
-        inputActions_MenuNav = new InputAction[]
-        {
-            menu_CursorMoveAction,
-            menu_ClickAction,
-            menu_CancelAction
-        };
-
-        inputActions_Cutscene = new InputAction[]
-        {
-            //
-        }; */
+        menu_DevAction = actionMap_MenuNav.FindAction(menu_Dev);
 
         RegisterInputActions();
     }
@@ -425,6 +377,11 @@ public class FPS_InputHandler : MonoBehaviour
         lint_ClickAction.performed += context => Lint_ClickInput = true;
         lint_ClickAction.canceled += context => Lint_ClickInput = false;
 
+        lint_InteractAction.started += context => lint_InteractTriggered.Invoke();
+        lint_InteractAction.performed += context => Lint_InteractInput = true;
+        lint_InteractAction.canceled += context => lint_InteractReleased.Invoke();
+        lint_InteractAction.canceled += context => Lint_InteractInput = false;
+
         lint_CancelAction.started += context => lint_CancelTriggered.Invoke();
         lint_CancelAction.performed += context => Lint_CancelInput = true;
         lint_CancelAction.canceled += context => Lint_CancelInput = false;
@@ -481,6 +438,10 @@ public class FPS_InputHandler : MonoBehaviour
         menu_CancelAction.started += context => menu_CancelTriggered.Invoke();
         menu_CancelAction.performed += context => Menu_CancelInput = true;
         menu_CancelAction.canceled += context => Menu_CancelInput = false;
+
+        menu_DevAction.started += context => menu_DevTriggered.Invoke();
+        menu_DevAction.performed += context => Menu_DevInput = true;
+        menu_DevAction.canceled += context => Menu_DevInput = false;
 
         //CUTSCENE ACTIONS
 

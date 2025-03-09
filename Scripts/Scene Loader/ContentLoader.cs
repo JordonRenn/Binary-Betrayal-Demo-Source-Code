@@ -41,6 +41,8 @@ public class ContentLoader : MonoBehaviour
 
     public void LoadScene(SceneName sceneName)
     {
+        Debug.Log("CONTENT LOADER | Beginning scene content loading");
+        
         switch (sceneName)
         {
             case SceneName.MainMenu:

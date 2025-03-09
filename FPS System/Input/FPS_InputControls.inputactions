@@ -599,6 +599,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "lint_Interact",
+                    "type": "Button",
+                    "id": "c35f46d2-c199-489e-ac23-26016fa6f7ec",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "lint_Num_1",
                     "type": "Button",
                     "id": "a2d607e7-176b-4fb4-b4fe-dc4f0be6808e",
@@ -975,6 +984,28 @@
                     "action": "lint_Num_0",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "81730a58-7834-4771-a8d6-fb454c2537f3",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "lint_Interact",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ea7909eb-9e6b-43a9-a4d0-96789d36a65b",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "lint_Interact",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
@@ -1004,6 +1035,15 @@
                     "name": "menu_Cancel",
                     "type": "Button",
                     "id": "7238d84d-24b1-446e-b623-ea639e8c68b0",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "menu_Dev",
+                    "type": "Button",
+                    "id": "64f44ad3-df96-4477-96e5-618c805bad82",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -1074,6 +1114,17 @@
                     "processors": "AxisDeadzone",
                     "groups": "",
                     "action": "menu_Click",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5803f0d7-3e4d-4a89-a753-0a2f233e5f5e",
+                    "path": "<Keyboard>/backquote",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "menu_Dev",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

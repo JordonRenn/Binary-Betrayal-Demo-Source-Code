@@ -6,8 +6,7 @@ using FMODUnity;
 public class PS_Main : Interactable
 {
     private FPSS_WeaponHUD c_WeaponHud;
-    private FPSS_ReticleSystem c_ReticleSystem;    
-    private FPS_InputHandler c_InputHandler;
+    private FPSS_ReticleSystem c_ReticleSystem;
     private GameObject playerObj;
     private CharacterMovement characterMovement;
 
@@ -38,7 +37,17 @@ public class PS_Main : Interactable
 
     //substates
     private bool usingPhone = false;
+    private bool initialized = false;
 
+    #region Initialization
+    void Awake()
+    {
+        Debug.Log($"PAY PHONE | {this.gameObject.transform.position} | Instantiated");
+
+        GameMaster.Instance.gm_PlayerSpawned.AddListener(_GetPlayer);
+        GameMaster.Instance.gm_ReticleSystemSpawned.AddListener(_GetReticle);
+        GameMaster.Instance.gm_WeaponHudSpawned.AddListener(_GetWeaponHUD);
+    }
 
     void Start()
     {
@@ -47,69 +56,57 @@ public class PS_Main : Interactable
 
     private IEnumerator Init()
     {
-        yield return new WaitForSeconds(initDelay);
+        Debug.Log($"PAY PHONE | {this.gameObject.transform.position} | Initialization started");
+
+        //yield return new WaitForSeconds(initDelay);
 
         float initTime = Time.time;
 
-        while (c_WeaponHud == null && Time.time - initTime < initTimeout) // WEAPON HUD
+        while (playerObj == null && Time.time - initTime < initTimeout) // PLAYER OBJECT
         {
-            c_WeaponHud = FindFirstObjectByType<FPSS_WeaponHUD>();
-        }
-
-        if (c_WeaponHud == null)
-        {
-            Debug.LogError($"PHONE SYSTEM {phoneID}: Weapon HUD not found. Initialization failed.");
-            yield break;
+            //playerObj = GameObject.FindWithTag("Player");
+            Debug.Log($"PAY PHONE | {this.gameObject.transform.position} | Searching for PLAYER OBJECT");
+            yield return null;
         }
 
         while (c_ReticleSystem == null && Time.time - initTime < initTimeout) // RETICLE SYSTEM
         {
-            c_ReticleSystem = FindFirstObjectByType<FPSS_ReticleSystem>();
+            //c_ReticleSystem = FindFirstObjectByType<FPSS_ReticleSystem>();
+            Debug.Log($"PAY PHONE | {this.gameObject.transform.position} | Searching for RETICLE SYSTEM");
+            yield return null;
         }
 
-        if (c_ReticleSystem == null)
+        while (c_WeaponHud == null && Time.time - initTime < initTimeout) // WEAPON HUD
         {
-            Debug.LogError($"PHONE SYSTEM {phoneID}: Reticle System not found. Initialization failed.");
-            yield break;
+            //c_WeaponHud = FindFirstObjectByType<FPSS_WeaponHUD>();
+            Debug.Log($"PAY PHONE | {this.gameObject.transform.position} | Searching for WEAPON HUD");
+            yield return null;
         }
 
-        while (playerObj == null && Time.time - initTime < initTimeout) // PLAYER OBJECT
-        {
-            playerObj = GameObject.FindWithTag("Player");
-        }
-
-        if (playerObj == null)
-        {
-            Debug.LogError($"PHONE SYSTEM {phoneID}: Player object not found. Initialization failed.");
-            yield break;
-        }
-
-        while (characterMovement == null && Time.time - initTime < initTimeout) // CHARACTER MOVEMENT
-        {
-            characterMovement = playerObj.GetComponent<CharacterMovement>();
-        }
-
-        if (characterMovement == null)
-        {
-            Debug.LogError($"PHONE SYSTEM {phoneID}: Character Movement component not found. Initialization failed.");
-            yield break;
-        }
-
-        while (c_InputHandler == null && Time.time - initTime < initTimeout) // INPUT HANDLER
-        {
-            c_InputHandler = FPS_InputHandler.Instance;
-        }
-
-        if (c_InputHandler == null)
-        {
-            Debug.LogError($"PHONE SYSTEM {phoneID}: Input Handler not found. Initialization failed.");
-            yield break;
-        }
+        initialized = true;
+        Debug.Log($"PAY PHONE | {this.gameObject.transform.position} | Initialization COMPLETE");
     }
+
+    private void _GetPlayer()
+    {
+        playerObj = GameObject.FindWithTag("Player");
+        characterMovement = playerObj.GetComponent<CharacterMovement>();
+    }
+
+    private void _GetReticle()
+    {
+        c_ReticleSystem = FindFirstObjectByType<FPSS_ReticleSystem>();
+    }
+
+    private void _GetWeaponHUD()
+    {
+        c_WeaponHud = FindFirstObjectByType<FPSS_WeaponHUD>();
+    }
+    #endregion
 
     public override void Interact()
     {
-        if (!usingPhone)
+        if (!usingPhone && initialized)
         {
            StartCoroutine(ActivePhone());
         }
@@ -117,13 +114,13 @@ public class PS_Main : Interactable
 
     /// <summary>
     /// Activates the phone system
-    /// </summary>
+    /// </summary>/
     
     private IEnumerator ActivePhone()
     {
         usingPhone = true;
 
-        FPSS_WeaponPool.Instance.currentWeaponSlotObject.ToggleWeaponActive();
+        FPSS_Pool.Instance.currentActiveWPO.SetCurrentWeaponActive(false);
         characterMovement.moveDisabled = true; //needed to stop Update loop from running so controller can be disabled so player can teleport
         FPS_InputHandler.Instance.SetInputState(InputState.LockedInteraction);
         FPS_InputHandler.Instance.lint_CancelTriggered.AddListener(DeactivePhone);
@@ -181,7 +178,7 @@ public class PS_Main : Interactable
         interactCollider.enabled = true;
         usingPhone = false;
 
-        FPSS_WeaponPool.Instance.currentWeaponSlotObject.ToggleWeaponActive();
+        FPSS_Pool.Instance.currentActiveWPO.SetCurrentWeaponActive(true);
 
         yield return new WaitForSeconds(0.2f); //allow time for weapon to be re-enabled
         

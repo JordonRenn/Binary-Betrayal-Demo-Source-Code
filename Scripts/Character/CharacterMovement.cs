@@ -78,14 +78,19 @@ public class CharacterMovement : MonoBehaviour
     [Header("Dev Options")]
     [Space(10)]
 
-    [SerializeField] private float initDelay = 0.1f;
+    [SerializeField] private float initDelay = 0f;
 
     [HideInInspector] public bool moveDisabled = false; //needs to be true for teleporting to work
 
+	void Awake()
+	{
+		Debug.Log("CHARACTER MOVEMENT | Instantiated");
+	}
 	
     void Start()
     {
         StartCoroutine(Init(initDelay));
+		GameMaster.Instance.gm_PlayerSpawned.Invoke();
     }
 
     IEnumerator Init(float delay)

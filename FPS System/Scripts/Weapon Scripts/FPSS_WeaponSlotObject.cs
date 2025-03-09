@@ -3,37 +3,27 @@ using FMODUnity;
 using UnityEngine;
 using Unity.Cinemachine;
 
-/// <summary>
-/// Enum representing the fire mode of the weapon.
-/// </summary>
-public enum WeaponFireMode
-{
-    Automatic,
-    SemiAutomatic,
-    BoltAction
-}
-
 #region FPSS_WeaponSlotObject
 /// <summary>
 /// Class representing a weapon slot object in the FPS system.
 /// </summary>
 public class FPSS_WeaponSlotObject : MonoBehaviour
 {
+    [SerializeField] public WeaponRefID refID;
+    [SerializeField] public WeaponHUDData HUDData;
+    
     [Header("References")]
     [Space(10)]
     
-    protected FPSS_WeaponPool weaponPool;
-    private FPSS_Main main;
-    protected FPS_InputHandler inputHandler;
     protected FPSS_ReticleSystem reticleSystem;
     private FPSS_WeaponHUD hud;
-
-
-    protected CamShake camShake;
+    
+    [SerializeField] protected FPSS_Pool weaponPool;
+    [SerializeField] protected CamShake camShake;
     [Tooltip("Intensity of camera shake, 0-1 (1 being the most intense)")]
     [SerializeField] protected float camShakeIntensity;
     [SerializeField] protected CinemachineCamera cam;
-    public Animator animator { get; private set; } 
+    [SerializeField] public Animator animator ;
     [SerializeField] protected FirstPersonCamController camController;
 
     [SerializeField] private WeaponSlot weaponSlot;
@@ -41,8 +31,8 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
     [Header("Objects")]
     [Space(10)]
 
-    [SerializeField] public Sprite img_activeIcon;
-    [SerializeField] public Sprite img_inactiveIcon;
+    /* [SerializeField] public Sprite img_activeIcon;
+    [SerializeField] public Sprite img_inactiveIcon; */
 
     [SerializeField] private GameObject weaponObject;
     [SerializeField] private GameObject weaponArms;
@@ -68,80 +58,90 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
     [Header("DEV OPTIONS")]
     [Space(10)]
     
-    [SerializeField] private bool debugMode;
-    [SerializeField] private float initDelay = 0.2f;
     [SerializeField] private float initTimeout = 10f;
     public bool initialized  { get; private set; }
     
-    void Awake()
+    void OnEnable()
     {
+        Debug.Log("FPS_WEAPONSLOTOBJECT | Instantiated");
         initialized = false;
         StartCoroutine(Init());
     }
 
+    /* void Start()
+    {
+        StartCoroutine(Init());
+    } */
+
     #region Init
     IEnumerator Init()
     {
-        float elapsedTime = 0;
+        Debug.Log("FPS_WEAPONSLOTOBJECT | Initialization started");
+        
+        float initTime = Time.time;
 
-        animator = GetComponent<Animator>();
-
-        while (FPSS_WeaponPool.Instance == null || FPSS_Main.Instance == null || FPS_InputHandler.Instance == null)
+        while (reticleSystem == null  && Time.time - initTime <= initTimeout)
         {
-            elapsedTime += Time.deltaTime;
-            if (elapsedTime >= initTimeout)
+            try
             {
-                Debug.LogError("WEAPON SLOT OBJECT: Initialization timed out: Main or WeaponPool instance not found.");
-                yield break;
+                reticleSystem = GameObject.FindAnyObjectByType<FPSS_ReticleSystem>();
             }
+            finally
+            {
+                Debug.Log("FPSS_WEAPONSLOTOBJECT | Searching for ''Reticle System''");
+            }
+
             yield return null;
         }
 
-        weaponPool = FPSS_WeaponPool.Instance;
-        main = FPSS_Main.Instance;
-        inputHandler = FPS_InputHandler.Instance;
-
-        yield return new WaitForSeconds(initDelay);
-        elapsedTime += initDelay;
-
-        while (reticleSystem == null ||  cam == null || hud == null)
+        while (hud == null  && Time.time - initTime <= initTimeout)
         {
-            //cam = Camera.main;
-            reticleSystem = GameObject.FindAnyObjectByType<FPSS_ReticleSystem>();
-
-            //camController = cam.GetComponentInParent<FirstPersonCamController>();
-
-            camShake = cam.GetComponent<CamShake>();
-            hud = GameObject.FindAnyObjectByType<FPSS_WeaponHUD>();
-
-            elapsedTime += Time.deltaTime;
-            if (elapsedTime >= initTimeout)
+            try
             {
-                Debug.LogError("WEAPON SLOT OBJECT: Initialization timed out: ReticleSystem or CamController not found.");
-                yield break;
+                hud = GameObject.FindAnyObjectByType<FPSS_WeaponHUD>();
             }
+            finally
+            {
+                Debug.Log("FPSS_WEAPONSLOTOBJECT | Searching for ''Weapon HUD''");
+            }
+
             yield return null;
         }
 
         initialized = true;
 
-        Debug.Log($"WEAPON SLOT OBJECT: Initialization time: {elapsedTime} seconds.");
+        Debug.Log($"WEAPON SLOT OBJECT: Initialization time: {Time.time - initTime} seconds.");
+
+
     }
     #endregion
 
     #region WEAPON ACTIONS
     public IEnumerator SetWeaponActive()
     {
-        if (weaponObject == null || weaponArms == null || animator == null || weaponPool == null || main == null)
+        if (weaponPool == null)
         {
-            Debug.LogError("WEAPON SLOT OBJECT: SetWeaponActive failed due to uninitialized objects.");
+            Debug.LogError("WEAPON SLOT OBJECT: SetWeaponActive() no Weapon pool found.");
+            yield break;
+        }
+
+        if (FPSS_Main.Instance == null)
+        {
+            Debug.LogError("WEAPON SLOT OBJECT: SetWeaponActive() no FPS_Main found.");
             yield break;
         }
 
         isActive = true;
+
+        if (weaponObject != null)
+        {
+            weaponObject.SetActive(true);
+        }
         
-        weaponObject.SetActive(true);
-        weaponArms.SetActive(true);
+        if (weaponArms != null)
+        {
+            weaponArms.SetActive(true);
+        }
 
         animator.SetTrigger("Arm");
 
@@ -150,9 +150,12 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
         animator.SetTrigger("Idle");
         
         weaponPool.currentWeaponSlot = weaponSlot;
-        main.currentWeaponSlot = weaponSlot;
-        hud.RefreshWeaponHUD();
-        
+        FPSS_Main.Instance.currentWeaponSlot = weaponSlot;
+
+        if (FPSS_WeaponHUD.Instance != null)
+        {
+            FPSS_WeaponHUD.Instance.RefreshWeaponHUD();
+        }
     }
 
     public IEnumerator SetWeaponInactive()
@@ -167,9 +170,13 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
         isActive = false;
     }
 
-    public void ToggleWeaponActive()
+    /// <summary>
+    /// Used to deactivate current weapon without actually switching, or unloading weapon. Use for locked interactions and maybe: cutescenes? dialog? spacial events?
+    /// </summary>
+    /// <param name="active"></param>
+    public void SetCurrentWeaponActive(bool active)
     {
-        if (isActive)
+        if (!active)
         {
             StartCoroutine(SetWeaponInactive());
         }

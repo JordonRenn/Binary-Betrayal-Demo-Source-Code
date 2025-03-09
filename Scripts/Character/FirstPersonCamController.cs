@@ -13,7 +13,7 @@ public class FirstPersonCamController : MonoBehaviour
     float xRotation;
     float yRotation; 
     
-    private float initDelay = 0.2f;    //used to pause execution between steps of initialization when needed
+    private float initDelay = 0.25f;    //used to pause execution between steps of initialization when needed
     private bool initialized = false;                   //flag used to stop Update() from running before initialization is complete
 
     private bool isOverridden = false;
@@ -22,6 +22,8 @@ public class FirstPersonCamController : MonoBehaviour
 
     void Awake()
     {
+        Debug.Log("FIRST PERSON CAM CONTROLLER | Instantiated");
+        
         if (Instance != null && Instance != this)
         {
             Destroy(this.gameObject);
@@ -40,8 +42,6 @@ public class FirstPersonCamController : MonoBehaviour
     IEnumerator Init()
     {
         yield return new WaitForSeconds(initDelay);
-
-        //yield return orientation = GameObject.FindWithTag("cam_Orientation").transform;
 
         initialized = true;
     }
@@ -68,8 +68,8 @@ public class FirstPersonCamController : MonoBehaviour
 
     public void ApplySpread(Vector2 spreadOffset)
     {
-        xRotation -= spreadOffset.y;
-        yRotation += spreadOffset.x;
+        xRotation -= spreadOffset.x;
+        yRotation += spreadOffset.y;
     }
 
     public void SetRotation(Vector3 rotation)
@@ -78,8 +78,8 @@ public class FirstPersonCamController : MonoBehaviour
         yRotation = rotation.y;
     }
 
-    public void AllowOverride(bool toggle)
+    public void AllowOverride(bool allow)
     {
-        isOverridden = toggle;
+        isOverridden = allow;
     }
 }

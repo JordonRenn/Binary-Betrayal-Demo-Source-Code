@@ -4,26 +4,14 @@ using FMODUnity;
 using UnityEngine;
 using UnityEngine.Events;
 
-/// <summary>
-/// Enum representing the different weapon slots.
-/// </summary>
-public enum WeaponSlot
-{
-    Primary,
-    Secondary,
-    Knife,
-    Utility,
-    Unarmed
-}
-
 #region FPSS_WeaponPool
 /// <summary>
 /// Class representing the weapon pool in the FPS system.
 /// </summary>
+[Obsolete("FPSS_WeaponPool is deprecated, please use FPSS_Pool instead.")]
 public class FPSS_WeaponPool : MonoBehaviour
 {
-    public static FPSS_WeaponPool Instance { get; private set; }
-    private FPS_InputHandler inputHandler;
+    /* public static FPSS_WeaponPool Instance { get; private set; }
     private FPSS_Main main;     
     
     [HideInInspector] public GameObject[][] weaponPool;
@@ -46,47 +34,41 @@ public class FPSS_WeaponPool : MonoBehaviour
 
     //SUB STATES
     private bool isSwitching = false;
-    public bool isReloading = false;
-    public bool canReload = true;
+    public bool isReloading {get; private set;}
 
     [Header("DEV OPTIONS")]
     [Space(10)]
     
-    [SerializeField] private bool debugMode;
     [SerializeField] private float initDelay = 0.2f;
     [SerializeField] private float initTimeout = 10f;
     private bool initialized = false;
 
+    #region init
     void Awake()
     {
+        Debug.Log("FPS_WEAPONPOOL | Spawned");
+        
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
             return;
         }
         Instance = this;
-    }
 
-    void SubscribeToEvents()
-    {
-        FPS_InputHandler.Instance.fireTriggered.AddListener(Fire);
-        FPS_InputHandler.Instance.reloadTriggered.AddListener(Reload);
-        
-        FPS_InputHandler.Instance.activatePrimaryTriggered.AddListener(SelectPrimary);
-        FPS_InputHandler.Instance.activateSecondaryTriggered.AddListener(SelectSecondary);
-        //FPS_InputHandler.Instance.weaponSlotKnifeTriggered.AddListener(SelectKnife);
-
-        FPS_InputHandler.Instance.swapTriggered.AddListener(SwapPrimarySecondary);
+        isReloading = false;
     }
 
     void Start()
     {
         StartCoroutine(Init());
+        GameMaster.Instance.gm_WeaponPoolSpawned.Invoke();
     }
-
-    #region init
+    
     IEnumerator Init()
     {
+        Debug.Log("FPS_WEAPONPOOL | Initialization started");
+        yield return new WaitForSeconds(initDelay);
+       
         float elapsedTime = 0f;
         
         weaponPool = new GameObject[poolSize][];
@@ -102,6 +84,8 @@ public class FPSS_WeaponPool : MonoBehaviour
             yield return null;
         }
 
+        Debug.Log("FPS_WEAPONPOOL | FPS_Main found");
+
         main = FPSS_Main.Instance;
 
         weaponPool[0] = primaryWeapons;
@@ -110,7 +94,9 @@ public class FPSS_WeaponPool : MonoBehaviour
         weaponPool[3] = utilityWeapons;
         weaponPool[4] = unarmedWeapons;
 
-        currentWeaponSlot = WeaponSlot.Unarmed;
+        Debug.Log("FPS_WEAPONPOOL | Weapon pool array assigned");
+
+        currentWeaponSlot = WeaponSlot.Melee;
         main.currentWeaponSlot = currentWeaponSlot;
         currentWeaponSlotObject = weaponPool[(int)currentWeaponSlot][0].GetComponent<FPSS_WeaponSlotObject>();
 
@@ -120,8 +106,10 @@ public class FPSS_WeaponPool : MonoBehaviour
         assignedUtilityWeaponIndex = 0;
         assignedUnarmedWeaponIndex = 0;
 
+        Debug.Log("FPS_WEAPONPOOL | Indexes assigned");
+
         yield return new WaitForSeconds(initDelay);
-        elapsedTime += initDelay;
+        //elapsedTime += initDelay;
 
         while (weaponPool[0] == null || weaponPool[1] == null || weaponPool[2] == null || weaponPool[3] == null || weaponPool[4] == null)
         {
@@ -131,8 +119,10 @@ public class FPSS_WeaponPool : MonoBehaviour
                 Debug.LogError("Weapon Pool initialization timed out: Weapon pool arrays not initialized.");
                 yield break;
             }
-            yield return null;
+            //yield return null;
         }
+
+        Debug.Log("FPS_WEAPONPOOL | Weapon Pool Objects found");
 
         SubscribeToEvents();
         
@@ -140,6 +130,20 @@ public class FPSS_WeaponPool : MonoBehaviour
         
         initialized = true;
         Debug.Log($"WEAPON POOL: Initialization time: {elapsedTime} seconds.");
+    }
+
+    void SubscribeToEvents()
+    {
+        FPS_InputHandler.Instance.fireTriggered.AddListener(Fire);
+        FPS_InputHandler.Instance.reloadTriggered.AddListener(Reload);
+        
+        FPS_InputHandler.Instance.activatePrimaryTriggered.AddListener(SelectPrimary);
+        FPS_InputHandler.Instance.activateSecondaryTriggered.AddListener(SelectSecondary);
+        //FPS_InputHandler.Instance.weaponSlotKnifeTriggered.AddListener(SelectKnife);
+
+        FPS_InputHandler.Instance.swapTriggered.AddListener(SwapPrimarySecondary);
+
+        Debug.Log("FPS_WEAPONPOOL | Subcribed to input events");
     }
     #endregion
 
@@ -153,19 +157,16 @@ public class FPSS_WeaponPool : MonoBehaviour
         switch (slot)
         {
             case WeaponSlot.Primary:
-                yield return StartCoroutine(SwitchWeaponSlot(WeaponSlot.Primary, currentWeaponSlot));
+                yield return StartCoroutine(SwitchWeaponSlot(WeaponSlot.Primary));
                 break;
             case WeaponSlot.Secondary:
-                yield return StartCoroutine(SwitchWeaponSlot(WeaponSlot.Secondary, currentWeaponSlot));
+                yield return StartCoroutine(SwitchWeaponSlot(WeaponSlot.Secondary));
                 break;
-            case WeaponSlot.Knife:
-                yield return StartCoroutine(SwitchWeaponSlot(WeaponSlot.Knife, currentWeaponSlot));
+            case WeaponSlot.Melee:
+                yield return StartCoroutine(SwitchWeaponSlot(WeaponSlot.Melee));
                 break;
             case WeaponSlot.Utility:
-                yield return StartCoroutine(SwitchWeaponSlot(WeaponSlot.Utility, currentWeaponSlot));
-                break;
-            case WeaponSlot.Unarmed:
-                yield return StartCoroutine(SwitchWeaponSlot(WeaponSlot.Unarmed, currentWeaponSlot));
+                yield return StartCoroutine(SwitchWeaponSlot(WeaponSlot.Utility));
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(slot), slot, null);
@@ -175,7 +176,7 @@ public class FPSS_WeaponPool : MonoBehaviour
         yield return null;
     }
 
-    private IEnumerator SwitchWeaponSlot(WeaponSlot nextSlot, WeaponSlot prevSlot)
+    private IEnumerator SwitchWeaponSlot(WeaponSlot nextSlot)
     {
         yield return currentWeaponSlotObject.SetWeaponInactive();
         yield return ActivateWeaponSlot(nextSlot);
@@ -192,14 +193,11 @@ public class FPSS_WeaponPool : MonoBehaviour
             case WeaponSlot.Secondary:
                 weaponIndex = assignedSecondaryWeaponIndex;
                 break;
-            case WeaponSlot.Knife:
+            case WeaponSlot.Melee:
                 weaponIndex = assignedKnifeWeaponIndex;
                 break;
             case WeaponSlot.Utility:
                 weaponIndex = assignedUtilityWeaponIndex;
-                break;
-            case WeaponSlot.Unarmed:
-                weaponIndex = assignedUnarmedWeaponIndex;
                 break;
         }
         currentWeaponSlotObject = weaponPool[(int)slot][weaponIndex].GetComponent<FPSS_WeaponSlotObject>();
@@ -234,13 +232,13 @@ public class FPSS_WeaponPool : MonoBehaviour
 
     public void SelectKnife()
     {
-        if (currentWeaponSlot == WeaponSlot.Knife) 
+        if (currentWeaponSlot == WeaponSlot.Melee) 
         {
             return;
         }
         else
         {
-            StartCoroutine(UpdateActiveWeaponSlot(WeaponSlot.Knife));
+            StartCoroutine(UpdateActiveWeaponSlot(WeaponSlot.Melee));
         }
     }
 
@@ -258,13 +256,13 @@ public class FPSS_WeaponPool : MonoBehaviour
 
     public void SelectUnarmed()
     {
-        if (currentWeaponSlot == WeaponSlot.Unarmed) 
+        if (currentWeaponSlot == WeaponSlot.Melee) 
         {
             return;
         }
         else
         {
-            StartCoroutine(UpdateActiveWeaponSlot(WeaponSlot.Unarmed));
+            StartCoroutine(UpdateActiveWeaponSlot(WeaponSlot.Melee));
         }
     }
 
@@ -286,25 +284,6 @@ public class FPSS_WeaponPool : MonoBehaviour
     #endregion
 
     #region Weapon Actions
-    /* public void ReloadWeapon()
-    {
-        if (isReloading) return;
-        if (!canReload) return;
-
-        StartCoroutine(ReloadSequence());
-    }
-
-    private IEnumerator ReloadSequence()
-    {
-        yield return currentWeaponSlotObject.Reload();
-        isReloading = false;
-        canReload = true;
-    } */
-
-    /* public void FireWeapon()
-    {
-        currentWeaponSlotObject.Fire();
-    } */
 
     public void Fire()
     {
@@ -317,6 +296,6 @@ public class FPSS_WeaponPool : MonoBehaviour
         Debug.Log("Reload");
         currentWeaponSlotObject.Reload();
     }
-    #endregion
+    #endregion */
 }
 #endregion

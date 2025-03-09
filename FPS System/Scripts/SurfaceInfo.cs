@@ -3,16 +3,6 @@ using FMODUnity;
 
 //used as a "struct" you can attach to objects to define their surface type
 
-public enum SurfaceType
-{
-    Concrete,
-    Metal,
-    Wood,
-    Glass,
-    Flesh,
-    None
-}
-
 public class SurfaceInfo : MonoBehaviour
 {
     public SurfaceType surfaceType;         //This will be used to store the surface type

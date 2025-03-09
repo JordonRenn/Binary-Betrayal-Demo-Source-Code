@@ -2,15 +2,12 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.Events;
 using FMODUnity;
-using Unity.Cinemachine;
 
 public class WPO_Gun : FPSS_WeaponSlotObject
 {
     [Header("Weapon Properties")]
     [Space(10)]
 
-    public string weaponName;
-    //[SerializeField] private WeaponSlot weaponSlot;
     [SerializeField] public WeaponFireMode fireMode;
     [SerializeField] private bool isScoped;
     
@@ -75,17 +72,23 @@ public class WPO_Gun : FPSS_WeaponSlotObject
 
     public UnityEvent AmmoChange;
 
-    void Start()
+    void Awake()
     {
+        //base.Awake();
         spreadPatternArrayLength = spreadPattern.Length;
         ConstructSpreadPattern(); 
     }
+    
+    /* void Start()
+    {
+        base.Start();
+    } */
 
     void Update()
     {
         if (!initialized) 
         {
-            Debug.LogWarning("WEAPON SLOT OBJECT: Initializing...");
+            //Debug.LogWarning("WEAPON SLOT OBJECT: Initializing...");
             return;
         }
 
@@ -94,7 +97,7 @@ public class WPO_Gun : FPSS_WeaponSlotObject
             CalculateSpread(); //find a way to get this the hell out of the Update loop
         }
 
-        if (!inputHandler.FireInput) //seems jank but works, i guess..
+        if (!FPS_InputHandler.Instance.FireInput) //seems jank but works, i guess..
         {
             spreadIndex = 0;
         }
@@ -102,10 +105,14 @@ public class WPO_Gun : FPSS_WeaponSlotObject
 
     protected void ConstructSpreadPattern()
     {
-        Vector2[] randomizedSpreadPattern = new Vector2[spreadPatternArrayLength];
         for (int i = 0; i < spreadPatternArrayLength; i++)
         {
-            spreadPattern[i] = spreadPattern[i] + new Vector2(Random.Range(-spreadPatternRandomization, spreadPatternRandomization), Random.Range(-spreadPatternRandomization, spreadPatternRandomization));
+            float randomX = 1f + UnityEngine.Random.Range(-spreadPatternRandomization, spreadPatternRandomization);
+            float randomY = 1f + UnityEngine.Random.Range(-spreadPatternRandomization, spreadPatternRandomization);
+            spreadPattern[i] = new Vector2(
+                spreadPattern[i].x * randomX,
+                spreadPattern[i].y * randomY
+            );
             Debug.Log($"Spread Index {i} = {spreadPattern[i]}");
         }
     }

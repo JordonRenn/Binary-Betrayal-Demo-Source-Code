@@ -5,26 +5,6 @@ using TMPro;
 using DG.Tweening;
 using FMODUnity;
 
-public enum NotificationType
-{
-    Normal,
-    Warning,
-    Error,
-    Reward,
-}
-
-public struct Notification
-{
-    public string message;
-    public NotificationType type;
-
-    public Notification(string _message, NotificationType _type)
-    {
-        message = _message;
-        type = _type;
-    }
-}
-
 public class NotificationSystem : MonoBehaviour
 {
     public static NotificationSystem Instance { get; private set; }
