@@ -3,11 +3,6 @@ using System.Collections;
 
 public class Gun_AK47 : WPO_Gun, IWPO_Gun //inherits from FPSS_WeaponSlotObject and implements WPO_Gun
 {
-    /* void Awake()
-    {
-        OnFire.AddListener(Fire);
-        OnReload.AddListener(Reload);
-    } */
     public override void Fire()
     {
         Debug.Log("Fire AK47");
@@ -39,7 +34,7 @@ public class Gun_AK47 : WPO_Gun, IWPO_Gun //inherits from FPSS_WeaponSlotObject 
             yield return new WaitForSeconds(fireRate);
             canFire = true;
 
-            if (FPS_InputHandler.Instance.FireInput && !weaponPool.isReloading)
+            if (FPS_InputHandler.Instance.FireInput && !isReloading)
             {
                 StartCoroutine(FireBullet());
             }
@@ -61,6 +56,7 @@ public class Gun_AK47 : WPO_Gun, IWPO_Gun //inherits from FPSS_WeaponSlotObject 
 
     private IEnumerator ReloadSequence()
     {
+        isReloading = true;
         yield return ReloadWeapon();
         isReloading = false;
         canReload = true;
