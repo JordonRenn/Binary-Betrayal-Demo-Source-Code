@@ -1,12 +1,13 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using FMODUnity;
 
 public class DoorLock : Interactable
 {
     [SerializeField] GameObject doorParentObject;
     private Door door;
-    [SerializeField] bool keyRequired;
+    [SerializeField] bool keyRequired = false;
     [SerializeField] int lockKeyId;
     [SerializeField] bool isPickable;
     [SerializeField] DoorLockState state;
@@ -34,7 +35,7 @@ public class DoorLock : Interactable
     [SerializeField] Image QTE_2_TargetImage;
     [SerializeField] float LP_TargetSize_BaseMultiplier = 0.175f; //base input value for algorithm
     float LP_TargetSize_ModerateMultiplier = 0.85f;
-    float LP_TargetSize_HardMultiplier = 0.6f;
+    float LP_TargetSize_HardMultiplier = 0.75f;
     private float QTE_1_TargetSize; //final value used
     private float QTE_2_TargetSize; //final value used
 
@@ -49,10 +50,13 @@ public class DoorLock : Interactable
     float LP_Speed_HardMultiplier = 2.2f;
     private float QTE_Speed; //final value used
 
-    
-    TargetFloatRange QTE_1_TargetRange;
-    TargetFloatRange QTE_2_TargetRange;
-    TargetFloatRange perfectTargetRange;
+    [Header("FMOD")]
+    [Space(10)]
+
+    [SerializeField] private Transform audioPosition;
+    [SerializeField] private EventReference sfx_QTE_1;
+    [SerializeField] private EventReference sfx_QTE_2;
+    [SerializeField] private EventReference sfx_QTE_Fail;
 
     //dev options
     bool initialized = false;
@@ -60,8 +64,6 @@ public class DoorLock : Interactable
     private bool isInQTE1Phase = false;
     private bool isInQTE2Phase = false;
     InputState prevInputState;
-    
-    //QTE_1_
 
     #region Init
     void Awake()
@@ -87,11 +89,6 @@ public class DoorLock : Interactable
         yield return new WaitForSeconds(0.125f);
         initialized = true;
     }
-
-    /* void Update() 
-    {
-        if (!initialized) { return; }
-    } */
 
     void GetValues()
     {
@@ -140,12 +137,16 @@ public class DoorLock : Interactable
 
     public override void Interact()
     {
-        if (isPickable && state != DoorLockState.Unlocked)
+        if (isPickable && state != DoorLockState.Unlocked && !keyRequired)
         {
             prevInputState = FPS_InputHandler.Instance.currentState;
             FPS_InputHandler.Instance.SetInputState(InputState.LockedInteraction);
             
             StartCoroutine(OpenLockGUI());
+        }
+        else if (keyRequired)
+        {
+            //do key stuff
         }
         else
         {
@@ -253,6 +254,31 @@ public class DoorLock : Interactable
     }
 
     #region QTEs
+    private void Update()
+    {
+        if (!initialized) { return; }
+        
+        // Handle QTE_1 oscillation
+        if (/* FPS_InputHandler.Instance.Lint_InteractInput &&  */!isInQTE2Phase && isInQTE1Phase)
+        {
+            QTE_1_IndicatorValue = Mathf.PingPong(Time.time * QTE_Speed, QTE_1_FullSize);
+            QTE_1_Indicator.rectTransform.anchoredPosition = new Vector2(QTE_1_IndicatorValue - (QTE_1_FullSize/2), QTE_1_Indicator.rectTransform.anchoredPosition.y);
+        }
+
+        // Handle QTE_2 oscillation during second phase
+        if (isInQTE2Phase)
+        {
+            QTE_2_IndicatorValue = Mathf.PingPong(Time.time * QTE_Speed, QTE_2_FullSize);
+            QTE_2_Indicator.rectTransform.anchoredPosition = new Vector2(QTE_2_IndicatorValue - (QTE_2_FullSize/2), QTE_2_Indicator.rectTransform.anchoredPosition.y);
+        }
+
+        // Add escape key handling
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            ResetLockPicking();
+        }
+    }
+    
     void QTE_1()
     {
         isInQTE2Phase = false;
@@ -278,12 +304,15 @@ public class DoorLock : Interactable
         if (!isSuccess)
         {
             Debug.Log("Lock picking unsucessful");
-            
+            PlaySFX(sfx_QTE_Fail);
             ResetLockPicking();
             return;
         }
+
         else if (isPerfect)
         {
+            PlaySFX(sfx_QTE_2);
+
             Debug.Log("PERFECT PICK");
             Debug.Log($"Pin successfully set, {unlockedPins}/{pinCount} pins set");
             unlockedPins++;
@@ -302,6 +331,8 @@ public class DoorLock : Interactable
             FPS_InputHandler.Instance.lint_InteractReleased.RemoveListener(QTE_1_Check);
             return;
         }
+
+        PlaySFX(sfx_QTE_1);
 
         FPS_InputHandler.Instance.lint_InteractReleased.RemoveListener(QTE_1_Check);
         QTE_2();
@@ -329,6 +360,7 @@ public class DoorLock : Interactable
 
         if (isSuccess)
         {
+            PlaySFX(sfx_QTE_2);
             unlockedPins++;
             Debug.Log($"Pin successfully set, {unlockedPins}/{pinCount} pins set");
             
@@ -349,34 +381,15 @@ public class DoorLock : Interactable
             return;
         }
 
+        PlaySFX(sfx_QTE_Fail);
         isInQTE2Phase = false;
         ResetLockPicking();
     }
+    #endregion
+    #endregion
 
-    private void Update()
+    void PlaySFX(EventReference eventRef)
     {
-        if (!initialized) { return; }
-        
-        // Handle QTE_1 oscillation
-        if (/* FPS_InputHandler.Instance.Lint_InteractInput &&  */!isInQTE2Phase && isInQTE1Phase)
-        {
-            QTE_1_IndicatorValue = Mathf.PingPong(Time.time * QTE_Speed, QTE_1_FullSize);
-            QTE_1_Indicator.rectTransform.anchoredPosition = new Vector2(QTE_1_IndicatorValue - (QTE_1_FullSize/2), QTE_1_Indicator.rectTransform.anchoredPosition.y);
-        }
-
-        // Handle QTE_2 oscillation during second phase
-        if (isInQTE2Phase)
-        {
-            QTE_2_IndicatorValue = Mathf.PingPong(Time.time * QTE_Speed, QTE_2_FullSize);
-            QTE_2_Indicator.rectTransform.anchoredPosition = new Vector2(QTE_2_IndicatorValue - (QTE_2_FullSize/2), QTE_2_Indicator.rectTransform.anchoredPosition.y);
-        }
-
-        // Add escape key handling
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            ResetLockPicking();
-        }
+        RuntimeManager.PlayOneShot(eventRef, audioPosition.position);
     }
-    #endregion
-    #endregion
 }

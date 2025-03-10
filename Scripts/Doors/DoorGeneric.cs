@@ -4,15 +4,9 @@ using FMODUnity;
 public class DoorGeneric : Door
 {
     [SerializeField] private Animator doorAnimator;
-    
-    [SerializeField] private bool int_Locked = false;       //locked when trying to pass from the inside
-    [SerializeField] private bool ext_Locked = false;       //locked when trying to pass from the outside
 
     [SerializeField] private bool alwaysOpenToExt = false;
-    [SerializeField] private float doorSpeed = 1f;
     [SerializeField] private float unlockTime = 2f;
-
-    [SerializeField] private LayerMask playerLayer;
 
     [Header("Door and Lock States")]
     [Space(10)]
