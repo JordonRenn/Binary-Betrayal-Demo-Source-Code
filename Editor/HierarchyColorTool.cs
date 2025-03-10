@@ -2,8 +2,8 @@ using UnityEditor;
 using UnityEngine;
 using UnityEditor.SceneManagement;
 using System.Collections.Generic;
-
-
+using System.IO;
+using System.Linq;
 
 namespace HierarchyTool
 {
@@ -12,8 +12,10 @@ namespace HierarchyTool
     {
         private static Dictionary<int, Color> objectColors = new Dictionary<int, Color>();
         private static Dictionary<int, Color> textColors = new Dictionary<int, Color>();
+        private static Dictionary<int, string> objectIcons = new Dictionary<int, string>();
         private const string PREF_PREFIX = "HierarchyColor_";
         private const string PREF_TEXT_PREFIX = "HierarchyTextColor_";
+        private const string PREF_ICON_PREFIX = "HierarchyIcon_";
         private const string PREF_ID_LIST = "HierarchyColorIDs_";
 
         static HierarchyColorTool()
@@ -83,6 +85,27 @@ namespace HierarchyTool
             }, Color.white);
         }
 
+        [MenuItem("GameObject/Hierarchy Colors/Set Icon", false, 2)]
+        static void SetSelectedObjectsIcon()
+        {
+            var selectedObjects = Selection.gameObjects;
+            if (selectedObjects.Length == 0) return;
+
+            IconPicker.Show((iconName) =>
+            {
+                foreach (var obj in selectedObjects)
+                {
+                    string persistentID = GetPersistentID(obj);
+                    if (string.IsNullOrEmpty(iconName))
+                        objectIcons.Remove(persistentID.GetHashCode());
+                    else
+                        objectIcons[persistentID.GetHashCode()] = iconName;
+                }
+                SaveColorData();
+                EditorApplication.RepaintHierarchyWindow();
+            });
+        }
+
         [MenuItem("GameObject/Hierarchy Colors/Clear Colors", false, 2)]
         static void ClearSelectedObjectsColors()
         {
@@ -116,11 +139,25 @@ namespace HierarchyTool
             if (persistentID == null) return;
 
             int colorKey = persistentID.ID.GetHashCode();
+            
+            // Draw background
             if (objectColors.TryGetValue(colorKey, out Color bgColor))
             {
                 EditorGUI.DrawRect(selectionRect, bgColor);
             }
 
+            // Draw icon if exists
+            if (objectIcons.TryGetValue(colorKey, out string iconName))
+            {
+                Rect iconRect = new Rect(selectionRect.x + 2, selectionRect.y, 16, 16);
+                var iconContent = EditorGUIUtility.IconContent(iconName);
+                if (iconContent != null && iconContent.image != null)
+                {
+                    GUI.DrawTexture(iconRect, iconContent.image);
+                }
+            }
+
+            // Draw custom text color
             if (textColors.TryGetValue(colorKey, out Color textColor))
             {
                 EditorGUI.LabelField(selectionRect, obj.name, new GUIStyle()
@@ -148,12 +185,14 @@ namespace HierarchyTool
             string sceneName = EditorSceneManager.GetActiveScene().name;
             if (string.IsNullOrEmpty(sceneName)) return;
 
-            // Save IDs
+            // Save IDs ||| STOP EDITING THIS "Join" NEEDS TO BE CAPITALIZED
             string objectIDs = objectColors.Count > 0 ? string.Join(",", objectColors.Keys) : "";
             string textIDs = textColors.Count > 0 ? string.Join(",", textColors.Keys) : "";
+            string iconIDs = objectIcons.Count > 0 ? string.Join(",", objectIcons.Keys) : "";
 
             EditorPrefs.SetString(PREF_ID_LIST + sceneName + "_bg", objectIDs);
             EditorPrefs.SetString(PREF_ID_LIST + sceneName + "_text", textIDs);
+            EditorPrefs.SetString(PREF_ID_LIST + sceneName + "_icons", iconIDs);
 
             // Save colors with # prefix to ensure proper parsing later
             foreach (var entry in objectColors)
@@ -167,12 +206,19 @@ namespace HierarchyTool
                 string colorStr = "#" + ColorUtility.ToHtmlStringRGBA(entry.Value);
                 EditorPrefs.SetString(PREF_TEXT_PREFIX + sceneName + "_" + entry.Key, colorStr);
             }
+
+            // Save icons
+            foreach (var entry in objectIcons)
+            {
+                EditorPrefs.SetString(PREF_ICON_PREFIX + sceneName + "_" + entry.Key, entry.Value);
+            }
         }
 
         private static void LoadColorData()
         {
             objectColors.Clear();
             textColors.Clear();
+            objectIcons.Clear();
 
             string sceneName = EditorSceneManager.GetActiveScene().name;
             if (string.IsNullOrEmpty(sceneName)) return;
@@ -215,6 +261,23 @@ namespace HierarchyTool
                 }
             }
 
+            // Load icons
+            string iconIDsList = EditorPrefs.GetString(PREF_ID_LIST + sceneName + "_icons", "");
+            if (!string.IsNullOrEmpty(iconIDsList))
+            {
+                foreach (string idStr in iconIDsList.Split(new[] { ',' }, System.StringSplitOptions.RemoveEmptyEntries))
+                {
+                    if (int.TryParse(idStr, out int id))
+                    {
+                        string iconName = EditorPrefs.GetString(PREF_ICON_PREFIX + sceneName + "_" + id, "");
+                        if (!string.IsNullOrEmpty(iconName))
+                        {
+                            objectIcons[id] = iconName;
+                        }
+                    }
+                }
+            }
+
             EditorApplication.RepaintHierarchyWindow();
         }
     }
@@ -224,7 +287,8 @@ namespace HierarchyTool
     {
         public static void Show(System.Action<Color> onColorSelected, Color defaultColor)
         {
-            EditorWindow colorWindow = EditorWindow.GetWindow(typeof(ColorPickerWindow));
+            ColorPickerWindow.CloseAll(); // Close any existing windows first
+            EditorWindow colorWindow = EditorWindow.GetWindow<ColorPickerWindow>(true, "Color Picker");
             if (colorWindow is ColorPickerWindow colorPickerWindow)
             {
                 colorPickerWindow.OnColorSelected = onColorSelected;
@@ -237,16 +301,307 @@ namespace HierarchyTool
     {
         public System.Action<Color> OnColorSelected;
         public Color selectedColor = Color.white;
+        private List<Color> recentColors = new List<Color>();
+        private const string RECENT_COLORS_KEY = "HierarchyTool_RecentColors";
+        private const int MAX_RECENT_COLORS = 12;
+        private Color? colorToApply = null;
+
+        private void OnEnable()
+        {
+            titleContent = new GUIContent("Color Picker");
+            LoadRecentColors();
+        }
+
+        private void OnDisable()
+        {
+            colorToApply = null;
+            OnColorSelected = null;
+        }
+
+        public static void CloseAll()
+        {
+            var windows = Resources.FindObjectsOfTypeAll<ColorPickerWindow>();
+            foreach (var window in windows)
+            {
+                window.Close();
+            }
+        }
 
         private void OnGUI()
         {
             selectedColor = EditorGUILayout.ColorField("Pick a color", selectedColor);
 
+            if (recentColors.Count > 0)
+            {
+                EditorGUILayout.Space();
+                EditorGUILayout.LabelField("Recent Colors:", EditorStyles.boldLabel);
+                
+                EditorGUILayout.BeginHorizontal();
+                int colorsPerRow = 6;
+                for (int i = 0; i < recentColors.Count; i++)
+                {
+                    if (i > 0 && i % colorsPerRow == 0)
+                    {
+                        EditorGUILayout.EndHorizontal();
+                        EditorGUILayout.BeginHorizontal();
+                    }
+
+                    if (GUILayout.Button(string.Empty, GUILayout.Width(32), GUILayout.Height(32)))
+                    {
+                        colorToApply = recentColors[i];
+                    }
+
+                    var rect = GUILayoutUtility.GetLastRect();
+                    EditorGUI.DrawRect(rect, recentColors[i]);
+                }
+                EditorGUILayout.EndHorizontal();
+            }
+
+            EditorGUILayout.Space();
             if (GUILayout.Button("Apply"))
             {
-                OnColorSelected?.Invoke(selectedColor);
+                colorToApply = selectedColor;
+            }
+        }
+
+        private void Update()
+        {
+            if (colorToApply.HasValue)
+            {
+                AddToRecentColors(colorToApply.Value);
+                OnColorSelected?.Invoke(colorToApply.Value);
                 Close();
             }
+        }
+
+        private void LoadRecentColors()
+        {
+            recentColors.Clear();
+            string savedColors = EditorPrefs.GetString(RECENT_COLORS_KEY, "");
+            if (!string.IsNullOrEmpty(savedColors))
+            {
+                var colorStrings = savedColors.Split(new[] { ',' }, System.StringSplitOptions.RemoveEmptyEntries);
+                foreach (var colorStr in colorStrings)
+                {
+                    if (ColorUtility.TryParseHtmlString("#" + colorStr, out Color color))
+                    {
+                        recentColors.Add(color);
+                    }
+                }
+            }
+        }
+
+        private void AddToRecentColors(Color color)
+        {
+            recentColors.RemoveAll(c => Mathf.Approximately(c.r, color.r) && 
+                                      Mathf.Approximately(c.g, color.g) && 
+                                      Mathf.Approximately(c.b, color.b) && 
+                                      Mathf.Approximately(c.a, color.a));
+            recentColors.Insert(0, color);
+            
+            if (recentColors.Count > MAX_RECENT_COLORS)
+            {
+                recentColors.RemoveRange(MAX_RECENT_COLORS, recentColors.Count - MAX_RECENT_COLORS);
+            }
+            
+            var colorStrings = recentColors.Select(c => ColorUtility.ToHtmlStringRGBA(c));
+            EditorPrefs.SetString(RECENT_COLORS_KEY, string.Join(",", colorStrings));
+        }
+    }
+
+    public class IconPicker : EditorWindow
+    {
+        private Vector2 scrollPosition;
+        private string searchString = "";
+        private System.Action<string> onIconSelected;
+        private List<string> customIcons = new List<string>();
+        private List<string> recentIcons = new List<string>();
+        private const string RECENT_ICONS_KEY = "HierarchyTool_RecentIcons";
+        private const int MAX_RECENT_ICONS = 12;
+        private string selectedFolderPath = "Assets/Editor/HierarchyIcons";
+
+        private void OnEnable()
+        {
+            // Ensure the folder exists
+            string fullPath = Path.Combine(Application.dataPath, "Editor/HierarchyIcons");
+            if (!Directory.Exists(fullPath))
+            {
+                Directory.CreateDirectory(fullPath);
+                AssetDatabase.Refresh();
+            }
+            LoadRecentIcons();
+        }
+
+        public static void Show(System.Action<string> callback)
+        {
+            var window = GetWindow<IconPicker>("Icon Picker");
+            window.onIconSelected = callback;
+            window.LoadRecentIcons();
+        }
+
+        private void OnGUI()
+        {
+            searchString = EditorGUILayout.TextField("Search", searchString);
+            
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("Custom Icons Folder:", GUILayout.Width(120));
+            EditorGUILayout.LabelField(selectedFolderPath, EditorStyles.textField);
+            
+            if (GUILayout.Button("Browse", GUILayout.Width(60)))
+            {
+                string newPath = EditorUtility.OpenFolderPanel("Select Icons Folder", selectedFolderPath, "");
+                if (!string.IsNullOrEmpty(newPath))
+                {
+                    if (newPath.StartsWith(Application.dataPath))
+                    {
+                        selectedFolderPath = "Assets" + newPath.Substring(Application.dataPath.Length);
+                        SearchForCustomIcons();
+                    }
+                }
+            }
+
+            if (GUILayout.Button("Search All Assets", GUILayout.Width(100)))
+            {
+                selectedFolderPath = "Assets";
+                SearchForCustomIcons();
+            }
+            EditorGUILayout.EndHorizontal();
+
+            scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
+            
+            if (GUILayout.Button("None"))
+            {
+                onIconSelected?.Invoke("");
+                Close();
+            }
+
+            EditorGUILayout.Space();
+            
+            if (recentIcons.Count > 0)
+            {
+                EditorGUILayout.LabelField("Recent Icons:", EditorStyles.boldLabel);
+                DrawIconGroup(recentIcons);
+                EditorGUILayout.Space();
+            }
+
+            EditorGUILayout.LabelField("Custom Icons:", EditorStyles.boldLabel);
+            DrawCustomIcons();
+            
+            EditorGUILayout.EndScrollView();
+        }
+
+        private void DrawIconGroup(List<string> icons)
+        {
+            if (icons == null || icons.Count == 0) return;
+
+            var iconsToDisplay = new List<string>(icons); // Create a copy for safe iteration
+            EditorGUILayout.BeginHorizontal();
+            int iconsPerRow = 6;
+            int currentInRow = 0;
+
+            foreach (string iconPath in iconsToDisplay)
+            {
+                Texture2D icon = AssetDatabase.LoadAssetAtPath<Texture2D>(iconPath);
+                if (icon != null)
+                {
+                    if (currentInRow >= iconsPerRow)
+                    {
+                        EditorGUILayout.EndHorizontal();
+                        EditorGUILayout.BeginHorizontal();
+                        currentInRow = 0;
+                    }
+
+                    if (GUILayout.Button(new GUIContent(icon, iconPath), GUILayout.Width(32), GUILayout.Height(32)))
+                    {
+                        string selectedPath = iconPath; // Store path before closing
+                        AddToRecentIcons(selectedPath);
+                        EditorGUILayout.EndHorizontal(); // Ensure layout is closed
+                        onIconSelected?.Invoke(selectedPath);
+                        Close();
+                        return;
+                    }
+                    currentInRow++;
+                }
+            }
+
+            // Only end horizontal if we haven't closed the window
+            if (currentInRow > 0)
+            {
+                EditorGUILayout.EndHorizontal();
+            }
+        }
+
+        private void SearchForCustomIcons()
+        {
+            customIcons.Clear();
+            string[] guids = AssetDatabase.FindAssets("t:texture2D", new[] { selectedFolderPath });
+            foreach (string guid in guids)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                customIcons.Add(path);
+            }
+            Repaint();
+        }
+
+        private void DrawCustomIcons()
+        {
+            if (string.IsNullOrEmpty(selectedFolderPath)) return;
+
+            string[] guids = AssetDatabase.FindAssets("t:texture2D", new[] { selectedFolderPath });
+            EditorGUILayout.BeginHorizontal();
+            int iconsPerRow = 6;
+            int currentInRow = 0;
+
+            foreach (string guid in guids)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                if (string.IsNullOrEmpty(searchString) || 
+                    Path.GetFileNameWithoutExtension(path).ToLower().Contains(searchString.ToLower()))
+                {
+                    Texture2D icon = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+                    if (icon != null)
+                    {
+                        if (currentInRow >= iconsPerRow)
+                        {
+                            EditorGUILayout.EndHorizontal();
+                            EditorGUILayout.BeginHorizontal();
+                            currentInRow = 0;
+                        }
+
+                        if (GUILayout.Button(new GUIContent(icon, path), GUILayout.Width(32), GUILayout.Height(32)))
+                        {
+                            AddToRecentIcons(path);
+                            onIconSelected?.Invoke(path);
+                            Close();
+                        }
+                        currentInRow++;
+                    }
+                }
+            }
+            EditorGUILayout.EndHorizontal();
+        }
+
+        private void LoadRecentIcons()
+        {
+            recentIcons.Clear();
+            string savedIcons = EditorPrefs.GetString(RECENT_ICONS_KEY, "");
+            if (!string.IsNullOrEmpty(savedIcons))
+            {
+                recentIcons.AddRange(savedIcons.Split(new[] { ',' }, System.StringSplitOptions.RemoveEmptyEntries));
+            }
+        }
+
+        private void AddToRecentIcons(string iconName)
+        {
+            recentIcons.Remove(iconName); // Remove if already exists
+            recentIcons.Insert(0, iconName); // Add to start
+            
+            if (recentIcons.Count > MAX_RECENT_ICONS)
+            {
+                recentIcons.RemoveRange(MAX_RECENT_ICONS, recentIcons.Count - MAX_RECENT_ICONS);
+            }
+            
+            EditorPrefs.SetString(RECENT_ICONS_KEY, string.Join(",", recentIcons));
         }
     }
 
