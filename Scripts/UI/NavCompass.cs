@@ -11,8 +11,11 @@ public class NavCompass : MonoBehaviour
     [SerializeField] GameObject iconPrefab;
     
 
-    private Dictionary<Trackable, GameObject> displayedIcons = new Dictionary<Trackable, GameObject>(); //icon game obj ref
+    private Dictionary<Trackable, CompassIcon> displayedIcons = new Dictionary<Trackable, CompassIcon>(); //icon game obj ref
     private List<Trackable> displayedTrackables = new List<Trackable>(); //class ref
+
+    private Queue<Trackable> markerAddQueue = new Queue<Trackable>();
+    private Queue<Trackable> markerRemoveQueue = new Queue<Trackable>();
 
     float compassUnit;
 
@@ -53,41 +56,6 @@ public class NavCompass : MonoBehaviour
         }
     }
 
-    public void AddCompassMarker(Trackable trackable)
-    {
-        GameObject newtrackable = Instantiate(iconPrefab, compassImg.transform);
-        
-        if (!displayedIcons.ContainsKey(trackable)) //if not in dict
-        {
-            displayedIcons.Add(trackable, newtrackable); //add to dict
-        }
-
-        trackable.compassImage = newtrackable.GetComponent<Image>();
-        trackable.compassImage.sprite = trackable.compassIcon;
-
-        Color color = trackable.compassImage.color;
-        color.a = 0f;
-        trackable.compassImage.color = color;
-
-        trackable.compassImage.DOFade(1f, 0.5f);
-
-        displayedTrackables.Add(trackable);
-    }
-
-    public void RemoveCompassMarker(Trackable trackable)
-    {
-        if (displayedIcons.ContainsKey(trackable))
-        {
-            displayedIcons[trackable].GetComponent<Image>().DOFade(0f, 0.5f).OnComplete(() =>
-            {
-                GameObject.Destroy(displayedIcons[trackable].gameObject);
-                displayedIcons.Remove(trackable);
-            });
-        }
-
-        displayedTrackables.Remove(trackable);
-    }
-
     Vector2 GetCompassPosition(Trackable trackable)
     {
         Vector2 playerPos = new Vector2(playerObject.transform.position.x, playerObject.transform.position.z);
@@ -96,6 +64,59 @@ public class NavCompass : MonoBehaviour
         float angle = Vector2.SignedAngle(trackable.position - playerPos, playerForward);
 
         return new Vector2(compassUnit * angle, 0f);
+    }
+
+    public void AddCompassMarker(Trackable trackable)
+    {
+        if (!displayedTrackables.Contains(trackable) && !markerAddQueue.Contains(trackable))
+        {
+            markerAddQueue.Enqueue(trackable);
+        }
+    }
+
+    public void RemoveCompassMarker(Trackable trackable)
+    {
+        if (displayedTrackables.Contains(trackable) && !markerRemoveQueue.Contains(trackable))
+        {
+            markerRemoveQueue.Enqueue(trackable);
+        }
+    }
+
+    void ProcessMarkerQueues()
+    {
+        while (markerRemoveQueue.Count > 0)
+        {
+            Trackable trackable = markerRemoveQueue.Dequeue();
+            displayedIcons[trackable].GetComponent<Image>().DOFade(0f, 0.5f).OnComplete(() =>
+            {
+                displayedIcons[trackable].DestroyIcon();
+                displayedIcons.Remove(trackable);
+                displayedTrackables.Remove(trackable);
+            });
+        }
+
+        while (markerAddQueue.Count > 0)
+        {
+            Trackable trackable = markerAddQueue.Dequeue();
+            GameObject newtrackable = Instantiate(iconPrefab, compassImg.transform);
+            newtrackable.GetComponent<CompassIcon>().compass = this;
+            
+            if (!displayedIcons.ContainsKey(trackable))
+            {
+                displayedIcons.Add(trackable, newtrackable.GetComponent<CompassIcon>());
+            }
+
+            trackable.compassImage = newtrackable.GetComponent<Image>();
+            trackable.compassImage.sprite = trackable.compassIcon;
+
+            Color color = trackable.compassImage.color;
+            color.a = 0f;
+            trackable.compassImage.color = color;
+
+            trackable.compassImage.DOFade(1f, 0.5f);
+            
+            displayedTrackables.Add(trackable);
+        }
     }
 
     void CheckDrawDistance()
@@ -115,7 +136,7 @@ public class NavCompass : MonoBehaviour
         foreach (Trackable trackable in trackablesToRemove)
         {
             RemoveCompassMarker(trackable);
-            Debug.Log($"NAV COMPASS | {trackable} marker removed");
+            Debug.Log($"NAV COMPASS | {trackable} marker queued for removal");
         }
 
         foreach (Trackable trackable in GameMaster.Instance.allTrackables)
@@ -126,9 +147,11 @@ public class NavCompass : MonoBehaviour
                 if (distance <= trackable.compassDrawDistance)
                 {
                     AddCompassMarker(trackable);
-                    Debug.Log($"NAV COMPASS | {trackable} marker added");
+                    Debug.Log($"NAV COMPASS | {trackable} marker queued for adding");
                 }
             }
         }
+
+        ProcessMarkerQueues();
     }
 }

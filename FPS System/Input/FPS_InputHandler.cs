@@ -72,6 +72,7 @@ public class FPS_InputHandler : MonoBehaviour
     //Menu Navigation Action Name Refs
 
     private const string menu_CursorMove = "menu_CursorMove";
+    private const string menu_Move = "menu_Move";
     private const string menu_Click = "menu_Click";
     private const string menu_Cancel = "menu_Cancel";
     private const string menu_Dev = "menu_Dev";
@@ -115,6 +116,7 @@ public class FPS_InputHandler : MonoBehaviour
     //Menu Navigation input actions
 
     private InputAction menu_CursorMoveAction;
+    private InputAction menu_MoveAction;
     private InputAction menu_ClickAction;
     private InputAction menu_CancelAction;
     private InputAction menu_DevAction;
@@ -161,6 +163,7 @@ public class FPS_InputHandler : MonoBehaviour
     //Menu Navigation
 
     public Vector2 Menu_CursorMoveInput {get ; private set;}
+    public Vector2 Menu_MoveInput {get ; private set;}
     public bool Menu_ClickInput {get ; private set;}
     public bool Menu_CancelInput {get ; private set;}
     public bool Menu_DevInput {get ; private set;}
@@ -213,6 +216,7 @@ public class FPS_InputHandler : MonoBehaviour
     [HideInInspector] public UnityEvent menu_ClickTriggered;
     [HideInInspector] public UnityEvent menu_CancelTriggered;
     [HideInInspector] public UnityEvent menu_DevTriggered;
+    [HideInInspector] public UnityEvent menu_MovePerformed;
 
     public InputState currentState {get ; private set;}
     [SerializeField] private InputState defaultState = InputState.FirstPerson;
@@ -277,6 +281,7 @@ public class FPS_InputHandler : MonoBehaviour
         //Menu Navigation actions
 
         menu_CursorMoveAction = actionMap_MenuNav.FindAction(menu_CursorMove);
+        menu_MoveAction = actionMap_MenuNav.FindAction(menu_Move);
         menu_ClickAction = actionMap_MenuNav.FindAction(menu_Click);
         menu_CancelAction = actionMap_MenuNav.FindAction(menu_Cancel);
         menu_DevAction = actionMap_MenuNav.FindAction(menu_Dev);
@@ -430,6 +435,14 @@ public class FPS_InputHandler : MonoBehaviour
 
         menu_CursorMoveAction.performed += context => Menu_CursorMoveInput = context.ReadValue<Vector2>();
         menu_CursorMoveAction.canceled += context => Menu_CursorMoveInput = Vector2.zero;
+
+        //menu_MoveAction.performed += context => Menu_MoveInput = context.ReadValue<Vector2>();
+        menu_MoveAction.performed += context => 
+        {
+            Menu_MoveInput = context.ReadValue<Vector2>();
+            menu_MovePerformed.Invoke();
+        };
+        menu_MoveAction.canceled += context => Menu_MoveInput = Vector2.zero;
 
         menu_ClickAction.started += context => menu_ClickTriggered.Invoke();
         menu_ClickAction.performed += context => Menu_ClickInput = true;
