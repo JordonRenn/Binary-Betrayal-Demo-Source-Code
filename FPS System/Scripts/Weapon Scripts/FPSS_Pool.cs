@@ -1,23 +1,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class FPSS_Pool : MonoBehaviour
 {
     public static FPSS_Pool Instance { get; private set; }
     private FPSS_Main main;
-
-    /* [SerializeField] private GameObject wgo_Rifle;
-    [SerializeField] private GameObject wgo_Sniper;
-    [SerializeField] private GameObject wgo_Handgun;
-    [SerializeField] private GameObject wgo_Shotgun;
-    [SerializeField] private GameObject wgo_Knife;
-    [SerializeField] private GameObject wgo_Grenade;
-    [SerializeField] private GameObject wgo_SmokeGrenade;
-    [SerializeField] private GameObject wgo_FlashGrenade;
-    [SerializeField] private GameObject wgo_Unarmed; */
 
     [SerializeField] private GameObject[] primaryWeaponObjects;
     [SerializeField] private GameObject[] secondaryWeaponObjects;
@@ -95,7 +84,7 @@ public class FPSS_Pool : MonoBehaviour
         AssignSecondaryWPO(WeaponRefID.Handgun);    //TEMP FOR DEV/DEBUG --- CREATE SYSTEM TO SELECT EXTERNALLY
         AssignMeleeWPO(WeaponRefID.Unarmed);        //TEMP FOR DEV/DEBUG --- CREATE SYSTEM TO SELECT EXTERNALLY
         AssignUtilityWPO(WeaponRefID.Unarmed);      //TEMP FOR DEV/DEBUG --- CREATE SYSTEM TO SELECT EXTERNALLY
-        currentActiveWPO = assignedMeleeWPO;      //TEMP FOR DEV/DEBUG --- CREATE SYSTEM TO SELECT EXTERNALLY
+        currentActiveWPO = assignedMeleeWPO;        //TEMP FOR DEV/DEBUG --- CREATE SYSTEM TO SELECT EXTERNALLY
 
         SubscribeToEvents();
         GameMaster.Instance.gm_WeaponPoolSpawned.Invoke();

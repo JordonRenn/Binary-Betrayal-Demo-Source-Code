@@ -2444,6 +2444,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerObject: {fileID: 6967550792206337341}
+  smoothTime: 0.05
+  useSmoothing: 1
 --- !u!114 &344260470287190638
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6656,7 +6658,6 @@ MonoBehaviour:
     m_RotationOrder: 4
   pos_GunAudio: {fileID: 3938912866746487209}
   initTimeout: 10
-  weaponName: AK_47
   fireMode: 0
   isScoped: 0
   infiniteAmmo: 1
@@ -13385,7 +13386,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   interactionCooldown: 0.25
-  reachDistance: 1.8
+  reachDistance: 2.2
 --- !u!1 &4904108566437472296
 GameObject:
   m_ObjectHideFlags: 0
@@ -26439,7 +26440,6 @@ MonoBehaviour:
     m_RotationOrder: 4
   pos_GunAudio: {fileID: 3938912866746487209}
   initTimeout: 10
-  weaponName: Handgun
   fireMode: 1
   isScoped: 0
   infiniteAmmo: 1

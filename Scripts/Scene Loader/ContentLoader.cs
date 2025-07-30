@@ -35,7 +35,7 @@ public class ContentLoader : MonoBehaviour
     void Start()
     {
         //Instantiate(EventSystem);
-        Instantiate(inputHandler);
+        //Instantiate(inputHandler);
         Instantiate(GlobalVolume);
     }
 

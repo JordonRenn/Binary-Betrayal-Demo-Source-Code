@@ -174,7 +174,7 @@
                     "id": "d5b33733-0628-4e07-83dc-5bc9519445bf",
                     "path": "<Gamepad>/rightStick",
                     "interactions": "",
-                    "processors": "",
+                    "processors": "ScaleVector2(x=5,y=5)",
                     "groups": "",
                     "action": "Look",
                     "isComposite": false,
@@ -348,7 +348,7 @@
                 {
                     "name": "2D Vector",
                     "id": "1731cd9e-2a95-47de-96bc-141b0270342c",
-                    "path": "2DVector",
+                    "path": "2DVector(mode=2)",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -1057,6 +1057,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "menu_Confirm",
+                    "type": "Button",
+                    "id": "1722f918-2bc0-4370-80b2-4fc03e914362",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -1238,34 +1247,23 @@
                 },
                 {
                     "name": "",
+                    "id": "5803f0d7-3e4d-4a89-a753-0a2f233e5f5e",
+                    "path": "<Keyboard>/backquote",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "menu_Dev",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "bfbb4b8d-b7b3-442c-9c86-64743a5c7990",
                     "path": "<Gamepad>/rightTrigger",
                     "interactions": "",
                     "processors": "AxisDeadzone",
                     "groups": "",
-                    "action": "menu_Click",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "01eb1ae7-945d-4a61-b5cb-0c11540f7253",
-                    "path": "<Keyboard>/e",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "menu_Click",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "b819adb4-1c3a-4835-9ef5-4d50a584ca6e",
-                    "path": "<Keyboard>/space",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "menu_Click",
+                    "action": "menu_Confirm",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -1276,18 +1274,29 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "menu_Click",
+                    "action": "menu_Confirm",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "5803f0d7-3e4d-4a89-a753-0a2f233e5f5e",
-                    "path": "<Keyboard>/backquote",
+                    "id": "b819adb4-1c3a-4835-9ef5-4d50a584ca6e",
+                    "path": "<Keyboard>/space",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "menu_Dev",
+                    "action": "menu_Confirm",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "01eb1ae7-945d-4a61-b5cb-0c11540f7253",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "menu_Confirm",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

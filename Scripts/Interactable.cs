@@ -4,8 +4,15 @@ using UnityEngine;
 
 public class Interactable : MonoBehaviour
 {
+    public string objectName;
+
     public virtual void Interact()
     {
         //override this method in inherited classes 
+    }
+
+    public string ShowObjectInfo()
+    {
+        return objectName;
     }
 }

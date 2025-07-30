@@ -1,12 +1,15 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class FPSS_ReticleSystem : MonoBehaviour
 {
     public static FPSS_ReticleSystem Instance { get; private set; }
 
     private CharacterMovement characterMovement = null;
+
+    public TMP_Text objectInfoText { get; private set; }
 
     [SerializeField][Range(10,100)] float size;
     float calculatedSize;
@@ -49,6 +52,8 @@ public class FPSS_ReticleSystem : MonoBehaviour
     void Start()
     {
         reticlePanel = GetComponent<RectTransform>();
+        objectInfoText = GetComponentInChildren<TMP_Text>();
+        
         FetchReticleElements();
 
         if (reticlePanel == null)
@@ -249,6 +254,7 @@ public class FPSS_ReticleSystem : MonoBehaviour
             {
                 reticleimages[i].enabled = false;
             }
+            objectInfoText.enabled = false;
 
             hidden = true;
         }
@@ -258,7 +264,9 @@ public class FPSS_ReticleSystem : MonoBehaviour
             {
                 reticleimages[i].enabled = true;
             }
-
+            objectInfoText.enabled = true;
+            ResetGFM();
+            
             hidden = false;
         }
     }

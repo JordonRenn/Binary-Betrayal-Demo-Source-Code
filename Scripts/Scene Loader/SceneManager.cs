@@ -158,21 +158,4 @@ public class CustomSceneManager : MonoBehaviour
         Debug.Log("CUSTOM SCENE MANAGER | Calling ''PlayerSpawner'' to spawn the Player");
         PlayerSpawner.Instance.SpawnPlayer();
     }
-
-    private void FadeScreen()
-    {
-        //
-        
-        // Fade in
-        fadeCanvasGroup.DOFade(1f, fadeDuration)
-            .OnComplete(() => {
-                // Wait for 2 seconds then fade out
-                DOVirtual.DelayedCall(2f, () => {
-                    fadeCanvasGroup.DOFade(0f, fadeDuration)
-                        .OnComplete(() => {
-                            fadeImgObj.SetActive(false);
-                        });
-                });
-            });
-    }
 }

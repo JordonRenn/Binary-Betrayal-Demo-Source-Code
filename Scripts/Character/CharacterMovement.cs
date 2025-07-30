@@ -318,8 +318,10 @@ public class CharacterMovement : MonoBehaviour
 
     public void SetMovementDir()
 	{
-		x = Input.GetAxis("Horizontal");
-		z = Input.GetAxis("Vertical");
+		// Replace old Input system with new input system through FPS_InputHandler
+		// Previous code: x = Input.GetAxis("Horizontal"); z = Input.GetAxis("Vertical");
+		x = FPS_InputHandler.Instance.MoveInput.x;
+		z = FPS_InputHandler.Instance.MoveInput.y;
 	}
 
     void GroundCheck()

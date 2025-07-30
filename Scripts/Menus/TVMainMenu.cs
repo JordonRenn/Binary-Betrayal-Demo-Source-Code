@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.Video;
 using UnityEngine.InputSystem;
 using System.Collections;
+using UnityEngine.Events;
+using UnityEngine.InputSystem.Utilities;
 
 public class TVMainMenu : MonoBehaviour
 {
@@ -17,9 +19,12 @@ public class TVMainMenu : MonoBehaviour
     [SerializeField] VideoClip clip_StaticLong;
     [SerializeField] VideoClip[] clip_StaticShort;
     
-    private enum MenuState { Main, Play, Settings, Credits, StartingGame }
-    private MenuState currentState = MenuState.Main;
+    
+
+    private MainMenuState currentState = MainMenuState.Main;
     private bool isTransitioning = false;
+
+    //private UnityEvent anyInputEvent = new UnityEvent();
 
     void Start()
     {
@@ -27,6 +32,7 @@ public class TVMainMenu : MonoBehaviour
         videoPlayer.Play();
 
         FPS_InputHandler.Instance.menu_MovePerformed.AddListener(OnMenuMove);
+        InputSystem.onAnyButtonPress.CallOnce(ctrl => EnterMenu());
     }
 
     void OnDestroy()
@@ -37,18 +43,6 @@ public class TVMainMenu : MonoBehaviour
     private void OnMenuMove()
     {
         if (isTransitioning) return;
-        
-        if (currentState == MenuState.Main)
-        {
-            StartCoroutine(TransitionToState(MenuState.Play));
-
-
-            ////////menu_ClickTriggered
-            FPS_InputHandler.Instance.menu_ClickTriggered.AddListener(OnMenuSelction);
-            FPS_InputHandler.Instance.menu_CancelTriggered.AddListener(OnMenuCancellation);
-
-            return;
-        }
 
         Vector2 input = FPS_InputHandler.Instance.Menu_MoveInput;
 
@@ -57,13 +51,13 @@ public class TVMainMenu : MonoBehaviour
         {
             if (input.x > 0)
             {
-                if (currentState == MenuState.Play) StartCoroutine(TransitionToState(MenuState.Settings));
-                else if (currentState == MenuState.Credits) StartCoroutine(TransitionToState(MenuState.Play));
+                if (currentState == MainMenuState.Play) StartCoroutine(TransitionToState(MainMenuState.Settings));
+                else if (currentState == MainMenuState.Credits) StartCoroutine(TransitionToState(MainMenuState.Play));
             }
             else
             {
-                if (currentState == MenuState.Play) StartCoroutine(TransitionToState(MenuState.Credits));
-                else if (currentState == MenuState.Settings) StartCoroutine(TransitionToState(MenuState.Play));
+                if (currentState == MainMenuState.Play) StartCoroutine(TransitionToState(MainMenuState.Credits));
+                else if (currentState == MainMenuState.Settings) StartCoroutine(TransitionToState(MainMenuState.Play));
             }
         }
     }
@@ -74,16 +68,16 @@ public class TVMainMenu : MonoBehaviour
 
         switch (currentState)
         {
-            case MenuState.Play:
-                StartCoroutine(TransitionToState(MenuState.StartingGame));
+            case MainMenuState.Play:
+                StartCoroutine(TransitionToState(MainMenuState.StartingGame));
                 break;
-            case MenuState.Settings:
+            case MainMenuState.Settings:
                 //
                 break;
-            case MenuState.Credits:
+            case MainMenuState.Credits:
                 //
                 break;
-            case MenuState.StartingGame:
+            case MainMenuState.StartingGame:
                 //too late bozo
                 break;
         }
@@ -93,16 +87,16 @@ public class TVMainMenu : MonoBehaviour
     {
         switch (currentState)
         {
-            case MenuState.Play:
-                StartCoroutine(TransitionToState(MenuState.Main));
+            case MainMenuState.Play:
+                StartCoroutine(TransitionToState(MainMenuState.Main));
                 break;
-            case MenuState.Settings:
-                StartCoroutine(TransitionToState(MenuState.Play));
+            case MainMenuState.Settings:
+                StartCoroutine(TransitionToState(MainMenuState.Play));
                 break;
-            case MenuState.Credits:
-                StartCoroutine(TransitionToState(MenuState.Play));
+            case MainMenuState.Credits:
+                StartCoroutine(TransitionToState(MainMenuState.Play));
                 break;
-            case MenuState.StartingGame:
+            case MainMenuState.StartingGame:
                 //too late bozo
                 break;
             default: 
@@ -110,7 +104,7 @@ public class TVMainMenu : MonoBehaviour
         }
     }
 
-    private IEnumerator TransitionToState(MenuState newState)
+    private IEnumerator TransitionToState(MainMenuState newState)
     {
         Debug.Log($"Transitioning menu to {newState}");
         
@@ -126,19 +120,20 @@ public class TVMainMenu : MonoBehaviour
         // Switch to new state video
         switch (newState)
         {
-            case MenuState.Main:
+            case MainMenuState.Main:
                 videoPlayer.clip = clip_Main;
+                InputSystem.onEvent += (eventPtr, device) => EnterMenu();
                 break;
-            case MenuState.Play:
+            case MainMenuState.Play:
                 videoPlayer.clip = clip_Play;
                 break;
-            case MenuState.Settings:
+            case MainMenuState.Settings:
                 videoPlayer.clip = clip_Settings;
                 break;
-            case MenuState.Credits:
+            case MainMenuState.Credits:
                 videoPlayer.clip = clip_Credits;
                 break;
-            case MenuState.StartingGame:
+            case MainMenuState.StartingGame:
                 videoPlayer.clip = clip_StaticLong;
                 yield return new WaitForSeconds((float)clip_StaticLong.length * 0.5f);
                 CustomSceneManager.Instance.LoadScene(SceneName.Dev_1);
@@ -148,5 +143,23 @@ public class TVMainMenu : MonoBehaviour
         
         currentState = newState;
         isTransitioning = false;
+    }
+
+    void EnterMenu()
+    {
+        if (currentState == MainMenuState.Main)
+        {
+            StartCoroutine(TransitionToState(MainMenuState.Play));
+
+            ////////menu_ClickTriggered
+            FPS_InputHandler.Instance.menu_ClickTriggered.AddListener(OnMenuSelction);
+            FPS_InputHandler.Instance.menu_CancelTriggered.AddListener(OnMenuCancellation);
+        }
+    }
+
+    void OnDestroyMenu()
+    {
+        FPS_InputHandler.Instance.menu_ClickTriggered.RemoveListener(OnMenuSelction);
+        FPS_InputHandler.Instance.menu_CancelTriggered.RemoveListener(OnMenuCancellation);
     }
 }

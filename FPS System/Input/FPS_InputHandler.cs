@@ -16,15 +16,19 @@ public enum InputState
 public class FPS_InputHandler : MonoBehaviour
 {
     public static FPS_InputHandler Instance {get ; private set;} 
+    
+    [Header("UI Input Module")]
+    [Space(10)]
+
+    //[SerializeField] private InputSystemUIInputModule UIInputModule;
 
     [Header("Input Action Asset")]
     [Space(10)]
     
     [SerializeField] private InputActionAsset playerControls;
-    [Space(10)]
 
     [Header("Action Map Name Ref")]
-    [Space(5)]
+    [Space(10)]
 
     [SerializeField] private const string actionMapName_FPS = "fpsControls";
     [SerializeField] private const string actionMapName_LockedInteraction = "lockedInteraction";
@@ -76,6 +80,7 @@ public class FPS_InputHandler : MonoBehaviour
     private const string menu_Click = "menu_Click";
     private const string menu_Cancel = "menu_Cancel";
     private const string menu_Dev = "menu_Dev";
+    private const string menu_Confirm = "menu_Confirm";
 
     //FPS input actions
     private InputAction moveAction;
@@ -120,9 +125,15 @@ public class FPS_InputHandler : MonoBehaviour
     private InputAction menu_ClickAction;
     private InputAction menu_CancelAction;
     private InputAction menu_DevAction;
+    private InputAction menu_ConfirmAction;
 
     //Cutscene input actions
 
+    [SerializeField] private float horizontalLookSensitivity = 1.0f;
+    [SerializeField] private float verticalLookSensitivity = 1.0f;
+    private float horizontalSensitivityMultiplier = 1.0f; 
+    private float verticalSensitivityMultiplier = 1.0f;
+    private bool invertYAxis = false;
 
     //FPS
     public Vector2 MoveInput {get ; private set;}
@@ -167,6 +178,7 @@ public class FPS_InputHandler : MonoBehaviour
     public bool Menu_ClickInput {get ; private set;}
     public bool Menu_CancelInput {get ; private set;}
     public bool Menu_DevInput {get ; private set;}
+    public bool Menu_ConfirmInput {get ; private set;}
 
     //Cutscene
 
@@ -217,6 +229,7 @@ public class FPS_InputHandler : MonoBehaviour
     [HideInInspector] public UnityEvent menu_CancelTriggered;
     [HideInInspector] public UnityEvent menu_DevTriggered;
     [HideInInspector] public UnityEvent menu_MovePerformed;
+    [HideInInspector] public UnityEvent menu_ConfirmTriggered;
 
     public InputState currentState {get ; private set;}
     [SerializeField] private InputState defaultState = InputState.FirstPerson;
@@ -230,11 +243,24 @@ public class FPS_InputHandler : MonoBehaviour
         
         if (Instance != null && Instance != this)
         {
-            Destroy(gameObject);
-            return;
+            Destroy(this.gameObject);
         }
         Instance = this;
-        DontDestroyOnLoad(gameObject);
+        DontDestroyOnLoad(Instance);
+        
+        /* // Find the UI input module if it's not already assigned
+        if (UIInputModule == null)
+        {
+            UIInputModule = FindAnyObjectByType<InputSystemUIInputModule>();
+            if (UIInputModule == null)
+            {
+                Debug.LogWarning("UIInputModule not assigned and couldn't be found automatically. UI input functionality may be limited.");
+            }
+            else
+            {
+                Debug.Log("UIInputModule was auto-assigned at runtime.");
+            }
+        } */
 
         InputActionMap actionMap_FPS = playerControls.FindActionMap(actionMapName_FPS);
         InputActionMap actionMap_LockedInteraction = playerControls.FindActionMap(actionMapName_LockedInteraction);
@@ -285,8 +311,12 @@ public class FPS_InputHandler : MonoBehaviour
         menu_ClickAction = actionMap_MenuNav.FindAction(menu_Click);
         menu_CancelAction = actionMap_MenuNav.FindAction(menu_Cancel);
         menu_DevAction = actionMap_MenuNav.FindAction(menu_Dev);
+        menu_ConfirmAction = actionMap_MenuNav.FindAction(menu_Confirm);
 
         RegisterInputActions();
+
+        // Apply settings at initialization
+        UpdateSensitivitySettings();
     }
 
     /// <summary>
@@ -299,7 +329,13 @@ public class FPS_InputHandler : MonoBehaviour
         moveAction.performed += context => MoveInput = context.ReadValue<Vector2>();
         moveAction.canceled += context => MoveInput = Vector2.zero;
 
-        lookAction.performed += context => LookInput = context.ReadValue<Vector2>();
+        lookAction.performed += context => {
+            Vector2 input = context.ReadValue<Vector2>();
+            // Apply sensitivity multipliers
+            input.x *= horizontalSensitivityMultiplier;
+            input.y *= verticalSensitivityMultiplier * (invertYAxis ? -1 : 1);
+            LookInput = input;
+        };
         lookAction.canceled += context => LookInput = Vector2.zero;
 
         slowWalkAction.started += context => slowWalkTriggered.Invoke();
@@ -456,9 +492,29 @@ public class FPS_InputHandler : MonoBehaviour
         menu_DevAction.performed += context => Menu_DevInput = true;
         menu_DevAction.canceled += context => Menu_DevInput = false;
 
+        menu_ConfirmAction.started += context => menu_ConfirmTriggered.Invoke();
+        menu_ConfirmAction.performed += context => Menu_ConfirmInput = true;
+        menu_ConfirmAction.canceled += context => Menu_ConfirmInput = false;
+
         //CUTSCENE ACTIONS
 
         //
+    }
+
+    /// <summary>
+    /// Updates sensitivity settings from the GameMaster
+    /// </summary>
+    public void UpdateSensitivitySettings()
+    {
+        if (GameMaster.Instance != null)
+        {
+            PlayerSettings settings = GameMaster.Instance.GetSettings();
+            horizontalSensitivityMultiplier = settings.GetHorizontalSensitivityMultiplier();
+            verticalSensitivityMultiplier = settings.GetVerticalSensitivityMultiplier();
+            invertYAxis = settings.invertYAxis;
+            
+            SBGDebug.LogInfo($"Mouse sensitivity updated - H: {horizontalSensitivityMultiplier}, V: {verticalSensitivityMultiplier}, InvertY: {invertYAxis}", "FPS_InputHandler");
+        }
     }
 
     /// <summary>
@@ -493,6 +549,7 @@ public class FPS_InputHandler : MonoBehaviour
                 playerControls.FindActionMap(actionMapName_LockedInteraction).Disable();
                 playerControls.FindActionMap(actionMapName_Cutscene).Disable();
                 playerControls.FindActionMap(actionMapName_FPS).Enable();
+                
                 currentState = state;
                 break;
             case InputState.MenuNavigation:
@@ -501,6 +558,7 @@ public class FPS_InputHandler : MonoBehaviour
                 playerControls.FindActionMap(actionMapName_LockedInteraction).Disable();
                 playerControls.FindActionMap(actionMapName_Cutscene).Disable();
                 playerControls.FindActionMap(actionMapName_MenuNav).Enable();
+
                 currentState = state;
                 break;
             case InputState.LockedInteraction:
@@ -509,6 +567,7 @@ public class FPS_InputHandler : MonoBehaviour
                 playerControls.FindActionMap(actionMapName_MenuNav).Disable();
                 playerControls.FindActionMap(actionMapName_Cutscene).Disable();
                 playerControls.FindActionMap(actionMapName_LockedInteraction).Enable();
+
                 currentState = state;
                 break;
             case InputState.Cutscene:
@@ -517,9 +576,12 @@ public class FPS_InputHandler : MonoBehaviour
                 playerControls.FindActionMap(actionMapName_MenuNav).Disable();
                 playerControls.FindActionMap(actionMapName_LockedInteraction).Disable();
                 playerControls.FindActionMap(actionMapName_Cutscene).Enable();
+
                 currentState = state;
                 break;
         }
+
+        //SetUIModuleValues(state);
     }
 
     public void CursorLock(bool state)
@@ -535,4 +597,41 @@ public class FPS_InputHandler : MonoBehaviour
             Cursor.visible = true;
         }
     }
+
+
+    //UI Module Values
+    /* void SetUIModuleValues(InputState state)
+    {
+        if (UIInputModule == null)
+        {
+            Debug.LogError("UIInputModule is null in SetUIModuleValues. UI input won't work correctly.");
+            return;
+        }
+
+        switch (state)
+        {
+            case InputState.FirstPerson:
+                //UIInputModule.move.Set(playerControls, actionMapName_FPS, move);
+                //UIInputModule.point.Set(playerControls, actionMapName_FPS, look);
+                //UIInputModule.leftClick.Set(playerControls, actionMapName_FPS, fire);
+                //UIInputModule.rightClick.Set(playerControls, actionMapName_FPS, aim);
+                //UIInputModule.cancel.Set(playerControls, actionMapName_FPS, cancel);
+                break;
+            case InputState.MenuNavigation:
+                UIInputModule.move.Set(menu_MoveAction);
+                UIInputModule.point.Set(menu_CursorMoveAction);
+                UIInputModule.leftClick.Set(menu_ClickAction);
+                UIInputModule.cancel.Set(menu_CancelAction);
+                UIInputModule.submit.Set(menu_ConfirmAction);
+                break;
+            case InputState.LockedInteraction:
+                //UIInputModule.move.Set(lint_CursorMoveAction);
+                UIInputModule.point.Set(lint_CursorMoveAction);
+                UIInputModule.leftClick.Set(lint_ClickAction);
+                UIInputModule.cancel.Set(lint_CancelAction);
+                break;
+            case InputState.Cutscene:
+                break;
+        }
+    } */
 }

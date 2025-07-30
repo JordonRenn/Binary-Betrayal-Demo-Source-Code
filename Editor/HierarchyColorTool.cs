@@ -34,13 +34,45 @@ namespace HierarchyTool
 
         private static string GetPersistentID(GameObject obj)
         {
+            // Check if the object already has the component
             var persistentID = obj.GetComponent<HierarchyColorID>();
+            
             if (persistentID == null)
             {
-                Undo.AddComponent<HierarchyColorID>(obj); // Make component addition undoable
-                persistentID = obj.GetComponent<HierarchyColorID>();
-                EditorUtility.SetDirty(obj); // Mark object as dirty to ensure save
+                try
+                {
+                    // Try to add the component using Undo system
+                    persistentID = Undo.AddComponent<HierarchyColorID>(obj);
+                    
+                    // If we still couldn't add it, provide clear error message
+                    if (persistentID == null)
+                    {
+                        Debug.LogError($"Failed to add HierarchyColorID to {obj.name}. The script may not be in a runtime-accessible folder. Make sure it's not in the Editor folder.");
+                        return System.Guid.NewGuid().ToString(); // Temporary fallback ID
+                    }
+                    
+                    EditorUtility.SetDirty(obj);
+                }
+                catch (System.Exception e)
+                {
+                    // If there's an exception, log it with helpful information
+                    Debug.LogError($"Error adding HierarchyColorID to {obj.name}: {e.Message}");
+                    return System.Guid.NewGuid().ToString(); // Temporary fallback ID
+                }
             }
+            
+            // Ensure the ID isn't null
+            if (string.IsNullOrEmpty(persistentID.ID))
+            {
+                Debug.LogWarning($"Empty ID found on {obj.name}, generating new ID");
+                // Force a new ID generation by setting the field directly for an empty ID
+                var serializedObject = new SerializedObject(persistentID);
+                var idProperty = serializedObject.FindProperty("id");
+                idProperty.stringValue = System.Guid.NewGuid().ToString();
+                serializedObject.ApplyModifiedProperties();
+                EditorUtility.SetDirty(persistentID);
+            }
+            
             return persistentID.ID;
         }
 
@@ -605,8 +637,14 @@ namespace HierarchyTool
         }
     }
 
-    public class HierarchyColorID : MonoBehaviour
+    [CustomEditor(typeof(HierarchyColorID))]
+    public class HierarchyColorIDEditor : Editor
     {
-        public string ID = System.Guid.NewGuid().ToString();
-    }
+        // Override the OnInspectorGUI method to draw nothing
+        public override void OnInspectorGUI()
+        {
+            // Draw nothing in the inspector
+        }
+    }           
 }
+

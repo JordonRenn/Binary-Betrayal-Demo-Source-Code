@@ -12,10 +12,7 @@ public class DoorGeneric : Door
     [Space(10)]
 
     [SerializeField] private DoorLockState defaultLockState;
-    public new DoorLockState doorLockState {get; private set;}
-    
     [SerializeField] private  DoorState defaultDoorState = DoorState.Closed;
-    public new DoorState doorState {get ; private set;}
 
     [Header("FMOD")]
     [Space(10)]
@@ -59,11 +56,11 @@ public class DoorGeneric : Door
                     break;
                 case DoorLockState.Locked:
                     PlayLocked_SFX();
-                    Debug.Log("DOORGENERIC | Door is locked from both sides");
+                    SBGDebug.LogInfo("Door is locked from both sides", "DOORGENERIC");
                     break;
                 case DoorLockState.LockedInteriorOnly:
                     PlayLocked_SFX();
-                    Debug.Log("DOORGENERIC | Door is locked from the outside");
+                    SBGDebug.LogInfo("Door is locked from the outside", "DOORGENERIC");
                     break;
             }
         }
@@ -72,7 +69,7 @@ public class DoorGeneric : Door
             switch(doorLockState)
             {
                 case DoorLockState.Unlocked:
-                    Debug.Log("DOORGENERIC | Door is opening");
+                    SBGDebug.LogInfo("Door is opening", "DOORGENERIC");
                     if (alwaysOpenToExt)
                     {
                         OpenDoor(true);
@@ -87,11 +84,11 @@ public class DoorGeneric : Door
                     break;
                 case DoorLockState.Locked:
                     PlayLocked_SFX();
-                    Debug.Log("DOORGENERIC | Door is locked from both sides");
+                    SBGDebug.LogInfo("Door is locked from both sides", "DOORGENERIC");
                     break;
                 case DoorLockState.LockedExteriorOnly:
                     PlayLocked_SFX();
-                    Debug.Log("DOORGENERIC | Door is locked from the inside");
+                    SBGDebug.LogInfo("Door is locked from the inside", "DOORGENERIC");
                     break;
             }
         }
@@ -105,7 +102,7 @@ public class DoorGeneric : Door
             PlayUnlock_SFX();
             yield return new WaitForSeconds(unlockTime);
             
-            Debug.Log($"DOORGENERIC | Door has been unlocked from the {(playerInside ? "inside" : "outside")}");
+            SBGDebug.LogInfo($"Door has been unlocked from the {(playerInside ? "inside" : "outside")}", "DOORGENERIC");
             doorLockState = DoorLockState.Unlocked;
 
             if (alwaysOpenToExt)
@@ -142,7 +139,7 @@ public class DoorGeneric : Door
     public override void CloseDoor()
     {
         //play close sound
-        Debug.Log("Door is closing");
+        SBGDebug.LogInfo("Door is closing", "DOORGENERIC");
         
         if (doorState == DoorState.OpenExt)
         {
@@ -198,7 +195,7 @@ public class DoorGeneric : Door
         }
         catch (System.Exception e)
         {
-            Debug.LogError($"DOORGENERIC | Error playing open sfx: {e}");
+            SBGDebug.LogError($"Error playing open sfx: {e}", "DOORGENERIC");
         }
     }
 
@@ -210,7 +207,7 @@ public class DoorGeneric : Door
         }
         catch (System.Exception e)
         {
-            Debug.LogError($"DOORGENERIC | Error playing close sfx: {e}");
+            SBGDebug.LogError($"Error playing close sfx: {e}", "DOORGENERIC");
         }
     }
 
@@ -222,7 +219,7 @@ public class DoorGeneric : Door
         }
         catch (System.Exception e)
         {
-            Debug.LogError($"DOORGENERIC | Error playing close sfx: {e}");
+            SBGDebug.LogError($"Error playing close sfx: {e}", "DOORGENERIC");
         }
     }
 
@@ -234,7 +231,7 @@ public class DoorGeneric : Door
         }
         catch (System.Exception e)
         {
-            Debug.LogError($"DOORGENERIC | Error playing close sfx: {e}");
+            SBGDebug.LogError($"Error playing close sfx: {e}", "DOORGENERIC");
         }
     }
 }

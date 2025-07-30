@@ -210,7 +210,8 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
             }
 
             GameObject impactDecal = surfaceInfo.bulletHolePrefab[Random.Range(0, surfaceInfo.bulletHolePrefab.Length)];
-            Instantiate(impactDecal, hit.point, Quaternion.LookRotation(hit.normal));
+            GameObject instantiatedDecal = Instantiate(impactDecal, hit.point, Quaternion.LookRotation(hit.normal));
+            instantiatedDecal.transform.SetParent(hit.collider.gameObject.transform); // Set impactDecal as a child
 
             PlaySfx(surfaceInfo.sfx_Impact, hit.point, true);
 
