@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using System.IO;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -133,6 +131,9 @@ public class GameMaster : MonoBehaviour
 [System.Serializable]
 public class PlayerSettings
 {
+    // Default language is English
+    public Language language = Language.English;
+
     // Mouse sensitivity (0.5 is default/neutral)
     public float mouseSensitivityHorizontal = 0.5f;
     public float mouseSensitivityVertical = 0.5f;

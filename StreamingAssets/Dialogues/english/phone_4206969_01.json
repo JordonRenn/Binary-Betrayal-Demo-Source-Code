@@ -1,0 +1,15 @@
+{
+    "dialogueId": "phone_4206969_01",
+    "entries": [
+        {
+            "characterName": "John",
+            "avatarPath": "Characters/John/avatar",
+            "message": "Did you hear about the security breach?"
+        },
+        {
+            "characterName": "Sarah",
+            "avatarPath": "Characters/Sarah/avatar",
+            "message": "Yes, it's concerning. We need to investigate."
+        }
+    ]
+}

@@ -2,10 +2,19 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 using System.IO;
+using System.Collections.Generic;
 
 //enums and structs and other global stuffs
 
 #region General
+
+public enum Language
+{
+    English,
+    Spanish,
+    French
+}
+
 public enum SurfaceType
 {
     Concrete,
@@ -209,14 +218,19 @@ public struct Notification
 
 
 #region Dialog
-/// <summary>
-/// Struct used to format dialog messages so they can be passed in one call
-/// </summary>
-public struct DialogMessage
+[Serializable]
+public class DialogueData
 {
-    public string charName;
-    public Sprite charAvatar;
-    public string charMessage;
+    public string dialogueId;
+    public List<DialogueEntry> entries;
+}
+
+[Serializable]
+public class DialogueEntry
+{
+    public string characterName;
+    public string avatarPath;
+    public string message;
 }
 #endregion
 

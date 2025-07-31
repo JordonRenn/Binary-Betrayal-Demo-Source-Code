@@ -11,6 +11,7 @@ public class UI_Master : MonoBehaviour
     [SerializeField] private GameObject[] HUD_Weapon_Elements;
     [SerializeField] private GameObject[] HUD_Utility_Elements;
     [SerializeField] private GameObject crosshair_Element;
+    [SerializeField] private GameObject DialogueBox;
 
     void Awake()
     {

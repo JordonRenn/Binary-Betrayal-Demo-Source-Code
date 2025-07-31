@@ -1,0 +1,15 @@
+{
+    "dialogueId": "c01_03_intro",
+    "entries": [
+        {
+            "characterName": "John",
+            "avatarPath": "Characters/John/avatar",
+            "message": "Tu as entendu parler de la faille de sécurité ?"
+        },
+        {
+            "characterName": "Sarah",
+            "avatarPath": "Characters/Sarah/avatar",
+            "message": "Oui, c’est inquiétant. Il faut enquêter."
+        }
+    ]
+}
