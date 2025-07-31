@@ -56,7 +56,7 @@ public class DialogueBox : MonoBehaviour
         if (dialogueBoxUI == null || characterNameText == null ||
             characterMessageText == null || avatarImage == null)
         {
-            Debug.LogError("DIALOGUE BOX | Required UI components are missing!");
+            SBGDebug.LogError("Required UI components are missing!", "DialogueBox");
             enabled = false;
             return;
         }
@@ -87,11 +87,11 @@ public class DialogueBox : MonoBehaviour
             if (!string.IsNullOrEmpty(entry.avatarPath))
                 avatarImage.sprite = Resources.Load<Sprite>(entry.avatarPath);
                 
-            Debug.Log($"Displaying message by {entry.characterName}: {entry.message}");
+            SBGDebug.LogInfo($"Displaying message by {entry.characterName}: {entry.message}", "DialogueBox");
         }
         else
         {
-            Debug.Log("No more messages in the dialogue queue.");
+            SBGDebug.LogInfo("No more messages in the dialogue queue.", "DialogueBox");
             dialogueFinished.Invoke();
             CloseDialogueBox();
         }
@@ -128,20 +128,20 @@ public class DialogueBox : MonoBehaviour
             .SetEase(Ease.OutBack)
             .OnComplete(() =>
             {
-                Debug.Log("Dialogue box opened with animation.");
+                SBGDebug.LogInfo("Dialogue box opened with animation.", "DialogueBox");
                 input.lint_InteractTriggered.AddListener(NextDialogue);
                 dialogueBoxOpened.Invoke();
             });
 
         yield return new WaitForSeconds(0.5f);
-        Debug.Log("Dialogue box opened.");
+        SBGDebug.LogInfo("Dialogue box opened.", "DialogueBox");
     }
 
     //CLOSE DIALOGUE BOX
     public void CloseDialogueBox()
     {
         StartCoroutine(CloseBoxRoutine());
-        Debug.Log("Closing dialogue box...");
+        SBGDebug.LogInfo("Closing dialogue box...", "DialogueBox");
         ClearDialogueQueue();
     }
     
@@ -158,7 +158,7 @@ public class DialogueBox : MonoBehaviour
                 characterNameText.text = string.Empty;
                 characterMessageText.text = string.Empty;
                 avatarImage.sprite = null;
-                Debug.Log("Dialogue box closed with animation.");
+                SBGDebug.LogInfo("Dialogue box closed with animation.", "DialogueBox");
                 dialogueBoxClosed.Invoke();
             });
 

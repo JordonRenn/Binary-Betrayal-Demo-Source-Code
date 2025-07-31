@@ -34,11 +34,11 @@ public class PS_Main : Interactable
 
     [SerializeField] public EventReference phonePickupSound;
     [SerializeField] public EventReference phoneHangupSound;
-    [SerializeField] public EventReference phoneHookSound;
+    //[SerializeField] public EventReference phoneHookSound;
     [SerializeField] public EventReference phoneRingbackTone;
     [SerializeField] public float rickBackLength = 3f;
     [SerializeField] public EventReference phoneInvalidCall;
-    [SerializeField] public float invalidCallLength = 3f; 
+    [SerializeField] public float invalidCallLength = 3f;
 
     [Header("Dev Options")]
     [Space(10)]
@@ -53,7 +53,7 @@ public class PS_Main : Interactable
     #region Initialization
     void Awake()
     {
-        Debug.Log($"PAY PHONE | {this.gameObject.transform.position} | Instantiated");
+        SBGDebug.LogInfo($"PAY PHONE | {this.gameObject.transform.position} | Instantiated", "PS_Main");
 
         GameMaster.Instance.gm_PlayerSpawned.AddListener(_GetPlayer);
         GameMaster.Instance.gm_ReticleSystemSpawned.AddListener(_GetReticle);
@@ -67,7 +67,7 @@ public class PS_Main : Interactable
 
     private IEnumerator Init()
     {
-        Debug.Log($"PAY PHONE | {this.gameObject.transform.position} | Initialization started");
+        SBGDebug.LogInfo($"PAY PHONE | {this.gameObject.transform.position} | Initialization started", "PS_Main");
 
         //yield return new WaitForSeconds(initDelay);
 
@@ -75,27 +75,24 @@ public class PS_Main : Interactable
 
         while (playerObj == null && Time.time - initTime < initTimeout) // PLAYER OBJECT
         {
-            //playerObj = GameObject.FindWithTag("Player");
-            Debug.Log($"PAY PHONE | {this.gameObject.transform.position} | Searching for PLAYER OBJECT");
+            SBGDebug.LogDebug($"PAY PHONE | {this.gameObject.transform.position} | Searching for PLAYER OBJECT", "PS_Main");
             yield return null;
         }
 
         while (c_ReticleSystem == null && Time.time - initTime < initTimeout) // RETICLE SYSTEM
         {
-            //c_ReticleSystem = FindFirstObjectByType<FPSS_ReticleSystem>();
-            Debug.Log($"PAY PHONE | {this.gameObject.transform.position} | Searching for RETICLE SYSTEM");
+            SBGDebug.LogDebug($"PAY PHONE | {this.gameObject.transform.position} | Searching for RETICLE SYSTEM", "PS_Main");
             yield return null;
         }
 
         while (c_WeaponHud == null && Time.time - initTime < initTimeout) // WEAPON HUD
         {
-            //c_WeaponHud = FindFirstObjectByType<FPSS_WeaponHUD>();
-            Debug.Log($"PAY PHONE | {this.gameObject.transform.position} | Searching for WEAPON HUD");
+            SBGDebug.LogDebug($"PAY PHONE | {this.gameObject.transform.position} | Searching for WEAPON HUD", "PS_Main");
             yield return null;
         }
 
         initialized = true;
-        Debug.Log($"PAY PHONE | {this.gameObject.transform.position} | Initialization COMPLETE");
+        SBGDebug.LogInfo($"PAY PHONE | {this.gameObject.transform.position} | Initialization COMPLETE", "PS_Main");
     }
 
     private void _GetPlayer()
@@ -123,6 +120,7 @@ public class PS_Main : Interactable
         }
     }
 
+    #region Phone Management
     /// <summary>
     /// Activates the phone system
     /// </summary>/
@@ -170,92 +168,158 @@ public class PS_Main : Interactable
         c_Keypad.enabled = false;
         FPS_InputHandler.Instance.lint_CancelTriggered.RemoveListener(DeactivePhone);
 
-        payphoneAnimator.SetTrigger("payphone_hangup");
+        // Only play hangup animation and sound if we haven't already
+        if (usingPhone)
+        {
+            payphoneAnimator.SetTrigger("payphone_hangup");
+            yield return new WaitForSeconds(0.85f);
 
-        yield return new WaitForSeconds(0.85f);
+            RuntimeManager.StudioSystem.getBus("bus:/Pay Phone", out FMOD.Studio.Bus phoneBank);
+            phoneBank.stopAllEvents(FMOD.Studio.STOP_MODE.IMMEDIATE);
 
-        RuntimeManager.PlayOneShot(phoneHangupSound, transform.position);
+            RuntimeManager.PlayOneShot(phoneHangupSound, transform.position);
+        }
 
+        // Clean up any ongoing dialogue
         DialogueBox.Instance.CloseDialogueBox();
 
         yield return new WaitForSeconds(0.45f);
 
+        // Reset visual and camera states
         fauxArms.SetActive(false);
-
         c_PhoneCam.Priority = 0;
-
         FirstPersonCamController.Instance.AllowOverride(false);
 
+        // Re-enable interaction and reset states
         interactCollider.enabled = true;
         usingPhone = false;
 
+        // Re-enable weapon
         FPSS_Pool.Instance.currentActiveWPO.SetCurrentWeaponActive(true);
 
         yield return new WaitForSeconds(0.2f); //allow time for weapon to be re-enabled
 
+        // Re-enable movement and input
         characterMovement.moveDisabled = false;
         FPS_InputHandler.Instance.SetInputState(InputState.FirstPerson);
 
         UI_Master.Instance.ShowAllHUD();
     }
 
+    private void SetPhoneState(bool active)
+    {
+        usingPhone = active;
+        c_Keypad.enabled = active;
+        interactCollider.enabled = !active;
+        fauxArms.SetActive(active);
+        
+        if (!active)
+        {
+            RuntimeManager.StudioSystem.getBus("bus:/Pay Phone", out FMOD.Studio.Bus phoneBank);
+            phoneBank.stopAllEvents(FMOD.Studio.STOP_MODE.IMMEDIATE);
+        }
+    }
+    #endregion
+
     #region Calling
     /// <summary>
-    /// Dials the number on the phone
+    /// Attempts to dial a number on the phone
     /// </summary>
+    /// <param name="number">The phone number to dial</param>
     public void AttemptCall(string number)
     {
-        Debug.Log("Dialed number: " + number);
-        if (NumberLookup(number))
-        {
-            StartCoroutine(ConnectingCall(number));
-        }
-        else
+        if (!ValidatePhoneNumber(number))
         {
             StartCoroutine(InvalidCall(number));
+            return;
         }
+
+        c_Keypad.DisableKeys();
+        StartCoroutine(ConnectingCall(number));
     }
 
-    private IEnumerator ConnectingCall(string number)
+    private bool ValidatePhoneNumber(string number)
     {
-        //play ringback sound
-        RuntimeManager.PlayOneShot(phoneRingbackTone, transform.position);
-        Debug.Log($"Calling {number}...");
-
-        yield return new WaitForSeconds(rickBackLength);
-
-        Debug.Log($"Connected to {number}. Loading dialogue...");
-
-        DialogueBox.Instance.LoadDialogue(phoneNumbers[number]);
-        DialogueBox.Instance.OpenDialogueBox(); 
-    }
-
-    private IEnumerator InvalidCall(string number)
-    {
-        Debug.LogWarning($"Dialing failed for number: {number}");
-        Debug.LogWarning("Invalid call attempt.");
-
-        RuntimeManager.PlayOneShot(phoneInvalidCall, transform.position);
-
-        yield return new WaitForSeconds(invalidCallLength);
-
-        DialogueBox.Instance.CloseDialogueBox();
-        DeactivePhone();
+        if (string.IsNullOrEmpty(number) || number.Length != 7)
+        {
+            SBGDebug.LogError($"Invalid number format: {number}", "PS_Main");
+            return false;
+        }
+        
+        return NumberLookup(number);
     }
 
     private bool NumberLookup(string number)
     {
-        if (phoneNumbers.TryGetValue(number, out string dialogueId))
+        if (!phoneNumbers.TryGetValue(number, out string dialogueId))
         {
-            Debug.Log($"Dialing {number} for dialogue: {dialogueId}");
-            DialogueLoader.Instance.LoadDialogue(dialogueId);
-            return true;
-        }
-        else
-        {
-            Debug.LogError($"Number {number} not found in phone book.");
+            SBGDebug.LogError($"Number {number} not found in phone book.", "PS_Main");
             return false;
         }
+
+        SBGDebug.LogInfo($"Dialing {number} for dialogue: {dialogueId}", "PS_Main");
+        DialogueLoader.Instance.LoadDialogue(dialogueId);
+        return true;
+    }
+
+    private IEnumerator ConnectingCall(string number)
+    {
+        bool callSuccess = false;
+
+        try
+        {
+            RuntimeManager.PlayOneShot(phoneRingbackTone, transform.position);
+            SBGDebug.LogInfo($"Calling {number}...", "PS_Main");
+            callSuccess = true;
+        }
+        catch (System.Exception e)
+        {
+            SBGDebug.LogException(e, "PS_Main");
+            StartCoroutine(InvalidCall(number));
+            yield break;
+        }
+
+        if (callSuccess)
+        {
+            yield return new WaitForSeconds(rickBackLength);
+
+            try
+            {
+                SBGDebug.LogInfo($"Connected to {number}. Loading dialogue...", "PS_Main");
+                DialogueBox.Instance.LoadDialogue(phoneNumbers[number]);
+                DialogueBox.Instance.OpenDialogueBox();
+            }
+            catch (System.Exception e)
+            {
+                SBGDebug.LogException(e, "PS_Main");
+                StartCoroutine(InvalidCall(number));
+            }
+        }
+    }
+
+    private IEnumerator InvalidCall(string number)
+    {
+        SBGDebug.LogWarning($"Dialing failed for number: {number}", "PS_Main");
+        
+        bool soundPlayed = false;
+        
+        try
+        {
+            RuntimeManager.PlayOneShot(phoneInvalidCall, transform.position);
+            soundPlayed = true;
+        }
+        catch (System.Exception e)
+        {
+            SBGDebug.LogException(e, "PS_Main");
+        }
+
+        if (soundPlayed)
+        {
+            yield return new WaitForSeconds(invalidCallLength);
+        }
+
+        DialogueBox.Instance.CloseDialogueBox(); //fail safe, probably not needed
+        DeactivePhone();
     }
     #endregion
 
@@ -293,7 +357,17 @@ public class PS_Main : Interactable
 
         FirstPersonCamController.Instance.AllowOverride(false);
 
-        Debug.Log("Player teleported to: " + playerTeleportPoint.position);
+        SBGDebug.LogInfo("Player teleported to: " + playerTeleportPoint.position, "PS_Main");
     }
     #endregion
+    
+    private void OnDestroy()
+    {
+        RuntimeManager.StudioSystem.getBus("bus:/Pay Phone", out FMOD.Studio.Bus phoneBank);
+        phoneBank.stopAllEvents(FMOD.Studio.STOP_MODE.IMMEDIATE);
+        
+        GameMaster.Instance.gm_PlayerSpawned.RemoveListener(_GetPlayer);
+        GameMaster.Instance.gm_ReticleSystemSpawned.RemoveListener(_GetReticle);
+        GameMaster.Instance.gm_WeaponHudSpawned.RemoveListener(_GetWeaponHUD);
+    }
 }
