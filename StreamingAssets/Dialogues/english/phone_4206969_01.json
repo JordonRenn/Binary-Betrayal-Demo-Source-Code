@@ -3,13 +3,98 @@
     "entries": [
         {
             "characterName": "John",
-            "avatarPath": "Characters/John/avatar",
-            "message": "Did you hear about the security breach?"
+            "avatarPath": "john",
+            "message": "You catch the report on the breach?"
         },
         {
             "characterName": "Sarah",
-            "avatarPath": "Characters/Sarah/avatar",
-            "message": "Yes, it's concerning. We need to investigate."
+            "avatarPath": "sarah",
+            "message": "Yeah. And it’s not just a breach, John. Someone walked right through our firewalls like they owned the place."
+        },
+        {
+            "characterName": "John",
+            "avatarPath": "john",
+            "message": "How the hell is that possible? We’ve got three air-gapped layers and a kill switch."
+        },
+        {
+            "characterName": "Sarah",
+            "avatarPath": "sarah",
+            "message": "That’s what scares me. Whoever did this… they knew our system inside out. This wasn’t some kid in a basement."
+        },
+        {
+            "characterName": "John",
+            "avatarPath": "john",
+            "message": "What’d they take?"
+        },
+        {
+            "characterName": "Sarah",
+            "avatarPath": "sarah",
+            "message": "Classified dossiers. Black sites, off-books operations, names of assets. Basically, everything that can get people killed."
+        },
+        {
+            "characterName": "John",
+            "avatarPath": "john",
+            "message": "Shit… That’s the whole damn playbook. Does Command know?"
+        },
+        {
+            "characterName": "Sarah",
+            "avatarPath": "sarah",
+            "message": "Not yet. I wanted to warn you first. The login they used was yours."
+        },
+        {
+            "characterName": "John",
+            "avatarPath": "john",
+            "message": "Excuse me?"
+        },
+        {
+            "characterName": "Sarah",
+            "avatarPath": "sarah",
+            "message": "Your ID, your clearance level, your timestamp. To anyone looking at the logs, it’s gonna look like you sold us out."
+        },
+        {
+            "characterName": "John",
+            "avatarPath": "john",
+            "message": "That’s bullshit and you know it. Someone’s framing me."
+        },
+        {
+            "characterName": "Sarah",
+            "avatarPath": "sarah",
+            "message": "I know. But Command won’t see it that way. They’ve been itching for an excuse to burn you ever since Moscow."
+        },
+        {
+            "characterName": "John",
+            "avatarPath": "john",
+            "message": "Then we need to get ahead of this before they pin it on me. Who else had access to my credentials?"
+        },
+        {
+            "characterName": "Sarah",
+            "avatarPath": "sarah",
+            "message": "No one… unless you count the ghost accounts. Shadow operatives that don’t officially exist. Ring any bells?"
+        },
+        {
+            "characterName": "John",
+            "avatarPath": "john",
+            "message": "Yeah. Ghost Division. Christ… if they’re active again, this is bigger than we thought."
+        },
+        {
+            "characterName": "Sarah",
+            "avatarPath": "sarah",
+            "message": "Bigger and bloodier. I traced the signal — it bounced through six countries, all dead drops. Whoever did this is covering their tracks in real time."
+        },
+        {
+            "characterName": "John",
+            "avatarPath": "john",
+            "message": "Alright. Sit tight, scrub the backups, and burn every trace of this call. If they’re listening, we’re already fucked."
+        },
+        {
+            "characterName": "Sarah",
+            "avatarPath": "sarah",
+            "message": "John… if they’re framing you, they’re coming for me next. You know that, right?"
+        },
+        {
+            "characterName": "John",
+            "avatarPath": "john",
+            "message": "Yeah. Keep a gun handy, Sarah. We’re in the deep end now."
         }
     ]
 }

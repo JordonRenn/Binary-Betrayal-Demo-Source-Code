@@ -1,10 +1,6 @@
 using UnityEngine;
 using System.IO;
 
-/* DialogueLoader.cs
- * This script is responsible for loading dialogue data from JSON files located in the StreamingAssets/Dialogues folder.
- */
-
 public class DialogueLoader : MonoBehaviour
 {
     public static DialogueLoader Instance { get; private set; }
@@ -36,7 +32,7 @@ public class DialogueLoader : MonoBehaviour
         UpdateLanguage(GameMaster.Instance.GetSettings().language);
 
         // Subscribe to language changes
-        GameMaster.Instance.gm_GamePaused.AddListener(() => {
+        GameMaster.Instance.gm_GameUnpaused.AddListener(() => {
             UpdateLanguage(GameMaster.Instance.GetSettings().language);
         });
     }

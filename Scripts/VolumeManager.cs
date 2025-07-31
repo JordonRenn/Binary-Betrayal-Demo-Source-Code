@@ -64,6 +64,8 @@ public class VolumeManager : MonoBehaviour
 
     public void LerpWeight(float targetWeight, float duration)
     {
-        DOTween.To(() => volume.weight, x => volume.weight = x, targetWeight, duration);
+        DOTween.To(() => volume.weight, x => volume.weight = x, targetWeight, duration)
+            .SetUpdate(true); // <-- Important: run even when timeScale = 0
     }
+
 }

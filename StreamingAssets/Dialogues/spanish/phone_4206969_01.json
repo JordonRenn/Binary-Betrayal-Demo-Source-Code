@@ -3,13 +3,98 @@
     "entries": [
         {
             "characterName": "John",
-            "avatarPath": "Characters/John/avatar",
-            "message": "¿Te enteraste de la brecha de seguridad?"
+            "avatarPath": "john",
+            "message": "¿Viste el informe sobre la brecha de seguridad?"
         },
         {
             "characterName": "Sarah",
-            "avatarPath": "Characters/Sarah/avatar",
-            "message": "Sí, es preocupante. Tenemos que investigarlo."
+            "avatarPath": "sarah",
+            "message": "Sí. Y no es solo una brecha, John. Alguien atravesó nuestros cortafuegos como si nada."
+        },
+        {
+            "characterName": "John",
+            "avatarPath": "john",
+            "message": "¿Cómo carajos es posible? Tenemos tres capas aisladas y un interruptor de emergencia."
+        },
+        {
+            "characterName": "Sarah",
+            "avatarPath": "sarah",
+            "message": "Eso es lo que da miedo. Quien lo hizo… conocía nuestro sistema al dedillo. No era un crío en su sótano."
+        },
+        {
+            "characterName": "John",
+            "avatarPath": "john",
+            "message": "¿Qué se llevaron?"
+        },
+        {
+            "characterName": "Sarah",
+            "avatarPath": "sarah",
+            "message": "Expedientes clasificados. Sitios negros, operaciones encubiertas, nombres de agentes. Básicamente, todo lo que puede hacer que maten a gente."
+        },
+        {
+            "characterName": "John",
+            "avatarPath": "john",
+            "message": "Mierda… Es todo el maldito manual. ¿El mando ya lo sabe?"
+        },
+        {
+            "characterName": "Sarah",
+            "avatarPath": "sarah",
+            "message": "Todavía no. Quería advertirte primero. El acceso que usaron… era el tuyo."
+        },
+        {
+            "characterName": "John",
+            "avatarPath": "john",
+            "message": "¿Perdón?"
+        },
+        {
+            "characterName": "Sarah",
+            "avatarPath": "sarah",
+            "message": "Tu ID, tu nivel de acceso, tu horario. Para cualquiera que vea los registros, parecerá que tú vendiste todo."
+        },
+        {
+            "characterName": "John",
+            "avatarPath": "john",
+            "message": "Eso es una mierda y lo sabes. Alguien me está incriminando."
+        },
+        {
+            "characterName": "Sarah",
+            "avatarPath": "sarah",
+            "message": "Lo sé. Pero el mando no lo verá así. Te quieren fuera desde Moscú."
+        },
+        {
+            "characterName": "John",
+            "avatarPath": "john",
+            "message": "Entonces tenemos que adelantarnos antes de que me lo carguen a mí. ¿Quién más tenía acceso a mis credenciales?"
+        },
+        {
+            "characterName": "Sarah",
+            "avatarPath": "sarah",
+            "message": "Nadie… a menos que cuentes las cuentas fantasma. Operativos que oficialmente no existen. ¿Te suena?"
+        },
+        {
+            "characterName": "John",
+            "avatarPath": "john",
+            "message": "Sí. La División Fantasma. Joder… si ellos están de vuelta, esto es peor de lo que pensábamos."
+        },
+        {
+            "characterName": "Sarah",
+            "avatarPath": "sarah",
+            "message": "Peor y más sangriento. Rastreé la señal — rebotó por seis países, todas direcciones muertas. Quien lo hace está borrando sus huellas en tiempo real."
+        },
+        {
+            "characterName": "John",
+            "avatarPath": "john",
+            "message": "Está bien. Mantente escondida, borra las copias de seguridad y quema todo rastro de esta llamada. Si nos están escuchando, ya estamos jodidos."
+        },
+        {
+            "characterName": "Sarah",
+            "avatarPath": "sarah",
+            "message": "John… si te incriminan a ti, yo soy la siguiente en la lista. Lo sabes, ¿verdad?"
+        },
+        {
+            "characterName": "John",
+            "avatarPath": "john",
+            "message": "Sí. Mantén el arma a mano, Sarah. Estamos metidos hasta el cuello ahora."
         }
     ]
 }

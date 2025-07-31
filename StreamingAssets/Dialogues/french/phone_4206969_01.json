@@ -3,13 +3,98 @@
     "entries": [
         {
             "characterName": "John",
-            "avatarPath": "Characters/John/avatar",
-            "message": "Tu as entendu parler de la faille de sécurité ?"
+            "avatarPath": "john",
+            "message": "T’as vu le rapport sur la faille de sécurité ?"
         },
         {
             "characterName": "Sarah",
-            "avatarPath": "Characters/Sarah/avatar",
-            "message": "Oui, c’est inquiétant. Il faut enquêter."
+            "avatarPath": "sarah",
+            "message": "Ouais. Et c’est pas juste une faille, John. Quelqu’un a traversé nos pare-feux comme si de rien n’était."
+        },
+        {
+            "characterName": "John",
+            "avatarPath": "john",
+            "message": "Comment c’est putain possible ? On a trois couches isolées et un interrupteur d’urgence."
+        },
+        {
+            "characterName": "Sarah",
+            "avatarPath": "sarah",
+            "message": "C’est ça qui fout les jetons. Celui qui a fait ça… il connaissait notre système par cœur. C’était pas un gamin dans sa cave."
+        },
+        {
+            "characterName": "John",
+            "avatarPath": "john",
+            "message": "Qu’est-ce qu’ils ont pris ?"
+        },
+        {
+            "characterName": "Sarah",
+            "avatarPath": "sarah",
+            "message": "Des dossiers classifiés. Sites noirs, opérations clandestines, noms d’agents. En gros, tout ce qui peut faire buter des gens."
+        },
+        {
+            "characterName": "John",
+            "avatarPath": "john",
+            "message": "Merde… C’est tout le putain de manuel. Le Commandement est au courant ?"
+        },
+        {
+            "characterName": "Sarah",
+            "avatarPath": "sarah",
+            "message": "Pas encore. Je voulais t’avertir avant. L’identifiant utilisé… c’est le tien."
+        },
+        {
+            "characterName": "John",
+            "avatarPath": "john",
+            "message": "Pardon ?"
+        },
+        {
+            "characterName": "Sarah",
+            "avatarPath": "sarah",
+            "message": "Ton ID, ton niveau d’accès, ton horaire. Pour ceux qui verront les logs, ça va sembler que t’as vendu la baraque."
+        },
+        {
+            "characterName": "John",
+            "avatarPath": "john",
+            "message": "C’est des conneries et tu le sais. Quelqu’un me fait porter le chapeau."
+        },
+        {
+            "characterName": "Sarah",
+            "avatarPath": "sarah",
+            "message": "Je sais. Mais le Commandement verra pas ça comme ça. Ils veulent ta peau depuis Moscou."
+        },
+        {
+            "characterName": "John",
+            "avatarPath": "john",
+            "message": "Alors on doit agir avant qu’ils me collent ça sur le dos. Qui d’autre avait accès à mes codes ?"
+        },
+        {
+            "characterName": "Sarah",
+            "avatarPath": "sarah",
+            "message": "Personne… sauf si tu comptes les comptes fantômes. Des opérateurs qui existent pas officiellement. Ça te dit quelque chose ?"
+        },
+        {
+            "characterName": "John",
+            "avatarPath": "john",
+            "message": "Ouais. La Division Fantôme. Putain… si eux sont de retour, c’est encore plus grave qu’on croyait."
+        },
+        {
+            "characterName": "Sarah",
+            "avatarPath": "sarah",
+            "message": "Grave et sanglant. J’ai tracé le signal — il a rebondi dans six pays, tous des planques mortes. Celui qui fait ça efface ses traces en temps réel."
+        },
+        {
+            "characterName": "John",
+            "avatarPath": "john",
+            "message": "Ok. Reste planquée, efface les sauvegardes et brûle toute trace de cet appel. S’ils nous écoutent, on est déjà foutus."
+        },
+        {
+            "characterName": "Sarah",
+            "avatarPath": "sarah",
+            "message": "John… si c’est toi qu’ils font tomber, je suis la prochaine sur la liste. Tu le sais, non ?"
+        },
+        {
+            "characterName": "John",
+            "avatarPath": "john",
+            "message": "Ouais. Garde ton arme à portée, Sarah. On est jusqu’au cou, maintenant."
         }
     ]
 }

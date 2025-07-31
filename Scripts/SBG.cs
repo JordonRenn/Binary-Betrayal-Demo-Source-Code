@@ -44,49 +44,6 @@ public struct TargetFloatRange //create a range using floats
 
 #region Menus
 /// <summary>
-/// Struct used to store references to menu tabs
-/// </summary>
-public struct MenuTab
-{
-    public Button button;
-    public Image image;
-    public Canvas panel;
-
-    public MenuTab(Button b, Image i, Canvas p)
-    {
-        button = b;
-        image = i;
-        panel = p;
-    }
-
-    public override bool Equals(object obj)
-    {
-        if (!(obj is MenuTab))
-        {
-            return false;
-        }
-
-        MenuTab other = (MenuTab)obj;
-        return button == other.button && image == other.image && panel == other.panel;
-    }
-
-    public override int GetHashCode()
-    {
-        return button.GetHashCode() ^ image.GetHashCode() ^ panel.GetHashCode();
-    }
-
-    public static bool operator ==(MenuTab a, MenuTab b)
-    {
-        return a.Equals(b);
-    }
-
-    public static bool operator !=(MenuTab a, MenuTab b)
-    {
-        return !a.Equals(b);
-    }
-}
-
-/// <summary>
 /// Enum representing the main menu state
 /// </summary>
 public enum MainMenuState 
@@ -103,11 +60,19 @@ public enum MainMenuState
 /// </summary>
 public enum SettingsMenuState
 {
+    NotDisplayed,
     Gameplay,
     Video,
     Audio,
     Controls,
     Credits
+}
+
+public enum PauseMenuState
+{
+    NotDisplayed,
+    Main,
+    Settings
 }
 #endregion
 

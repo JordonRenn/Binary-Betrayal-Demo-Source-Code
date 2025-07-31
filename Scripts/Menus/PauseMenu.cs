@@ -1,272 +1,230 @@
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+using TMPro;
 
 public class PauseMenu : MonoBehaviour
 {
-    #region Variables
+    private FPS_InputHandler input;
 
-    [Header("General")]
-    [Space(10)]
-
-    [SerializeField] private float pauseCooldown = 0.5f;
+    [Header("Main Menus")]
     [SerializeField] private Canvas pauseMenuCanvas;
     [SerializeField] private Canvas settingsMenuCanvas;
 
-    [Header("Main Pause Menu")]
-    [Space(10)]
-    
+    [Header("Pause Menu Buttons")]
     [SerializeField] private Button b_Resume;
     [SerializeField] private Button b_Settings;
     [SerializeField] private Button b_Quit;
-    
+
     [Header("Settings Menu")]
-    [Space(10)]
-    
-    [SerializeField] private Button b_BackToMenu; // Return button
-    
+    [SerializeField] private Button b_BackToMenu;
+
     [Header("Settings Tabs")]
-    [Space(10)]
-    
     [SerializeField] private Button b_Gameplay;
     [SerializeField] private Button b_Video;
     [SerializeField] private Button b_Audio;
     [SerializeField] private Button b_Controls;
     [SerializeField] private Button b_Credits;
-    [Space(10)]
-    [SerializeField] private Image i_Gameplay;
-    [SerializeField] private Image i_Video;
-    [SerializeField] private Image i_Audio;
-    [SerializeField] private Image i_Controls;
-    [SerializeField] private Image i_Credits;
-    [Space(10)]
-    [SerializeField] private Sprite tab_normal;
-    [SerializeField] private Sprite tab_selected;
-    [SerializeField] private Sprite tab_active;
-
-    private enum SettingsMenuTab
-    {
-        Gameplay,
-        Video,
-        Audio,
-        Controls,
-        Credits
-    }
-
-    
-    
-    private MenuTab mt_Gameplay;
-    private MenuTab mt_Video;
-    private MenuTab mt_Audio;
-    private MenuTab mt_Controls;
-    private MenuTab mt_Credits;
-
-    private MenuTab activeTab;
-    private MenuTab defaultTab;
-
-    private MenuTab[] tabs;
 
     [Header("Settings Panels")]
-    [Space(10)]
-    
-    [SerializeField] private Canvas gameplayPanel; // default panel
+    [SerializeField] private Canvas gameplayPanel;
     [SerializeField] private Canvas videoPanel;
     [SerializeField] private Canvas audioPanel;
     [SerializeField] private Canvas controlsPanel;
     [SerializeField] private Canvas creditsPanel;
-    
-    [Header("Gameplay Settings Elements")]
-    [Space(10)]
-    
-    [SerializeField] private Toggle t_InvertY;
+
+    [Header("Gameplay Elements")]
     [SerializeField] private Slider s_VertSensitivity;
     [SerializeField] private Slider s_HorizSensitivity;
+    [SerializeField] private Toggle t_InvertY;
+    [SerializeField] private TMP_Dropdown d_Language;
 
-    private float defaultVerticalSensitivity = 0.5f;
-    private float defaultHorizontalSensitivity = 0.5f;
-    
-    [Header("Visual Feedback")]
-    [Space(10)]
-    
-    [SerializeField] private Color normalColor = new Color(1f, 1f, 1f, 1f);
-    [SerializeField] private Color selectedColor = new Color(1f, .8f, .2f, 1f);
-    [SerializeField] private Color activeTabColor = new Color(.8f, .8f, 1f, 1f);
+    // Internal states
+    private bool isPaused = false;
+    private PauseMenuState pMenuState = PauseMenuState.NotDisplayed;
+    private SettingsMenuState sMenuState = SettingsMenuState.NotDisplayed;
 
-    #endregion
-
-    void Start()
+    private void Start()
     {
-        mt_Gameplay = new MenuTab(b_Gameplay, i_Gameplay, gameplayPanel);
-        mt_Video = new MenuTab(b_Video, i_Video, videoPanel);
-        mt_Audio = new MenuTab(b_Audio, i_Audio, audioPanel);
-        mt_Controls = new MenuTab(b_Controls, i_Controls, controlsPanel);
-        mt_Credits = new MenuTab(b_Credits, i_Credits, creditsPanel);
+        input = FPS_InputHandler.Instance;
 
-        tabs = new MenuTab[] { mt_Gameplay, mt_Video, mt_Audio, mt_Controls, mt_Credits };
+        input.pauseMenuButtonTriggered.AddListener(TogglePauseMenu);
+        SetupButtonListeners();
 
-        SetTabColor(mt_Gameplay, tab_normal);
-        SetTabColor(mt_Video, tab_normal);
-        SetTabColor(mt_Audio, tab_normal);
-        SetTabColor(mt_Controls, tab_normal);
-        SetTabColor(mt_Credits, tab_normal);
+        pauseMenuCanvas.gameObject.SetActive(false);
+        settingsMenuCanvas.gameObject.SetActive(false);
+        HideAllSettingsPanels();
 
-        defaultTab = mt_Gameplay;
-        
-        SwitchTab(defaultTab);
-
-        t_InvertY.onValueChanged.AddListener(OnInvertYChanged);
-        s_VertSensitivity.onValueChanged.AddListener(OnVerticalSensitivityChanged);
-        s_HorizSensitivity.onValueChanged.AddListener(OnHorizontalSensitivityChanged);
+        // Setup settings UI listeners
+        SetupSettingsUIBindings();
     }
 
-    void SetTabColor(MenuTab tab, Sprite sprite)
+    private void TogglePauseMenu()
     {
-        tab.image.sprite = sprite;
-    }
+        isPaused = !isPaused;
 
-    void OnTabHover(MenuTab tab)
-    {
-        if (tab == activeTab)
-        {
-            SetTabColor(tab, tab_active);
-        }
+        if (isPaused)
+            ShowPauseMenu();
         else
-        {
-            SetTabColor(tab, tab_selected);
-        }
+            HidePauseMenu();
     }
 
-    void OnTabExit(MenuTab tab) // OnTabUnhover
+    private void ShowPauseMenu()
     {
-        if (tab == activeTab)
-        {
-            SetTabColor(tab, tab_active);
-        }
-        else
-        {
-            SetTabColor(tab, tab_normal);
-        }
+        GameMaster.Instance.gm_GamePaused.Invoke();
+        pMenuState = PauseMenuState.Main;
+        sMenuState = SettingsMenuState.NotDisplayed;
+
+        UI_Master.Instance.HideAllHUD();
+        VolumeManager.Instance.SetVolume(VolumeType.PauseMenu);
+        Time.timeScale = 0f;
+
+        input.pauseMenuButtonTriggered.RemoveListener(TogglePauseMenu);
+        input.menu_CancelTriggered.AddListener(TogglePauseMenu);
+        input.SetInputState(InputState.MenuNavigation);
+
+        pauseMenuCanvas.gameObject.SetActive(true);
+        settingsMenuCanvas.gameObject.SetActive(false);
     }
 
-    void OnTabClick(MenuTab tab)
+    private void HidePauseMenu()
     {
-        if (tab == activeTab)
-        {
-            return;
-        }
-        else
-        {
-            SwitchTab(tab);
-        }
-    }
+        pMenuState = PauseMenuState.NotDisplayed;
+        sMenuState = SettingsMenuState.NotDisplayed;
 
-    void SwitchTab(MenuTab tab)
-    {
-        if (tab == activeTab)
-        {
-            return;
-        }
+        input.pauseMenuButtonTriggered.AddListener(TogglePauseMenu);
+        input.menu_CancelTriggered.RemoveListener(TogglePauseMenu);
+        input.SetInputState(InputState.FirstPerson);
 
-        foreach (MenuTab t in tabs)
-        {
-            if (t == tab)
-            {
-                SetTabColor(t, tab_active);
-            }
-            else
-            {
-                SetTabColor(t, tab_normal);
-            }
-        }
+        pauseMenuCanvas.gameObject.SetActive(false);
+        settingsMenuCanvas.gameObject.SetActive(false);
 
-        if (tab == mt_Gameplay)
-        {
-            SwitchSettingsPanel(SettingsMenuTab.Gameplay);
-        }
-        else if (tab == mt_Video)
-        {
-            SwitchSettingsPanel(SettingsMenuTab.Video);
-        }
-        else if (tab == mt_Audio)
-        {
-            SwitchSettingsPanel(SettingsMenuTab.Audio);
-        }
-        else if (tab == mt_Controls)
-        {
-            SwitchSettingsPanel(SettingsMenuTab.Controls);
-        }
-        else if (tab == mt_Credits)
-        {
-            SwitchSettingsPanel(SettingsMenuTab.Credits);
-        }
+        UI_Master.Instance.ShowAllHUD();
+        VolumeManager.Instance.SetVolume(VolumeType.Default);
+        Time.timeScale = 1f;
 
-        activeTab = tab;
-    }
-
-    private void SwitchSettingsPanel(SettingsMenuTab tab)
-    {
-        gameplayPanel.enabled = (tab == SettingsMenuTab.Gameplay);
-        videoPanel.enabled = (tab == SettingsMenuTab.Video);
-        audioPanel.enabled = (tab == SettingsMenuTab.Audio);
-        controlsPanel.enabled = (tab == SettingsMenuTab.Controls);
-        creditsPanel.enabled = (tab == SettingsMenuTab.Credits);
-    }
-
-    // Settings Handlers
-    #region Settings Handlers
-    
-    /// <summary>
-    /// Handle invert Y axis toggle change
-    /// </summary>
-    private void OnInvertYChanged(bool isInverted)
-    {
-        GameMaster.Instance.GetSettings().invertYAxis = isInverted;
+        // Save settings when exiting pause
         GameMaster.Instance.SaveSettings();
-        GameMaster.Instance.ApplySettings();
+        GameMaster.Instance.gm_GameUnpaused.Invoke();
     }
-    
-    /// <summary>
-    /// Handle vertical sensitivity slider change
-    /// </summary>
-    private void OnVerticalSensitivityChanged(float value)
+
+    // ---- Settings Menu Logic ----
+    private void ToggleSettingsMenu()
     {
-        GameMaster.Instance.GetSettings().mouseSensitivityVertical = value;
-        GameMaster.Instance.SaveSettings();
-        GameMaster.Instance.ApplySettings();
-    }
-    
-    /// <summary>
-    /// Handle horizontal sensitivity slider change
-    /// </summary>
-    private void OnHorizontalSensitivityChanged(float value)
-    {
-        GameMaster.Instance.GetSettings().mouseSensitivityHorizontal = value;
-        GameMaster.Instance.SaveSettings();
-        GameMaster.Instance.ApplySettings();
-    }
-    
-    /// <summary>
-    /// Reset vertical sensitivity to default value
-    /// </summary>
-    public void ResetVerticalSensitivity()
-    {
-        if (s_VertSensitivity != null)
+        if (pMenuState == PauseMenuState.Main)
         {
-            s_VertSensitivity.value = defaultVerticalSensitivity;
+            pMenuState = PauseMenuState.Settings;
+            SwitchSettingsTab(SettingsMenuState.Gameplay);
+
+            // Load settings into UI when entering settings menu
+            LoadSettingsToUI();
+
+            pauseMenuCanvas.gameObject.SetActive(false);
+            settingsMenuCanvas.gameObject.SetActive(true);
+        }
+        else if (pMenuState == PauseMenuState.Settings)
+        {
+            pMenuState = PauseMenuState.Main;
+            sMenuState = SettingsMenuState.NotDisplayed;
+
+            settingsMenuCanvas.gameObject.SetActive(false);
+            pauseMenuCanvas.gameObject.SetActive(true);
         }
     }
-    
-    /// <summary>
-    /// Reset horizontal sensitivity to default value
-    /// </summary>
-    public void ResetHorizontalSensitivity()
+
+    private void SwitchSettingsTab(SettingsMenuState tab)
     {
-        if (s_HorizSensitivity != null)
+        sMenuState = tab;
+        HideAllSettingsPanels();
+
+        switch (tab)
         {
-            s_HorizSensitivity.value = defaultHorizontalSensitivity;
+            case SettingsMenuState.Gameplay:
+                gameplayPanel.gameObject.SetActive(true);
+                break;
+            case SettingsMenuState.Video:
+                videoPanel.gameObject.SetActive(true);
+                break;
+            case SettingsMenuState.Audio:
+                audioPanel.gameObject.SetActive(true);
+                break;
+            case SettingsMenuState.Controls:
+                controlsPanel.gameObject.SetActive(true);
+                break;
+            case SettingsMenuState.Credits:
+                creditsPanel.gameObject.SetActive(true);
+                break;
         }
     }
-    
-    #endregion
+
+    private void HideAllSettingsPanels()
+    {
+        gameplayPanel.gameObject.SetActive(false);
+        videoPanel.gameObject.SetActive(false);
+        audioPanel.gameObject.SetActive(false);
+        controlsPanel.gameObject.SetActive(false);
+        creditsPanel.gameObject.SetActive(false);
+    }
+
+    // ---- Button Listeners Setup ----
+    private void SetupButtonListeners()
+    {
+        b_Resume.onClick.AddListener(TogglePauseMenu);
+        b_Settings.onClick.AddListener(ToggleSettingsMenu);
+        b_Quit.onClick.AddListener(QuitGame);
+
+        b_BackToMenu.onClick.AddListener(ToggleSettingsMenu);
+
+        b_Gameplay.onClick.AddListener(() => SwitchSettingsTab(SettingsMenuState.Gameplay));
+        b_Video.onClick.AddListener(() => SwitchSettingsTab(SettingsMenuState.Video));
+        b_Audio.onClick.AddListener(() => SwitchSettingsTab(SettingsMenuState.Audio));
+        b_Controls.onClick.AddListener(() => SwitchSettingsTab(SettingsMenuState.Controls));
+        b_Credits.onClick.AddListener(() => SwitchSettingsTab(SettingsMenuState.Credits));
+    }
+
+    private void QuitGame()
+    {
+        Application.Quit();
+    }
+
+    // ---- Settings UI Binding ----
+    private void SetupSettingsUIBindings()
+    {
+        s_VertSensitivity.onValueChanged.AddListener(value =>
+        {
+            var settings = GameMaster.Instance.GetSettings();
+            settings.mouseSensitivityVertical = value;
+            GameMaster.Instance.ApplySettings();
+        });
+
+        s_HorizSensitivity.onValueChanged.AddListener(value =>
+        {
+            var settings = GameMaster.Instance.GetSettings();
+            settings.mouseSensitivityHorizontal = value;
+            GameMaster.Instance.ApplySettings();
+        });
+
+        t_InvertY.onValueChanged.AddListener(isOn =>
+        {
+            var settings = GameMaster.Instance.GetSettings();
+            settings.invertYAxis = isOn;
+            GameMaster.Instance.ApplySettings();
+        });
+
+        d_Language.onValueChanged.AddListener(index =>
+        {
+            var settings = GameMaster.Instance.GetSettings();
+            settings.language = (Language)index;
+            GameMaster.Instance.ApplySettings();
+        });
+    }
+
+    private void LoadSettingsToUI()
+    {
+        var settings = GameMaster.Instance.GetSettings();
+
+        s_VertSensitivity.SetValueWithoutNotify(settings.mouseSensitivityVertical);
+        s_HorizSensitivity.SetValueWithoutNotify(settings.mouseSensitivityHorizontal);
+        t_InvertY.SetIsOnWithoutNotify(settings.invertYAxis);
+        d_Language.SetValueWithoutNotify((int)settings.language);
+    }
 }

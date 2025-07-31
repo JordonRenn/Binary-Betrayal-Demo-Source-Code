@@ -17,8 +17,8 @@ public class FPS_InputHandler : MonoBehaviour
 {
     public static FPS_InputHandler Instance {get ; private set;} 
     
-    [Header("UI Input Module")]
-    [Space(10)]
+    //[Header("UI Input Module")]
+    //[Space(10)]
 
     //[SerializeField] private InputSystemUIInputModule UIInputModule;
 

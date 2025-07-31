@@ -7,16 +7,14 @@ using TMPro;
 using DG.Tweening;
 using FMODUnity;
 
-/* * DialogueBox.cs
- * This script manages the dialogue box UI and handles loading and displaying dialogues.
- * It uses a queue to manage dialogue messages and provides methods to open/close the dialogue box.
-
- * Place dialogue JSON files in the StreamingAssets/Dialogues folder
+/* 
+ * Place dialogue JSON files in the StreamingAssets/Dialogues/{language} folder
  * File names should match the dialogue ID
- * Load dialogues using DialogueLoader.LoadDialogue("dialogue_id");
 
- * Place avatar images in the Resources folder
- * Load avatars using Resources.Load<Sprite>("path_to_avatar");
+ * Avatar Placement:
+ * 1. Place avatar sprites in Assets/Resources/Textures/avatars
+ * 2. Reference avatars in dialogue files using just the character name in lowercase
+ *    Example: "john" for Assets/Resources/Textures/avatars/john.png
  */
 
 public class DialogueBox : MonoBehaviour
@@ -36,6 +34,8 @@ public class DialogueBox : MonoBehaviour
     [HideInInspector] public UnityEvent dialogueBoxOpened;
     [HideInInspector] public UnityEvent dialogueBoxClosed;
     [HideInInspector] public UnityEvent dialogueFinished;
+
+    private const string AVATAR_PATH = "Textures/avatars/";
 
     #region Initialization
     void Awake()
@@ -84,9 +84,20 @@ public class DialogueBox : MonoBehaviour
             DialogueEntry entry = dialogueQueue.Dequeue();
             characterNameText.text = entry.characterName;
             characterMessageText.text = entry.message;
+            
             if (!string.IsNullOrEmpty(entry.avatarPath))
-                avatarImage.sprite = Resources.Load<Sprite>(entry.avatarPath);
-                
+            {
+                Sprite avatarSprite = Resources.Load<Sprite>(AVATAR_PATH + entry.avatarPath);
+                if (avatarSprite != null)
+                {
+                    avatarImage.sprite = avatarSprite;
+                }
+                else
+                {
+                    SBGDebug.LogWarning($"Could not load avatar sprite at path: {AVATAR_PATH + entry.avatarPath}", "DialogueBox");
+                }
+            }
+            
             SBGDebug.LogInfo($"Displaying message by {entry.characterName}: {entry.message}", "DialogueBox");
         }
         else
