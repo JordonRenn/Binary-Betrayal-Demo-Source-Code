@@ -28,10 +28,12 @@ public enum SurfaceType
     None
 }
 
+
+
 public struct TargetFloatRange //create a range using floats
 {
-    public float minValue {get ; private set;}
-    public float maxValue {get ; private set;}
+    public float minValue { get; private set; }
+    public float maxValue { get; private set; }
 
     public TargetFloatRange(float min, float max)
     {

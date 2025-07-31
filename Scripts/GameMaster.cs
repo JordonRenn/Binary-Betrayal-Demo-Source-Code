@@ -74,11 +74,28 @@ public class GameMaster : MonoBehaviour
             SBGDebug.LogInfo("Using default settings", "GameMaster");
         }
     }
+
+    /// <summary>
+    /// Gets the current player settings
+    /// </summary>
+    public PlayerSettings GetSettings()
+    {
+        return playerSettings;
+    }
+
+    /// <summary>
+    /// Saves and applies player settings
+    /// </summary>
+    public void SaveAndApplySettings()
+    {
+        SaveSettings();
+        ApplySettings();
+    }
     
     /// <summary>
     /// Saves player settings to PlayerPrefs
     /// </summary>
-    public void SaveSettings()
+    private void SaveSettings()
     {
         try
         {
@@ -94,17 +111,9 @@ public class GameMaster : MonoBehaviour
     }
     
     /// <summary>
-    /// Gets the current player settings
-    /// </summary>
-    public PlayerSettings GetSettings()
-    {
-        return playerSettings;
-    }
-    
-    /// <summary>
     /// Applies settings changes to relevant systems
     /// </summary>
-    public void ApplySettings()
+    private void ApplySettings()
     {
         // Notify any systems that need to update when settings change
         if (FPS_InputHandler.Instance != null)

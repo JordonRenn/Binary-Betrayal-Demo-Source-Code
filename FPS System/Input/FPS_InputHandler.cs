@@ -3,28 +3,23 @@ using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
 public enum InputState
-{
-    FirstPerson,
-    MenuNavigation,
-    LockedInteraction,
-    Cutscene,
-}
+    {
+        FirstPerson,
+        MenuNavigation,
+        LockedInteraction,
+        Cutscene,
+    }
 
 /// <summary>
 /// Singleton class to handle all the input actions for the FPS system.
 /// </summary>
 public class FPS_InputHandler : MonoBehaviour
 {
-    public static FPS_InputHandler Instance {get ; private set;} 
-    
-    //[Header("UI Input Module")]
-    //[Space(10)]
-
-    //[SerializeField] private InputSystemUIInputModule UIInputModule;
+    public static FPS_InputHandler Instance { get; private set; }
 
     [Header("Input Action Asset")]
     [Space(10)]
-    
+
     [SerializeField] private InputActionAsset playerControls;
 
     [Header("Action Map Name Ref")]
@@ -36,7 +31,7 @@ public class FPS_InputHandler : MonoBehaviour
     [SerializeField] private const string actionMapName_Cutscene = "cutscene";
 
     //FPS Action Name Refs
-    
+
     private const string move = "Move";
     private const string look = "Look";
     private const string slowWalk = "Slow Walk";
@@ -131,61 +126,61 @@ public class FPS_InputHandler : MonoBehaviour
 
     [SerializeField] private float horizontalLookSensitivity = 1.0f;
     [SerializeField] private float verticalLookSensitivity = 1.0f;
-    private float horizontalSensitivityMultiplier = 1.0f; 
+    private float horizontalSensitivityMultiplier = 1.0f;
     private float verticalSensitivityMultiplier = 1.0f;
     private bool invertYAxis = false;
 
     //FPS
-    public Vector2 MoveInput {get ; private set;}
-    public Vector2 LookInput {get ; private set;}
-    public bool SlowWalkInput {get ; private set;}
-    public bool CrouchInput {get ; private set;}
-    public bool JumpInput {get ; private set;}
-    public bool InteractInput {get ; private set;}
-    public bool CancelInput {get ; private set;}
-    public bool PauseMenuButtonInput {get ; private set;}
-    public bool EquipmentMenuButtonInput {get ; private set;}
-    public bool AimInput {get ; private set;}
-    public bool FireInput {get ; private set;}
+    public Vector2 MoveInput { get; private set; }
+    public Vector2 LookInput { get; private set; }
+    public bool SlowWalkInput { get; private set; }
+    public bool CrouchInput { get; private set; }
+    public bool JumpInput { get; private set; }
+    public bool InteractInput { get; private set; }
+    public bool CancelInput { get; private set; }
+    public bool PauseMenuButtonInput { get; private set; }
+    public bool EquipmentMenuButtonInput { get; private set; }
+    public bool AimInput { get; private set; }
+    public bool FireInput { get; private set; }
     public bool ReloadInput { get; private set; }
-    public bool SwapSlotInput {get ; private set;}
-    public bool ActivatePrimaryWeaponSlotInput {get ; private set;}
-    public bool ActivateSecondaryWeaponSlotInput {get ; private set;}
-    public bool UseUtilLeftInput {get ; private set;}
-    public bool UseUtilRightInput {get ; private set;}
-    public bool ActivateUnarmedInput {get ; private set;}
+    public bool SwapSlotInput { get; private set; }
+    public bool ActivatePrimaryWeaponSlotInput { get; private set; }
+    public bool ActivateSecondaryWeaponSlotInput { get; private set; }
+    public bool UseUtilLeftInput { get; private set; }
+    public bool UseUtilRightInput { get; private set; }
+    public bool ActivateUnarmedInput { get; private set; }
 
     //locked interaction
-    public Vector2 Lint_CursorMoveInput {get ; private set;}
-    public bool Lint_ClickInput {get ; private set;}
-    public bool Lint_CancelInput {get ; private set;}
-    public bool Lint_InteractInput {get ; private set;}  // Add this line
-    public bool Lint_Num_1Input {get ; private set;}
-    public bool Lint_Num_2Input {get ; private set;}
-    public bool Lint_Num_3Input {get ; private set;}
-    public bool Lint_Num_4Input {get ; private set;}
-    public bool Lint_Num_5Input {get ; private set;}
-    public bool Lint_Num_6Input {get ; private set;}
-    public bool Lint_Num_7Input {get ; private set;}
-    public bool Lint_Num_8Input {get ; private set;}
-    public bool Lint_Num_9Input {get ; private set;}
-    public bool Lint_Num_0Input {get ; private set;}
+    public Vector2 Lint_CursorMoveInput { get; private set; }
+    public bool Lint_ClickInput { get; private set; }
+    public bool Lint_CancelInput { get; private set; }
+    public bool Lint_InteractInput { get; private set; }  // Add this line
+    public bool Lint_Num_1Input { get; private set; }
+    public bool Lint_Num_2Input { get; private set; }
+    public bool Lint_Num_3Input { get; private set; }
+    public bool Lint_Num_4Input { get; private set; }
+    public bool Lint_Num_5Input { get; private set; }
+    public bool Lint_Num_6Input { get; private set; }
+    public bool Lint_Num_7Input { get; private set; }
+    public bool Lint_Num_8Input { get; private set; }
+    public bool Lint_Num_9Input { get; private set; }
+    public bool Lint_Num_0Input { get; private set; }
 
     //Menu Navigation
 
-    public Vector2 Menu_CursorMoveInput {get ; private set;}
-    public Vector2 Menu_MoveInput {get ; private set;}
-    public bool Menu_ClickInput {get ; private set;}
-    public bool Menu_CancelInput {get ; private set;}
-    public bool Menu_DevInput {get ; private set;}
-    public bool Menu_ConfirmInput {get ; private set;}
+    public Vector2 Menu_CursorMoveInput { get; private set; }
+    public Vector2 Menu_MoveInput { get; private set; }
+    public bool Menu_ClickInput { get; private set; }
+    public bool Menu_CancelInput { get; private set; }
+    public bool Menu_DevInput { get; private set; }
+    public bool Menu_ConfirmInput { get; private set; }
 
     //Cutscene
 
     [Header("FPS Unity Events")]
     [Space(10)]
-    
-   [HideInInspector]  public UnityEvent slowWalkTriggered;
+
+    [HideInInspector] public UnityEvent slowWalkTriggered;
     [HideInInspector] public UnityEvent crouchTriggered;
     [HideInInspector] public UnityEvent crouchReleased;
     [HideInInspector] public UnityEvent jumpTriggered;
@@ -209,7 +204,7 @@ public class FPS_InputHandler : MonoBehaviour
     [HideInInspector] public UnityEvent lint_CursorMoveTriggered;
     [HideInInspector] public UnityEvent lint_ClickTriggered;
     [HideInInspector] public UnityEvent lint_CancelTriggered;
-    [HideInInspector] public UnityEvent lint_InteractTriggered; 
+    [HideInInspector] public UnityEvent lint_InteractTriggered;
     [HideInInspector] public UnityEvent lint_InteractReleased;
     [HideInInspector] public UnityEvent lint_Num_1Triggered;
     [HideInInspector] public UnityEvent lint_Num_2Triggered;
@@ -231,7 +226,7 @@ public class FPS_InputHandler : MonoBehaviour
     [HideInInspector] public UnityEvent menu_MovePerformed;
     [HideInInspector] public UnityEvent menu_ConfirmTriggered;
 
-    public InputState currentState {get ; private set;}
+    public InputState currentState { get; private set; }
     [SerializeField] private InputState defaultState = InputState.FirstPerson;
 
     /// <summary>
@@ -240,27 +235,13 @@ public class FPS_InputHandler : MonoBehaviour
     void Awake()
     {
         currentState = defaultState;
-        
+
         if (Instance != null && Instance != this)
         {
             Destroy(this.gameObject);
         }
         Instance = this;
         DontDestroyOnLoad(Instance);
-        
-        /* // Find the UI input module if it's not already assigned
-        if (UIInputModule == null)
-        {
-            UIInputModule = FindAnyObjectByType<InputSystemUIInputModule>();
-            if (UIInputModule == null)
-            {
-                Debug.LogWarning("UIInputModule not assigned and couldn't be found automatically. UI input functionality may be limited.");
-            }
-            else
-            {
-                Debug.Log("UIInputModule was auto-assigned at runtime.");
-            }
-        } */
 
         InputActionMap actionMap_FPS = playerControls.FindActionMap(actionMapName_FPS);
         InputActionMap actionMap_LockedInteraction = playerControls.FindActionMap(actionMapName_LockedInteraction);
@@ -325,11 +306,12 @@ public class FPS_InputHandler : MonoBehaviour
     private void RegisterInputActions()
     {
         //FPS Actions
-        
+
         moveAction.performed += context => MoveInput = context.ReadValue<Vector2>();
         moveAction.canceled += context => MoveInput = Vector2.zero;
 
-        lookAction.performed += context => {
+        lookAction.performed += context =>
+        {
             Vector2 input = context.ReadValue<Vector2>();
             // Apply sensitivity multipliers
             input.x *= horizontalSensitivityMultiplier;
@@ -393,7 +375,7 @@ public class FPS_InputHandler : MonoBehaviour
         weaponPrimaryAction.started += context => activatePrimaryTriggered.Invoke();
         weaponPrimaryAction.performed += context => ActivatePrimaryWeaponSlotInput = true;
         weaponPrimaryAction.canceled += context => ActivatePrimaryWeaponSlotInput = false;
-        
+
         //weaponSecondaryAction.started += context => FPSS_WeaponPool.Instance.SelectSecondary();
         weaponSecondaryAction.started += context => activateSecondaryTriggered.Invoke();
         weaponSecondaryAction.performed += context => ActivateSecondaryWeaponSlotInput = true;
@@ -473,7 +455,7 @@ public class FPS_InputHandler : MonoBehaviour
         menu_CursorMoveAction.canceled += context => Menu_CursorMoveInput = Vector2.zero;
 
         //menu_MoveAction.performed += context => Menu_MoveInput = context.ReadValue<Vector2>();
-        menu_MoveAction.performed += context => 
+        menu_MoveAction.performed += context =>
         {
             Menu_MoveInput = context.ReadValue<Vector2>();
             menu_MovePerformed.Invoke();
@@ -512,7 +494,7 @@ public class FPS_InputHandler : MonoBehaviour
             horizontalSensitivityMultiplier = settings.GetHorizontalSensitivityMultiplier();
             verticalSensitivityMultiplier = settings.GetVerticalSensitivityMultiplier();
             invertYAxis = settings.invertYAxis;
-            
+
             SBGDebug.LogInfo($"Mouse sensitivity updated - H: {horizontalSensitivityMultiplier}, V: {verticalSensitivityMultiplier}, InvertY: {invertYAxis}", "FPS_InputHandler");
         }
     }
@@ -521,7 +503,7 @@ public class FPS_InputHandler : MonoBehaviour
     /// Set the input state on enable.
     /// </summary>
     void OnEnable()
-    {   
+    {
         SetInputState(defaultState); //maybe need to use default state here????
     }
 
@@ -549,7 +531,7 @@ public class FPS_InputHandler : MonoBehaviour
                 playerControls.FindActionMap(actionMapName_LockedInteraction).Disable();
                 playerControls.FindActionMap(actionMapName_Cutscene).Disable();
                 playerControls.FindActionMap(actionMapName_FPS).Enable();
-                
+
                 currentState = state;
                 break;
             case InputState.MenuNavigation:
@@ -597,41 +579,6 @@ public class FPS_InputHandler : MonoBehaviour
             Cursor.visible = true;
         }
     }
-
-
-    //UI Module Values
-    /* void SetUIModuleValues(InputState state)
-    {
-        if (UIInputModule == null)
-        {
-            Debug.LogError("UIInputModule is null in SetUIModuleValues. UI input won't work correctly.");
-            return;
-        }
-
-        switch (state)
-        {
-            case InputState.FirstPerson:
-                //UIInputModule.move.Set(playerControls, actionMapName_FPS, move);
-                //UIInputModule.point.Set(playerControls, actionMapName_FPS, look);
-                //UIInputModule.leftClick.Set(playerControls, actionMapName_FPS, fire);
-                //UIInputModule.rightClick.Set(playerControls, actionMapName_FPS, aim);
-                //UIInputModule.cancel.Set(playerControls, actionMapName_FPS, cancel);
-                break;
-            case InputState.MenuNavigation:
-                UIInputModule.move.Set(menu_MoveAction);
-                UIInputModule.point.Set(menu_CursorMoveAction);
-                UIInputModule.leftClick.Set(menu_ClickAction);
-                UIInputModule.cancel.Set(menu_CancelAction);
-                UIInputModule.submit.Set(menu_ConfirmAction);
-                break;
-            case InputState.LockedInteraction:
-                //UIInputModule.move.Set(lint_CursorMoveAction);
-                UIInputModule.point.Set(lint_CursorMoveAction);
-                UIInputModule.leftClick.Set(lint_ClickAction);
-                UIInputModule.cancel.Set(lint_CancelAction);
-                break;
-            case InputState.Cutscene:
-                break;
-        }
-    } */
+    
+    
 }

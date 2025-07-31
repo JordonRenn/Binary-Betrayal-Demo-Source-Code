@@ -103,7 +103,7 @@ public class PauseMenu : MonoBehaviour
         Time.timeScale = 1f;
 
         // Save settings when exiting pause
-        GameMaster.Instance.SaveSettings();
+        GameMaster.Instance.SaveAndApplySettings();
         GameMaster.Instance.gm_GameUnpaused.Invoke();
     }
 
@@ -193,28 +193,28 @@ public class PauseMenu : MonoBehaviour
         {
             var settings = GameMaster.Instance.GetSettings();
             settings.mouseSensitivityVertical = value;
-            GameMaster.Instance.ApplySettings();
+            GameMaster.Instance.SaveAndApplySettings();
         });
 
         s_HorizSensitivity.onValueChanged.AddListener(value =>
         {
             var settings = GameMaster.Instance.GetSettings();
             settings.mouseSensitivityHorizontal = value;
-            GameMaster.Instance.ApplySettings();
+            GameMaster.Instance.SaveAndApplySettings();
         });
 
         t_InvertY.onValueChanged.AddListener(isOn =>
         {
             var settings = GameMaster.Instance.GetSettings();
             settings.invertYAxis = isOn;
-            GameMaster.Instance.ApplySettings();
+            GameMaster.Instance.SaveAndApplySettings();
         });
 
         d_Language.onValueChanged.AddListener(index =>
         {
             var settings = GameMaster.Instance.GetSettings();
             settings.language = (Language)index;
-            GameMaster.Instance.ApplySettings();
+            GameMaster.Instance.SaveAndApplySettings();
         });
     }
 
