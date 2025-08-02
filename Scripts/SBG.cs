@@ -1,7 +1,7 @@
 using UnityEngine;
-using UnityEngine.UI;
 using System;
 using System.IO;
+using System.Linq;
 using System.Collections.Generic;
 
 //enums and structs and other global stuffs
@@ -201,6 +201,146 @@ public class DialogueEntry
 }
 #endregion
 
+#region Questing
+public enum QuestState
+{
+    Incomplete,
+    InProgress,
+    Complete
+}
+
+public enum QuestType
+{
+    Main,
+    Side,
+    Secret,
+    Encounter
+}
+
+public enum ObjectiveType
+{
+    Talk,
+    Collect,
+    DoorLock,
+    PhoneCall,
+    Kill,
+    Explore,
+    UseItem,
+    Interact
+}
+
+[System.Serializable]
+public class QuestData {
+    public int quest_id;
+    public QuestType type;
+    public string title;
+    public string description;
+    public Objective[] objectives;
+    public int[] prerequisiteQuestIds; // For quest chains
+    public QuestReward[] rewards;
+    public bool isRepeatable;
+    public float timeLimit;
+    public QuestState state { get; private set; } = QuestState.Incomplete;
+    
+    public float Progress => 
+        objectives?.Length > 0 
+            ? objectives.Average(o => o.Progress)
+            : 0f;
+            
+    public void UpdateState()
+    {
+        if (state == QuestState.Complete) return;
+        
+        if (objectives == null || objectives.Length == 0)
+        {
+            state = QuestState.Complete;
+            return;
+        }
+        
+        bool allComplete = objectives.All(o => o.IsCompleted);
+        state = allComplete ? QuestState.Complete :
+               objectives.Any(o => o.Progress > 0) ? QuestState.InProgress :
+               QuestState.Incomplete;
+    }
+}
+
+[System.Serializable]
+public class Objective
+{
+    public int objective_id;
+    public ObjectiveType type;
+    public string[] item;  // For collect objectives
+    public int quantity;
+    public int currentQuantity;
+    public string[] enemy; // For kill objectives
+    public string dialogID; // For talk objectives
+    public ObjectiveTarget[] target;  // Use a specific type (e.g., NPC or item) later
+    public string message;
+    public bool IsCompleted { get; private set; }
+
+    public float Progress =>
+        quantity > 0 ? Mathf.Clamp01((float)currentQuantity / quantity) :
+        IsCompleted ? 1f : 0f;
+
+    public void MarkAsComplete()
+    {
+        IsCompleted = true;
+    }
+
+    public void UpdateProgress(int newCount)
+    {
+        currentQuantity = Mathf.Min(newCount, quantity);
+        if (currentQuantity >= quantity)
+            MarkAsComplete();
+    }
+}
+
+public enum ObjectiveStatus
+{
+    InProgress,
+    CompletedSuccess,
+    CompletedFailure,
+    Abandoned
+}
+
+[System.Serializable]
+public class ObjectiveTarget
+{
+    public string targetId;
+    public Vector3 position;
+    public TargetType type;
+    public bool isInteracted;
+    
+    // Additional data can be stored in a serialized format
+    public string data;
+}
+
+[System.Serializable]
+public class QuestReward
+{
+    public RewardType type;
+    public string itemId;
+    public int quantity;
+    public int experiencePoints;
+    public float currency;
+}
+
+public enum RewardType {
+    Item,
+    Experience,
+    Currency,
+    Skill,
+    Reputation
+}
+
+public enum TargetType {
+    NPC,
+    Item,
+    Location,
+    Interactable
+}
+#endregion
+
 #region Graphics
 public enum VolumeType //post process volume
 {
@@ -208,6 +348,16 @@ public enum VolumeType //post process volume
     LockPick,
     Cutscene,
     Default
+}
+#endregion
+
+#region Inventory
+public enum ItemType
+{
+    Weapon,
+    Consumable,
+    KeyItem,
+    QuestItem
 }
 #endregion
 
@@ -244,7 +394,7 @@ public static class SBGMath
         float oneMinusT = 1f - t;
         float oneMinusTSquared = oneMinusT * oneMinusT;
         float tSquared = t * t;
-        
+
         return oneMinusTSquared * oneMinusT * start +
                3f * oneMinusTSquared * t * control1 +
                3f * oneMinusT * tSquared * control2 +
@@ -258,12 +408,12 @@ public static class SBGMath
     {
         float tSquared = t * t;
         float tCubed = tSquared * t;
-        
+
         float h1 = 2f * tCubed - 3f * tSquared + 1f;
         float h2 = -2f * tCubed + 3f * tSquared;
         float h3 = tCubed - 2f * tSquared + t;
         float h4 = tCubed - tSquared;
-        
+
         return h1 * start + h2 * end + h3 * startTangent + h4 * endTangent;
     }
 
@@ -283,7 +433,7 @@ public static class SBGMath
         float angle = Quaternion.Angle(from, to);
         if (angle < 0.0001f)
             return to;
-            
+
         float t = Mathf.Min(1.0f, angularVelocity * deltaTime / angle);
         return Quaternion.Slerp(from, to, t);
     }
@@ -332,12 +482,12 @@ public static class SBGMath
         float uu = u * u;
         float uuu = uu * u;
         float ttt = tt * t;
-        
+
         Vector3 p = uuu * p0; // (1-t)³ * P0
         p += 3f * uu * t * p1; // 3(1-t)² * t * P1
         p += 3f * u * tt * p2; // 3(1-t) * t² * P2
         p += ttt * p3; // t³ * P3
-        
+
         return p;
     }
 
@@ -349,13 +499,13 @@ public static class SBGMath
         Vector3 lineDirection = lineEnd - lineStart;
         float lineLength = lineDirection.magnitude;
         lineDirection.Normalize();
-        
+
         Vector3 pointVector = point - lineStart;
         float dot = Vector3.Dot(pointVector, lineDirection);
-        
+
         // Clamp dot to line segment
         dot = Mathf.Clamp(dot, 0f, lineLength);
-        
+
         return lineStart + lineDirection * dot;
     }
 
@@ -370,13 +520,13 @@ public static class SBGMath
         Vector2 triA = RemoveComponent(a, minComponent);
         Vector2 triB = RemoveComponent(b, minComponent);
         Vector2 triC = RemoveComponent(c, minComponent);
-        
+
         // Check if point is inside triangle using barycentric coordinates
         float denominator = ((triB.y - triC.y) * (triA.x - triC.x) + (triC.x - triB.x) * (triA.y - triC.y));
         float u = ((triB.y - triC.y) * (point.x - triC.x) + (triC.x - triB.x) * (point.y - triC.y)) / denominator;
         float v = ((triC.y - triA.y) * (point.x - triC.x) + (triA.x - triC.x) * (point.y - triC.y)) / denominator;
         float w = 1 - u - v;
-        
+
         return u >= 0f && v >= 0f && w >= 0f;
     }
 
@@ -388,7 +538,7 @@ public static class SBGMath
         float absX = Mathf.Abs(v.x);
         float absY = Mathf.Abs(v.y);
         float absZ = Mathf.Abs(v.z);
-        
+
         if (absX < absY && absX < absZ) return 0; // X is smallest
         if (absY < absX && absY < absZ) return 1; // Y is smallest
         return 2; // Z is smallest
@@ -399,7 +549,8 @@ public static class SBGMath
     /// </summary>
     private static Vector2 RemoveComponent(Vector3 v, int component)
     {
-        switch (component) {
+        switch (component)
+        {
             case 0: return new Vector2(v.y, v.z); // Remove X
             case 1: return new Vector2(v.x, v.z); // Remove Y
             default: return new Vector2(v.x, v.y); // Remove Z
@@ -415,17 +566,17 @@ public static class SBGMath
         Vector3 toTarget = targetPos - startPos;
         Vector3 toTargetXZ = new Vector3(toTarget.x, 0f, toTarget.z);
         float xzDistance = toTargetXZ.magnitude;
-        
+
         // Calculate time to reach target
         float time = Mathf.Sqrt(2f * (arcHeight + toTarget.y) / gravity) + Mathf.Sqrt(2f * arcHeight / gravity);
-        
+
         // Check if target is reachable
         if (float.IsNaN(time)) return null;
-        
+
         // Calculate initial velocity
         Vector3 velocity = toTargetXZ.normalized * (xzDistance / time);
         velocity.y = Mathf.Sqrt(2f * gravity * arcHeight) + toTarget.y / time;
-        
+
         return velocity;
     }
 
@@ -439,7 +590,7 @@ public static class SBGMath
         Quaternion rotation = Quaternion.Euler(pitch, yaw, 0);
         Vector3 negDistance = new Vector3(0, 0, -distance);
         Vector3 position = rotation * negDistance + targetPos;
-        
+
         return (position, rotation);
     }
 
@@ -450,19 +601,19 @@ public static class SBGMath
     {
         if (vectors.Length != weights.Length)
             throw new ArgumentException("Vectors and weights arrays must have the same length");
-            
+
         Vector3 result = Vector3.zero;
         float totalWeight = 0f;
-        
+
         for (int i = 0; i < vectors.Length; i++)
         {
             result += vectors[i] * weights[i];
             totalWeight += weights[i];
         }
-        
+
         if (totalWeight > 0f)
             result /= totalWeight;
-            
+
         return result;
     }
 
@@ -473,7 +624,7 @@ public static class SBGMath
     {
         float angle = UnityEngine.Random.Range(0f, Mathf.PI * 2f);
         float radius = Mathf.Sqrt(UnityEngine.Random.Range(innerRadius * innerRadius, outerRadius * outerRadius));
-        
+
         return new Vector2(radius * Mathf.Cos(angle), radius * Mathf.Sin(angle));
     }
 
@@ -484,17 +635,17 @@ public static class SBGMath
     {
         int numPoints = polygonPoints.Length;
         bool inside = false;
-        
+
         for (int i = 0, j = numPoints - 1; i < numPoints; j = i++)
         {
             if (((polygonPoints[i].y > point.y) != (polygonPoints[j].y > point.y)) &&
-                (point.x < (polygonPoints[j].x - polygonPoints[i].x) * (point.y - polygonPoints[i].y) / 
+                (point.x < (polygonPoints[j].x - polygonPoints[i].x) * (point.y - polygonPoints[i].y) /
                 (polygonPoints[j].y - polygonPoints[i].y) + polygonPoints[i].x))
             {
                 inside = !inside;
             }
         }
-        
+
         return inside;
     }
 

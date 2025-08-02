@@ -5,7 +5,20 @@ using UnityEngine;
 
 public class FPSS_Pool : MonoBehaviour
 {
-    public static FPSS_Pool Instance { get; private set; }
+    private static FPSS_Pool _instance;
+    public static FPSS_Pool Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                Debug.LogError($"Attempting to access {nameof(FPSS_Pool)} before it is initialized.");
+            }
+            return _instance;
+        }
+        private set => _instance = value;
+    }
+
     private FPSS_Main main;
 
     [SerializeField] private GameObject[] primaryWeaponObjects;
@@ -39,15 +52,41 @@ public class FPSS_Pool : MonoBehaviour
     [SerializeField] private float initTimeout = 10f;
     public bool initialized  {get; private set;}
 
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        ValidateRequiredComponents();
+    }
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetStatics()
+    {
+        // Reset static instance when entering play mode in editor
+        _instance = null;
+    }
+#endif
+
+    private void ValidateRequiredComponents()
+    {
+        if (primaryWeaponObjects == null || primaryWeaponObjects.Length == 0)
+            Debug.LogError($"{nameof(FPSS_Pool)}: Primary weapon objects array is missing!");
+        if (secondaryWeaponObjects == null || secondaryWeaponObjects.Length == 0)
+            Debug.LogError($"{nameof(FPSS_Pool)}: Secondary weapon objects array is missing!");
+        if (meleeWeaponObjects == null || meleeWeaponObjects.Length == 0)
+            Debug.LogError($"{nameof(FPSS_Pool)}: Melee weapon objects array is missing!");
+        if (utilityWeaponObjects == null || utilityWeaponObjects.Length == 0)
+            Debug.LogError($"{nameof(FPSS_Pool)}: Utility weapon objects array is missing!");
+    }
+
     #region Initialization
     private void Awake()
     {
-        if (Instance != null && Instance != this)
+        // Initialize as singleton and persist across scenes since weapons need to be maintained
+        if (this.InitializeSingleton(ref _instance, true) == this)
         {
-            Destroy(gameObject);
-            return;
+            // Validate required arrays
+            ValidateRequiredComponents();
         }
-        Instance = this;
         
         isReloading = false;
         isSwitching = false;

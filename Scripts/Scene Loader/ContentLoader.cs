@@ -6,7 +6,19 @@ using UnityEngine.SceneManagement;
 
 public class ContentLoader : MonoBehaviour
 {
-    public static ContentLoader Instance { get; private set; }
+    private static ContentLoader _instance;
+    public static ContentLoader Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                Debug.LogError($"Attempting to access {nameof(ContentLoader)} before it is initialized.");
+            }
+            return _instance;
+        }
+        private set => _instance = value;
+    }
     
     [SerializeField] private GameObject inputHandler;
 
@@ -20,23 +32,51 @@ public class ContentLoader : MonoBehaviour
 
     private bool freshGame = true;
 
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        ValidateRequiredComponents();
+    }
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetStatics()
+    {
+        // Reset static instance when entering play mode in editor
+        _instance = null;
+    }
+#endif
+
+    private void ValidateRequiredComponents()
+    {
+        if (!inputHandler)
+            Debug.LogError($"{nameof(ContentLoader)}: Input Handler prefab is missing!");
+        if (!EventSystem)
+            Debug.LogError($"{nameof(ContentLoader)}: Event System prefab is missing!");
+        if (!GlobalVolume)
+            Debug.LogError($"{nameof(ContentLoader)}: Global Volume prefab is missing!");
+        if (!UI_Master)
+            Debug.LogError($"{nameof(ContentLoader)}: UI Master prefab is missing!");
+        if (!NotificationSystem)
+            Debug.LogError($"{nameof(ContentLoader)}: Notification System prefab is missing!");
+        if (!PauseMenu)
+            Debug.LogError($"{nameof(ContentLoader)}: Pause Menu prefab is missing!");
+    }
+
     private void Awake()
     {
-        if (Instance == null)
+        // Initialize as singleton and persist across scenes since content loading is global
+        if (this.InitializeSingleton(ref _instance, true) == this)
         {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
+            ValidateRequiredComponents();
         }
     }
 
     void Start()
     {
-        //Instantiate(EventSystem);
-        //Instantiate(inputHandler);
-        Instantiate(GlobalVolume);
+        if (GlobalVolume)
+        {
+            Instantiate(GlobalVolume);
+        }
     }
 
     public void LoadScene(SceneName sceneName)

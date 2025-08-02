@@ -113,7 +113,7 @@ public class WPO_Gun : FPSS_WeaponSlotObject
                 spreadPattern[i].x * randomX,
                 spreadPattern[i].y * randomY
             );
-            Debug.Log($"Spread Index {i} = {spreadPattern[i]}");
+            //Debug.Log($"Spread Index {i} = {spreadPattern[i]}");
         }
     }
 

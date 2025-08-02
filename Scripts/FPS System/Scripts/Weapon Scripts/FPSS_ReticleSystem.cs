@@ -5,7 +5,19 @@ using TMPro;
 
 public class FPSS_ReticleSystem : MonoBehaviour
 {
-    public static FPSS_ReticleSystem Instance { get; private set; }
+    private static FPSS_ReticleSystem _instance;
+    public static FPSS_ReticleSystem Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                Debug.LogError($"Attempting to access {nameof(FPSS_ReticleSystem)} before it is initialized.");
+            }
+            return _instance;
+        }
+        private set => _instance = value;
+    }
 
     private CharacterMovement characterMovement = null;
 
@@ -35,17 +47,41 @@ public class FPSS_ReticleSystem : MonoBehaviour
     [Space(10)]
 
     [SerializeField] private float initTimeout = 5f;
-    private bool initizalized = false;
+    private bool initialized = false;
+
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        ValidateRequiredComponents();
+    }
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetStatics()
+    {
+        // Reset static instance when entering play mode in editor
+        _instance = null;
+    }
+#endif
+
+    private void ValidateRequiredComponents()
+    {
+        if (!reticlePanel)
+            Debug.LogError($"{nameof(FPSS_ReticleSystem)}: Reticle panel is missing!");
+        if (size <= 0)
+            Debug.LogError($"{nameof(FPSS_ReticleSystem)}: Invalid reticle size!");
+        if (adsRetSpeed <= 0)
+            Debug.LogError($"{nameof(FPSS_ReticleSystem)}: Invalid ADS reticle speed!");
+        if (gunFireCurve == null)
+            Debug.LogError($"{nameof(FPSS_ReticleSystem)}: Gun fire curve is missing!");
+    }
 
     void Awake()
     {
-        if (Instance != null && Instance != this)
+        // Initialize as singleton but don't persist across scenes since it's UI-specific
+        if (this.InitializeSingleton(ref _instance) == this)
         {
-            Destroy(this.gameObject);
-        }
-        else
-        {
-            Instance = this;
+            // Validate required components
+            ValidateRequiredComponents();
         }
     }
 
@@ -95,12 +131,12 @@ public class FPSS_ReticleSystem : MonoBehaviour
 
             playerController = player.GetComponent<CharacterController>();
 
-            initizalized = true;
+            initialized = true;
         }
     
     void Update()
     {
-        if (!initizalized) {return;}
+        if (!initialized) {return;}
 
         if (reticlePanel != null)
         {

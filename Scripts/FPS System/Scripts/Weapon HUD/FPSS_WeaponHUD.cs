@@ -10,14 +10,63 @@ using DG.Tweening;
 /// </summary>
 public class FPSS_WeaponHUD : MonoBehaviour
 {
-    public static FPSS_WeaponHUD Instance { get; private set; }
+    private static FPSS_WeaponHUD _instance;
+    public static FPSS_WeaponHUD Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                Debug.LogError($"Attempting to access {nameof(FPSS_WeaponHUD)} before it is initialized.");
+            }
+            return _instance;
+        }
+        private set => _instance = value;
+    }
     
-    //private FPSS_Main FPSS_Main.Instance; // Used to see what weapon slot is currently active
-    //private FPSS_WeaponPool weaponPool; // Used to see what gun is currently assigned to each slot
     private GameObject player;
     private FPSS_Pool c_WeaponPool;
     private WPO_Gun primaryWeaponComponent;
     private WPO_Gun secondaryWeaponComponent;
+
+    private bool isHidden = false;
+
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        ValidateRequiredComponents();
+    }
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetStatics()
+    {
+        // Reset static instance when entering play mode in editor
+        _instance = null;
+    }
+#endif
+
+    private void ValidateRequiredComponents()
+    {
+        // Primary weapon components
+        if (primaryNameText == null)
+            Debug.LogError($"{nameof(FPSS_WeaponHUD)}: Primary weapon name text component is missing!");
+        if (primarySlotNumber == null)
+            Debug.LogError($"{nameof(FPSS_WeaponHUD)}: Primary slot number text component is missing!");
+        if (primaryAmmoText == null)
+            Debug.LogError($"{nameof(FPSS_WeaponHUD)}: Primary ammo text component is missing!");
+        if (primaryIconImg == null)
+            Debug.LogError($"{nameof(FPSS_WeaponHUD)}: Primary weapon icon image component is missing!");
+
+        // Secondary weapon components
+        if (secondaryNameText == null)
+            Debug.LogError($"{nameof(FPSS_WeaponHUD)}: Secondary weapon name text component is missing!");
+        if (secondarySlotNumber == null)
+            Debug.LogError($"{nameof(FPSS_WeaponHUD)}: Secondary slot number text component is missing!");
+        if (secondaryAmmoText == null)
+            Debug.LogError($"{nameof(FPSS_WeaponHUD)}: Secondary ammo text component is missing!");
+        if (secondaryIconImg == null)
+            Debug.LogError($"{nameof(FPSS_WeaponHUD)}: Secondary weapon icon image component is missing!");
+    }
     
     [Header("Primary Weapon Objects")]
     [Space(10)] 
@@ -60,19 +109,18 @@ public class FPSS_WeaponHUD : MonoBehaviour
     #region Initialization
     void Awake()
     {
-        Debug.Log("FPSS_WEAPONHUD | Instantiated");
-        
-        if (Instance == null)
+        // Initialize as singleton but don't persist across scenes (UI is scene-specific)
+        if (this.InitializeSingleton(ref _instance) == this)
         {
-            Instance = this;
+            // Validate required components
+            ValidateRequiredComponents();
+
+            // Setup event listeners
+            GameMaster.Instance.gm_PlayerSpawned.AddListener(GetPlayer);
+            GameMaster.Instance.gm_WeaponPoolSpawned.AddListener(GetWeaponPool);
+
+            SBGDebug.LogInfo("WeaponHUD initialized successfully", "FPSS_WeaponHUD");
         }
-        else
-        {
-            Destroy(gameObject);
-        }
-        
-        GameMaster.Instance.gm_PlayerSpawned.AddListener(GetPlayer);
-        GameMaster.Instance.gm_WeaponPoolSpawned.AddListener(GetWeaponPool);
     }
     
     void Start()

@@ -129,14 +129,14 @@ public class NavCompass : MonoBehaviour
             if (distance > trackable.compassDrawDistance)
             {
                 trackablesToRemove.Add(trackable);
-                Debug.Log($"NAV COMPASS | Queueing {trackable} marker for display removal");
+                //Debug.Log($"NAV COMPASS | Queueing {trackable} marker for display removal");
             }
         }
 
         foreach (Trackable trackable in trackablesToRemove)
         {
             RemoveCompassMarker(trackable);
-            Debug.Log($"NAV COMPASS | {trackable} marker queued for removal");
+            //Debug.Log($"NAV COMPASS | {trackable} marker queued for removal");
         }
 
         foreach (Trackable trackable in GameMaster.Instance.allTrackables)
@@ -147,7 +147,7 @@ public class NavCompass : MonoBehaviour
                 if (distance <= trackable.compassDrawDistance)
                 {
                     AddCompassMarker(trackable);
-                    Debug.Log($"NAV COMPASS | {trackable} marker queued for adding");
+                    //Debug.Log($"NAV COMPASS | {trackable} marker queued for adding");
                 }
             }
         }

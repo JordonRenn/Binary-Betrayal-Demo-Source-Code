@@ -3,7 +3,20 @@ using FMODUnity;
 
 public class FMOD_FPSS_PlayerAudio : MonoBehaviour
 {
-    public static FMOD_FPSS_PlayerAudio Instance {get ; private set;}
+    private static FMOD_FPSS_PlayerAudio _instance;
+    public static FMOD_FPSS_PlayerAudio Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                Debug.LogError($"Attempting to access {nameof(FMOD_FPSS_PlayerAudio)} before it is initialized.");
+            }
+            return _instance;
+        }
+        private set => _instance = value;
+    }
+
     private FPSS_Pool weaponPool;
     [SerializeField] private Transform pos_GunAudio;
 
@@ -18,14 +31,43 @@ public class FMOD_FPSS_PlayerAudio : MonoBehaviour
 
     
 
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        ValidateRequiredComponents();
+    }
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetStatics()
+    {
+        // Reset static instance when entering play mode in editor
+        _instance = null;
+    }
+#endif
+
+    private void ValidateRequiredComponents()
+    {
+        if (!pos_GunAudio)
+            Debug.LogError($"{nameof(FMOD_FPSS_PlayerAudio)}: Gun audio position transform is missing!");
+        if (sfx_player_adsIn.Guid == System.Guid.Empty)
+            Debug.LogError($"{nameof(FMOD_FPSS_PlayerAudio)}: ADS in sound effect not assigned!");
+        if (sfx_player_adsOut.Guid == System.Guid.Empty)
+            Debug.LogError($"{nameof(FMOD_FPSS_PlayerAudio)}: ADS out sound effect not assigned!");
+        if (sfx_player_hurt.Guid == System.Guid.Empty)
+            Debug.LogError($"{nameof(FMOD_FPSS_PlayerAudio)}: Player hurt sound effect not assigned!");
+        if (sfx_player_exertion.Guid == System.Guid.Empty)
+            Debug.LogError($"{nameof(FMOD_FPSS_PlayerAudio)}: Player exertion sound effect not assigned!");
+        if (sfx_player_death.Guid == System.Guid.Empty)
+            Debug.LogError($"{nameof(FMOD_FPSS_PlayerAudio)}: Player death sound effect not assigned!");
+    }
+
     void Awake()
     {
-        if (Instance != null && Instance != this) //Singleton
+        // Initialize as singleton and persist across scenes since audio needs to be maintained
+        if (this.InitializeSingleton(ref _instance, true) == this)
         {
-            Destroy(gameObject);
-            return;
+            ValidateRequiredComponents();
         }
-        Instance = this;
     }
 
     void Start()

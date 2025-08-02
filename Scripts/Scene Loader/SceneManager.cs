@@ -4,7 +4,20 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 public class CustomSceneManager : MonoBehaviour
 {
-    public static CustomSceneManager Instance { get; private set; }
+    private static CustomSceneManager _instance;
+    public static CustomSceneManager Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                Debug.LogError($"Attempting to access {nameof(CustomSceneManager)} before it is initialized.");
+            }
+            return _instance;
+        }
+        private set => _instance = value;
+    }
+    
     private ContentLoader loader;
 
     [Header("Settings")]
@@ -26,19 +39,73 @@ public class CustomSceneManager : MonoBehaviour
     [SerializeField] private const string scene_EndCredits = "_EndCredits";
     [SerializeField] private const string scene_Dev_1 = "SampleScene";
 
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        // Editor-time validation
+        if (fadeCanvasGroup == null)
+        {
+            Debug.LogWarning($"{nameof(CustomSceneManager)}: CanvasGroup reference is required for scene transitions!");
+        }
+        if (fadeImgObj == null)
+        {
+            Debug.LogWarning($"{nameof(CustomSceneManager)}: Fade image GameObject reference is required!");
+        }
+        
+        // Validate scene name constants are set in build settings
+        ValidateSceneNames();
+    }
+
+    private void ValidateSceneNames()
+    {
+        ValidateSceneName(scene_MainMenu, "Main Menu");
+        ValidateSceneName(scene_C01_01, "Chapter 1-1");
+        ValidateSceneName(scene_C01_02, "Chapter 1-2");
+        ValidateSceneName(scene_C01_03, "Chapter 1-3");
+        ValidateSceneName(scene_C01_04, "Chapter 1-4");
+        ValidateSceneName(scene_EndCredits, "End Credits");
+        ValidateSceneName(scene_Dev_1, "Development Scene");
+    }
+
+    private void ValidateSceneName(string sceneName, string description)
+    {
+        bool sceneExists = false;
+        for (int i = 0; i < SceneManager.sceneCountInBuildSettings; i++)
+        {
+            string scenePath = SceneUtility.GetScenePathByBuildIndex(i);
+            if (scenePath.Contains(sceneName))
+            {
+                sceneExists = true;
+                break;
+            }
+        }
+        if (!sceneExists)
+        {
+            Debug.LogWarning($"{nameof(CustomSceneManager)}: Scene '{sceneName}' ({description}) is not added to build settings!");
+        }
+    }
+#endif
+
+    private void ValidateRequiredComponents()
+    {
+        loader = GetComponent<ContentLoader>();
+        if (loader == null)
+            Debug.LogError($"{nameof(CustomSceneManager)}: Required ContentLoader component is missing!");
+        if (fadeCanvasGroup == null)
+            Debug.LogError($"{nameof(CustomSceneManager)}: Required CanvasGroup for fading is missing!");
+        if (fadeImgObj == null)
+            Debug.LogError($"{nameof(CustomSceneManager)}: Required fade image GameObject is missing!");
+
+        ValidateSceneNames();
+    }
+
     private void Awake()
     {
-        if (Instance == null)
+        // Initialize as singleton and persist across scenes since scene management is global
+        if (this.InitializeSingleton(ref _instance, true) == this)
         {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
+            ValidateRequiredComponents();
         }
-        else
-        {
-            Destroy(gameObject);
-        }
-
-        loader = GetComponent<ContentLoader>();
     }
 
     public void LoadScene(SceneName sceneName)

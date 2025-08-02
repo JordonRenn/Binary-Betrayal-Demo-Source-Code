@@ -4,7 +4,19 @@ using UnityEngine.Events;
 
 public class GameMaster : MonoBehaviour
 {
-    public static GameMaster Instance {get; private set;}
+    private static GameMaster _instance;
+    public static GameMaster Instance 
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                Debug.LogError($"Attempting to access {nameof(GameMaster)} before it is initialized.");
+            }
+            return _instance;
+        }
+        private set => _instance = value;
+    }
     
     public List<Trackable> allTrackables = new List<Trackable>(); 
 
@@ -36,15 +48,9 @@ public class GameMaster : MonoBehaviour
 
     void Awake() 
     {
-        if (Instance == null)
+        if (this.InitializeSingleton(ref _instance, true) == this)
         {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
             LoadSettings();
-        }
-        else
-        {
-            Destroy(gameObject);
         }
     }
 

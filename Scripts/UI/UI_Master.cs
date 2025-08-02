@@ -2,7 +2,19 @@ using UnityEngine;
 
 public class UI_Master : MonoBehaviour
 {
-    public static UI_Master Instance { get; private set; }
+    private static UI_Master _instance;
+    public static UI_Master Instance 
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                Debug.LogError($"Attempting to access {nameof(UI_Master)} before it is initialized.");
+            }
+            return _instance;
+        }
+        private set => _instance = value;
+    }
     
     [Header("HUD Elements")]
     [Space(10)]
@@ -15,14 +27,15 @@ public class UI_Master : MonoBehaviour
 
     void Awake()
     {
-        if (Instance != null && Instance != this)
+        if (this.InitializeSingleton(ref _instance) == this)
         {
-            Destroy(this.gameObject);
+            InitializeUI();
         }
-        else
-        {
-            Instance = this;
-        }
+    }
+
+    private void InitializeUI()
+    {
+        // UI initialization code
     }
 
     public void HideAllHUD()

@@ -4,7 +4,19 @@ using DG.Tweening;
 
 public class VolumeManager : MonoBehaviour
 {
-    public static VolumeManager Instance { get; private set; }
+    private static VolumeManager _instance;
+    public static VolumeManager Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                Debug.LogError($"Attempting to access {nameof(VolumeManager)} before it is initialized.");
+            }
+            return _instance;
+        }
+        private set => _instance = value;
+    }
 
     [SerializeField] private Volume volume;
 
@@ -37,8 +49,34 @@ public class VolumeManager : MonoBehaviour
 
     void Awake()
     {
-        Instance = this;
+        // Initialize as singleton, don't persist across scenes since post-processing is scene-specific
+        if (this.InitializeSingleton(ref _instance) == this)
+        {
+            // Validate required components
+            if (volume == null)
+            {
+                Debug.LogError($"{nameof(VolumeManager)}: Required Volume component is missing!");
+            }
+        }
     }
+
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        // Editor-time validation
+        if (volume == null)
+        {
+            Debug.LogWarning($"{nameof(VolumeManager)}: Volume reference is required!");
+        }
+    }
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetStatics()
+    {
+        // Reset static instance when entering play mode in editor
+        _instance = null;
+    }
+#endif
 
     public void SetVolume(VolumeType volumeType)
     {
@@ -62,10 +100,24 @@ public class VolumeManager : MonoBehaviour
         }
     }
 
+    private Tweener currentTween;
+
     public void LerpWeight(float targetWeight, float duration)
     {
-        DOTween.To(() => volume.weight, x => volume.weight = x, targetWeight, duration)
-            .SetUpdate(true); // <-- Important: run even when timeScale = 0
+        if (volume == null) return;
+
+        // Kill any existing transition
+        currentTween?.Kill();
+        
+        // Create new transition
+        currentTween = DOTween.To(() => volume.weight, x => volume.weight = x, targetWeight, duration)
+            .SetUpdate(true) // Important: run even when timeScale = 0
+            .OnComplete(() => currentTween = null);
     }
 
+    private void OnDestroy()
+    {
+        // Clean up any running tweens
+        currentTween?.Kill();
+    }
 }

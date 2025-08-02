@@ -24,6 +24,15 @@ public class PauseMenu : MonoBehaviour
     [SerializeField] private Button b_Audio;
     [SerializeField] private Button b_Controls;
     [SerializeField] private Button b_Credits;
+    [Space(10)]
+    [SerializeField] private Color activeTabColor;
+    [SerializeField] private Color inactiveTabColor;
+
+    private Image btnImg_Gameplay;
+    private Image btnImg_Video;
+    private Image btnImg_Audio;
+    private Image btnImg_Controls;
+    private Image btnImg_Credits;
 
     [Header("Settings Panels")]
     [SerializeField] private Canvas gameplayPanel;
@@ -37,6 +46,7 @@ public class PauseMenu : MonoBehaviour
     [SerializeField] private Slider s_HorizSensitivity;
     [SerializeField] private Toggle t_InvertY;
     [SerializeField] private TMP_Dropdown d_Language;
+
 
     // Internal states
     private bool isPaused = false;
@@ -56,6 +66,12 @@ public class PauseMenu : MonoBehaviour
 
         // Setup settings UI listeners
         SetupSettingsUIBindings();
+
+        btnImg_Gameplay = b_Gameplay.GetComponent<Image>();
+        btnImg_Video = b_Video.GetComponent<Image>();
+        btnImg_Audio = b_Audio.GetComponent<Image>();
+        btnImg_Controls = b_Controls.GetComponent<Image>();
+        btnImg_Credits = b_Credits.GetComponent<Image>();
     }
 
     private void TogglePauseMenu()
@@ -135,23 +151,29 @@ public class PauseMenu : MonoBehaviour
     {
         sMenuState = tab;
         HideAllSettingsPanels();
+        UnhighlightAllButtons();
 
         switch (tab)
         {
             case SettingsMenuState.Gameplay:
                 gameplayPanel.gameObject.SetActive(true);
+                btnImg_Gameplay.color = activeTabColor;
                 break;
             case SettingsMenuState.Video:
                 videoPanel.gameObject.SetActive(true);
+                btnImg_Video.color = activeTabColor;
                 break;
             case SettingsMenuState.Audio:
                 audioPanel.gameObject.SetActive(true);
+                btnImg_Audio.color = activeTabColor;
                 break;
             case SettingsMenuState.Controls:
                 controlsPanel.gameObject.SetActive(true);
+                btnImg_Controls.color = activeTabColor;
                 break;
             case SettingsMenuState.Credits:
                 creditsPanel.gameObject.SetActive(true);
+                btnImg_Credits.color = activeTabColor;
                 break;
         }
     }
@@ -163,6 +185,15 @@ public class PauseMenu : MonoBehaviour
         audioPanel.gameObject.SetActive(false);
         controlsPanel.gameObject.SetActive(false);
         creditsPanel.gameObject.SetActive(false);
+    }
+
+    private void UnhighlightAllButtons()
+    {
+        btnImg_Gameplay.color = inactiveTabColor;
+        btnImg_Video.color = inactiveTabColor;
+        btnImg_Audio.color = inactiveTabColor;
+        btnImg_Controls.color = inactiveTabColor;
+        btnImg_Credits.color = inactiveTabColor;
     }
 
     // ---- Button Listeners Setup ----

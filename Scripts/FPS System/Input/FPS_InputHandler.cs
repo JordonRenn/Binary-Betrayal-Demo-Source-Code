@@ -15,7 +15,19 @@ public enum InputState
 /// </summary>
 public class FPS_InputHandler : MonoBehaviour
 {
-    public static FPS_InputHandler Instance { get; private set; }
+    private static FPS_InputHandler _instance;
+    public static FPS_InputHandler Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                Debug.LogError($"Attempting to access {nameof(FPS_InputHandler)} before it is initialized.");
+            }
+            return _instance;
+        }
+        private set => _instance = value;
+    }
 
     [Header("Input Action Asset")]
     [Space(10)]
@@ -123,6 +135,23 @@ public class FPS_InputHandler : MonoBehaviour
     private InputAction menu_ConfirmAction;
 
     //Cutscene input actions
+
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        if (playerControls == null)
+        {
+            Debug.LogWarning($"{nameof(FPS_InputHandler)}: Input Action Asset reference is required!");
+        }
+    }
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetStatics()
+    {
+        // Reset static instance when entering play mode in editor
+        _instance = null;
+    }
+#endif
 
     [SerializeField] private float horizontalLookSensitivity = 1.0f;
     [SerializeField] private float verticalLookSensitivity = 1.0f;
@@ -236,13 +265,17 @@ public class FPS_InputHandler : MonoBehaviour
     {
         currentState = defaultState;
 
-        if (Instance != null && Instance != this)
+        // Initialize as singleton and persist across scenes since input handling is global
+        if (this.InitializeSingleton(ref _instance, true) == this)
         {
-            Destroy(this.gameObject);
+            // Validate required components and setup
+            if (playerControls == null)
+            {
+                Debug.LogError($"{nameof(FPS_InputHandler)}: Required Input Action Asset is missing!");
+                return;
+            }
         }
-        Instance = this;
-        DontDestroyOnLoad(Instance);
-
+        
         InputActionMap actionMap_FPS = playerControls.FindActionMap(actionMapName_FPS);
         InputActionMap actionMap_LockedInteraction = playerControls.FindActionMap(actionMapName_LockedInteraction);
         InputActionMap actionMap_MenuNav = playerControls.FindActionMap(actionMapName_MenuNav);

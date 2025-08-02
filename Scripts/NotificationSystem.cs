@@ -7,7 +7,19 @@ using FMODUnity;
 
 public class NotificationSystem : MonoBehaviour
 {
-    public static NotificationSystem Instance { get; private set; }
+    private static NotificationSystem _instance;
+    public static NotificationSystem Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                Debug.LogError($"Attempting to access {nameof(NotificationSystem)} before it is initialized.");
+            }
+            return _instance;
+        }
+        private set => _instance = value;
+    }
     
     [SerializeField] private bool isDebugMode;
     
@@ -64,15 +76,42 @@ public class NotificationSystem : MonoBehaviour
 
     private bool paused = false;
 
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        if (rect_NotifSystem == null)
+        {
+            Debug.LogWarning($"{nameof(NotificationSystem)}: RectTransform reference is required!");
+        }
+        if (notif_TextBody == null)
+        {
+            Debug.LogWarning($"{nameof(NotificationSystem)}: TextMeshPro Text reference is required!");
+        }
+    }
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetStatics()
+    {
+        // Reset static instance when entering play mode in editor
+        _instance = null;
+    }
+#endif
+
     void Awake()
     {
-        if (Instance != null && Instance != this)
+        // Initialize as singleton and persist across scenes
+        if (this.InitializeSingleton(ref _instance, true) == this)
         {
-            Destroy(gameObject);
-            return;
+            // Validate required components
+            if (rect_NotifSystem == null)
+            {
+                Debug.LogError($"{nameof(NotificationSystem)}: Required RectTransform component is missing!");
+            }
+            if (notif_TextBody == null)
+            {
+                Debug.LogError($"{nameof(NotificationSystem)}: Required TextMeshPro Text component is missing!");
+            }
         }
-        Instance = this;
-        DontDestroyOnLoad(gameObject);
         
         rect_NotifSystem.anchoredPosition = new Vector2(pos_Hidden.x, pos_Hidden.y);
         currentNotificationDisplayState = NotificationDisplayState.Hidden;
