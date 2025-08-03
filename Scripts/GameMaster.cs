@@ -11,7 +11,7 @@ public class GameMaster : MonoBehaviour
         {
             if (_instance == null)
             {
-                Debug.LogError($"Attempting to access {nameof(GameMaster)} before it is initialized.");
+                SBGDebug.LogWarning($"Attempting to access before initialization.", "GameMaster");
             }
             return _instance;
         }
@@ -41,6 +41,9 @@ public class GameMaster : MonoBehaviour
 
     //tick event
     [HideInInspector] public UnityEvent globalTick;
+
+    //Settings Events
+    [HideInInspector] public UnityEvent gm_SettingsChanged;
 
     //Settings Management
     [SerializeField] private PlayerSettings playerSettings = new PlayerSettings();
@@ -126,6 +129,9 @@ public class GameMaster : MonoBehaviour
         {
             FPS_InputHandler.Instance.UpdateSensitivitySettings();
         }
+
+        // Notify all listeners that settings have changed
+        gm_SettingsChanged.Invoke();
     }
 
     /// <summary>

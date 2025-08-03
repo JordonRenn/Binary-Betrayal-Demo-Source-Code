@@ -24,7 +24,6 @@ public class ContentLoader : MonoBehaviour
 
     [Header("Singleton Managers")]
 
-    [SerializeField] private GameObject EventSystem;
     [SerializeField] private GameObject GlobalVolume;
     [SerializeField] private GameObject UI_Master;
     [SerializeField] private GameObject NotificationSystem;
@@ -50,8 +49,6 @@ public class ContentLoader : MonoBehaviour
     {
         if (!inputHandler)
             Debug.LogError($"{nameof(ContentLoader)}: Input Handler prefab is missing!");
-        if (!EventSystem)
-            Debug.LogError($"{nameof(ContentLoader)}: Event System prefab is missing!");
         if (!GlobalVolume)
             Debug.LogError($"{nameof(ContentLoader)}: Global Volume prefab is missing!");
         if (!UI_Master)

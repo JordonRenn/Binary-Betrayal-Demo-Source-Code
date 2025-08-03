@@ -4,17 +4,19 @@ using DG.Tweening;
 using FMODUnity;
 using System;
 
+
 /// <summary>
 /// Character controller for the FPS system.
 /// </summary>
+[Obsolete("Use FPSS_CharacterController instead.")]
 public class FPSS_CharacterController : MonoBehaviour
 {
     public static FPSS_CharacterController Instance { get; private set; }
     [SerializeField] Transform orientation;
     private FPS_InputHandler input;
-    
+
     [Header("Movement")]
-    [Space(10)] 
+    [Space(10)]
 
     public static float moveSpeed;
     [SerializeField] float sprintSpeed;
@@ -31,7 +33,7 @@ public class FPSS_CharacterController : MonoBehaviour
     [Space(5)]
 
     [Header("Ground Check")]
-    [Space(10)] 
+    [Space(10)]
 
     [SerializeField] float playerHeight;
     [SerializeField] float groundCheckBuffer = 0.2f;
@@ -39,7 +41,7 @@ public class FPSS_CharacterController : MonoBehaviour
     bool grounded;
 
     [Header("Slope Handling")]
-    [Space(10)] 
+    [Space(10)]
 
     [SerializeField] float maxSlopeAngle = 45f;
     private bool onSlope;
@@ -47,7 +49,7 @@ public class FPSS_CharacterController : MonoBehaviour
     private RaycastHit slopeHit;
 
     [Header("Crouch Settings")]
-    [Space(10)] 
+    [Space(10)]
 
     [SerializeField] private float crouchHeight = 1.5f;
     [SerializeField] private float crouchSpeed;
@@ -57,7 +59,7 @@ public class FPSS_CharacterController : MonoBehaviour
     private Vector3 initialColliderCenter;
 
     [Header("SFX")]
-    [Space(10)] 
+    [Space(10)]
 
     [SerializeField] private Transform defaultAudioPosition;
     [SerializeField] private EventReference sfx_player_footstep;
@@ -90,10 +92,10 @@ public class FPSS_CharacterController : MonoBehaviour
     void Start()
     {
         Instance = this;
-        
+
         moveInput = FPS_InputHandler.Instance.MoveInput;
         input = FPS_InputHandler.Instance;
-        
+
         playerRigidbody = GetComponent<Rigidbody>();
         playerRigidbody.freezeRotation = true;
 
@@ -112,7 +114,7 @@ public class FPSS_CharacterController : MonoBehaviour
         CalculateDrag();
         CheckSlope();
         CalculateFootSteps();
-        
+
         moveInput = FPS_InputHandler.Instance.MoveInput;
         moveSpeed = Mathf.Lerp(moveSpeed, input.SlowWalkInput || isCrouching ? walkSpeed : sprintSpeed, Time.deltaTime * 10f);
     }
@@ -121,7 +123,7 @@ public class FPSS_CharacterController : MonoBehaviour
     {
         MovePlayer();
     }
-    
+
     /// <summary>
     /// Moves the player based on input and physics.
     /// </summary>
@@ -253,14 +255,14 @@ public class FPSS_CharacterController : MonoBehaviour
     {
         Vector3 flatVelocity = new Vector3(playerRigidbody.linearVelocity.x, 0f, playerRigidbody.linearVelocity.z);
 
-        if(flatVelocity.magnitude > moveSpeed)
+        if (flatVelocity.magnitude > moveSpeed)
         {
             Vector3 limitedVelocity = Vector3.ClampMagnitude(flatVelocity, moveSpeed);
             playerRigidbody.linearVelocity = new Vector3(limitedVelocity.x, playerRigidbody.linearVelocity.y, limitedVelocity.z);
         }
     }
 
-    
+
     void GroundCheck()
     {
         float checkHeight = isCrouching ? crouchHeight : playerHeight;                                                                  // Check height based on crouching state
@@ -268,14 +270,14 @@ public class FPSS_CharacterController : MonoBehaviour
         //TODO: Implement gound type check
         Debug.DrawLine(transform.position, transform.position + Vector3.down * (checkHeight * 0.5f + groundCheckBuffer), Color.red);    // Draw a line to visualize the ground check
     }
-    
 
-    
+
+
 
     void CalculateFootSteps() //used to calculate speed of footstep sounds and play back and forth between left and right foot
     {
         bool isMovingOnGround;
-        
+
         if (playerRigidbody.linearVelocity.magnitude > 0.1f && grounded)
         {
             isMovingOnGround = true;
@@ -283,7 +285,7 @@ public class FPSS_CharacterController : MonoBehaviour
             if (isMovingOnGround && nextStep)
             {
                 nextStep = false;
-                
+
                 if (moveSpeed <= walkSpeed + 1)
                 {
                     StartCoroutine(FootStep(baseFootStepRate));

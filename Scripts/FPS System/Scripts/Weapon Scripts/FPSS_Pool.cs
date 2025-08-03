@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class FPSS_Pool : MonoBehaviour
 {
@@ -40,7 +41,6 @@ public class FPSS_Pool : MonoBehaviour
 
     //SUB STATES
     public bool isSwitching {get; private set;}
-    public bool isReloading {get; private set;}
 
     [SerializeField] WeaponSlot defaultActiveSlot;              //TEMP FOR DEV/DEBUG --- CREATE SYSTEM TO SELECT EXTERNALLY
     [HideInInspector] public WeaponSlot currentWeaponSlot;
@@ -50,7 +50,16 @@ public class FPSS_Pool : MonoBehaviour
     
     [SerializeField] private float initDelay = 0.2f;
     [SerializeField] private float initTimeout = 10f;
-    public bool initialized  {get; private set;}
+
+    // Events
+    [Header("Weapon Events")]
+    [Space(10)]
+    public UnityEvent<WeaponSlot> onWeaponSwitchStarted;
+    public UnityEvent<WeaponSlot> onWeaponSwitchCompleted;
+    public UnityEvent<WeaponSlot> onWeaponSwitchFailed;
+
+
+    public bool initialized { get; private set; }
 
 #if UNITY_EDITOR
     private void OnValidate()
@@ -88,7 +97,6 @@ public class FPSS_Pool : MonoBehaviour
             ValidateRequiredComponents();
         }
         
-        isReloading = false;
         isSwitching = false;
         initialized = false;
 
@@ -167,11 +175,48 @@ public class FPSS_Pool : MonoBehaviour
 
         FPS_InputHandler.Instance.swapTriggered.AddListener(SwapPrimarySecondary);
 
+        onWeaponSwitchStarted.AddListener((slot) => 
+        {
+            Debug.Log($"Starting weapon switch to {slot}");
+           // do stuff..
+        });
+        
+        onWeaponSwitchCompleted.AddListener((slot) => 
+        {
+            Debug.Log($"Completed weapon switch to {slot}");
+            // do stuff..
+        });
+        
+        onWeaponSwitchFailed.AddListener((slot) => 
+        {
+            Debug.Log($"Failed to switch to {slot}");
+            // do stuff..
+        });
+
         Debug.Log("FPS_WEAPONPOOL | Subcribed to input events");
     }
     #endregion
 
     #region Weapon Actions
+
+    private bool CanSwitchToWeapon(WeaponSlot targetSlot)
+    {
+        if (isSwitching)
+        {
+            onWeaponSwitchFailed?.Invoke(targetSlot);
+            Debug.Log($"Cannot switch weapons: Already switching");
+            return false;
+        }
+
+        if (currentWeaponSlot == targetSlot)
+        {
+            Debug.Log($"Already using {targetSlot} weapon");
+            return false;
+        }
+
+        return true;
+    }
+
     public void Fire()
     {
         Debug.Log("Fire");
@@ -188,50 +233,22 @@ public class FPSS_Pool : MonoBehaviour
     #region Weapon Selection
     private void SelectPrimary()
     {
-        if (currentWeaponSlot == WeaponSlot.Primary) 
-        {
-            return;
-        }
-        else
-        {
-            StartCoroutine(UpdateActiveWeaponSlot(WeaponSlot.Primary));
-        }
+        StartCoroutine(UpdateActiveWeaponSlot(WeaponSlot.Primary));
     }
 
     private void SelectSecondary()
     {
-        if (currentWeaponSlot == WeaponSlot.Secondary) 
-        {
-            return;
-        }
-        else
-        {
-            StartCoroutine(UpdateActiveWeaponSlot(WeaponSlot.Secondary));
-        } 
+        StartCoroutine(UpdateActiveWeaponSlot(WeaponSlot.Secondary));
     }
 
     private void SelectMelee()
     {
-        if (currentWeaponSlot == WeaponSlot.Melee) 
-        {
-            return;
-        }
-        else
-        {
-            StartCoroutine(UpdateActiveWeaponSlot(WeaponSlot.Melee));
-        }
+        StartCoroutine(UpdateActiveWeaponSlot(WeaponSlot.Melee));
     }
 
     private void SelectUtility()
     {
-        if (currentWeaponSlot == WeaponSlot.Utility) 
-        {
-            return;
-        }
-        else
-        {
-            StartCoroutine(UpdateActiveWeaponSlot(WeaponSlot.Utility));
-        }
+        StartCoroutine(UpdateActiveWeaponSlot(WeaponSlot.Utility));
     }
     #endregion
 
@@ -240,46 +257,46 @@ public class FPSS_Pool : MonoBehaviour
     #region Weapon Switching
     private void SwapPrimarySecondary()
     {
-        if (currentWeaponSlot == WeaponSlot.Primary) 
+        WeaponSlot targetSlot = currentWeaponSlot switch
         {
-            StartCoroutine(UpdateActiveWeaponSlot(WeaponSlot.Secondary));
-        }
-        else if (currentWeaponSlot == WeaponSlot.Secondary) 
-        {
-            StartCoroutine(UpdateActiveWeaponSlot(WeaponSlot.Primary));
-        }
-        else
-        {
-            StartCoroutine(UpdateActiveWeaponSlot(WeaponSlot.Primary));
-        }
+            WeaponSlot.Primary => WeaponSlot.Secondary,
+            WeaponSlot.Secondary => WeaponSlot.Primary,
+            _ => WeaponSlot.Primary
+        };
+        
+        StartCoroutine(UpdateActiveWeaponSlot(targetSlot));
     }
     
     private IEnumerator UpdateActiveWeaponSlot(WeaponSlot slot)
     {
-        if (isSwitching) yield break;
+        if (!CanSwitchToWeapon(slot)) yield break;
+    
         isSwitching = true;
-        WeaponSlot nextWeaponSlot = slot;
+        onWeaponSwitchStarted?.Invoke(slot);
 
-        switch (slot)
+        bool switchSuccessful = true;
+        try 
         {
-            case WeaponSlot.Primary:
-                yield return StartCoroutine(SwitchWeaponSlot(WeaponSlot.Primary));
-                break;
-            case WeaponSlot.Secondary:
-                yield return StartCoroutine(SwitchWeaponSlot(WeaponSlot.Secondary));
-                break;
-            case WeaponSlot.Melee:
-                yield return StartCoroutine(SwitchWeaponSlot(WeaponSlot.Melee));
-                break;
-            case WeaponSlot.Utility:
-                yield return StartCoroutine(SwitchWeaponSlot(WeaponSlot.Utility));
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(slot), slot, null);
+            // Start the switching process
+            currentActiveWPO.SetWeaponInactive();
+            ActivateWeaponSlot(slot);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"Error switching weapons: {e.Message}");
+            onWeaponSwitchFailed?.Invoke(slot);
+            switchSuccessful = false;
+        }
+        finally
+        {
+            isSwitching = false;
         }
 
-        isSwitching = false;
-        yield return null;
+        if (switchSuccessful)
+        {
+            yield return StartCoroutine(SwitchWeaponSlot(slot));
+            onWeaponSwitchCompleted?.Invoke(slot);
+        }
     }
 
     private IEnumerator SwitchWeaponSlot(WeaponSlot nextSlot)

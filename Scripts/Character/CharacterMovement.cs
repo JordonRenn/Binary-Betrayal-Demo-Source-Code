@@ -3,12 +3,6 @@ using System.Collections;
 using DG.Tweening;
 using FMODUnity;
 
-/* 
-Based on script by Alpharaoh
-Source:
-https://github.com/alpharaoh/SourceMovement/blob/main/PlayerMovementWithStrafes.cs
- */
-
 [RequireComponent(typeof(CharacterController))]
 [SelectionBase]
 
@@ -22,11 +16,13 @@ public class CharacterMovement : MonoBehaviour
     [Space(10)]
 
 	public float moveSpeed = 7.0f;                      // Ground move speed
+    public float slowWalkSpeedMultiplier = 0.5f;        // Multiplier for slow walking speed
 	public float runAcceleration = 14f;                 // Ground accel
 	public float runDeacceleration = 10f;               // Deacceleration that occurs when running on the ground
 	public float airAcceleration = 2.0f;                // Air accel
 	public float airDeacceleration = 2.0f;              // Deacceleration experienced when opposite strafing
 	public float airControl = 0.3f;                     // How precise air control is
+    public float airStrafeInfluence = 100f;            // How much mouse movement affects air strafing
 	public float sideStrafeAcceleration = 50f;          // How fast acceleration occurs to get up to sideStrafeSpeed when side strafing
 	public float sideStrafeSpeed = 1f;                  // What the max speed to generate when side strafing
 	public float jumpSpeed = 8.0f;
@@ -52,8 +48,10 @@ public class CharacterMovement : MonoBehaviour
 	private float control;
 	private float drop;
 
-	private bool JumpQueue = false;
+    private bool JumpQueue = false;
 	private bool wishJump = false;
+    private float jumpBufferTimer = 0f;
+    private float jumpBufferDuration = 0.1f; // Time window to allow another jump
 
     //
 
@@ -62,9 +60,9 @@ public class CharacterMovement : MonoBehaviour
 	private Vector3 playerVelocity;
 	Vector3 wishdir;
 	Vector3 vec;
-
-	private float x;
-	private float z;
+    private float previousMouseX = 0f; // For tracking mouse movement
+    private float moveX;
+    private float moveZ;
 
 	private Vector3 udp;
 
@@ -137,23 +135,32 @@ public class CharacterMovement : MonoBehaviour
 
     void QueueJump()
 	{
-		if (grounded && JumpQueue)
+        // Update jump buffer timer
+        if (jumpBufferTimer > 0)
+        {
+            jumpBufferTimer -= Time.deltaTime;
+        }
+
+		if (grounded && JumpQueue && jumpBufferTimer > 0)
 		{
 			wishJump = true;
 			JumpQueue = false;
+            jumpBufferTimer = 0f;
 		}
 	}
 
     void Jump()
     {
-        if (grounded)
+        if (grounded && jumpBufferTimer <= 0)
 		{
 			wishJump = true;
+            jumpBufferTimer = 0f; // Reset timer on successful jump
 		}
 
 		if (!grounded)
 		{
 			JumpQueue = true;
+            jumpBufferTimer = jumpBufferDuration; // Start buffer timer
 		}
     }
 
@@ -179,7 +186,7 @@ public class CharacterMovement : MonoBehaviour
 		moveDirectionNorm = wishdir;
 
 		wishspeed = wishdir.magnitude;
-		wishspeed *= moveSpeed;
+		wishspeed *= moveSpeed * (FPS_InputHandler.Instance.SlowWalkInput ? slowWalkSpeedMultiplier : 1.0f);
 
 		Accelerate(wishdir, wishspeed, runAcceleration);
 
@@ -227,13 +234,24 @@ public class CharacterMovement : MonoBehaviour
 	{
 		SetMovementDir();
 
+        // Get mouse movement delta from the input system and make it frame-rate independent
+        float mouseDelta = FPS_InputHandler.Instance.LookInput.x;
+        float frameIndependentDelta = mouseDelta * Time.fixedDeltaTime * 60f; // Normalize to 60fps feel
+
 		wishdir = new Vector3(FPS_InputHandler.Instance.MoveInput.x, 0, FPS_InputHandler.Instance.MoveInput.y);
 
 		wishdir = transform.TransformDirection(wishdir);
 
-		wishspeed = wishdir.magnitude;
+        // Apply mouse movement influence when strafing
+        if (FPS_InputHandler.Instance.MoveInput.x != 0 && Mathf.Abs(mouseDelta) > 0.1f)
+        {
+            // Adjust direction based on mouse movement - strafe in the direction you're looking
+            float mouseInfluence = Mathf.Sign(FPS_InputHandler.Instance.MoveInput.x) * frameIndependentDelta * airControl * airStrafeInfluence; // Configurable scale factor
+            wishdir = Quaternion.Euler(0, mouseInfluence, 0) * wishdir;
+        }
 
-		wishspeed *= 7f;
+		wishspeed = wishdir.magnitude;
+		wishspeed *= moveSpeed * (FPS_InputHandler.Instance.SlowWalkInput ? slowWalkSpeedMultiplier : 1.0f);
 
 		wishdir.Normalize();
 		moveDirectionNorm = wishdir;
@@ -320,8 +338,8 @@ public class CharacterMovement : MonoBehaviour
 	{
 		// Replace old Input system with new input system through FPS_InputHandler
 		// Previous code: x = Input.GetAxis("Horizontal"); z = Input.GetAxis("Vertical");
-		x = FPS_InputHandler.Instance.MoveInput.x;
-		z = FPS_InputHandler.Instance.MoveInput.y;
+		moveX = FPS_InputHandler.Instance.MoveInput.x;
+		moveZ = FPS_InputHandler.Instance.MoveInput.y;
 	}
 
     void GroundCheck()

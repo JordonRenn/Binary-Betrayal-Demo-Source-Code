@@ -2444,8 +2444,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerObject: {fileID: 6967550792206337341}
-  smoothTime: 0.05
-  useSmoothing: 1
 --- !u!114 &344260470287190638
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6893,7 +6891,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8255199052588272926}
-  - component: {fileID: 5920183560676551140}
   - component: {fileID: 3516844291746054869}
   m_Layer: 8
   m_Name: FPS_WeaponObjectPool
@@ -6927,18 +6924,6 @@ Transform:
   - {fileID: 8835636763069589136}
   m_Father: {fileID: 9076592013168454418}
   m_LocalEulerAnglesHint: {x: 1.741, y: 0, z: 0}
---- !u!114 &5920183560676551140
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2634023758813433793}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b0d973d680e221b48ac146627d8b9581, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &3516844291746054869
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6969,6 +6954,15 @@ MonoBehaviour:
   currentWeaponSlot: 0
   initDelay: 0.2
   initTimeout: 10
+  onWeaponSwitchStarted:
+    m_PersistentCalls:
+      m_Calls: []
+  onWeaponSwitchCompleted:
+    m_PersistentCalls:
+      m_Calls: []
+  onWeaponSwitchFailed:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &2673616101054333819
 GameObject:
   m_ObjectHideFlags: 0
@@ -19633,14 +19627,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   controller: {fileID: 8460228814328020085}
   moveSpeed: 7
+  slowWalkSpeedMultiplier: 0.625
   runAcceleration: 14
   runDeacceleration: 10
   airAcceleration: 2
   airDeacceleration: 2
-  airControl: 0.3
-  sideStrafeAcceleration: 50
+  airControl: 0.75
+  airStrafeInfluence: 100
+  sideStrafeAcceleration: 20
   sideStrafeSpeed: 1
-  jumpSpeed: 8
+  jumpSpeed: 7
   friction: 6
   playerFriction: 0
   whatIsGround:

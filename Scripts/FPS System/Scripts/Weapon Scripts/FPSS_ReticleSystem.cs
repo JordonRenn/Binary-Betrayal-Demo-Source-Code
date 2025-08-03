@@ -65,8 +65,8 @@ public class FPSS_ReticleSystem : MonoBehaviour
 
     private void ValidateRequiredComponents()
     {
-        if (!reticlePanel)
-            Debug.LogError($"{nameof(FPSS_ReticleSystem)}: Reticle panel is missing!");
+        //if (!reticlePanel)
+        //    Debug.LogError($"{nameof(FPSS_ReticleSystem)}: Reticle panel is missing!");
         if (size <= 0)
             Debug.LogError($"{nameof(FPSS_ReticleSystem)}: Invalid reticle size!");
         if (adsRetSpeed <= 0)

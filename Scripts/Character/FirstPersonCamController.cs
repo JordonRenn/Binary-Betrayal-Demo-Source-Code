@@ -6,16 +6,16 @@ public class FirstPersonCamController : MonoBehaviour
     public static FirstPersonCamController Instance { get; private set; }
 
     [SerializeField] public GameObject playerObject;
-    [SerializeField] public static float sensX = 50f;
-    [SerializeField] public static float sensY = 50f;
-    [SerializeField] private float smoothTime = 0.05f; // Smoothing time for camera movement
-    [SerializeField] private bool useSmoothing = true; // Toggle for enabling/disabling smoothing
+
+    [Header("Look Settings")]
+    private float baseSensitivity = 50f;  // Base sensitivity value
+    private float sensitivityX;           // Will be calculated from settings
+    private float sensitivityY;           // Will be calculated from settings
+    private bool invertY;                 // Will be set from settings
 
     private Vector2 lookInput;
-    private Vector2 currentLookVelocity; // For SmoothDamp calculation
-    private Vector2 currentLook; // Smoothed look values
     float xRotation;
-    float yRotation; 
+    float yRotation;
     
     private float initDelay = 0.25f;    //used to pause execution between steps of initialization when needed
     private bool initialized = false;                   //flag used to stop Update() from running before initialization is complete
@@ -46,8 +46,25 @@ public class FirstPersonCamController : MonoBehaviour
     IEnumerator Init()
     {
         yield return new WaitForSeconds(initDelay);
-
+        
+        // Apply initial settings
+        UpdateFromSettings();
+        
+        // Subscribe to settings change event
+        GameMaster.Instance.gm_SettingsChanged.AddListener(UpdateFromSettings);
+        
         initialized = true;
+    }
+
+    private void UpdateFromSettings()
+    {
+        if (GameMaster.Instance != null)
+        {
+            var settings = GameMaster.Instance.GetSettings();
+            sensitivityX = baseSensitivity * settings.GetHorizontalSensitivityMultiplier();
+            sensitivityY = baseSensitivity * settings.GetVerticalSensitivityMultiplier();
+            invertY = settings.invertYAxis;
+        }
     }
 
     void Update()
@@ -55,26 +72,11 @@ public class FirstPersonCamController : MonoBehaviour
         if (!initialized || isOverridden) {return;}
         
         lookInput = FPS_InputHandler.Instance.LookInput;
-
-        float mouseX = lookInput.x * sensX;
-        float mouseY = lookInput.y * sensY;
-
-        // Apply smoothing if enabled
-        if (useSmoothing)
-        {
-            // Use SmoothDamp for interpolated movement
-            currentLook.x = Mathf.SmoothDamp(currentLook.x, mouseX, ref currentLookVelocity.x, smoothTime);
-            currentLook.y = Mathf.SmoothDamp(currentLook.y, mouseY, ref currentLookVelocity.y, smoothTime);
-            
-            yRotation += currentLook.x * Time.deltaTime;
-            xRotation -= currentLook.y * Time.deltaTime;
-        }
-        else
-        {
-            // Original direct input method
-            yRotation += mouseX * Time.deltaTime;
-            xRotation -= mouseY * Time.deltaTime;
-        }
+        
+        // Direct mouse-to-view conversion, scaled by sensitivity and deltaTime
+        yRotation += lookInput.x * sensitivityX * Time.deltaTime;
+        float verticalInput = invertY ? lookInput.y : -lookInput.y;
+        xRotation += verticalInput * sensitivityY * Time.deltaTime;
 
         //clamp how far up and down you can look
         xRotation = Mathf.Clamp(xRotation, -90f, 90f);
@@ -101,15 +103,11 @@ public class FirstPersonCamController : MonoBehaviour
         isOverridden = allow;
     }
 
-    // Method to adjust smoothing amount at runtime
-    public void SetSmoothingAmount(float amount)
+    void OnDestroy()
     {
-        smoothTime = Mathf.Clamp(amount, 0.01f, 0.5f);
-    }
-
-    // Method to toggle smoothing on/off
-    public void ToggleSmoothing(bool enabled)
-    {
-        useSmoothing = enabled;
+        if (GameMaster.Instance != null)
+        {
+            GameMaster.Instance.gm_SettingsChanged.RemoveListener(UpdateFromSettings);
+        }
     }
 }

@@ -1,0 +1,29 @@
+GAME MECHANIC AND SYSTEM IDEAS
+
+Encumbrance System:
+- Player has a maximum carrying capacity
+- There is an encumbrance threshold that is a set amount of weight below max capacity
+- The encumbrance debuff scales with how far past the threshold you are until you reach max capacity with full debuff
+- Dynamic debuffing rates:
+    - For example: Jumping is debuffed faster than walk speed
+        - Being slightly encumbered may make some jumps impossible/difficult but movement is still near max
+        - Nearly at max encumbrance, you stop being able to jump altogether, limiting navigation
+
+Two-Weapon System:
+- Inspired by the Two-Weapon System of classic Halo games
+- Can only carry two weapons at maximum at all times
+- Can additionally carry a single melee weapon and limited utilities like grenades and handheld devices
+
+Journaling System:
+- Shows active and completed Quests/Objectives
+- Shows a log of all logged activity (who you talked to, what items you found, etc.)
+
+Weapon Crafting and Upgrading:
+- Sort of inspired by Tomb Raider
+- Collect items that can be used to upgrade base weapons or craft new weapons
+- Use a "Workshop Bench" to perform upgrades
+
+Level Secrets:
+- Doom and classic puzzle game inspired
+- Find items, perform tasks, or solve puzzles to gain access to additional content
+
