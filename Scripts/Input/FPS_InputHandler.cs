@@ -53,6 +53,7 @@ public class FPS_InputHandler : MonoBehaviour
     private const string cancel = "Cancel";
     private const string menuEquip = "Equipment Menu";
     private const string menuPause = "Pause Menu";
+    private const string menuInventory = "Inventory Menu";
     private const string aim = "Aim";
     private const string fire = "Fire";
     private const string reload = "Reload";
@@ -99,6 +100,7 @@ public class FPS_InputHandler : MonoBehaviour
     private InputAction cancelAction;
     private InputAction menuEquipAction;
     private InputAction menuPauseAction;
+    private InputAction menuInventoryAction;
     private InputAction aimAction;
     private InputAction fireAction;
     private InputAction reloadAction;
@@ -169,6 +171,7 @@ public class FPS_InputHandler : MonoBehaviour
     public bool CancelInput { get; private set; }
     public bool PauseMenuButtonInput { get; private set; }
     public bool EquipmentMenuButtonInput { get; private set; }
+    public bool InventoryMenuButtonInput { get; private set; }
     public bool AimInput { get; private set; }
     public bool FireInput { get; private set; }
     public bool ReloadInput { get; private set; }
@@ -217,6 +220,7 @@ public class FPS_InputHandler : MonoBehaviour
     [HideInInspector] public UnityEvent cancelTriggered;
     [HideInInspector] public UnityEvent pauseMenuButtonTriggered;
     [HideInInspector] public UnityEvent equipMenuButtonTriggered;
+    [HideInInspector] public UnityEvent inventoryMenuButtonTriggered;
     [HideInInspector] public UnityEvent aimTriggered;
     [HideInInspector] public UnityEvent fireTriggered;
     [HideInInspector] public UnityEvent reloadTriggered;
@@ -291,6 +295,7 @@ public class FPS_InputHandler : MonoBehaviour
         cancelAction = actionMap_FPS.FindAction(cancel);
         menuPauseAction = actionMap_FPS.FindAction(menuPause);
         menuEquipAction = actionMap_FPS.FindAction(menuEquip);
+        menuInventoryAction = actionMap_FPS.FindAction(menuInventory);
         aimAction = actionMap_FPS.FindAction(aim);
         fireAction = actionMap_FPS.FindAction(fire);
         reloadAction = actionMap_FPS.FindAction(reload);
@@ -384,6 +389,10 @@ public class FPS_InputHandler : MonoBehaviour
         menuEquipAction.started += context => equipMenuButtonTriggered.Invoke();
         menuEquipAction.performed += context => EquipmentMenuButtonInput = true;
         menuEquipAction.canceled += context => EquipmentMenuButtonInput = false;
+
+        menuInventoryAction.started += context => inventoryMenuButtonTriggered.Invoke();
+        menuInventoryAction.performed += context => InventoryMenuButtonInput = true;
+        menuInventoryAction.canceled += context => InventoryMenuButtonInput = false;
 
         //aimAction.started += context => FPSS_WeaponPool.Instance.urrentWeapon.Aim();
         aimAction.performed += context => AimInput = true;

@@ -11,13 +11,19 @@ using DG.Tweening;
 public class FPSS_WeaponHUD : MonoBehaviour
 {
     private static FPSS_WeaponHUD _instance;
+    public static bool IsInitialized => _instance != null && _instance.initialized;
     public static FPSS_WeaponHUD Instance
     {
         get
         {
             if (_instance == null)
             {
-                Debug.LogError($"Attempting to access {nameof(FPSS_WeaponHUD)} before it is initialized.");
+                _instance = FindAnyObjectByType<FPSS_WeaponHUD>();
+                if (_instance == null)
+                {
+                    Debug.LogWarning($"Attempting to access {nameof(FPSS_WeaponHUD)} before it is initialized. Returning null.");
+                    return null;
+                }
             }
             return _instance;
         }

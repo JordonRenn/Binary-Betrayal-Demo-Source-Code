@@ -152,9 +152,9 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
         weaponPool.currentWeaponSlot = weaponSlot;
         FPSS_Main.Instance.currentWeaponSlot = weaponSlot;
 
-        if (FPSS_WeaponHUD.Instance != null)
+        if (hud != null)
         {
-            FPSS_WeaponHUD.Instance.RefreshWeaponHUD();
+            hud.RefreshWeaponHUD();
         }
     }
 

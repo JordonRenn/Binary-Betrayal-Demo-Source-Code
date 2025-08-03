@@ -35,7 +35,7 @@ public class GameMaster : MonoBehaviour
     //
 
     //Game Play Events
-    [HideInInspector] public UnityEvent gm_GamePaused ;
+    [HideInInspector] public UnityEvent gm_GamePaused;
     [HideInInspector] public UnityEvent gm_GameUnpaused;
     [HideInInspector] public UnityEvent gm_ReturnToMainMenu;
 
@@ -44,6 +44,20 @@ public class GameMaster : MonoBehaviour
 
     //Settings Events
     [HideInInspector] public UnityEvent gm_SettingsChanged;
+
+    //Inventory Events
+    [HideInInspector] public UnityEvent gm_InventoryMenuOpened;
+    [HideInInspector] public UnityEvent gm_InventoryMenuOpened_Container;
+    [HideInInspector] public UnityEvent gm_InventoryMenuOpened_NPC;
+    [HideInInspector] public UnityEvent gm_InventoryMenuClosed;
+    [HideInInspector] public UnityEvent gm_InventoryMenuClosed_Container;
+    [HideInInspector] public UnityEvent gm_InventoryMenuClosed_NPC;
+    [HideInInspector] public UnityEvent gm_InventoryItemAdded;
+    [HideInInspector] public UnityEvent gm_InventoryItemAdded_Container;
+    [HideInInspector] public UnityEvent gm_InventoryItemAdded_NPC;
+    [HideInInspector] public UnityEvent gm_InventoryItemRemoved;
+    [HideInInspector] public UnityEvent gm_InventoryItemRemoved_Container;
+    [HideInInspector] public UnityEvent gm_InventoryItemRemoved_NPC;
 
     //Settings Management
     [SerializeField] private PlayerSettings playerSettings = new PlayerSettings();

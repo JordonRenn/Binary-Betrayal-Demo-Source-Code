@@ -357,7 +357,12 @@ public enum ItemType
     Weapon,
     Consumable,
     KeyItem,
-    QuestItem
+    QuestItem,
+    Ammo,
+    Medical,
+    Resource,
+    Quest,
+    Misc
 }
 #endregion
 
