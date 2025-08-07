@@ -102,8 +102,14 @@ public class CharacterMovement : MonoBehaviour
 
     [SerializeField] private float initDelay = 0f;
 
-    [HideInInspector] public bool moveDisabled = false; //needs to be true for teleporting to work
+    [HideInInspector] public bool moveDisabled = false; 		//needs to be true for teleporting to work
+	[SerializeField] private bool logJumpMetrics = false; 		//for testing jump metrics
 
+    // Jump tracking variables
+    private Vector3 jumpStartPosition;
+    private bool wasGroundedLastFrame = true;
+    private bool isTrackingJump = false;
+    [HideInInspector] public float lastDropDistance = 0f; // Always calculated for future fall damage
 	void Awake()
 	{
 		Debug.Log("CHARACTER MOVEMENT | Instantiated");
@@ -138,6 +144,7 @@ public class CharacterMovement : MonoBehaviour
     {
         GroundCheck(); 
         QueueJump();
+        TrackJumpMetrics();
     }
 
 
@@ -178,6 +185,48 @@ public class CharacterMovement : MonoBehaviour
             jumpBufferTimer = 0f;
 		}
 	}
+
+    void TrackJumpMetrics()
+    {
+        // Check if player just lost contact with ground (started jumping/falling)
+        if (wasGroundedLastFrame && !grounded && !isTrackingJump)
+        {
+            jumpStartPosition = transform.position;
+            isTrackingJump = true;
+        }
+        
+        // Check if player just landed (regained contact with ground)
+        if (!wasGroundedLastFrame && grounded && isTrackingJump)
+        {
+            Vector3 landingPosition = transform.position;
+            CalculateJumpMetrics(jumpStartPosition, landingPosition);
+            isTrackingJump = false;
+        }
+        
+        // Update previous frame state
+        wasGroundedLastFrame = grounded;
+    }
+
+    void CalculateJumpMetrics(Vector3 startPos, Vector3 endPos)
+    {
+        // Calculate horizontal distance (jump length)
+        Vector3 horizontalMovement = new Vector3(endPos.x - startPos.x, 0, endPos.z - startPos.z);
+        float jumpLength = horizontalMovement.magnitude;
+        
+        // Calculate vertical distance (jump height = positive, drop distance = negative)
+        float verticalDistance = endPos.y - startPos.y;
+        float jumpHeight = Mathf.Max(0, verticalDistance); // Only positive values for jump height
+        float dropDistance = Mathf.Max(0, -verticalDistance); // Only positive values for drop distance
+        
+        // Always store drop distance for future fall damage calculations
+        lastDropDistance = dropDistance;
+        
+        // Optional: Log combined metrics if any logging is enabled
+        if (logJumpMetrics && (jumpLength > 0.1f || jumpHeight > 0.1f || dropDistance > 0.1f))
+        {
+            Debug.Log($"[Jump Metrics] Start: {startPos}, End: {endPos}, Length: {jumpLength:F2}, Height: {jumpHeight:F2}, Drop: {dropDistance:F2}");
+        }
+    }
 
     void Jump()
     {

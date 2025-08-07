@@ -6,7 +6,7 @@ public class PUI_Key: PickUpItem
 
     public override void PickUp() 
     {
-        Debug.Log($"Picked up {ItemName} | KeyID: {keyID}");
+        Debug.Log($"Picked up {objectDisplayName} | KeyID: {keyID}");
         PlaySFX(sfx_PickUp);
         Destroy(gameObject);
     }

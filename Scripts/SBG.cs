@@ -344,6 +344,12 @@ public enum TargetType {
 #endregion
 
 #region Inventory
+public enum InventoryType
+{
+    Player,
+    Container,
+    NPC
+}
 public enum ItemType
 {
     Misc, //used as default fallback

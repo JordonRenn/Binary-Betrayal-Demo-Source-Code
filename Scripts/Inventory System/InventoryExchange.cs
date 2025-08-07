@@ -1,5 +1,17 @@
 using System.Collections.Generic;
 
+/* 
+INHERITANCE STRUCTURE:
+IInventory
+├── InventoryBase (abstract class)
+│   ├── Inv_Container
+│   ├── Inv_NPC
+│   ├── Inv_Container
+│   └── Inv_Player
+InventoryData (struct)
+IInventoryExchange 
+ */
+
 public static class InventoryExchange
 {
     public static bool TransferSingleItem(IInventory sourceInventory, IInventory targetInventory, IItem item, int quantity)

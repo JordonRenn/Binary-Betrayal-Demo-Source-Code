@@ -5,16 +5,13 @@ using System.Collections;
 
 public class PickUpItem : SauceObject
 {
-    //[SerializeField] protected int itemID;
-    
     [Header("Item Properties")]
     [Space(10)]
 
-    [SerializeField] protected string itemId;
-    [SerializeField] protected string itemName;
     [SerializeField] protected string itemDescription;
-    //[SerializeField] protected Sprite itemIcon;
     [SerializeField] protected ItemType itemType;
+    [SerializeField] protected ItemRarity itemRarity;
+    [SerializeField] protected ItemViewLogicType itemViewLogic;
     [SerializeField] protected int weight = 0;
     [SerializeField] protected GameObject itemPrefab;
 
@@ -39,8 +36,8 @@ public class PickUpItem : SauceObject
     private Vector3 initialPosition;
 
     //public int ItemID { get => itemID; }
-    public string ItemName { get => itemName; }
-    public string ItemDescription { get => itemDescription; }
+    //public string ItemName { get => objectDisplayName; }
+    //public string ItemDescription { get => itemDescription; }
     //public Sprite ItemIcon { get => itemIcon; }
 
     void Start()
@@ -69,7 +66,7 @@ public class PickUpItem : SauceObject
 
     public virtual void PickUp()
     {
-        Debug.Log($"Picking up {ItemName}");
+        Debug.Log($"Picking up {objectDisplayName}");
         StartCoroutine(PickUpRoutine());
     }
 
@@ -98,10 +95,10 @@ public class PickUpItem : SauceObject
 
     private void CreateInventoryItem()
     {
-        Debug.Log($"Creating inventory item: {itemName} (ID: {itemId}, Type: {itemType}, Weight: {weight})");
+        Debug.Log($"Creating inventory item: {objectDisplayName} (ID: {objectID}, Type: {itemType}, Weight: {weight})");
         
         // Create the item data directly
-        IItem item = new ItemData(itemId, itemName, itemDescription, null, itemType, weight);
+        IItem item = new ItemData(objectID, objectDisplayName, itemDescription, null, itemType, weight, itemRarity, itemViewLogic);
         
         // Check if InventoryManager exists
         if (InventoryManager.Instance != null)
@@ -109,7 +106,7 @@ public class PickUpItem : SauceObject
             // Check if player inventory exists, if not create a temporary one
             if (InventoryManager.Instance.GetPlayerInventory() == null)
             {
-                SBGDebug.LogError($"Player inventory is null! Item not added to inventory.", $"PICK UP ITEM: {itemName}");
+                SBGDebug.LogError($"Player inventory is null! Item not added to inventory.", $"PICK UP ITEM: {objectDisplayName}");
                 return; // Exit if no inventory is available
             }
             

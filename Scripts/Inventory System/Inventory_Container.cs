@@ -10,9 +10,9 @@ InventoryData (struct)
 IInventoryExchange 
  */
 
-public class Inv_NPC : InventoryBase
+public class Inv_Container : InventoryBase
 {
-    public Inv_NPC(string inventoryId, string name, int capacity) : base(inventoryId, name, capacity, InventoryType.NPC)
+    public Inv_Container(string inventoryId, string name, int capacity) : base(inventoryId, name, capacity, InventoryType.Container)
     {
     }
 }

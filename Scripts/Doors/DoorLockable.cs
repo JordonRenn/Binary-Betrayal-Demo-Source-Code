@@ -107,7 +107,7 @@ public class DoorLockable : DoorGeneric
         if (isKeyRequired)
         {
             var id = "key_" + keyId;
-            if (InventoryManager.Instance.playerInventory.HasItemById(id))
+            if (InventoryManager.Instance.playerInventory.HasItemById(id, 1))
             {
                 playerHasKey = true;
                 SBGDebug.LogInfo($"Key {id} found in inventory", $"class: DoorGeneric | object: {objectDisplayName}");

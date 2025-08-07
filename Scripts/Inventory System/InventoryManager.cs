@@ -1,6 +1,18 @@
 using UnityEngine;
 using System.IO;
 
+/* 
+INHERITANCE STRUCTURE:
+IInventory
+├── InventoryBase (abstract class)
+│   ├── Inv_Container
+│   ├── Inv_NPC
+│   ├── Inv_Container
+│   └── Inv_Player
+InventoryData (struct)
+IInventoryExchange 
+ */
+
 public class InventoryManager : MonoBehaviour
 {
     private static InventoryManager _instance;
@@ -18,13 +30,13 @@ public class InventoryManager : MonoBehaviour
     }
 
     //[Header("Player Inventory")]
-    public Inv_Player playerInventory { get; private set; } //player's inventory
+    public IInventory playerInventory { get; private set; } //player's inventory
 
     private IInventory connectedInventory; //inventory of the currently interacted NPC or container
 
     [Header("Developer Options")]
     [Space(10)]
-    private const string JSON_DUMMY_INVENTORY_FILE_PATH = "Testing/DummyInventoryData.json";
+    private const string JSON_INVENTORY_FILE_PATH = "Inventories/";
     [SerializeField] private bool GenerateDummyInventory = false;
     [SerializeField] private bool GenerateEmptyInventory = false;
 
@@ -36,7 +48,7 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
-    void Start ()
+    void Start()
     {
         if (GenerateDummyInventory)
         {
@@ -49,10 +61,11 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
+    #region Player Inventory
     /// <summary>
     /// Sets the player's inventory
     /// </summary>
-    public void SetPlayerInventory(Inv_Player inventory)
+    public void SetPlayerInventory(IInventory inventory)
     {
         // Clear any existing inventory reference
         playerInventory = null;
@@ -102,7 +115,7 @@ public class InventoryManager : MonoBehaviour
 
     public void GenerateDummyInventories()
     {
-        var playerInventory = LoadDummyInventoryFromJSON();
+        var playerInventory = LoadInventoryFromJSON("DummyInventoryData");
 
         if (playerInventory != null)
         {
@@ -114,15 +127,14 @@ public class InventoryManager : MonoBehaviour
             Debug.LogError("Failed to load dummy inventory from JSON.");
         }
     }
+    #endregion
 
-    private static Inv_Player LoadDummyInventoryFromJSON()
+    #region JSON Loading
+    public static IInventory LoadInventoryFromJSON(string inventoryId)
     {
         try
         {
-            string filePath = Path.Combine(Application.streamingAssetsPath, JSON_DUMMY_INVENTORY_FILE_PATH);
-
-            Debug.Log($"Loading inventory from: {filePath}");
-
+            string filePath = Path.Combine(Application.streamingAssetsPath, JSON_INVENTORY_FILE_PATH, $"{inventoryId}.json");
             if (!File.Exists(filePath))
             {
                 Debug.LogError($"JSON file not found at: {filePath}");
@@ -130,46 +142,13 @@ public class InventoryManager : MonoBehaviour
             }
 
             string jsonContent = File.ReadAllText(filePath);
-            Debug.Log($"JSON file loaded, content length: {jsonContent.Length} characters");
 
             var inventoryData = JsonUtility.FromJson<InventoryData>(jsonContent);
 
-            if (inventoryData?.playerInventory == null)
-            {
-                Debug.LogError("Invalid JSON structure - playerInventory not found");
-                return null;
-            }
-
             // Create the player inventory
-            var playerInventory = new Inv_Player(
-                inventoryData.playerInventory.inventoryId,
-                inventoryData.playerInventory.name,
-                inventoryData.playerInventory.capacity
-            );
+            var loadedInventory = InventoryFactory.CreateInventory(inventoryData);
 
-            // Add all items from JSON
-            foreach (var itemData in inventoryData.playerInventory.items)
-            {
-                if (itemData != null)
-                {
-                    var item = new ItemData(
-                        itemData.ItemId,
-                        itemData.Name,
-                        itemData.Description,
-                        itemData.Icon,
-                        itemData.Type,
-                        itemData.weight
-                    );
-                    playerInventory.AddItem(item, 1); // Assuming quantity is 1 for each item
-                }
-                else
-                {
-                    SBGDebug.LogWarning("Found null item in DUMMY JSON DATA, skipping.", "InventoryManager");
-                }
-            }
-
-            Debug.Log($"Loaded player inventory with {playerInventory.GetItems().Length} different item types");
-            return playerInventory;
+            return loadedInventory;
         }
         catch (System.Exception e)
         {
@@ -177,19 +156,12 @@ public class InventoryManager : MonoBehaviour
             return null;
         }
     }
-}
+    #endregion
 
-[System.Serializable]
-public class InventoryData
-{
-    public PlayerInventoryData playerInventory;
-}
-
-[System.Serializable]
-public class PlayerInventoryData
-{
-    public string inventoryId;
-    public string name;
-    public int capacity;
-    public ItemData[] items;
+    public void ConnectInventory(IInventory inventory)
+    {
+        connectedInventory = inventory;
+        Debug.Log($"Connected to inventory: {inventory.Name}");
+        //GameMaster.Instance?.gm_InventoryConnected?.Invoke();
+    }
 }
