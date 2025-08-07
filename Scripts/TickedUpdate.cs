@@ -30,6 +30,5 @@ public class TickedUpdateBehavior : MonoBehaviour
     protected virtual void TickedUpdate()
     {
         gameMaster.globalTick.Invoke();
-        //Debug.Log($"Tick: {tick}");
     }
 }

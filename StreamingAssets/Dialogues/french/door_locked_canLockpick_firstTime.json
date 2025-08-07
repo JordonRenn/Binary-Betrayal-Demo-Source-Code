@@ -1,0 +1,10 @@
+{
+    "dialogueID": "door_locked_canLockpick_firstTime",
+    "entries": [
+        {
+            "characterName": "Player",
+            "avatarPath": "john",
+            "message": "C'est verrouillé... mais je peux le crocheter !"
+        }
+    ]
+}

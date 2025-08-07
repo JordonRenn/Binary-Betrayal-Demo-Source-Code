@@ -21,6 +21,7 @@ public class FPSS_ReticleSystem : MonoBehaviour
 
     private CharacterMovement characterMovement = null;
 
+    //INFO TEXT
     public TMP_Text objectInfoText { get; private set; }
 
     [SerializeField][Range(10,100)] float size;

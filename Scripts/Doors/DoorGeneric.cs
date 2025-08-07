@@ -1,18 +1,30 @@
 using System.Collections;
 using UnityEngine;
 using FMODUnity;
+
+/* 
+INHERITANCE HIERARCHY:
+MonoBehaviour
+    |
+    +-- SauceObject                                 // Nav Tracking + Interactablity
+        |
+        +-- Door (abstract class)
+            |
+            +-- DoorGeneric (concrete class)        // Just Open/Close logic + Player Position Consideration
+                |
+                +-- DoorLockable (concrete class)   // Adds Lock/Unlock logic
+ */
+
 public class DoorGeneric : Door
 {
-    [SerializeField] private Animator doorAnimator;
-
-    [SerializeField] private bool alwaysOpenToExt = false;
-    [SerializeField] private float unlockTime = 2f;
-
-    [Header("Door and Lock States")]
+    [Header("Door Generic Properties")]
     [Space(10)]
 
-    [SerializeField] private DoorLockState defaultLockState;
-    [SerializeField] private  DoorState defaultDoorState = DoorState.Closed;
+    [SerializeField] private bool alwaysOpenToExt = false;
+    /* [SerializeField] private float unlockTime = 2f; */
+    [SerializeField] protected DoorState defaultDoorState = DoorState.Closed;
+    [SerializeField] private Animator doorAnimator;
+
 
     [Header("FMOD")]
     [Space(10)]
@@ -23,17 +35,30 @@ public class DoorGeneric : Door
     [SerializeField] private EventReference sfx_Unlock;
     [SerializeField] private Transform audioPosition;
 
-    //SUBSTATES
-    private bool playerInside = false; //is player on the interior side of the door
+    private bool playerInside = false;
+    private GameObject player;
 
-    void Awake() 
+    void Awake()
     {
-       doorState = defaultDoorState;
-       doorLockState = defaultLockState;
+        doorState = defaultDoorState;
     }
-    
+
+    void Start()
+    {
+        player = GameMaster.Instance.playerObject;
+        if (player == null)
+        {
+            SBGDebug.LogWarning("Player object not found in GameMaster on instanciation, will try again when interacted with ", "DoorGeneric");
+        }
+    }
+
+    #region Door Actions
     public override void Interact()
     {
+        playerInside = IsPlayerInside();
+
+        SBGDebug.LogInfo("Door Interacted with", "DoorGeneric");
+
         if (doorState == DoorState.Closed)
         {
             StartCoroutine(OpenDoor());
@@ -46,80 +71,34 @@ public class DoorGeneric : Door
 
     private void HandleDoorOpen(bool isPlayerInside)
     {
+        isPlayerInside = IsPlayerInside();
+
         if (isPlayerInside)
         {
-            switch (doorLockState)
-            {
-                case DoorLockState.Unlocked:
-                    OpenDoor(true);
-                    doorState = DoorState.OpenExt;
-                    break;
-                case DoorLockState.Locked:
-                    PlayLocked_SFX();
-                    SBGDebug.LogInfo("Door is locked from both sides", "DOORGENERIC");
-                    break;
-                case DoorLockState.LockedInteriorOnly:
-                    PlayLocked_SFX();
-                    SBGDebug.LogInfo("Door is locked from the outside", "DOORGENERIC");
-                    break;
-            }
+            OpenDoor(true);
+            doorState = DoorState.OpenExt;
         }
         else
         {
-            switch(doorLockState)
-            {
-                case DoorLockState.Unlocked:
-                    SBGDebug.LogInfo("Door is opening", "DOORGENERIC");
-                    if (alwaysOpenToExt)
-                    {
-                        OpenDoor(true);
-                        doorState = DoorState.OpenExt;
-                    }
-                    else 
-                    {
-                        OpenDoor(false);
-                        doorState = DoorState.OpenInt;
-                    }
-                    doorState = DoorState.OpenExt;
-                    break;
-                case DoorLockState.Locked:
-                    PlayLocked_SFX();
-                    SBGDebug.LogInfo("Door is locked from both sides", "DOORGENERIC");
-                    break;
-                case DoorLockState.LockedExteriorOnly:
-                    PlayLocked_SFX();
-                    SBGDebug.LogInfo("Door is locked from the inside", "DOORGENERIC");
-                    break;
-            }
-        }
-    }
-
-    public override IEnumerator OpenDoor()
-    {
-        if (playerInside && doorLockState == DoorLockState.LockedExteriorOnly ||
-            !playerInside && doorLockState == DoorLockState.LockedInteriorOnly)
-        {
-            PlayUnlock_SFX();
-            yield return new WaitForSeconds(unlockTime);
-            
-            SBGDebug.LogInfo($"Door has been unlocked from the {(playerInside ? "inside" : "outside")}", "DOORGENERIC");
-            doorLockState = DoorLockState.Unlocked;
-
             if (alwaysOpenToExt)
             {
                 OpenDoor(true);
                 doorState = DoorState.OpenExt;
             }
-            else 
+            else
             {
-                OpenDoor(!playerInside);
-                doorState = playerInside ? DoorState.OpenExt : DoorState.OpenInt;
+                OpenDoor(false);
+                doorState = DoorState.OpenInt;
             }
+            doorState = DoorState.OpenExt;
         }
-        else
-        {
-            HandleDoorOpen(playerInside);
-        }
+    }
+
+    public override IEnumerator OpenDoor()
+    {
+        OpenDoor(!playerInside);
+        doorState = playerInside ? DoorState.OpenExt : DoorState.OpenInt;
+        return null;
     }
 
     private void OpenDoor(bool exterior)
@@ -140,7 +119,7 @@ public class DoorGeneric : Door
     {
         //play close sound
         SBGDebug.LogInfo("Door is closing", "DOORGENERIC");
-        
+
         if (doorState == DoorState.OpenExt)
         {
             doorAnimator.SetTrigger("CloseExt");
@@ -152,41 +131,40 @@ public class DoorGeneric : Door
             doorState = DoorState.Closed;
         }
     }
+    #endregion
 
-    public override void LockDoor(bool locked)
+    #region Player Locator
+    private bool IsPlayerInside()
     {
-        //int_Locked = locked;
-        //ext_Locked = locked;
+        if (player == null)
+        {
+            player = GameMaster.Instance.playerObject;
+            if (player == null)
+            {
+                SBGDebug.LogWarning("Player object not found in GameMaster", "DoorGeneric");
+                return false;
+            }
+        }
 
-        if (locked)
+        if (player != null)
         {
-            doorLockState = DoorLockState.Locked;
+            // Convert player's world position to door's local space
+            Vector3 playerLocalPosition = transform.InverseTransformPoint(player.transform.position);
+            
+            if (playerLocalPosition.x > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
-        else
-        {
-            PlayUnlock_SFX();
-            doorLockState = DoorLockState.Unlocked;
-        }
+        // If player is still null for some reason, return false
+        return false;
     }
 
-    //TRIGGER TO DETECT PLAYER SIDE OF THE DOOR
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.layer == LayerMask.NameToLayer("playerObject"))
-        {
-            playerInside = true;
-        }
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.gameObject.layer == LayerMask.NameToLayer("playerObject"))
-        {
-            playerInside = false;
-        }
-    }
-
+    #region Audio
     public void PlayOpen_SFX()
     {
         try
@@ -234,4 +212,6 @@ public class DoorGeneric : Door
             SBGDebug.LogError($"Error playing close sfx: {e}", "DOORGENERIC");
         }
     }
+    #endregion
 }
+#endregion

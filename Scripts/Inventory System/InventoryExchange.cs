@@ -1,17 +1,8 @@
 using System.Collections.Generic;
 
-public class InventoryExchange
+public static class InventoryExchange
 {
-    private IInventory sourceInventory;
-    private IInventory targetInventory;
-
-    public InventoryExchange(IInventory source, IInventory target)
-    {
-        sourceInventory = source;
-        targetInventory = target;
-    }
-
-    public bool ExchangeItem(IItem item, int quantity)
+    public static bool TransferSingleItem(IInventory sourceInventory, IInventory targetInventory, IItem item, int quantity)
     {
         if (sourceInventory.HasItem(item, quantity))
         {
@@ -22,14 +13,50 @@ public class InventoryExchange
         return false;
     }
 
-    public void TransferAllItems()
+    public static void TransferAllItems(IInventory source, IInventory target)
     {
-        foreach (var item in sourceInventory.GetItems())
+        foreach (var item in source.GetItems())
         {
-            int quantity = sourceInventory.Items[item];
+            int quantity = source.Items[item];
             if (quantity > 0)
             {
-                ExchangeItem(item, quantity);
+                TransferSingleItem(source, target, item, quantity);
+            }
+        }
+    }
+
+    public static void ExchangeMultipleItems(IInventory source, IInventory target, List<IItem> sourceItemsToTransfer, List<IItem> targetItemsToTransfer)
+    {
+        foreach (var item in sourceItemsToTransfer)
+        {
+            int quantity = source.Items[item];
+            if (source.HasItem(item, quantity))
+            {
+                TransferSingleItem(source, target, item, quantity);
+            }
+        }
+
+        foreach (var item in targetItemsToTransfer)
+        {
+            int quantity = target.Items[item];
+            if (target.HasItem(item, quantity))
+            {
+                TransferSingleItem(target, source, item, quantity);
+            }
+        }
+    }
+
+    public static void TransferItemsByType(IInventory source, IInventory target, ItemType itemType)
+    {
+        foreach (var item in source.GetItems())
+        {
+            if (item.Type == itemType)
+            {
+                int quantity = source.Items[item];
+                if (quantity > 0)
+                {
+                    TransferSingleItem(source, target, item, quantity);
+                }
             }
         }
     }

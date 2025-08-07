@@ -30,6 +30,16 @@ public class Inv_Player : IInventory
         {
             Items[item] = quantity;
         }
+        if (NotificationSystem.Instance != null)
+        {
+            Notification notification = new Notification
+            {
+                message = $"Added {quantity}x {item.Name} to your inventory.",
+                type = NotificationType.Normal
+            };
+
+            NotificationSystem.Instance.DisplayNotification(notification);
+        }
     }
 
     public void RemoveItem(IItem item, int quantity)
@@ -41,6 +51,16 @@ public class Inv_Player : IInventory
             {
                 Items.Remove(item);
             }
+        }
+
+        if (NotificationSystem.Instance != null)
+        {
+            Notification notification = new Notification
+            {
+                message = $"Removed {quantity}x {item.Name} from your inventory.",
+                type = NotificationType.Normal
+            };
+            NotificationSystem.Instance.DisplayNotification(notification);
         }
     }
 
@@ -57,5 +77,29 @@ public class Inv_Player : IInventory
             total += item.Key.weight * item.Value;
         }
         return total;
+    }
+
+    public IItem GetItemById(string itemId)
+    {
+        foreach (var item in Items.Keys)
+        {
+            if (item.ItemId == itemId)
+            {
+                return item;
+            }
+        }
+        return null;
+    }
+
+    public bool HasItemById(string itemId, int quantity = 1)
+    {
+        IItem item = GetItemById(itemId);
+        return item != null && Items[item] >= quantity;
+    }
+
+    public int GetItemQuantityById(string itemId)
+    {
+        IItem item = GetItemById(itemId);
+        return item != null ? Items[item] : 0;
     }
 }

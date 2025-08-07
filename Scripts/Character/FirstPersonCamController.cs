@@ -1,6 +1,32 @@
 using UnityEngine;
 using System.Collections;
 
+/* 
+    First Person Controller Hierarchy:
+    
+    **Game Object Name (Script Name)**
+
+    - Character Controller (CharacterMovement.cs)
+        - FPS_Cam (FirstPersonCamController.cs + CamShake.cs)           <--- THIS SCRIPT
+            - FPS System (FPSS_Main.cs)
+                - FPS_Interaction (FirstPersonInteraction.cs)           
+                - FPS_WeaponObjectPool (FPSS_Pool.cs)                  
+                    - POS_GUN_AUDIO
+                    - 0_0_Ak-47 (Gun_AK47.cs)
+                        - AK_47
+                            - MuzzleFlash (MuzzleFlash.cs)
+                    - 0_1_SniperRifle (FPSS_WeaponSlotObject.cs)        // Need to make "Gun_SniperRifle.cs"
+                    - 1_0_HandGun (Gun_HandGun.cs)
+                        - HandGun
+                            - MuzzleFlash (MuzzleFlash.cs)
+                    - 1_1_ShotGun (FPSS_WeaponSlotObject.cs)            // Need to make "Gun_ShotGun.cs"
+                    - 2_0_Knife (FPSS_WeaponSlotObject.cs)              // Need to make "Melee_Knife.cs"
+                    - 3_0_Grenade (FPSS_WeaponSlotObject.cs)            // Need to make "Grenade.cs"
+                    - 3_1_FlashGrenade (FPSS_WeaponSlotObject.cs)       // Need to make "FlashGrenade.cs"
+                    - 3_2_SmokeGrenade (FPSS_WeaponSlotObject.cs)       // Need to make "SmokeGrenade.cs"
+                    - 4_0_Unarmed (FPSS_WeaponSlotObject.cs)            // Need to make "Unarmed.cs"
+ */
+
 public class FirstPersonCamController : MonoBehaviour
 {
     public static FirstPersonCamController Instance { get; private set; }
@@ -16,7 +42,7 @@ public class FirstPersonCamController : MonoBehaviour
     private Vector2 lookInput;
     float xRotation;
     float yRotation;
-    
+
     private float initDelay = 0.25f;    //used to pause execution between steps of initialization when needed
     private bool initialized = false;                   //flag used to stop Update() from running before initialization is complete
 
@@ -27,7 +53,7 @@ public class FirstPersonCamController : MonoBehaviour
     void Awake()
     {
         Debug.Log("FIRST PERSON CAM CONTROLLER | Instantiated");
-        
+
         if (Instance != null && Instance != this)
         {
             Destroy(this.gameObject);
@@ -37,7 +63,7 @@ public class FirstPersonCamController : MonoBehaviour
             Instance = this;
         }
     }
-    
+
     void Start()
     {
         StartCoroutine(Init());
@@ -46,13 +72,13 @@ public class FirstPersonCamController : MonoBehaviour
     IEnumerator Init()
     {
         yield return new WaitForSeconds(initDelay);
-        
+
         // Apply initial settings
         UpdateFromSettings();
-        
+
         // Subscribe to settings change event
         GameMaster.Instance.gm_SettingsChanged.AddListener(UpdateFromSettings);
-        
+
         initialized = true;
     }
 
@@ -69,10 +95,10 @@ public class FirstPersonCamController : MonoBehaviour
 
     void Update()
     {
-        if (!initialized || isOverridden) {return;}
-        
+        if (!initialized || isOverridden) { return; }
+
         lookInput = FPS_InputHandler.Instance.LookInput;
-        
+
         // Direct mouse-to-view conversion, scaled by sensitivity and deltaTime
         yRotation += lookInput.x * sensitivityX * Time.deltaTime;
         float verticalInput = invertY ? lookInput.y : -lookInput.y;

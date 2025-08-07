@@ -3,31 +3,59 @@ using FMODUnity;
 using UnityEngine;
 using Unity.Cinemachine;
 
+/* 
+    First Person Controller Hierarchy:
+
+    - Character Controller (CharacterMovement.cs)
+        - FPS_Cam (FirstPersonCamController.cs + CamShake.cs)
+            - FPS System (FPSS_Main.cs)
+                - FPS_Interaction (FirstPersonInteraction.cs) 
+                - FPS_WeaponObjectPool (FPSS_Pool.cs)                   
+                    - POS_GUN_AUDIO
+                    - 0_0_Ak-47 (Gun_AK47.cs)
+                        - AK_47
+                            - MuzzleFlash (MuzzleFlash.cs)
+                    - 0_1_SniperRifle (FPSS_WeaponSlotObject.cs)        <--- THIS SCRIPT
+                    - 1_0_HandGun (Gun_HandGun.cs)
+                        - HandGun
+                            - MuzzleFlash (MuzzleFlash.cs)
+                    - 1_1_ShotGun (FPSS_WeaponSlotObject.cs)            <--- THIS SCRIPT
+                    - 2_0_Knife (FPSS_WeaponSlotObject.cs)              <--- THIS SCRIPT
+                    - 3_0_Grenade (FPSS_WeaponSlotObject.cs)            <--- THIS SCRIPT
+                    - 3_1_FlashGrenade (FPSS_WeaponSlotObject.cs)       <--- THIS SCRIPT
+                    - 3_2_SmokeGrenade (FPSS_WeaponSlotObject.cs)       <--- THIS SCRIPT
+                    - 4_0_Unarmed (FPSS_WeaponSlotObject.cs)            <--- THIS SCRIPT
+ */
+
 #region FPSS_WeaponSlotObject
 /// <summary>
 /// Class representing a weapon slot object in the FPS system.
+/// 
+/// SHOULD NOT BE USING AS A BASE CLASS!!!
+/// MAKE CHILD CLASSES FOR EACH WEAPON TYPE (GUN, MELEE, GRENADE, UNARMED)
+/// 
 /// </summary>
 public class FPSS_WeaponSlotObject : MonoBehaviour
 {
     [SerializeField] public WeaponRefID refID;
     [SerializeField] public WeaponHUDData HUDData;
-    
+
     [Header("References")]
     [Space(10)]
-    
+
     protected FPSS_ReticleSystem reticleSystem;
     private FPSS_WeaponHUD hud;
-    
+
     [SerializeField] protected FPSS_Pool weaponPool;
     [SerializeField] protected CamShake camShake;
     [Tooltip("Intensity of camera shake, 0-1 (1 being the most intense)")]
     [SerializeField] protected float camShakeIntensity;
     [SerializeField] protected CinemachineCamera cam;
-    [SerializeField] public Animator animator ;
+    [SerializeField] public Animator animator;
     [SerializeField] protected FirstPersonCamController camController;
 
     [SerializeField] private WeaponSlot weaponSlot;
-    
+
     [Header("Objects")]
     [Space(10)]
 
@@ -43,7 +71,7 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
 
     [Header("Range and Damage")]
     [Space(10)]
-    
+
     [SerializeField] private int damagePerShot;
     [SerializeField] private float headshotMultiplier;
     [SerializeField] private float armourPenetration;
@@ -57,30 +85,25 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
 
     [Header("DEV OPTIONS")]
     [Space(10)]
-    
+
     [SerializeField] private float initTimeout = 10f;
-    public bool initialized  { get; private set; }
-    
+    public bool initialized { get; private set; }
+
     void OnEnable()
     {
-        Debug.Log("FPS_WEAPONSLOTOBJECT | Instantiated");
+        //SBGDebug.LogInfo("Instantiated" , $"WeaponSlotObject: {HUDData.weaponDisplayName}");
         initialized = false;
         StartCoroutine(Init());
     }
-
-    /* void Start()
-    {
-        StartCoroutine(Init());
-    } */
 
     #region Init
     IEnumerator Init()
     {
         Debug.Log("FPS_WEAPONSLOTOBJECT | Initialization started");
-        
+
         float initTime = Time.time;
 
-        while (reticleSystem == null  && Time.time - initTime <= initTimeout)
+        while (reticleSystem == null && Time.time - initTime <= initTimeout)
         {
             try
             {
@@ -88,13 +111,13 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
             }
             finally
             {
-                Debug.Log("FPSS_WEAPONSLOTOBJECT | Searching for ''Reticle System''");
+                //Debug.Log("FPSS_WEAPONSLOTOBJECT | Searching for ''Reticle System''");
             }
 
             yield return null;
         }
 
-        while (hud == null  && Time.time - initTime <= initTimeout)
+        while (hud == null && Time.time - initTime <= initTimeout)
         {
             try
             {
@@ -102,7 +125,7 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
             }
             finally
             {
-                Debug.Log("FPSS_WEAPONSLOTOBJECT | Searching for ''Weapon HUD''");
+                //Debug.Log("FPSS_WEAPONSLOTOBJECT | Searching for ''Weapon HUD''");
             }
 
             yield return null;
@@ -110,7 +133,7 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
 
         initialized = true;
 
-        Debug.Log($"WEAPON SLOT OBJECT: Initialization time: {Time.time - initTime} seconds.");
+        //SBGDebug.LogInfo($"Initialization time: {Time.time - initTime} seconds." , $"WeaponSlotObject: {HUDData.weaponDisplayName}" );
 
 
     }
@@ -121,13 +144,13 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
     {
         if (weaponPool == null)
         {
-            Debug.LogError("WEAPON SLOT OBJECT: SetWeaponActive() no Weapon pool found.");
+            //SBGDebug.LogError("'SetWeaponActive()' No Weapon pool found." , $"WeaponSlotObject: {HUDData.weaponDisplayName}");
             yield break;
         }
 
         if (FPSS_Main.Instance == null)
         {
-            Debug.LogError("WEAPON SLOT OBJECT: SetWeaponActive() no FPS_Main found.");
+            //SBGDebug.LogError("'SetWeaponActive()' No FPS_Main found." , $"WeaponSlotObject: {HUDData.weaponDisplayName}");
             yield break;
         }
 
@@ -137,7 +160,7 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
         {
             weaponObject.SetActive(true);
         }
-        
+
         if (weaponArms != null)
         {
             weaponArms.SetActive(true);
@@ -148,7 +171,7 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
         yield return new WaitForSeconds(armSpeed);
 
         animator.SetTrigger("Idle");
-        
+
         weaponPool.currentWeaponSlot = weaponSlot;
         FPSS_Main.Instance.currentWeaponSlot = weaponSlot;
 
@@ -163,7 +186,7 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
         animator.SetTrigger("Disarm");
 
         yield return new WaitForSeconds(disarmSpeed);
-        
+
         weaponObject.SetActive(false);
         weaponArms.SetActive(false);
 
@@ -240,7 +263,7 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
             {
                 position = pos_GunAudio.position;
             }
-            
+
             RuntimeManager.PlayOneShot(eventRef, position);
         }
     }

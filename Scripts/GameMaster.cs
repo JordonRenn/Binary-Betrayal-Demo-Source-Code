@@ -18,21 +18,16 @@ public class GameMaster : MonoBehaviour
         private set => _instance = value;
     }
     
-    public List<Trackable> allTrackables = new List<Trackable>(); 
+    public List<SauceObject> allSauceObjects = new List<SauceObject>();
+    public List<SauceObject> allTrackableSauceObjects = new List<SauceObject>();
+    public GameObject playerObject; //reference assigned when player is instantiated
 
-    //OBJECT INSTANTIATION
-
-    //Player Objects
+    //Player Object Instantiations
     [HideInInspector] public UnityEvent gm_PlayerSpawned;
     [HideInInspector] public UnityEvent gm_WeaponHudSpawned;
     [HideInInspector] public UnityEvent gm_ReticleSystemSpawned;
     [HideInInspector] public UnityEvent gm_WeaponPoolSpawned;
     [HideInInspector] public UnityEvent gm_FPSMainSpawned;
-
-    //Level Objects
-    //
-    //
-    //
 
     //Game Play Events
     [HideInInspector] public UnityEvent gm_GamePaused;
@@ -58,6 +53,10 @@ public class GameMaster : MonoBehaviour
     [HideInInspector] public UnityEvent gm_InventoryItemRemoved;
     [HideInInspector] public UnityEvent gm_InventoryItemRemoved_Container;
     [HideInInspector] public UnityEvent gm_InventoryItemRemoved_NPC;
+
+    // Dialogue Events
+    [HideInInspector] public UnityEvent gm_DialogueStarted;
+    [HideInInspector] public UnityEvent gm_DialogueEnded;
 
     //Settings Management
     [SerializeField] private PlayerSettings playerSettings = new PlayerSettings();

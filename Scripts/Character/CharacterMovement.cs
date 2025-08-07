@@ -1,7 +1,31 @@
 using UnityEngine;
 using System.Collections;
-using DG.Tweening;
-using FMODUnity;
+
+/* 
+    First Person Controller Hierarchy:
+    
+    **Game Object Name (Script Name)**
+
+    - Character Controller (CharacterMovement.cs)						<--- THIS SCRIPT
+        - FPS_Cam (FirstPersonCamController.cs + CamShake.cs)           
+            - FPS System (FPSS_Main.cs)
+                - FPS_Interaction (FirstPersonInteraction.cs)           
+                - FPS_WeaponObjectPool (FPSS_Pool.cs)                  
+                    - POS_GUN_AUDIO
+                    - 0_0_Ak-47 (Gun_AK47.cs)
+                        - AK_47
+                            - MuzzleFlash (MuzzleFlash.cs)
+                    - 0_1_SniperRifle (FPSS_WeaponSlotObject.cs)        // Need to make "Gun_SniperRifle.cs"
+                    - 1_0_HandGun (Gun_HandGun.cs)
+                        - HandGun
+                            - MuzzleFlash (MuzzleFlash.cs)
+                    - 1_1_ShotGun (FPSS_WeaponSlotObject.cs)            // Need to make "Gun_ShotGun.cs"
+                    - 2_0_Knife (FPSS_WeaponSlotObject.cs)              // Need to make "Melee_Knife.cs"
+                    - 3_0_Grenade (FPSS_WeaponSlotObject.cs)            // Need to make "Grenade.cs"
+                    - 3_1_FlashGrenade (FPSS_WeaponSlotObject.cs)       // Need to make "FlashGrenade.cs"
+                    - 3_2_SmokeGrenade (FPSS_WeaponSlotObject.cs)       // Need to make "SmokeGrenade.cs"
+                    - 4_0_Unarmed (FPSS_WeaponSlotObject.cs)            // Need to make "Unarmed.cs"
+ */
 
 [RequireComponent(typeof(CharacterController))]
 [SelectionBase]
@@ -83,6 +107,12 @@ public class CharacterMovement : MonoBehaviour
 	void Awake()
 	{
 		Debug.Log("CHARACTER MOVEMENT | Instantiated");
+
+		if (GameMaster.Instance != null)
+		{
+			GameMaster.Instance.playerObject = this.gameObject;
+			SBGDebug.LogInfo("Registered player object with GameMaster", "CharacterMovement");
+		}
 	}
 	
     void Start()

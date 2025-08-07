@@ -6,5 +6,5 @@ public interface INPC
     string Name { get; }
     string Description { get; }
     Sprite Icon { get; }
-    Trackable Trackable { get; }
+    SauceObject SauceObject { get; }
 }

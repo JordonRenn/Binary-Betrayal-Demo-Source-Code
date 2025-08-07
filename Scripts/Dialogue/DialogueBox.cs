@@ -142,6 +142,10 @@ public class DialogueBox : MonoBehaviour
                 SBGDebug.LogInfo("Dialogue box opened with animation.", "DialogueBox");
                 input.lint_InteractTriggered.AddListener(NextDialogue);
                 dialogueBoxOpened.Invoke();
+                if (GameMaster.Instance != null)
+                {
+                    GameMaster.Instance.gm_DialogueStarted.Invoke();
+                }
             });
 
         yield return new WaitForSeconds(0.5f);
@@ -171,6 +175,10 @@ public class DialogueBox : MonoBehaviour
                 avatarImage.sprite = null;
                 SBGDebug.LogInfo("Dialogue box closed with animation.", "DialogueBox");
                 dialogueBoxClosed.Invoke();
+                if (GameMaster.Instance != null)
+                {
+                    GameMaster.Instance.gm_DialogueEnded.Invoke();
+                }
             });
 
         yield return new WaitForSeconds(0.5f);

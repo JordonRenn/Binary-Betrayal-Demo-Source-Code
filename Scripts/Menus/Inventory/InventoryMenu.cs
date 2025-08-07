@@ -191,7 +191,7 @@ public class InventoryMenu : MonoBehaviour
 
     private void SelectItemType(ItemType? type)
     {
-        currentType = type ?? ItemType.Weapon; // Default to Weapon if null (All Items)
+        currentType = type ?? ItemType.Misc; // Default to Weapon if null (All Items)
 
         // Update type button highlighting
         UpdateItemTypeButtonHighlighting(type);

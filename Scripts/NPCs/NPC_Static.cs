@@ -1,21 +1,19 @@
 using UnityEngine;
 
-public class NPC_Static : Interactable, INPC
+public class NPC_Static : SauceObject, INPC
 {
     [SerializeField] private string npcId;
     [SerializeField] private string npcName;
     [SerializeField] private string description;
-    [SerializeField] private Sprite trackerIcon;
-    [SerializeField] private Trackable trackable;
 
     public string NPCId => npcId;
     public string Name => npcName;
     public string Description => description;
-    public Sprite Icon => trackerIcon;
-    public Trackable Trackable => trackable;
+    public Sprite Icon => nav_CompassIcon;
+    public SauceObject SauceObject => this;
 
-    // Required compass marker fields from Trackable
-    public Sprite compassIcon => trackerIcon;
-    public float compassDrawDistance => trackable?.compassDrawDistance ?? 20f;
+    // Compass marker properties are inherited from SauceObject
+    public Sprite compassIcon => nav_CompassIcon;
+    public float compassDrawDistance => nav_CompassDrawDistance;
 }
 

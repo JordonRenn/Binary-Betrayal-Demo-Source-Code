@@ -101,7 +101,6 @@ public class CustomSceneManager : MonoBehaviour
 
     private void Awake()
     {
-        // Initialize as singleton and persist across scenes since scene management is global
         if (this.InitializeSingleton(ref _instance, true) == this)
         {
             ValidateRequiredComponents();

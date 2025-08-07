@@ -49,7 +49,7 @@ public class PauseMenu : MonoBehaviour
 
 
     // Internal states
-    private bool isPaused = false;
+    public bool isPaused { get; private set; } = false;
     private PauseMenuState pMenuState = PauseMenuState.NotDisplayed;
     private SettingsMenuState sMenuState = SettingsMenuState.NotDisplayed;
 
@@ -102,7 +102,7 @@ public class PauseMenu : MonoBehaviour
         settingsMenuCanvas.gameObject.SetActive(false);
     }
 
-    private void HidePauseMenu()
+    public void HidePauseMenu()
     {
         pMenuState = PauseMenuState.NotDisplayed;
         sMenuState = SettingsMenuState.NotDisplayed;

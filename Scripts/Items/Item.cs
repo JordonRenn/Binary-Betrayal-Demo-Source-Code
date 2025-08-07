@@ -1,9 +1,9 @@
 using UnityEngine;
 
 [System.Serializable]
-public class Item : IItem
+public class Item //: IItem
 {
-    [SerializeField] private string itemId;
+    /* [SerializeField] private string itemId;
     [SerializeField] private string itemName;
     [SerializeField] private string itemDescription;
     [SerializeField] private Sprite itemIcon;
@@ -25,5 +25,5 @@ public class Item : IItem
         this.itemIcon = icon;
         this.itemType = type;
         this.itemWeight = weight;
-    }
+    } */
 }

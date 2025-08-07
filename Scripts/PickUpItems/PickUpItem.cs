@@ -1,17 +1,22 @@
 using UnityEngine;
 using FMODUnity;
 using DG.Tweening;
+using System.Collections;
 
-public class PickUpItem : Trackable
+public class PickUpItem : SauceObject
 {
-    [SerializeField] protected int itemID;
+    //[SerializeField] protected int itemID;
     
     [Header("Item Properties")]
     [Space(10)]
-    
+
+    [SerializeField] protected string itemId;
     [SerializeField] protected string itemName;
     [SerializeField] protected string itemDescription;
-    [SerializeField] protected Sprite itemIcon;
+    //[SerializeField] protected Sprite itemIcon;
+    [SerializeField] protected ItemType itemType;
+    [SerializeField] protected int weight = 0;
+    [SerializeField] protected GameObject itemPrefab;
 
     [Header("Item Components")]
     [Space(10)]
@@ -31,38 +36,111 @@ public class PickUpItem : Trackable
     [SerializeField] protected float bobSpeed = 0.5f;
     [SerializeField] protected float bobHeight = 0.5f;
 
-    public int ItemID { get => itemID; }
+    private Vector3 initialPosition;
+
+    //public int ItemID { get => itemID; }
     public string ItemName { get => itemName; }
     public string ItemDescription { get => itemDescription; }
-    public Sprite ItemIcon { get => itemIcon; }
+    //public Sprite ItemIcon { get => itemIcon; }
+
+    void Start()
+    {
+        // Store the initial position of the itemPrefab for bobbing animation
+        if (itemPrefab != null)
+        {
+            initialPosition = itemPrefab.transform.position;
+        }
+    }
 
     void Update () 
     {
         AnimateObject();
     }
-    
-    protected void OnCollisionEnter(Collision c) 
+
+    protected void OnTriggerEnter(Collider c) 
     {
-        if (c.gameObject.layer == playerLayer) {
+        Debug.Log($"Trigger Entered by: {c.gameObject.name} | Layer: {LayerMask.LayerToName(c.gameObject.layer)}");
+
+        if ((playerLayer.value & (1 << c.gameObject.layer)) != 0)
+        {
             PickUp();
         }
     }
 
-    public virtual void PickUp() 
+    public virtual void PickUp()
     {
-        Debug.Log($"Picked up {ItemName}");
+        Debug.Log($"Picking up {ItemName}");
+        StartCoroutine(PickUpRoutine());
+    }
+
+    private IEnumerator PickUpRoutine()
+    {
+        if (NavCompass.Instance != null)
+        {
+            NavCompass.Instance.RemoveCompassMarker(this);
+        }
+        // Play pick-up sound effect
         PlaySFX(sfx_PickUp);
+
+        // Play pick-up animation
+        if (itemPrefab != null)
+        {
+            itemPrefab.transform.DOScale(Vector3.zero, 0.5f).SetEase(Ease.InBack);
+            yield return new WaitForSeconds(0.5f);
+        }
+
+        CreateInventoryItem();
+
+        yield return new WaitForSeconds(0.125f);
+
         Destroy(gameObject);
     }
 
-    protected void PlaySFX(EventReference path) 
+    private void CreateInventoryItem()
+    {
+        Debug.Log($"Creating inventory item: {itemName} (ID: {itemId}, Type: {itemType}, Weight: {weight})");
+        
+        // Create the item data directly
+        IItem item = new ItemData(itemId, itemName, itemDescription, null, itemType, weight);
+        
+        // Check if InventoryManager exists
+        if (InventoryManager.Instance != null)
+        {
+            // Check if player inventory exists, if not create a temporary one
+            if (InventoryManager.Instance.GetPlayerInventory() == null)
+            {
+                SBGDebug.LogError($"Player inventory is null! Item not added to inventory.", $"PICK UP ITEM: {itemName}");
+                return; // Exit if no inventory is available
+            }
+            
+            Debug.Log($"Adding item to player inventory: {item.Name}");
+            InventoryManager.Instance.AddItemToPlayer(item, 1);
+        }
+        else
+        {
+            Debug.LogError("InventoryManager.Instance is null! Cannot add item to inventory.");
+        }
+    }
+
+    protected void PlaySFX(EventReference path)
     {
         RuntimeManager.PlayOneShot(path, transform.position);
     }
 
     void AnimateObject() 
     {
-        transform.Rotate(Vector3.up, spinSpeed * Time.deltaTime);
-        transform.position = new Vector3(transform.position.x, transform.position.y + Mathf.Sin(Time.time * bobSpeed) * bobHeight, transform.position.z);
+        if (itemPrefab != null)
+        {
+            // Rotate the item
+            itemPrefab.transform.Rotate(Vector3.up, spinSpeed * Time.deltaTime);
+            
+            // Bob the item up and down relative to its initial position
+            float bobOffset = Mathf.Sin(Time.time * bobSpeed) * bobHeight;
+            itemPrefab.transform.position = new Vector3(
+                initialPosition.x, 
+                initialPosition.y + bobOffset, 
+                initialPosition.z
+            );
+        }
     }
 }

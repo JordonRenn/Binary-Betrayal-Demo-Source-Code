@@ -1,11 +1,25 @@
 using UnityEngine;
 using System.Collections;
 
-public class Door : Interactable, IDoor
-{
-    [HideInInspector] public DoorLockState doorLockState ;
+/* 
+INHERITANCE HIERARCHY:
+MonoBehaviour
+    |
+    +-- SauceObject                                 // Nav Tracking + Interactablity
+        |
+        +-- Door (abstract class)
+            |
+            +-- DoorGeneric (concrete class)        // Just Open/Close logic + Player Position Consideration
+                |
+                +-- DoorLockable (concrete class)   // Adds Lock/Unlock logic
+ */
 
-    [HideInInspector] public DoorState doorState ;
+//public class Door : Interactable
+public abstract class Door : SauceObject
+{
+    [HideInInspector] public DoorLockState doorLockState;
+
+    [HideInInspector] public DoorState doorState;
 
     public virtual IEnumerator OpenDoor()
     {
@@ -21,4 +35,13 @@ public class Door : Interactable, IDoor
     {
         //
     }
+
+}
+
+public enum LockedDoorDialogueVariation
+{
+    LockedKeyNeeded,
+    LockedCanLockPick,
+    LockedHasKey
+
 }

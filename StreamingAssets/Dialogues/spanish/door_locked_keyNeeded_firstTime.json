@@ -1,0 +1,10 @@
+{
+    "dialogueID": "door_locked_keyNeeded_firstTime",
+    "entries": [
+        {
+            "characterName": "Player",
+            "avatarPath": "john",
+            "message": "Necesito una llave para abrir esta puerta. No puedo forzarla."
+        }
+    ]
+}

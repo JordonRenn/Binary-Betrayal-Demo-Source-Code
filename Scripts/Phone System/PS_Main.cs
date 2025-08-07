@@ -4,7 +4,7 @@ using UnityEngine;
 using Unity.Cinemachine;
 using FMODUnity;
 
-public class PS_Main : Interactable
+public class PS_Main : SauceObject
 {
     private FPSS_WeaponHUD c_WeaponHud;
     private FPSS_ReticleSystem c_ReticleSystem;

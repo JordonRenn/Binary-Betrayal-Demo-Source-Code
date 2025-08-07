@@ -1,17 +1,43 @@
 using UnityEngine;
 using TMPro;
 
+/* 
+    First Person Controller Hierarchy: 
+    
+    **Game Object Name (Script Name)**
+
+    - Character Controller (CharacterMovement.cs)
+        - FPS_Cam (FirstPersonCamController.cs + CamShake.cs)
+            - FPS System (FPSS_Main.cs)
+                - FPS_Interaction (FirstPersonInteraction.cs)           <--- THIS SCRIPT
+                - FPS_WeaponObjectPool (FPSS_Pool.cs)                  
+                    - POS_GUN_AUDIO
+                    - 0_0_Ak-47 (Gun_AK47.cs)
+                        - AK_47
+                            - MuzzleFlash (MuzzleFlash.cs)
+                    - 0_1_SniperRifle (FPSS_WeaponSlotObject.cs)        // Need to make "Gun_SniperRifle.cs"
+                    - 1_0_HandGun (Gun_HandGun.cs)
+                        - HandGun
+                            - MuzzleFlash (MuzzleFlash.cs)
+                    - 1_1_ShotGun (FPSS_WeaponSlotObject.cs)            // Need to make "Gun_ShotGun.cs"
+                    - 2_0_Knife (FPSS_WeaponSlotObject.cs)              // Need to make "Melee_Knife.cs"
+                    - 3_0_Grenade (FPSS_WeaponSlotObject.cs)            // Need to make "Grenade.cs"
+                    - 3_1_FlashGrenade (FPSS_WeaponSlotObject.cs)       // Need to make "FlashGrenade.cs"
+                    - 3_2_SmokeGrenade (FPSS_WeaponSlotObject.cs)       // Need to make "SmokeGrenade.cs"
+                    - 4_0_Unarmed (FPSS_WeaponSlotObject.cs)            // Need to make "Unarmed.cs"
+ */
+
 /// <summary>
 /// Handles player interaction with objects in the game world through raycasting.
 /// </summary>
-public class FPSS_Interaction : MonoBehaviour
+public class FirstPersonInteraction : MonoBehaviour
 {
-    public static FPSS_Interaction Instance { get; private set; }
+    public static FirstPersonInteraction Instance { get; private set; }
 
     [SerializeField] float interactionCooldown = 0.25f;
     [SerializeField] float reachDistance = 3f;
     private FPS_InputHandler input;
-    private TMP_Text objctInfoText; 
+    private TMP_Text objctInfoText;
     private float lastInteractionTime = 0f;
 
     private Ray ray;
@@ -36,7 +62,7 @@ public class FPSS_Interaction : MonoBehaviour
     /// <summary>
     /// Updates the interaction system each frame, handling input and hover states.
     /// </summary>
-    void Update() 
+    void Update()
     {
         ray = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
 
@@ -55,20 +81,12 @@ public class FPSS_Interaction : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Performs a raycast to detect interactable objects in front of the player.
-    /// </summary>
-    /// <returns>The Interactable component if found, null otherwise.</returns>
-    private Interactable GetInteractableFromRaycast()
+    private SauceObject GetSauceObjectFromRaycast()
     {
         if (Physics.Raycast(ray, out hitInfo, reachDistance))
         {
-            #if UNITY_EDITOR
-            Debug.DrawRay(ray.origin, ray.direction * reachDistance, Color.red, 0.1f);
-            #endif
-
-            Interactable interactable = hitInfo.collider.GetComponent<Interactable>();
-            return interactable ?? hitInfo.collider.GetComponentInParent<Interactable>();
+            SauceObject sauceObject = hitInfo.collider.GetComponent<SauceObject>();
+            return sauceObject ?? hitInfo.collider.GetComponentInParent<SauceObject>();
         }
         return null;
     }
@@ -79,15 +97,18 @@ public class FPSS_Interaction : MonoBehaviour
     /// </summary>
     public void AttemptInteraction()
     {
-        Interactable interactable = GetInteractableFromRaycast();
-        if (interactable != null)
+        //Interactable interactable = GetInteractableFromRaycast();
+        SauceObject sauceObject = GetSauceObjectFromRaycast();
+
+        if (sauceObject != null)
         {
-            interactable.Interact();
+            sauceObject.Interact();
         }
         else
         {
-            Debug.Log("Nothing to interact with");
+            SBGDebug.LogInfo("No interactable object found in front of the player", "FPSS_Interaction");
         }
+
     }
 
     /// <summary>
@@ -96,10 +117,11 @@ public class FPSS_Interaction : MonoBehaviour
     /// </summary>
     private void InteractHover()
     {
-        Interactable interactable = GetInteractableFromRaycast();
-        if (interactable != null)
+        //Interactable interactable = GetInteractableFromRaycast();
+        SauceObject sauceObject = GetSauceObjectFromRaycast();
+        if (sauceObject != null)
         {
-            ShowObjectInfo(interactable);
+            ShowObjectInfo(sauceObject);
         }
         else
         {
@@ -112,11 +134,11 @@ public class FPSS_Interaction : MonoBehaviour
     /// Updates the UI with information about the currently hovered interactable object.
     /// </summary>
     /// <param name="interactable">The interactable object to show information for.</param>
-    private void ShowObjectInfo(Interactable interactable)
+    private void ShowObjectInfo(SauceObject obj)
     {
         if (objctInfoText != null)
         {
-            objctInfoText.text = interactable.ShowObjectInfo();
+            objctInfoText.text = obj.GetObjectDisplayName();
             objctInfoText.gameObject.SetActive(true);
         }
         else

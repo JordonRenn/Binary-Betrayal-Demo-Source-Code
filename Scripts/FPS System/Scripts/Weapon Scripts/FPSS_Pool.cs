@@ -4,6 +4,30 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
+/* 
+    First Person Controller Hierarchy:
+
+    - Character Controller (CharacterMovement.cs)
+        - FPS_Cam (FirstPersonCamController.cs + CamShake.cs)
+            - FPS System (FPSS_Main.cs)
+                - FPS_Interaction (FirstPersonInteraction.cs) 
+                - FPS_WeaponObjectPool (FPSS_Pool.cs)                   <--- THIS SCRIPT
+                    - POS_GUN_AUDIO
+                    - 0_0_Ak-47 (Gun_AK47.cs)
+                        - AK_47
+                            - MuzzleFlash (MuzzleFlash.cs)
+                    - 0_1_SniperRifle (FPSS_WeaponSlotObject.cs)        // Need to make "Gun_SniperRifle.cs"
+                    - 1_0_HandGun (Gun_HandGun.cs)
+                        - HandGun
+                            - MuzzleFlash (MuzzleFlash.cs)
+                    - 1_1_ShotGun (FPSS_WeaponSlotObject.cs)            // Need to make "Gun_ShotGun.cs"
+                    - 2_0_Knife (FPSS_WeaponSlotObject.cs)              // Need to make "Melee_Knife.cs"
+                    - 3_0_Grenade (FPSS_WeaponSlotObject.cs)            // Need to make "Grenade.cs"
+                    - 3_1_FlashGrenade (FPSS_WeaponSlotObject.cs)       // Need to make "FlashGrenade.cs"
+                    - 3_2_SmokeGrenade (FPSS_WeaponSlotObject.cs)       // Need to make "SmokeGrenade.cs"
+                    - 4_0_Unarmed (FPSS_WeaponSlotObject.cs)            // Need to make "Unarmed.cs"
+ */
+
 public class FPSS_Pool : MonoBehaviour
 {
     private static FPSS_Pool _instance;
@@ -29,25 +53,25 @@ public class FPSS_Pool : MonoBehaviour
 
     private Dictionary<WeaponRefID, FPSS_WeaponSlotObject> PrimaryObjects = new Dictionary<WeaponRefID, FPSS_WeaponSlotObject>();
     private Dictionary<WeaponRefID, FPSS_WeaponSlotObject> SecondaryObjects = new Dictionary<WeaponRefID, FPSS_WeaponSlotObject>();
-    private Dictionary<WeaponRefID, FPSS_WeaponSlotObject> MeleeObjects = new Dictionary<WeaponRefID, FPSS_WeaponSlotObject>(); 
+    private Dictionary<WeaponRefID, FPSS_WeaponSlotObject> MeleeObjects = new Dictionary<WeaponRefID, FPSS_WeaponSlotObject>();
     private Dictionary<WeaponRefID, FPSS_WeaponSlotObject> UtilityObjects = new Dictionary<WeaponRefID, FPSS_WeaponSlotObject>();
 
-    public FPSS_WeaponSlotObject assignedPrimaryWPO {get; private set;}
-    public FPSS_WeaponSlotObject assignedSecondaryWPO {get; private set;}
-    public FPSS_WeaponSlotObject assignedMeleeWPO {get; private set;}
-    public FPSS_WeaponSlotObject assignedUtilityWPO {get; private set;}
+    public FPSS_WeaponSlotObject assignedPrimaryWPO { get; private set; }
+    public FPSS_WeaponSlotObject assignedSecondaryWPO { get; private set; }
+    public FPSS_WeaponSlotObject assignedMeleeWPO { get; private set; }
+    public FPSS_WeaponSlotObject assignedUtilityWPO { get; private set; }
 
-    public FPSS_WeaponSlotObject currentActiveWPO {get; private set;}
+    public FPSS_WeaponSlotObject currentActiveWPO { get; private set; }
 
     //SUB STATES
-    public bool isSwitching {get; private set;}
+    public bool isSwitching { get; private set; }
 
     [SerializeField] WeaponSlot defaultActiveSlot;              //TEMP FOR DEV/DEBUG --- CREATE SYSTEM TO SELECT EXTERNALLY
     [HideInInspector] public WeaponSlot currentWeaponSlot;
 
     [Header("DEV OPTIONS")]
     [Space(10)]
-    
+
     [SerializeField] private float initDelay = 0.2f;
     [SerializeField] private float initTimeout = 10f;
 
@@ -96,29 +120,29 @@ public class FPSS_Pool : MonoBehaviour
             // Validate required arrays
             ValidateRequiredComponents();
         }
-        
+
         isSwitching = false;
         initialized = false;
 
-        foreach (GameObject wgo in  primaryWeaponObjects)
+        foreach (GameObject wgo in primaryWeaponObjects)
         {
             var wso = wgo.GetComponent<FPSS_WeaponSlotObject>();
             PrimaryObjects.Add(wso.refID, wso);
         }
 
-        foreach (GameObject wgo in  secondaryWeaponObjects)
+        foreach (GameObject wgo in secondaryWeaponObjects)
         {
             var wso = wgo.GetComponent<FPSS_WeaponSlotObject>();
             SecondaryObjects.Add(wso.refID, wso);
         }
 
-        foreach (GameObject wgo in  meleeWeaponObjects)
+        foreach (GameObject wgo in meleeWeaponObjects)
         {
             var wso = wgo.GetComponent<FPSS_WeaponSlotObject>();
             MeleeObjects.Add(wso.refID, wso);
         }
 
-        foreach (GameObject wgo in  utilityWeaponObjects)
+        foreach (GameObject wgo in utilityWeaponObjects)
         {
             var wso = wgo.GetComponent<FPSS_WeaponSlotObject>();
             UtilityObjects.Add(wso.refID, wso);
@@ -143,7 +167,7 @@ public class FPSS_Pool : MonoBehaviour
     #region WPO Assignment
     void AssignPrimaryWPO(WeaponRefID id)
     {
-        assignedPrimaryWPO = PrimaryObjects[id]; 
+        assignedPrimaryWPO = PrimaryObjects[id];
     }
 
     void AssignSecondaryWPO(WeaponRefID id)
@@ -158,7 +182,7 @@ public class FPSS_Pool : MonoBehaviour
 
     void AssignUtilityWPO(WeaponRefID id)
     {
-        assignedUtilityWPO = UtilityObjects[id]; 
+        assignedUtilityWPO = UtilityObjects[id];
     }
     #endregion
 
@@ -167,7 +191,7 @@ public class FPSS_Pool : MonoBehaviour
     {
         FPS_InputHandler.Instance.fireTriggered.AddListener(Fire);
         FPS_InputHandler.Instance.reloadTriggered.AddListener(Reload);
-        
+
         FPS_InputHandler.Instance.activatePrimaryTriggered.AddListener(SelectPrimary);
         FPS_InputHandler.Instance.activateSecondaryTriggered.AddListener(SelectSecondary);
         //FPS_InputHandler.Instance.weaponSlotKnifeTriggered.AddListener(SelectMelee);          //update input handler before implementation
@@ -175,19 +199,19 @@ public class FPSS_Pool : MonoBehaviour
 
         FPS_InputHandler.Instance.swapTriggered.AddListener(SwapPrimarySecondary);
 
-        onWeaponSwitchStarted.AddListener((slot) => 
+        onWeaponSwitchStarted.AddListener((slot) =>
         {
             Debug.Log($"Starting weapon switch to {slot}");
-           // do stuff..
+            // do stuff..
         });
-        
-        onWeaponSwitchCompleted.AddListener((slot) => 
+
+        onWeaponSwitchCompleted.AddListener((slot) =>
         {
             Debug.Log($"Completed weapon switch to {slot}");
             // do stuff..
         });
-        
-        onWeaponSwitchFailed.AddListener((slot) => 
+
+        onWeaponSwitchFailed.AddListener((slot) =>
         {
             Debug.Log($"Failed to switch to {slot}");
             // do stuff..
@@ -263,19 +287,19 @@ public class FPSS_Pool : MonoBehaviour
             WeaponSlot.Secondary => WeaponSlot.Primary,
             _ => WeaponSlot.Primary
         };
-        
+
         StartCoroutine(UpdateActiveWeaponSlot(targetSlot));
     }
-    
+
     private IEnumerator UpdateActiveWeaponSlot(WeaponSlot slot)
     {
         if (!CanSwitchToWeapon(slot)) yield break;
-    
+
         isSwitching = true;
         onWeaponSwitchStarted?.Invoke(slot);
 
         bool switchSuccessful = true;
-        try 
+        try
         {
             // Start the switching process
             currentActiveWPO.SetWeaponInactive();

@@ -1,11 +1,10 @@
-using System.ComponentModel;
-using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class UI_Master : MonoBehaviour
 {
     private static UI_Master _instance;
-    public static UI_Master Instance 
+    public static UI_Master Instance
     {
         get
         {
@@ -17,7 +16,7 @@ public class UI_Master : MonoBehaviour
         }
         private set => _instance = value;
     }
-    
+
     [Header("HUD Elements")]
     [Space(10)]
 
@@ -29,18 +28,27 @@ public class UI_Master : MonoBehaviour
 
     [Header("Menu References")]
     [SerializeField] private InventoryMenu inventoryMenu;
+    private PauseMenu pauseMenu;
+    private bool gamePaused = false;
 
     private bool isInventoryOpen = false;
 
-    [Header("Developer Options")]
-    [SerializeField] private bool GenerateDummyInventories = false;
-
     void Awake()
     {
-        if (this.InitializeSingleton(ref _instance) == this)
+        // persist accross scenes
+        if (this.InitializeSingleton(ref _instance, true) == this)
         {
             InitializeUI();
             SubscribeToEvents();
+
+            try
+            {
+                pauseMenu = FindFirstObjectByType<PauseMenu>();
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogError($"Error finding PauseMenu: {ex.Message}");
+            }
         }
     }
 
@@ -50,13 +58,6 @@ public class UI_Master : MonoBehaviour
         {
             inventoryMenu.gameObject.SetActive(false);
         }
-
-        if (GenerateDummyInventories)
-        {
-            // Generate dummy inventories for testing purposes
-            // Wait a frame to ensure InventoryManager is initialized
-            StartCoroutine(GenerateDummyInventoriesCoroutine());
-        }
     }
 
     private void SubscribeToEvents()
@@ -65,6 +66,16 @@ public class UI_Master : MonoBehaviour
         {
             FPS_InputHandler.Instance.inventoryMenuButtonTriggered.AddListener(ToggleInventory);
         }
+
+        GameMaster.Instance.gm_GamePaused.AddListener(() =>
+        {
+            gamePaused = true;
+        });
+
+        GameMaster.Instance.gm_GameUnpaused.AddListener(() =>
+        {
+            gamePaused = false;
+        });
     }
 
     private void ToggleInventory()
@@ -72,57 +83,66 @@ public class UI_Master : MonoBehaviour
         isInventoryOpen = !isInventoryOpen;
 
         if (isInventoryOpen)
+        {
             ShowInventory();
+        }
+        else if (gamePaused && pauseMenu != null)
+        {
+            pauseMenu.HidePauseMenu();
+            ShowInventory();
+        }
+        else if (gamePaused && pauseMenu == null)
+        {
+            PauseMenu menu = FindFirstObjectByType<PauseMenu>();
+
+            if (menu != null)
+            {
+                menu.HidePauseMenu();
+                pauseMenu = menu;
+                Debug.Log("PauseMenu found, hiding it before showing inventory.");
+                ShowInventory();
+            }
+        }
         else
+        {
             HideInventory();
+        }
     }
 
+    #region Inventory
     private void ShowInventory()
     {
         if (inventoryMenu == null) return;
+        
+        inventoryMenu.RefreshInventory();
 
         GameMaster.Instance.gm_InventoryMenuOpened.Invoke();
-        
-        // Hide HUD elements
+
         HideAllHUD();
-        
-        // Setup post-processing
+
         VolumeManager.Instance.SetVolume(VolumeType.PauseMenu);
-        
-        // Pause the game
+
         Time.timeScale = 0f;
-        
-        // Switch input mode
+
         FPS_InputHandler.Instance.SetInputState(InputState.MenuNavigation);
-        
-        // Show inventory
+
         inventoryMenu.gameObject.SetActive(true);
-        
-        // Get the player inventory from InventoryManager or generate dummy data
+
         IInventory playerInventory = null;
-        
-        if (GenerateDummyInventories)
-        {
-            // Force regenerate dummy inventory from JSON
-            DummyInventoryGenerator.GenerateDummyInventories();
-        }
-        
-        // Get the inventory from InventoryManager
+
         if (InventoryManager.Instance != null)
         {
             playerInventory = InventoryManager.Instance.GetPlayerInventory();
         }
-        
-        // Fallback to empty inventory if nothing is available
+
         if (playerInventory == null)
         {
-            playerInventory = new Inv_Player("temp_player", "Player Inventory", 100);
-            Debug.LogWarning("No inventory found, using empty temporary inventory");
+            playerInventory = new Inv_Player("player", "Player Inventory", 100);
+            Debug.LogWarning("No inventory found, generating empty inventory");
         }
-        
+
         inventoryMenu.Initialize(playerInventory);
-        
-        // Update input listeners
+
         FPS_InputHandler.Instance.inventoryMenuButtonTriggered.RemoveListener(ToggleInventory);
         FPS_InputHandler.Instance.menu_CancelTriggered.AddListener(ToggleInventory);
     }
@@ -133,25 +153,19 @@ public class UI_Master : MonoBehaviour
 
         GameMaster.Instance.gm_InventoryMenuClosed.Invoke();
 
-        // Hide inventory
         inventoryMenu.gameObject.SetActive(false);
-        
-        // Show HUD elements
+
         ShowAllHUD();
-        
-        // Reset post-processing
+
         VolumeManager.Instance.SetVolume(VolumeType.Default);
-        
-        // Unpause the game
+
         Time.timeScale = 1f;
-        
-        // Switch input mode back
+
         FPS_InputHandler.Instance.SetInputState(InputState.FirstPerson);
-        
-        // Update input listeners
         FPS_InputHandler.Instance.inventoryMenuButtonTriggered.AddListener(ToggleInventory);
         FPS_InputHandler.Instance.menu_CancelTriggered.RemoveListener(ToggleInventory);
     }
+    #endregion
 
     public void HideAllHUD()
     {
@@ -159,7 +173,7 @@ public class UI_Master : MonoBehaviour
         {
             FPSS_WeaponHUD.Instance.Hide(true);
         }
-        
+
         if (FPSS_ReticleSystem.Instance != null)
         {
             FPSS_ReticleSystem.Instance.Hide(true);
@@ -180,14 +194,5 @@ public class UI_Master : MonoBehaviour
         {
             element.SetActive(true);
         }
-    }
-
-    private IEnumerator GenerateDummyInventoriesCoroutine()
-    {
-        // Wait a frame to ensure all managers are initialized
-        yield return null;
-        
-        // Generate inventory from JSON when needed
-        Debug.Log("Dummy inventory generation will happen when inventory is opened.");
     }
 }

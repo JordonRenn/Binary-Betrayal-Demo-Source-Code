@@ -1,17 +1,25 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
 using FMODUnity;
 using DG.Tweening;
 
-public class DoorLock1 : Interactable
+// previous declarations:
+// public class DoorLock1 : Interactable
+//public class LockPickingQuickTimeEvent : SauceObject
+public class LockPickingQuickTimeEvent : MonoBehaviour // : SauceObject
 {
     [SerializeField] GameObject doorParentObject;
     private Door door;
-    [SerializeField] bool keyRequired = false;
+    //[SerializeField] bool keyRequired = false;
     [SerializeField] int lockKeyId;
     [SerializeField] bool isPickable;
     [SerializeField] CanvasGroup canvasGroup;
+
+    //[Header("Tracking")]
+    //[Space(10)]
+    //[SerializeField] Trackable tracker;
 
     [Header("Lock Picking")]
     [Space(10)]
@@ -33,8 +41,8 @@ public class DoorLock1 : Interactable
 
     //QTE speed 
     [SerializeField] float LP_Speed_Base = 250f;
-    [SerializeField] float QTE2_SpeedMultiplier = 1.5f; 
-    private float QTE_Speed; 
+    [SerializeField] float QTE2_SpeedMultiplier = 1.5f;
+    private float QTE_Speed;
     private Tweener clockwiseTweener;
     private Tweener counterClockwiseTweener;
     //private Tweener indicatorTweener;
@@ -123,20 +131,16 @@ public class DoorLock1 : Interactable
 
     //PUBLIC METHODS
 
-    public override void Interact()
+    public void Interact()
     {
-        if (door.doorLockState != DoorLockState.Unlocked && !keyRequired && isPickable)
+        if (door.doorLockState != DoorLockState.Unlocked && isPickable)
         {
             prevInputState = FPS_InputHandler.Instance.currentState;
             FPS_InputHandler.Instance.SetInputState(InputState.LockedInteraction);
-            
+
             StartCoroutine(OpenLockGUI());
         }
-        else if (door.doorLockState != DoorLockState.Unlocked && keyRequired)
-        {
-            //do key stuff
-        }
-        else
+        else if (door.doorLockState == DoorLockState.Unlocked)
         {
             door.Interact();
         }
@@ -149,22 +153,31 @@ public class DoorLock1 : Interactable
         door.OpenDoor();
     }
 
-    
+    /* private void UpdateIconColor()
+    {
+        if (tracker != null)
+        {
+            tracker = NavCompass.Instance.Find(tracker, this);
+        }
+    } */
+
+    // DO NOT EDIT THIS REGION UNLESS YOU KNOW WHAT YOU ARE DOING and IT'S NECESSARY
+    // IT'S HELD TOGETHR BY HOPES AND DREAMS
     #region Lock Pick GUI
     private IEnumerator OpenLockGUI()
     {
         VolumeManager.Instance.SetVolume(VolumeType.LockPick);
-        if (UI_Master.Instance != null) {UI_Master.Instance.HideAllHUD();}
-        if (FPSS_Pool.Instance != null) {FPSS_Pool.Instance.currentActiveWPO.SetCurrentWeaponActive(false);}
-        
+        if (UI_Master.Instance != null) { UI_Master.Instance.HideAllHUD(); }
+        if (FPSS_Pool.Instance != null) { FPSS_Pool.Instance.currentActiveWPO.SetCurrentWeaponActive(false); }
+
         isPicking = true;
 
-        SetSuccessArea(difficulty); 
+        SetSuccessArea(difficulty);
         ResetIndicators();
         StartPickWiggle();
 
         canvasGroup.gameObject.SetActive(true);
-        
+
         float elapsedTime = 0;
         float duration = 0.25f;
         while (elapsedTime < duration)
@@ -178,7 +191,7 @@ public class DoorLock1 : Interactable
         FPS_InputHandler.Instance.lint_InteractTriggered.AddListener(StartInitialQTE1);
         FPS_InputHandler.Instance.lint_CancelTriggered.AddListener(ResetLockPicking);
     }
-    
+
     private void StartPickWiggle()
     {
         if (pickWiggleTweener != null)
@@ -218,7 +231,7 @@ public class DoorLock1 : Interactable
         isInQTE1Phase = false;
         isInQTE2Phase = false;
         unlockedPins = 0;
-        
+
         CleanupEventListeners();
         StartCoroutine(CloseLockGUI());
 
@@ -243,7 +256,7 @@ public class DoorLock1 : Interactable
 
     private IEnumerator CloseLockGUI() //do not call directly
     {
-        isPicking = false; 
+        isPicking = false;
 
         float elapsedTime = 0;
         float duration = 0.25f;
@@ -258,9 +271,9 @@ public class DoorLock1 : Interactable
         canvasGroup.gameObject.SetActive(false);
 
         VolumeManager.Instance.SetVolume(VolumeType.Default);
-        
-        if (FPSS_Pool.Instance != null) {FPSS_Pool.Instance.currentActiveWPO.SetCurrentWeaponActive(true);}
-        if (UI_Master.Instance != null) {UI_Master.Instance.ShowAllHUD();}
+
+        if (FPSS_Pool.Instance != null) { FPSS_Pool.Instance.currentActiveWPO.SetCurrentWeaponActive(true); }
+        if (UI_Master.Instance != null) { UI_Master.Instance.ShowAllHUD(); }
         FPS_InputHandler.Instance.SetInputState(prevInputState);
     }
 
@@ -268,7 +281,7 @@ public class DoorLock1 : Interactable
     private void Update()
     {
         if (!isPicking) { return; }
-        
+
         if (pickWiggleTweener != null)
         {
             pickWiggleTweener.timeScale = isInQTE2Phase ? QTE2_SpeedMultiplier : 1f;
@@ -284,7 +297,8 @@ public class DoorLock1 : Interactable
 
             float startAngle = continuousAngle;
             float rotationDuration = 1f / QTE_Speed;
-            clockwiseTweener = DOTween.To(() => continuousAngle, x => {
+            clockwiseTweener = DOTween.To(() => continuousAngle, x =>
+            {
                 continuousAngle = x;
                 img_Indicator.rectTransform.localRotation = Quaternion.Euler(0, 0, x % 360f);
             }, startAngle + 360f, rotationDuration)
@@ -301,7 +315,8 @@ public class DoorLock1 : Interactable
 
             float startAngle = continuousAngle;
             float rotationDuration = (1f / QTE_Speed) / QTE2_SpeedMultiplier;
-            counterClockwiseTweener = DOTween.To(() => continuousAngle, x => {
+            counterClockwiseTweener = DOTween.To(() => continuousAngle, x =>
+            {
                 continuousAngle = x;
                 img_Indicator.rectTransform.localRotation = Quaternion.Euler(0, 0, x % 360f);
             }, startAngle - 360f, rotationDuration)
@@ -311,12 +326,12 @@ public class DoorLock1 : Interactable
 
         //Debug.Log($"FINAL continuousAngle: Frame {Time.frameCount}, {continuousAngle}");
     }
-    
+
     void QTE_1()
     {
         isInQTE1Phase = true;
         isInQTE2Phase = false;
-        
+
         FPS_InputHandler.Instance.lint_InteractReleased.AddListener(QTE_1_Check);
     }
 
@@ -349,7 +364,7 @@ public class DoorLock1 : Interactable
     void QTE_2_Check()
     {
         FPS_InputHandler.Instance.lint_InteractTriggered.RemoveListener(QTE_2_Check);
-        
+
         float currentRotation;
         currentRotation = continuousAngle % 360f;
         if (currentRotation < 0) currentRotation += 360f;
@@ -364,7 +379,7 @@ public class DoorLock1 : Interactable
 
         unlockedPins++;
         PlaySFX(sfx_QTE_2);
-        
+
         if (unlockedPins >= pinCount)
         {
             UnlockDoor();
@@ -374,7 +389,7 @@ public class DoorLock1 : Interactable
 
         isInQTE2Phase = false;
         ResetAndReinitialize();  // Add this line
-        
+
         QTE_1();
     }
 
@@ -427,10 +442,15 @@ public class DoorLock1 : Interactable
         return angle;
     }
     #endregion
-    
+
     void PlaySFX(EventReference eventRef)
     {
         RuntimeManager.PlayOneShot(eventRef, audioPosition.position);
     }
     #endregion
+
+    public bool IsPickable()
+    {
+        return isPickable;
+    }
 }
