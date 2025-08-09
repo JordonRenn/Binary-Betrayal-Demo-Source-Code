@@ -310,7 +310,7 @@ public enum ItemViewLogicType
 
 public enum ItemRarity
 {
-    Ordanary,   //white
+    Ordinary,   //white
     Common,     //blue
     Uncommon,   //green
     Rare,       //purple

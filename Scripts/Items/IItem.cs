@@ -4,7 +4,7 @@ using UnityEngine;
 INHERITANCE STRUCTURE:
 IItem
 ├── ItemBase (abstract class)
-│   ├── ItemTypes (e.g., Item_Misc, Item_Material, Item_Food, Item_Keys, Item_Quest)
+│   ├── Item Type Classes (e.g., Item_Misc, Item_Material, Item_Food, Item_Keys, Item_Quest)
 │   └── ItemData (concrete implementation of IItem)
  */
 

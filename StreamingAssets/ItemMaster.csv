@@ -1,0 +1,47 @@
+itemId,displayName,description,category,subtype,rarity,viewLogic,value
+
+# Materials
+mat_metalScraps,Metal Scraps,Salvaged metal pieces,Material,MetalScraps,Common,Static,5
+mat_plasticScraps,Plastic Scraps,Salvaged plastic pieces,Material,PlasticScraps,Common,Static,5
+mat_circuitBoards,Circuit Boards,Salvaged electronic components,Material,CircuitBoards,Common,Static,5
+mat_wires,Electrical Wires,Salvaged electrical wires,Material,Wires,Common,Static,5
+mat_cloth,Cloth,Salvaged fabric pieces,Material,Cloth,Common,Static,5
+
+# Food
+food_Chips_01,Sweet Beet Chips,Bag of chips,Food,Snack,Ordinary,Consumable,5
+food_Chips_02,Salted Carrot Chips,Bag of chips,Food,Snack,Ordinary,Consumable,5
+food_cannedBeans,Canned Beans,Nutritious canned food,Food,CannedFood,Common,Consumable,8
+food_energyDrink,Energy Drink,Caffeinated beverage,Food,Drink,Common,Consumable,6
+food_mealRation,Meal Ration,Military-style preserved meal,Food,Ration,Common,Consumable,12
+
+# Key Cards
+key_cardRed,Red Keycard,Security keycard for restricted areas,Keys,Keycard,Common,Static,50
+key_cardBlue,Blue Keycard,Security keycard for restricted areas,Keys,Keycard,Common,Static,50
+key_cardGreen,Green Keycard,Security keycard for restricted areas,Keys,Keycard,Common,Static,50
+key_cardYellow,Yellow Keycard,Security keycard for restricted areas,Keys,Keycard,Common,Static,50
+key_cardOrange,Orange Keycard,Security keycard for restricted areas,Keys,Keycard,Common,Static,50
+key_cardPurple,Purple Keycard,Security keycard for restricted areas,Keys,Keycard,Common,Static,50
+
+# Key Codes
+key_code_0000,Key Code 0000,Used to unlock specific doors,Keys,Code,Common,Static,10
+
+# Key
+key_0000,Key 0000,Used to unlock specific doors,Keys,Key,Common,Static,10
+
+# Quest Items
+quest_docs_001,Classified Documents,Important mission files,Quest,Secret,Quest,Static,75
+quest_data_001,Data Drive,Contains classified data,Quest,Main,Quest,Static,25
+quest_book_001,Quest Book,Contains knowledge,Quest,Side,Quest,Static,50
+
+# Medical Items
+med_kit,First Aid Kit,Professional medical supplies,Medical,FirstAidKit,Common,Consumable,45
+med_supplement,Health Supplement,Boosts health regeneration,Medical,Supplement,Uncommon,Consumable,30
+med_bandage,Medical Bandage,Used to stop bleeding and heal wounds,Medical,Bandage,Common,Consumable,15
+med_painKiller,Medical Pain Pill,Reduces pain and discomfort,Medical,Painkillers,Common,Consumable,10
+
+# Phone Items
+phone_4206969, Test Phone Number, Contains a test phone number for debugging purposes,Phone,Number,Common,Usable,10
+
+# Tools
+tool_camJammer,Camera Jammer,Disables security cameras,Tools,CameraJammer,Rare,Usable,95
+tool_keyJammer,Keypad Jammer,Disables keypads and Keycard locks,Tools,KeyJammer,Legendary,Usable,100

@@ -1,0 +1,15 @@
+{
+  "quest_id": "Q_C01_01_test",
+  "quest_name": "Sample Scene Test",
+  "description": "This is a test quest for the sample scene.",
+  "objectives": [
+    {
+      "objective_id": "OBJ_C01_01_test",
+      "description": "Complete the first objective."
+    },
+    {
+      "objective_id": "OBJ_C01_02_test",
+      "description": "Complete the second objective."
+    }
+  ]
+}
