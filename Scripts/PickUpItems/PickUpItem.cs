@@ -3,6 +3,10 @@ using FMODUnity;
 using DG.Tweening;
 using System.Collections;
 
+/* 
+Only use this class for Misc items that do not fit into other categories and need no extra properties.
+ */
+
 public class PickUpItem : SauceObject
 {
     [Header("Item Properties")]
@@ -26,19 +30,17 @@ public class PickUpItem : SauceObject
 
     [SerializeField] protected EventReference sfx_PickUp;
 
-    [Header("Animation")]
-    [Space(10)]
+    /* [Header("Animation")]
+    [Space(10)] */
 
-    [SerializeField] protected float spinSpeed = 180f;
-    [SerializeField] protected float bobSpeed = 0.5f;
-    [SerializeField] protected float bobHeight = 0.5f;
+    /* [SerializeField] */
+    protected float spinSpeed = 120f;
+    /* [SerializeField] */
+    protected float bobSpeed = 1.25f;
+    /* [SerializeField] */
+    protected float bobHeight = 0.25f;
 
     private Vector3 initialPosition;
-
-    //public int ItemID { get => itemID; }
-    //public string ItemName { get => objectDisplayName; }
-    //public string ItemDescription { get => itemDescription; }
-    //public Sprite ItemIcon { get => itemIcon; }
 
     void Start()
     {
@@ -49,12 +51,12 @@ public class PickUpItem : SauceObject
         }
     }
 
-    void Update () 
+    void Update()
     {
         AnimateObject();
     }
 
-    protected void OnTriggerEnter(Collider c) 
+    protected void OnTriggerEnter(Collider c)
     {
         Debug.Log($"Trigger Entered by: {c.gameObject.name} | Layer: {LayerMask.LayerToName(c.gameObject.layer)}");
 
@@ -96,10 +98,10 @@ public class PickUpItem : SauceObject
     private void CreateInventoryItem()
     {
         Debug.Log($"Creating inventory item: {objectDisplayName} (ID: {objectID}, Type: {itemType}, Weight: {weight})");
-        
+
         // Create the item data directly
         IItem item = new ItemData(objectID, objectDisplayName, itemDescription, null, itemType, weight, itemRarity, itemViewLogic);
-        
+
         // Check if InventoryManager exists
         if (InventoryManager.Instance != null)
         {
@@ -109,7 +111,7 @@ public class PickUpItem : SauceObject
                 SBGDebug.LogError($"Player inventory is null! Item not added to inventory.", $"PICK UP ITEM: {objectDisplayName}");
                 return; // Exit if no inventory is available
             }
-            
+
             Debug.Log($"Adding item to player inventory: {item.Name}");
             InventoryManager.Instance.AddItemToPlayer(item, 1);
         }
@@ -124,18 +126,18 @@ public class PickUpItem : SauceObject
         RuntimeManager.PlayOneShot(path, transform.position);
     }
 
-    void AnimateObject() 
+    void AnimateObject()
     {
         if (itemPrefab != null)
         {
             // Rotate the item
             itemPrefab.transform.Rotate(Vector3.up, spinSpeed * Time.deltaTime);
-            
+
             // Bob the item up and down relative to its initial position
             float bobOffset = Mathf.Sin(Time.time * bobSpeed) * bobHeight;
             itemPrefab.transform.position = new Vector3(
-                initialPosition.x, 
-                initialPosition.y + bobOffset, 
+                initialPosition.x,
+                initialPosition.y + bobOffset,
                 initialPosition.z
             );
         }

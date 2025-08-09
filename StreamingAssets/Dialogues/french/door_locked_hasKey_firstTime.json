@@ -1,0 +1,10 @@
+{
+    "dialogueID": "door_locked_hasKey_firstTime",
+    "entries": [
+        {
+            "characterName": "Player",
+            "avatarPath": "john",
+            "message": "C'est verrouillé, mais j'ai la clé !"
+        }
+    ]
+}

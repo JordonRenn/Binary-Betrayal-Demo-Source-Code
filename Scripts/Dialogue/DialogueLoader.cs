@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.IO;
+using System;
+using System.Collections.Generic;
 
 public class DialogueLoader : MonoBehaviour
 {
@@ -32,7 +34,8 @@ public class DialogueLoader : MonoBehaviour
         UpdateLanguage(GameMaster.Instance.GetSettings().language);
 
         // Subscribe to language changes
-        GameMaster.Instance.gm_GameUnpaused.AddListener(() => {
+        GameMaster.Instance.gm_GameUnpaused.AddListener(() =>
+        {
             UpdateLanguage(GameMaster.Instance.GetSettings().language);
         });
     }
@@ -41,7 +44,7 @@ public class DialogueLoader : MonoBehaviour
     {
         currentLanguage = language.ToString().ToLower();
         string langPath = Path.Combine(Application.streamingAssetsPath, DIALOGUE_FOLDER, currentLanguage);
-        
+
         if (!Directory.Exists(langPath))
         {
             Directory.CreateDirectory(langPath);
@@ -70,4 +73,19 @@ public class DialogueLoader : MonoBehaviour
             return null;
         }
     }
+}
+
+[Serializable]
+public class DialogueData
+{
+    public string dialogueId;
+    public List<DialogueEntry> entries;
+}
+
+[Serializable]
+public class DialogueEntry
+{
+    public string characterName;
+    public string avatarPath;
+    public string message;
 }

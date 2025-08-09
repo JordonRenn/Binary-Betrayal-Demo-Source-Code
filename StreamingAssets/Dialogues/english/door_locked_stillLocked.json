@@ -1,0 +1,10 @@
+{
+    "dialogueID": "door_locked_stillLocked",
+    "entries": [
+        {
+            "characterName": "Player",
+            "avatarPath": "john",
+            "message": "It's still locked. I need a key."
+        }
+    ]
+}

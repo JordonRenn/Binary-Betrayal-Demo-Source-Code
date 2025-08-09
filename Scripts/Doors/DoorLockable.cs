@@ -13,21 +13,27 @@ MonoBehaviour
                 |
                 +-- DoorLockable (concrete class)   // Adds Lock/Unlock logic
  */
-
+#region Door Lockable
 public class DoorLockable : DoorGeneric
 {
     [Header("Key Properties")]
     [Space(10)]
 
+    [Tooltip("If true, a key is required and cannot be lockpicked. If false, the door can be lockpicked.")]
     [SerializeField] private bool isKeyRequired = false;
     [SerializeField] private string keyId = "";
     [SerializeField] private KeyType keyType = KeyType.Key;
-    [SerializeField] private float unlockTime = 2f;
+    private float unlockTime = 1f;
 
-    [Header("Door and Lock States")]
+    [Header("Lock State")]
     [Space(10)]
 
     [SerializeField] private DoorLockState defaultLockState;
+
+    private const string FILE_DIALOGUE_ID_KEYNEEDED = "door_locked_keyNeeded_firstTime";
+    private const string FILE_DIALOGUE_ID_STILLLOCKED = "door_locked_stillLocked";
+    private const string FILE_DIALOGUE_ID_CANLOCKPICK = "door_locked_canLockPick_firstTime";
+    private const string FILE_DIALOGUE_ID_HASKEY = "door_locked_hasKey_firstTime";
 
     private LockPickingQuickTimeEvent qte_LockPick;
     private bool hasBeenInteractedWith = false;
@@ -45,126 +51,142 @@ public class DoorLockable : DoorGeneric
         }
     }
 
+    #region Interaction
     public override void Interact()
     {
-        if (doorState == DoorState.Closed)
+        // If door is open, close it
+        if (doorState != DoorState.Closed)
         {
-            if (doorLockState == DoorLockState.Unlocked)
-            {
-                StartCoroutine(OpenDoor());
-            }
+            CloseDoor();
+            return;
+        }
 
-            if (doorLockState == DoorLockState.Locked)
-            {
-                if (hasBeenInteractedWith)
-                {
-                    if (isKeyRequired)
-                    {
-                        CheckKey();
-                    }
-                    if (playerHasKey)
-                    {
-                        StartCoroutine(OpenDoor());
-                    }
-                    else
-                    {
-                        if (qte_LockPick != null && qte_LockPick.IsPickable())
-                        {
-                            SBGDebug.LogInfo("Triggering LockPick QTE", "DOORGENERIC");
-                            qte_LockPick.Interact();
-                        }
-                    }
-                }
-                else if (!hasBeenInteractedWith)
-                {
-                    hasBeenInteractedWith = true;
-                    if (isKeyRequired)
-                    {
-                        if (CheckKey())
-                        {
-                            StartCoroutine(DoorLockDialogueSequence(LockedDoorDialogueVariation.LockedHasKey));
-                        }
-                        else
-                        {
-                            StartCoroutine(DoorLockDialogueSequence(LockedDoorDialogueVariation.LockedKeyNeeded));
-                        }
-                    }
-                    else
-                    {
-                        StartCoroutine(DoorLockDialogueSequence(LockedDoorDialogueVariation.LockedCanLockPick));
-                    }
-                }
-            }
+        // If door is unlocked, open it
+        if (doorLockState == DoorLockState.Unlocked)
+        {
+            HandleDoorOpen();
+            return;
+        }
+
+        // Door is locked - handle locked door interaction
+        HandleLockedDoorInteraction();
+    }
+
+    private void HandleLockedDoorInteraction()
+    {
+        if (!hasBeenInteractedWith)
+        {
+            HandleFirstTimeInteraction();
         }
         else
         {
-            CloseDoor();
+            HandleSubsequentInteraction();
         }
     }
 
-    private bool CheckKey()
+    private void HandleFirstTimeInteraction()
+    {
+        hasBeenInteractedWith = true;
+
+        if (isKeyRequired)
+        {
+            var dialogueVariation = CheckKey() ?
+                LockedDoorDialogueVariation.LockedHasKey :
+                LockedDoorDialogueVariation.LockedKeyNeeded;
+
+            StartCoroutine(DoorLockDialogueSequence(dialogueVariation));
+        }
+        else
+        {
+            StartCoroutine(DoorLockDialogueSequence(LockedDoorDialogueVariation.LockedCanLockPick));
+        }
+    }
+
+    private void HandleSubsequentInteraction()
     {
         if (isKeyRequired)
         {
-            var id = "key_" + keyId;
-            if (InventoryManager.Instance.playerInventory.HasItemById(id, 1))
+            CheckKey();
+            if (playerHasKey)
             {
-                playerHasKey = true;
-                SBGDebug.LogInfo($"Key {id} found in inventory", $"class: DoorGeneric | object: {objectDisplayName}");
-                return true;
+                HandleDoorOpen();
             }
-            else
+            // If key is required but player doesn't have it, do nothing
+        }
+        else
+        {
+            // Key not required, allow lock picking
+            if (qte_LockPick != null && qte_LockPick.IsPickable())
             {
-                SBGDebug.LogInfo($"Key {id} not found in inventory", $"class: DoorGeneric | {objectDisplayName}");
+                SBGDebug.LogInfo("Triggering LockPick QTE", "DoorLockable");
+                qte_LockPick.Interact();
             }
         }
-        return playerHasKey;
     }
+    #endregion
 
+    #region Dialogue
     // Only used first  time the door is interacted with
     public IEnumerator DoorLockDialogueSequence(LockedDoorDialogueVariation v)
     {
+        // Lock input during dialogue to prevent interference
+        FPS_InputHandler.Instance.SetInputState(InputState.LockedInteraction);
+
         switch (v)
         {
             case LockedDoorDialogueVariation.LockedKeyNeeded:
-                DialogueBox.Instance.LoadDialogue("door_locked_keyNeeded_firstTime");
+                DialogueBox.Instance.LoadDialogue(FILE_DIALOGUE_ID_KEYNEEDED);
                 break;
             case LockedDoorDialogueVariation.LockedCanLockPick:
-                DialogueBox.Instance.LoadDialogue("door_locked_canLockPick_firstTime");
+                DialogueBox.Instance.LoadDialogue(FILE_DIALOGUE_ID_CANLOCKPICK);
                 break;
             case LockedDoorDialogueVariation.LockedHasKey:
-                DialogueBox.Instance.LoadDialogue("door_locked_hasKey_firstTime");
+                DialogueBox.Instance.LoadDialogue(FILE_DIALOGUE_ID_HASKEY);
                 break;
         }
 
-        // Wait until the dialogue ends, then trigger lockpick interaction
+        // Open the dialogue box to display the loaded dialogue
+        DialogueBox.Instance.OpenDialogueBox();
+
+        // Wait until the dialogue ends, then trigger appropriate action
         bool dialogueEnded = false;
         void OnDialogueEnded()
         {
             dialogueEnded = true;
             GameMaster.Instance.gm_DialogueEnded.RemoveListener(OnDialogueEnded);
-            if (qte_LockPick != null && qte_LockPick.IsPickable())
+
+            // Handle different dialogue variations
+            if (v == LockedDoorDialogueVariation.LockedHasKey)
             {
-                SBGDebug.LogInfo("Triggering LockPick QTE after dialogue", "DOORGENERIC");
+                FPS_InputHandler.Instance.SetInputState(InputState.FirstPerson);
+
+                // Player has key, unlock and open the door
+                LockDoor(false); // Unlock the door
+                HandleDoorOpen(); // Open the door
+            }
+            else if (v == LockedDoorDialogueVariation.LockedCanLockPick && qte_LockPick != null && qte_LockPick.IsPickable())
+            {
+                // Only trigger lock picking for the LockedCanLockPick variation
+                SBGDebug.LogInfo("Triggering LockPick QTE after dialogue", "DoorLockable");
                 qte_LockPick.Interact();
             }
+            else
             {
-                qte_LockPick.Interact();
+                // For LockedKeyNeeded, just restore input state without triggering lock picking
+                FPS_InputHandler.Instance.SetInputState(InputState.FirstPerson);
             }
         }
         GameMaster.Instance.gm_DialogueEnded.AddListener(OnDialogueEnded);
 
         // Wait until dialogueEnded is true
         yield return new WaitUntil(() => dialogueEnded);
-
-
     }
+    #endregion
 
+
+    #region Public Methods
     public override void LockDoor(bool locked)
     {
-        //int_Locked = locked;
-        //ext_Locked = locked;
-
         if (locked)
         {
             doorLockState = DoorLockState.Locked;
@@ -175,4 +197,30 @@ public class DoorLockable : DoorGeneric
             doorLockState = DoorLockState.Unlocked;
         }
     }
+    
+    public bool CheckKey()
+    {
+        if (isKeyRequired)
+        {
+            var id = "key_" + keyId;
+            if (InventoryManager.Instance.playerInventory.HasItemById(id, 1))
+            {
+                playerHasKey = true;
+                SBGDebug.LogInfo($"Key {id} found in inventory", $"class: DoorLockable | object: {objectDisplayName}");
+                return true;
+            }
+            else
+            {
+                SBGDebug.LogInfo($"Key {id} not found in inventory", $"class: DoorLockable | {objectDisplayName}");
+            }
+        }
+        return playerHasKey;
+    }
+    
+    public bool LockCheck() // for other scripts to check if door is locked
+    {
+        return doorLockState == DoorLockState.Locked || doorLockState == DoorLockState.LockedExteriorOnly || doorLockState == DoorLockState.LockedInteriorOnly;
+    }
+    #endregion
 }
+#endregion

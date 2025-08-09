@@ -2,14 +2,9 @@ using UnityEngine;
 
 public class PUI_Key: PickUpItem
 {
+    [Header("Key Properties")]
+    [Space(10)]
+
     [SerializeField] private int keyID = 0000;
-
-    public override void PickUp() 
-    {
-        Debug.Log($"Picked up {objectDisplayName} | KeyID: {keyID}");
-        PlaySFX(sfx_PickUp);
-        Destroy(gameObject);
-    }
-
-
+    [SerializeField] private KeyType keyType = KeyType.Key;
 }

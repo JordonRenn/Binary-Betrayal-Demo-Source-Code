@@ -37,11 +37,3 @@ public abstract class Door : SauceObject
     }
 
 }
-
-public enum LockedDoorDialogueVariation
-{
-    LockedKeyNeeded,
-    LockedCanLockPick,
-    LockedHasKey
-
-}

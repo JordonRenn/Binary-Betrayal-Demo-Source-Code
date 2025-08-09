@@ -61,7 +61,7 @@ public class LockPickingQuickTimeEvent : MonoBehaviour // : SauceObject
     private bool isInQTE1Phase = false;
     private bool isInQTE2Phase = false;
     private bool isPicking = false;
-    InputState prevInputState;
+    //InputState prevInputState;
     private float totalRotation = 0f; // Add this field near other private fields
     //private float currentAngle = 0f;  // Add this near other private fields
     private float continuousAngle = 0f;  // Add this field - never gets reset
@@ -135,7 +135,7 @@ public class LockPickingQuickTimeEvent : MonoBehaviour // : SauceObject
     {
         if (door.doorLockState != DoorLockState.Unlocked && isPickable)
         {
-            prevInputState = FPS_InputHandler.Instance.currentState;
+            //prevInputState = FPS_InputHandler.Instance.currentState;
             FPS_InputHandler.Instance.SetInputState(InputState.LockedInteraction);
 
             StartCoroutine(OpenLockGUI());
@@ -274,7 +274,7 @@ public class LockPickingQuickTimeEvent : MonoBehaviour // : SauceObject
 
         if (FPSS_Pool.Instance != null) { FPSS_Pool.Instance.currentActiveWPO.SetCurrentWeaponActive(true); }
         if (UI_Master.Instance != null) { UI_Master.Instance.ShowAllHUD(); }
-        FPS_InputHandler.Instance.SetInputState(prevInputState);
+        FPS_InputHandler.Instance.SetInputState(InputState.FirstPerson);
     }
 
     #region QTEs

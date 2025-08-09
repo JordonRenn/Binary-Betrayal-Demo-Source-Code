@@ -1,10 +1,3 @@
-using UnityEngine;
-using System;
-using System.Linq;
-using System.Collections.Generic;
-
-//enums and structs and other global stuffs
-
 #region General
 
 public enum Language
@@ -144,18 +137,19 @@ public enum DoorLockState
     Unlocked
 }
 
+public enum LockedDoorDialogueVariation
+{
+    LockedKeyNeeded,
+    LockedCanLockPick,
+    LockedHasKey
+
+}
+
 public enum LockDifficulty
 {
     Easy,
     Moderate,
     Hard
-}
-
-public enum KeyType
-{
-    Key,
-    Keycard,
-    Code
 }
 #endregion
 
@@ -182,24 +176,6 @@ public struct Notification
         message = _message;
         type = _type;
     }
-}
-#endregion
-
-
-#region Dialog
-[Serializable]
-public class DialogueData
-{
-    public string dialogueId;
-    public List<DialogueEntry> entries;
-}
-
-[Serializable]
-public class DialogueEntry
-{
-    public string characterName;
-    public string avatarPath;
-    public string message;
 }
 #endregion
 
@@ -231,100 +207,12 @@ public enum ObjectiveType
     Interact
 }
 
-[System.Serializable]
-public class QuestData {
-    public int quest_id;
-    public QuestType type;
-    public string title;
-    public string description;
-    public Objective[] objectives;
-    public int[] prerequisiteQuestIds; // For quest chains
-    public QuestReward[] rewards;
-    public bool isRepeatable;
-    public float timeLimit;
-    public QuestState state { get; private set; } = QuestState.Incomplete;
-    
-    public float Progress => 
-        objectives?.Length > 0 
-            ? objectives.Average(o => o.Progress)
-            : 0f;
-            
-    public void UpdateState()
-    {
-        if (state == QuestState.Complete) return;
-        
-        if (objectives == null || objectives.Length == 0)
-        {
-            state = QuestState.Complete;
-            return;
-        }
-        
-        bool allComplete = objectives.All(o => o.IsCompleted);
-        state = allComplete ? QuestState.Complete :
-               objectives.Any(o => o.Progress > 0) ? QuestState.InProgress :
-               QuestState.Incomplete;
-    }
-}
-
-[System.Serializable]
-public class Objective
-{
-    public int objective_id;
-    public ObjectiveType type;
-    public string[] item;  // For collect objectives
-    public int quantity;
-    public int currentQuantity;
-    public string[] enemy; // For kill objectives
-    public string dialogID; // For talk objectives
-    public ObjectiveTarget[] target;  // Use a specific type (e.g., NPC or item) later
-    public string message;
-    public bool IsCompleted { get; private set; }
-
-    public float Progress =>
-        quantity > 0 ? Mathf.Clamp01((float)currentQuantity / quantity) :
-        IsCompleted ? 1f : 0f;
-
-    public void MarkAsComplete()
-    {
-        IsCompleted = true;
-    }
-
-    public void UpdateProgress(int newCount)
-    {
-        currentQuantity = Mathf.Min(newCount, quantity);
-        if (currentQuantity >= quantity)
-            MarkAsComplete();
-    }
-}
-
 public enum ObjectiveStatus
 {
     InProgress,
     CompletedSuccess,
     CompletedFailure,
     Abandoned
-}
-
-[System.Serializable]
-public class ObjectiveTarget
-{
-    public string targetId;
-    public Vector3 position;
-    public TargetType type;
-    public bool isInteracted;
-    
-    // Additional data can be stored in a serialized format
-    public string data;
-}
-
-[System.Serializable]
-public class QuestReward
-{
-    public RewardType type;
-    public string itemId;
-    public int quantity;
-    public int experiencePoints;
-    public float currency;
 }
 
 public enum RewardType {
@@ -360,6 +248,56 @@ public enum ItemType
     Medical,
     Phone,
     Tools
+}
+
+public enum Item_MaterialType
+{
+    MetalScraps,
+    PlasticScraps,
+    CircuitBoards,
+    Wires,
+    Cloth,
+}
+
+public enum Item_FoodType
+{
+    CannedFood,
+    Drink,
+    Snack,
+    Ration
+}
+
+public enum KeyType
+{
+    Key,
+    Keycard,
+    Code
+}
+
+public enum Item_ToolType
+{
+    KeyJammer,
+    CameraJammer
+}
+
+public enum Item_MedicalType
+{
+    Supplement,
+    Bandage,
+    Painkillers,
+    FirstAidKit
+}
+
+public enum Item_PhoneType
+{
+    Number
+}
+
+public enum Item_QuestType
+{
+    Main,
+    Side,
+    Secret
 }
 
 // can be used to change logic of how items are displayed in the inventory

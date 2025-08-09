@@ -1,0 +1,10 @@
+{
+    "dialogueID": "door_locked_stillLocked",
+    "entries": [
+        {
+            "characterName": "Player",
+            "avatarPath": "john",
+            "message": "C'est toujours verrouillé. J'ai besoin d'une clé."
+        }
+    ]
+}

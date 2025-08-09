@@ -13,8 +13,13 @@ MonoBehaviour
             +-- DoorGeneric (concrete class)        // Just Open/Close logic + Player Position Consideration
                 |
                 +-- DoorLockable (concrete class)   // Adds Lock/Unlock logic
+
+MORE INFO:
+
+    - Open/Close SFX are triggered within the animation clips.
  */
 
+[RequireComponent(typeof(Animator))]
 public class DoorGeneric : Door
 {
     [Header("Door Generic Properties")]
@@ -23,10 +28,8 @@ public class DoorGeneric : Door
     [SerializeField] private bool alwaysOpenToExt = false;
     /* [SerializeField] private float unlockTime = 2f; */
     [SerializeField] protected DoorState defaultDoorState = DoorState.Closed;
-    [SerializeField] private Animator doorAnimator;
 
-
-    [Header("FMOD")]
+    [Header("Audio References")]
     [Space(10)]
 
     [SerializeField] private EventReference sfx_Open;
@@ -35,8 +38,8 @@ public class DoorGeneric : Door
     [SerializeField] private EventReference sfx_Unlock;
     [SerializeField] private Transform audioPosition;
 
-    private bool playerInside = false;
     private GameObject player;
+    private Animator doorAnimator;
 
     void Awake()
     {
@@ -50,18 +53,22 @@ public class DoorGeneric : Door
         {
             SBGDebug.LogWarning("Player object not found in GameMaster on instanciation, will try again when interacted with ", "DoorGeneric");
         }
+
+        doorAnimator = GetComponent<Animator>();
+        if (doorAnimator == null)   
+        {
+            SBGDebug.LogError("Animator component missing from DoorGeneric", "DoorGeneric");
+        }
     }
 
     #region Door Actions
     public override void Interact()
     {
-        playerInside = IsPlayerInside();
-
         SBGDebug.LogInfo("Door Interacted with", "DoorGeneric");
 
         if (doorState == DoorState.Closed)
         {
-            StartCoroutine(OpenDoor());
+            HandleDoorOpen();
         }
         else
         {
@@ -69,35 +76,37 @@ public class DoorGeneric : Door
         }
     }
 
-    private void HandleDoorOpen(bool isPlayerInside)
+    protected void HandleDoorOpen()
     {
-        isPlayerInside = IsPlayerInside();
+        bool isPlayerInside = IsPlayerInside();
 
-        if (isPlayerInside)
+        if (alwaysOpenToExt)
         {
+            // Always open to exterior regardless of player position
             OpenDoor(true);
             doorState = DoorState.OpenExt;
         }
         else
         {
-            if (alwaysOpenToExt)
+            // Open away from player (default behavior)
+            if (isPlayerInside)
             {
+                // Player is inside, open to exterior (away from player)
                 OpenDoor(true);
                 doorState = DoorState.OpenExt;
             }
             else
             {
+                // Player is outside, open to interior (away from player)
                 OpenDoor(false);
                 doorState = DoorState.OpenInt;
             }
-            doorState = DoorState.OpenExt;
         }
     }
 
     public override IEnumerator OpenDoor()
     {
-        OpenDoor(!playerInside);
-        doorState = playerInside ? DoorState.OpenExt : DoorState.OpenInt;
+        HandleDoorOpen();
         return null;
     }
 
@@ -118,7 +127,7 @@ public class DoorGeneric : Door
     public override void CloseDoor()
     {
         //play close sound
-        SBGDebug.LogInfo("Door is closing", "DOORGENERIC");
+        SBGDebug.LogInfo("Door is closing", "DoorGeneric");
 
         if (doorState == DoorState.OpenExt)
         {
@@ -150,7 +159,7 @@ public class DoorGeneric : Door
         {
             // Convert player's world position to door's local space
             Vector3 playerLocalPosition = transform.InverseTransformPoint(player.transform.position);
-            
+
             if (playerLocalPosition.x > 0)
             {
                 return true;
@@ -173,7 +182,7 @@ public class DoorGeneric : Door
         }
         catch (System.Exception e)
         {
-            SBGDebug.LogError($"Error playing open sfx: {e}", "DOORGENERIC");
+            SBGDebug.LogError($"Error playing open sfx: {e}", "DoorGeneric");
         }
     }
 
@@ -185,7 +194,7 @@ public class DoorGeneric : Door
         }
         catch (System.Exception e)
         {
-            SBGDebug.LogError($"Error playing close sfx: {e}", "DOORGENERIC");
+            SBGDebug.LogError($"Error playing close sfx: {e}", "DoorGeneric");
         }
     }
 
@@ -197,7 +206,7 @@ public class DoorGeneric : Door
         }
         catch (System.Exception e)
         {
-            SBGDebug.LogError($"Error playing close sfx: {e}", "DOORGENERIC");
+            SBGDebug.LogError($"Error playing locked sfx: {e}", "DoorGeneric");
         }
     }
 
@@ -209,7 +218,7 @@ public class DoorGeneric : Door
         }
         catch (System.Exception e)
         {
-            SBGDebug.LogError($"Error playing close sfx: {e}", "DOORGENERIC");
+            SBGDebug.LogError($"Error playing unlock sfx: {e}", "DoorGeneric");
         }
     }
     #endregion
