@@ -283,6 +283,8 @@ public class PS_Main : SauceObject
         {
             yield return new WaitForSeconds(rickBackLength);
 
+            GameMaster.Instance?.objective_PhoneCallMade?.Invoke(phoneID, number);
+
             try
             {
                 SBGDebug.LogInfo($"Connected to {number}. Loading dialogue...", "PS_Main");

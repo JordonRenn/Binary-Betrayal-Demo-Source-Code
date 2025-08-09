@@ -84,11 +84,13 @@ public class PickUpItem : SauceObject
         // Play pick-up animation
         if (itemPrefab != null)
         {
-            itemPrefab.transform.DOScale(Vector3.zero, 0.5f).SetEase(Ease.InBack);
-            yield return new WaitForSeconds(0.5f);
+            itemPrefab.transform.DOScale(Vector3.zero, 0.25f).SetEase(Ease.InBack);
+            yield return new WaitForSeconds(0.25f);
         }
 
         CreateInventoryItem();
+        
+        GameMaster.Instance?.objective_ItemCollected?.Invoke(objectID, objectDisplayName);
 
         yield return new WaitForSeconds(0.125f);
 

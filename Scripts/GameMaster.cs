@@ -58,6 +58,19 @@ public class GameMaster : MonoBehaviour
     [HideInInspector] public UnityEvent gm_DialogueStarted;
     [HideInInspector] public UnityEvent gm_DialogueEnded;
 
+    // Objective Events
+    // <<string (ObjectId), string (context)>>
+    [HideInInspector] public UnityEvent<string, string> objective_DoorLocked;
+    [HideInInspector] public UnityEvent<string, string> objective_DoorUnlocked;
+    [HideInInspector] public UnityEvent<string, string> objective_ItemUsed;
+    [HideInInspector] public UnityEvent<string, string> objective_InteractableInteracted;
+    [HideInInspector] public UnityEvent<string, string> objective_ItemCollected;
+    [HideInInspector] public UnityEvent<string, string> objective_NPCTalkedTo;
+    [HideInInspector] public UnityEvent<string, string> objective_PhoneCallMade;
+    [HideInInspector] public UnityEvent<string, string> objective_PhoneCallAnswered;
+    [HideInInspector] public UnityEvent<string, string> objective_ExploredLocation;
+    [HideInInspector] public UnityEvent<string, string> objective_NPCKilled;
+
     //Settings Management
     [SerializeField] private PlayerSettings playerSettings = new PlayerSettings();
     private const string SETTINGS_KEY = "PlayerSettings";

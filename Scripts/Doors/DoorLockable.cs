@@ -190,11 +190,15 @@ public class DoorLockable : DoorGeneric
         if (locked)
         {
             doorLockState = DoorLockState.Locked;
+            // Trigger locked event for objectives
+            GameMaster.Instance.objective_DoorLocked?.Invoke(objectDisplayName, keyId);
         }
         else
         {
             PlayUnlock_SFX();
             doorLockState = DoorLockState.Unlocked;
+            // Trigger unlocked event for objectives
+            GameMaster.Instance.objective_DoorUnlocked?.Invoke(objectDisplayName, keyId);
         }
     }
     
