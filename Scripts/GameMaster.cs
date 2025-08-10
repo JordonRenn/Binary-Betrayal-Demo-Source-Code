@@ -60,14 +60,15 @@ public class GameMaster : MonoBehaviour
 
     // Objective Events
     // <<string (ObjectId), string (context)>>
-    [HideInInspector] public UnityEvent<string, string> objective_DoorLocked;
-    [HideInInspector] public UnityEvent<string, string> objective_DoorUnlocked;
-    [HideInInspector] public UnityEvent<string, string> objective_ItemUsed;
-    [HideInInspector] public UnityEvent<string, string> objective_InteractableInteracted;
-    [HideInInspector] public UnityEvent<string, string> objective_ItemCollected;
+    [HideInInspector] public UnityEvent<string, string> objective_DoorLocked; //invoked in DoorLockable
+    [HideInInspector] public UnityEvent<string, string> objective_DoorUnlocked; //invoked in DoorLockable
+    [HideInInspector] public UnityEvent<string, string> objective_ItemUsed; //invoked in specific item classes
+    [HideInInspector] public UnityEvent<string, string> objective_InteractableInteracted; // invoked in FirstPersonInteraction
+    [HideInInspector] public UnityEvent<string, string> objective_ItemCollected; //should be invoked in Inventory system, not the scripts that use Inventory System
+    [HideInInspector] public UnityEvent<string, string> objective_ItemRemoved; //should be invoked in Inventory system, not the scripts that use Inventory System
     [HideInInspector] public UnityEvent<string, string> objective_NPCTalkedTo;
-    [HideInInspector] public UnityEvent<string, string> objective_PhoneCallMade;
-    [HideInInspector] public UnityEvent<string, string> objective_PhoneCallAnswered;
+    [HideInInspector] public UnityEvent<string, string> objective_PhoneCallMade; // invoked in PS_Main
+    [HideInInspector] public UnityEvent<string, string> objective_PhoneCallAnswered; // invoked in PS_Main
     [HideInInspector] public UnityEvent<string, string> objective_ExploredLocation;
     [HideInInspector] public UnityEvent<string, string> objective_NPCKilled;
 

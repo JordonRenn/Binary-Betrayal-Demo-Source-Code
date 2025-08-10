@@ -1,4 +1,3 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class UI_Master : MonoBehaviour
@@ -26,8 +25,8 @@ public class UI_Master : MonoBehaviour
     [SerializeField] private GameObject crosshair_Element;
     [SerializeField] private GameObject DialogueBox;
 
-    [Header("Menu References")]
-    [SerializeField] private InventoryMenu inventoryMenu;
+   /*  [Header("Menu References")] */
+    /* [SerializeField] */ private InventoryMenu inventoryMenu;
     private PauseMenu pauseMenu;
     private bool gamePaused = false;
 
@@ -48,6 +47,14 @@ public class UI_Master : MonoBehaviour
             catch (System.Exception ex)
             {
                 Debug.LogError($"Error finding PauseMenu: {ex.Message}");
+            }
+            try
+            {
+                inventoryMenu = GetComponentInChildren<InventoryMenu>(true);
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogError($"Error finding InventoryMenu: {ex.Message}");
             }
         }
     }

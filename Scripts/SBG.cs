@@ -277,7 +277,9 @@ public enum KeyType
 public enum Item_ToolType
 {
     KeyJammer,
-    CameraJammer
+    CameraJammer,
+    AlarmJammer,
+    RadioJammer
 }
 
 public enum Item_MedicalType
@@ -297,7 +299,65 @@ public enum Item_QuestType
 {
     Main,
     Side,
-    Secret
+    Secret,
+    Hidden
+}
+
+public enum ItemEffect_Material
+{
+    CraftMetal,
+    CraftPlastic,
+    CraftElectronics,
+    CraftCloth
+}
+
+public enum ItemEffect_Food
+{
+    RestoreHealth,              // fully restores health
+    BoostHealth,                // incremental restoration of health
+    BoostStamina,               // incremental restoration of stamina
+    BoostHealthRegen,           // temporarily increases health regeneration
+    BoostMaxHealth,             // temporarily increases max health
+    BoostStaminaRegen,          // temporarily increases stamina regeneration
+    BoostSpeed                  // temporarily increases speed
+}
+
+public enum ItemEffect_Key
+{
+    UnlockDoor,
+    UnlockContainer
+}
+
+// FUTURE FEATURES
+public enum ItemEffect_Tool
+{
+    DisableCamera,
+    DisableAlarm,
+    DisableRadio,
+    DisableKeypad
+}
+
+public enum ItemEffect_Medical
+{
+    Heal,
+    StopBleeding,
+    CurePoison,
+    CureDisease,
+    Painkiller,
+    BoostHealthRegen,
+    BoostMaxHealth
+}
+
+// TBD
+public enum ItemEffect_Phone
+{
+    None
+}
+
+// TBD
+public enum ItemEffect_Quest
+{
+    None
 }
 
 // can be used to change logic of how items are displayed in the inventory

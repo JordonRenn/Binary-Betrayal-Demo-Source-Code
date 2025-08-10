@@ -102,6 +102,7 @@ public class FirstPersonInteraction : MonoBehaviour
 
         if (sauceObject != null)
         {
+            GameMaster.Instance?.objective_InteractableInteracted?.Invoke(sauceObject.objectID, sauceObject.objectDisplayName);
             sauceObject.Interact();
         }
         else

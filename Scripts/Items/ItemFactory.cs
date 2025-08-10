@@ -29,8 +29,11 @@ public class ItemMasterData
     public string itemId;
     public string displayName;
     public string description;
+    public int weight;
     public string category;
     public string subtype;
+    public string effectType;
+    public string effectValue;
     public string rarity;
     public string viewLogic;
     public int value;
@@ -185,7 +188,7 @@ public class ItemFactory : MonoBehaviour
     {
         string[] values = SplitCsvLine(line);
 
-        if (values.Length < 8)
+        if (values.Length < 11)
         {
             SBGDebug.LogWarning($"CSV line has insufficient columns: {line}", "ItemFactory");
             return null;
@@ -196,11 +199,14 @@ public class ItemFactory : MonoBehaviour
             itemId = values[0].Trim(),
             displayName = values[1].Trim(),
             description = values[2].Trim(),
-            category = values[3].Trim(),
-            subtype = values[4].Trim(),
-            rarity = values[5].Trim(),
-            viewLogic = values[6].Trim(),
-            value = int.TryParse(values[7].Trim(), out int val) ? val : 0
+            weight = int.TryParse(values[3].Trim(), out int weight) ? weight : 0,
+            category = values[4].Trim(),
+            subtype = values[5].Trim(),
+            effectType = values[6].Trim(),
+            effectValue = values[7].Trim(),
+            rarity = values[8].Trim(),
+            viewLogic = values[9].Trim(),
+            value = int.TryParse(values[10].Trim(), out int val) ? val : 0
         };
 
         return item;
@@ -357,14 +363,14 @@ public class ItemFactory : MonoBehaviour
 
             return itemData.Type switch
             {
-                ItemType.Misc => ValidateAndCreate(() => new Item_Misc(itemData.ItemId, itemData.Name, itemData.Description, itemData.Icon, null), "Misc"),
-                ItemType.Material => ValidateAndCreate(() => new Item_Material(itemData.ItemId, itemData.Name, itemData.Description, itemData.Icon, null, Item_MaterialType.MetalScraps), "Material"),
-                ItemType.Food => ValidateAndCreate(() => new Item_Food(itemData.ItemId, itemData.Name, itemData.Description, itemData.Icon, null, Item_FoodType.Snack), "Food"),
-                ItemType.Keys => ValidateAndCreate(() => new Item_Keys(itemData.ItemId, itemData.Name, itemData.Description, itemData.Icon, null, KeyType.Key), "Keys"),
-                ItemType.Quest => ValidateAndCreate(() => new Item_Quest(itemData.ItemId, itemData.Name, itemData.Description, itemData.Icon, null, Item_QuestType.Main, string.Empty), "Quest"),
-                ItemType.Medical => ValidateAndCreate(() => new Item_Medical(itemData.ItemId, itemData.Name, itemData.Description, itemData.Icon, null, Item_MedicalType.FirstAidKit), "Medical"),
-                ItemType.Phone => ValidateAndCreate(() => new Item_Phone(itemData.ItemId, itemData.Name, itemData.Description, itemData.Icon, null, Item_PhoneType.Number, string.Empty), "Phone"),
-                ItemType.Tools => ValidateAndCreate(() => new Item_Tools(itemData.ItemId, itemData.Name, itemData.Description, itemData.Icon, null, Item_ToolType.KeyJammer), "Tools"),
+                ItemType.Misc => ValidateAndCreate(() => new Item_Misc(itemData.ItemId, itemData.Name, itemData.Description, itemData.Icon, null, itemData.weight), "Misc"),
+                ItemType.Material => ValidateAndCreate(() => new Item_Material(itemData.ItemId, itemData.Name, itemData.Description, itemData.Icon, null, Item_MaterialType.MetalScraps, ItemEffect_Material.CraftMetal, 0, itemData.weight), "Material"),
+                ItemType.Food => ValidateAndCreate(() => new Item_Food(itemData.ItemId, itemData.Name, itemData.Description, itemData.Icon, null, Item_FoodType.Snack, ItemEffect_Food.BoostHealth, 0, itemData.weight), "Food"),
+                ItemType.Keys => ValidateAndCreate(() => new Item_Keys(itemData.ItemId, itemData.Name, itemData.Description, itemData.Icon, null, KeyType.Key, ItemEffect_Key.UnlockDoor, itemData.weight), "Keys"),
+                ItemType.Quest => ValidateAndCreate(() => new Item_Quest(itemData.ItemId, itemData.Name, itemData.Description, itemData.Icon, null, Item_QuestType.Main, string.Empty, ItemEffect_Quest.None, itemData.weight), "Quest"),
+                ItemType.Medical => ValidateAndCreate(() => new Item_Medical(itemData.ItemId, itemData.Name, itemData.Description, itemData.Icon, null, Item_MedicalType.FirstAidKit, ItemEffect_Medical.Heal, 0, itemData.weight), "Medical"),
+                ItemType.Phone => ValidateAndCreate(() => new Item_Phone(itemData.ItemId, itemData.Name, itemData.Description, itemData.Icon, null, Item_PhoneType.Number, string.Empty, ItemEffect_Phone.None, itemData.weight), "Phone"),
+                ItemType.Tools => ValidateAndCreate(() => new Item_Tools(itemData.ItemId, itemData.Name, itemData.Description, itemData.Icon, null, Item_ToolType.KeyJammer, ItemEffect_Tool.DisableKeypad, itemData.weight), "Tools"),
                 _ => throw new ArgumentOutOfRangeException($"Unsupported item type: {itemData.Type}")
             };
         }
@@ -386,7 +392,7 @@ public class ItemFactory : MonoBehaviour
     {
         try
         {
-            return ValidateAndCreate(() => new Item_Keys(id, name, description, icon, null, keyType), "Keys");
+            return ValidateAndCreate(() => new Item_Keys(id, name, description, icon, null, keyType, ItemEffect_Key.UnlockDoor, 0), "Keys");
         }
         catch (Exception ex)
         {
@@ -402,7 +408,16 @@ public class ItemFactory : MonoBehaviour
     {
         try
         {
-            return ValidateAndCreate(() => new Item_Material(id, name, description, icon, null, materialType), "Material");
+            ItemEffect_Material effect = materialType switch
+            {
+                Item_MaterialType.MetalScraps => ItemEffect_Material.CraftMetal,
+                Item_MaterialType.PlasticScraps => ItemEffect_Material.CraftPlastic,
+                Item_MaterialType.CircuitBoards => ItemEffect_Material.CraftElectronics,
+                Item_MaterialType.Wires => ItemEffect_Material.CraftElectronics,
+                Item_MaterialType.Cloth => ItemEffect_Material.CraftCloth,
+                _ => ItemEffect_Material.CraftMetal
+            };
+            return ValidateAndCreate(() => new Item_Material(id, name, description, icon, null, materialType, effect, 10, 0), "Material");
         }
         catch (Exception ex)
         {
@@ -418,7 +433,7 @@ public class ItemFactory : MonoBehaviour
     {
         try
         {
-            return ValidateAndCreate(() => new Item_Food(id, name, description, icon, null, foodType), "Food");
+            return ValidateAndCreate(() => new Item_Food(id, name, description, icon, null, foodType, ItemEffect_Food.BoostHealth, 15, 0), "Food");
         }
         catch (Exception ex)
         {
@@ -434,7 +449,7 @@ public class ItemFactory : MonoBehaviour
     {
         try
         {
-            return ValidateAndCreate(() => new Item_Medical(id, name, description, icon, null, medicalType), "Medical");
+            return ValidateAndCreate(() => new Item_Medical(id, name, description, icon, null, medicalType, ItemEffect_Medical.Heal, 50, 0), "Medical");
         }
         catch (Exception ex)
         {
@@ -450,7 +465,15 @@ public class ItemFactory : MonoBehaviour
     {
         try
         {
-            return ValidateAndCreate(() => new Item_Tools(id, name, description, icon, null, toolType), "Tools");
+            ItemEffect_Tool effect = toolType switch
+            {
+                Item_ToolType.KeyJammer => ItemEffect_Tool.DisableKeypad,
+                Item_ToolType.CameraJammer => ItemEffect_Tool.DisableCamera,
+                Item_ToolType.AlarmJammer => ItemEffect_Tool.DisableAlarm,
+                Item_ToolType.RadioJammer => ItemEffect_Tool.DisableRadio,
+                _ => ItemEffect_Tool.DisableCamera
+            };
+            return ValidateAndCreate(() => new Item_Tools(id, name, description, icon, null, toolType, effect, 0), "Tools");
         }
         catch (Exception ex)
         {
@@ -463,7 +486,7 @@ public class ItemFactory : MonoBehaviour
     {
         try
         {
-            return ValidateAndCreate(() => new Item_Quest(id, name, description, icon, null, questType, questId), "Quest");
+            return ValidateAndCreate(() => new Item_Quest(id, name, description, icon, null, questType, questId, ItemEffect_Quest.None, 0), "Quest");
         }
         catch (Exception ex)
         {
@@ -476,7 +499,7 @@ public class ItemFactory : MonoBehaviour
     {
         try
         {
-            return ValidateAndCreate(() => new Item_Phone(id, name, description, icon, null, phoneType, phoneNumber), "Phone");
+            return ValidateAndCreate(() => new Item_Phone(id, name, description, icon, null, phoneType, phoneNumber, ItemEffect_Phone.None, 0), "Phone");
         }
         catch (Exception ex)
         {
@@ -497,7 +520,7 @@ public class ItemFactory : MonoBehaviour
             data.description,
             icon,
             data.ItemType,
-            0, // You might want to add weight to your CSV
+            data.weight,
             data.ItemRarity,
             data.ViewLogicType
         );
@@ -505,31 +528,36 @@ public class ItemFactory : MonoBehaviour
 
     private static IItem CreateMaterialFromData(ItemMasterData data, Sprite icon)
     {
-        if (Enum.TryParse<Item_MaterialType>(data.subtype, out Item_MaterialType materialType))
+        if (Enum.TryParse<Item_MaterialType>(data.subtype, out Item_MaterialType materialType) &&
+            Enum.TryParse<ItemEffect_Material>(data.effectType, out ItemEffect_Material effectType))
         {
-            return CreateMaterialItem(data.itemId, data.displayName, data.description, icon, materialType);
+            int effectValue = int.TryParse(data.effectValue, out int val) ? val : 0;
+            return new Item_Material(data.itemId, data.displayName, data.description, icon, null, materialType, effectType, effectValue, data.weight);
         }
-        SBGDebug.LogWarning($"Unknown material subtype '{data.subtype}' for item '{data.itemId}'", "ItemFactory");
+        SBGDebug.LogWarning($"Unknown material subtype '{data.subtype}' or effect '{data.effectType}' for item '{data.itemId}'", "ItemFactory");
         return null;
     }
 
     private static IItem CreateFoodFromData(ItemMasterData data, Sprite icon)
     {
-        if (Enum.TryParse<Item_FoodType>(data.subtype, out Item_FoodType foodType))
+        if (Enum.TryParse<Item_FoodType>(data.subtype, out Item_FoodType foodType) &&
+            Enum.TryParse<ItemEffect_Food>(data.effectType, out ItemEffect_Food effectType))
         {
-            return CreateFoodItem(data.itemId, data.displayName, data.description, icon, foodType);
+            int effectValue = int.TryParse(data.effectValue, out int val) ? val : 0;
+            return new Item_Food(data.itemId, data.displayName, data.description, icon, null, foodType, effectType, effectValue, data.weight);
         }
-        SBGDebug.LogWarning($"Unknown food subtype '{data.subtype}' for item '{data.itemId}'", "ItemFactory");
+        SBGDebug.LogWarning($"Unknown food subtype '{data.subtype}' or effect '{data.effectType}' for item '{data.itemId}'", "ItemFactory");
         return null;
     }
 
     private static IItem CreateKeyFromData(ItemMasterData data, Sprite icon)
     {
-        if (Enum.TryParse<KeyType>(data.subtype, out KeyType keyType))
+        if (Enum.TryParse<KeyType>(data.subtype, out KeyType keyType) &&
+            Enum.TryParse<ItemEffect_Key>(data.effectType, out ItemEffect_Key effectType))
         {
-            return CreateKeyItem(data.itemId, data.displayName, data.description, icon, keyType);
+            return new Item_Keys(data.itemId, data.displayName, data.description, icon, null, keyType, effectType, data.weight);
         }
-        SBGDebug.LogWarning($"Unknown key subtype '{data.subtype}' for item '{data.itemId}'", "ItemFactory");
+        SBGDebug.LogWarning($"Unknown key subtype '{data.subtype}' or effect '{data.effectType}' for item '{data.itemId}'", "ItemFactory");
         return null;
     }
 
@@ -537,7 +565,7 @@ public class ItemFactory : MonoBehaviour
     {
         if (Enum.TryParse<Item_QuestType>(data.subtype, out Item_QuestType questType))
         {
-            return CreateQuestItem(data.itemId, data.displayName, data.description, icon, questType, "");
+            return new Item_Quest(data.itemId, data.displayName, data.description, icon, null, questType, "", ItemEffect_Quest.None, data.weight);
         }
         SBGDebug.LogWarning($"Unknown quest subtype '{data.subtype}' for item '{data.itemId}'", "ItemFactory");
         return null;
@@ -545,11 +573,13 @@ public class ItemFactory : MonoBehaviour
 
     private static IItem CreateMedicalFromData(ItemMasterData data, Sprite icon)
     {
-        if (Enum.TryParse<Item_MedicalType>(data.subtype, out Item_MedicalType medicalType))
+        if (Enum.TryParse<Item_MedicalType>(data.subtype, out Item_MedicalType medicalType) &&
+            Enum.TryParse<ItemEffect_Medical>(data.effectType, out ItemEffect_Medical effectType))
         {
-            return CreateMedicalItem(data.itemId, data.displayName, data.description, icon, medicalType);
+            int effectValue = int.TryParse(data.effectValue, out int val) ? val : 0;
+            return new Item_Medical(data.itemId, data.displayName, data.description, icon, null, medicalType, effectType, effectValue, data.weight);
         }
-        SBGDebug.LogWarning($"Unknown medical subtype '{data.subtype}' for item '{data.itemId}'", "ItemFactory");
+        SBGDebug.LogWarning($"Unknown medical subtype '{data.subtype}' or effect '{data.effectType}' for item '{data.itemId}'", "ItemFactory");
         return null;
     }
 
@@ -557,7 +587,7 @@ public class ItemFactory : MonoBehaviour
     {
         if (Enum.TryParse<Item_PhoneType>(data.subtype, out Item_PhoneType phoneType))
         {
-            return CreatePhoneItem(data.itemId, data.displayName, data.description, icon, phoneType, "");
+            return new Item_Phone(data.itemId, data.displayName, data.description, icon, null, phoneType, "", ItemEffect_Phone.None, data.weight);
         }
         SBGDebug.LogWarning($"Unknown phone subtype '{data.subtype}' for item '{data.itemId}'", "ItemFactory");
         return null;
@@ -565,11 +595,12 @@ public class ItemFactory : MonoBehaviour
 
     private static IItem CreateToolFromData(ItemMasterData data, Sprite icon)
     {
-        if (Enum.TryParse<Item_ToolType>(data.subtype, out Item_ToolType toolType))
+        if (Enum.TryParse<Item_ToolType>(data.subtype, out Item_ToolType toolType) &&
+            Enum.TryParse<ItemEffect_Tool>(data.effectType, out ItemEffect_Tool effectType))
         {
-            return CreateToolItem(data.itemId, data.displayName, data.description, icon, toolType);
+            return new Item_Tools(data.itemId, data.displayName, data.description, icon, null, toolType, effectType, data.weight);
         }
-        SBGDebug.LogWarning($"Unknown tool subtype '{data.subtype}' for item '{data.itemId}'", "ItemFactory");
+        SBGDebug.LogWarning($"Unknown tool subtype '{data.subtype}' or effect '{data.effectType}' for item '{data.itemId}'", "ItemFactory");
         return null;
     }
 

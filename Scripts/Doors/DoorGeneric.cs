@@ -64,8 +64,6 @@ public class DoorGeneric : Door
     #region Door Actions
     public override void Interact()
     {
-        SBGDebug.LogInfo("Door Interacted with", "DoorGeneric");
-
         if (doorState == DoorState.Closed)
         {
             HandleDoorOpen();

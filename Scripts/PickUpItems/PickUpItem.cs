@@ -9,7 +9,7 @@ Only use this class for Misc items that do not fit into other categories and nee
 
 public class PickUpItem : SauceObject
 {
-    [Header("Item Properties")]
+    [Header("Pick-Up Item Properties")]
     [Space(10)]
 
     [SerializeField] protected string itemDescription;
@@ -17,37 +17,58 @@ public class PickUpItem : SauceObject
     [SerializeField] protected ItemRarity itemRarity;
     [SerializeField] protected ItemViewLogicType itemViewLogic;
     [SerializeField] protected int weight = 0;
-    [SerializeField] protected GameObject itemPrefab;
+    [SerializeField] protected GameObject item3dIcon;
+    [SerializeField] protected Sprite itemInventoryIcon;
 
-    [Header("Item Components")]
-    [Space(10)]
-
-    [SerializeField] protected Collider pickUpTrigger;
-    [SerializeField] protected LayerMask playerLayer;
-
-    [Header("SFX")]
-    [Space(10)]
-
-    [SerializeField] protected EventReference sfx_PickUp;
-
-    /* [Header("Animation")]
+    /* [Header("Pick-Up Item Components")]
     [Space(10)] */
 
-    /* [SerializeField] */
+    /* [SerializeField] */ private protected Collider pickUpTrigger;
+    /* [SerializeField] */ private protected LayerMask playerLayer;
+    private const string PLAYER_LAYER_NAME = "playerObject";
+
+    /* [Header("SFX")]
+    [Space(10)] */
+
+    /* [SerializeField] */ private protected EventReference sfx_PickUp;
+
+    private const string SFX_REFERENCE = "event:/Player/player_Hurt";
+
+
     protected float spinSpeed = 120f;
-    /* [SerializeField] */
     protected float bobSpeed = 1.25f;
-    /* [SerializeField] */
     protected float bobHeight = 0.25f;
 
     private Vector3 initialPosition;
+    protected IItem item;
 
-    void Start()
+    protected virtual void Start()
     {
-        // Store the initial position of the itemPrefab for bobbing animation
-        if (itemPrefab != null)
+        // Store the initial position of the item3dIcon for bobbing animation
+        if (item3dIcon != null)
         {
-            initialPosition = itemPrefab.transform.position;
+            initialPosition = item3dIcon.transform.position;
+        }
+
+        // Create item for misc items using ItemFactory
+        CreateItem();
+
+        sfx_PickUp = EventReference.Find(SFX_REFERENCE);
+        playerLayer = LayerMask.GetMask(PLAYER_LAYER_NAME);
+        pickUpTrigger = GetComponent<Collider>();
+    }
+
+    protected virtual void CreateItem()
+    {
+        // Try to create from database first
+        if (ItemFactory.ItemExists(objectID))
+        {
+            item = ItemFactory.CreateItemFromDatabase(objectID, itemInventoryIcon);
+        }
+        else
+        {
+            // Fallback to manual creation for misc items
+            item = new ItemData(objectID, objectDisplayName, itemDescription, itemInventoryIcon, itemType, weight, itemRarity, itemViewLogic);
         }
     }
 
@@ -82,15 +103,13 @@ public class PickUpItem : SauceObject
         PlaySFX(sfx_PickUp);
 
         // Play pick-up animation
-        if (itemPrefab != null)
+        if (item3dIcon != null)
         {
-            itemPrefab.transform.DOScale(Vector3.zero, 0.25f).SetEase(Ease.InBack);
+            item3dIcon.transform.DOScale(Vector3.zero, 0.25f).SetEase(Ease.InBack);
             yield return new WaitForSeconds(0.25f);
         }
 
         CreateInventoryItem();
-        
-        GameMaster.Instance?.objective_ItemCollected?.Invoke(objectID, objectDisplayName);
 
         yield return new WaitForSeconds(0.125f);
 
@@ -101,8 +120,12 @@ public class PickUpItem : SauceObject
     {
         Debug.Log($"Creating inventory item: {objectDisplayName} (ID: {objectID}, Type: {itemType}, Weight: {weight})");
 
-        // Create the item data directly
-        IItem item = new ItemData(objectID, objectDisplayName, itemDescription, null, itemType, weight, itemRarity, itemViewLogic);
+        // Use the item created in Start() or CreateItem()
+        if (item == null)
+        {
+            SBGDebug.LogError($"Item is null for {objectDisplayName}! Creating fallback item.", $"PICK UP ITEM: {objectDisplayName}");
+            item = new ItemData(objectID, objectDisplayName, itemDescription, itemInventoryIcon, itemType, weight, itemRarity, itemViewLogic);
+        }
 
         // Check if InventoryManager exists
         if (InventoryManager.Instance != null)
@@ -130,14 +153,14 @@ public class PickUpItem : SauceObject
 
     void AnimateObject()
     {
-        if (itemPrefab != null)
+        if (item3dIcon != null)
         {
             // Rotate the item
-            itemPrefab.transform.Rotate(Vector3.up, spinSpeed * Time.deltaTime);
+            item3dIcon.transform.Rotate(Vector3.up, spinSpeed * Time.deltaTime);
 
             // Bob the item up and down relative to its initial position
             float bobOffset = Mathf.Sin(Time.time * bobSpeed) * bobHeight;
-            itemPrefab.transform.position = new Vector3(
+            item3dIcon.transform.position = new Vector3(
                 initialPosition.x,
                 initialPosition.y + bobOffset,
                 initialPosition.z
