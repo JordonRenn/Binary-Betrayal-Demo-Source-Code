@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 
+[Obsolete("Old UI_Master class, please use NewUI_Master instead.")]
 public class UI_Master : MonoBehaviour
 {
     private static UI_Master _instance;
@@ -26,8 +27,9 @@ public class UI_Master : MonoBehaviour
     [SerializeField] private GameObject crosshair_Element;
     [SerializeField] private GameObject DialogueBox;
 
-   /*  [Header("Menu References")] */
-    /* [SerializeField] */ private InventoryMenu inventoryMenu;
+    /*  [Header("Menu References")] */
+    /* [SerializeField] */
+    private InventoryMenu inventoryMenu;
     private PauseMenu pauseMenu;
     private bool gamePaused = false;
 
@@ -124,8 +126,10 @@ public class UI_Master : MonoBehaviour
     {
         if (inventoryMenu == null) return;
 
-        GameMaster.Instance.gm_InventoryOpened.Invoke(inventoryType);
-        
+        //
+        //GameMaster.Instance.gm_InventoryOpened.Invoke(inventoryType);
+        //
+
         HideAllHUD();
         VolumeManager.Instance.SetVolume(VolumeType.PauseMenu);
         Time.timeScale = 0f;
@@ -173,7 +177,9 @@ public class UI_Master : MonoBehaviour
     {
         if (inventoryMenu == null) return;
 
-        GameMaster.Instance.gm_InventoryClosed.Invoke(inventoryType);
+        //
+        //GameMaster.Instance.gm_InventoryClosed.Invoke(inventoryType);
+        //
 
         inventoryMenu.gameObject.SetActive(false);
 

@@ -347,6 +347,18 @@ public class InventoryMenu : MonoBehaviour
         itemTypeText.text = "";
         itemWeightText.text = "";
     }
+
+    #region Helper Methods
+    public void OnMenuClose()
+    {
+        GameMaster.Instance.gm_InventoryClosed.Invoke();
+    }
+
+    public void OnMenuOpen()
+    {
+        GameMaster.Instance.gm_InventoryOpened.Invoke();
+    }
+    #endregion
 }
 #endregion
 
@@ -362,5 +374,7 @@ public class ItemButtonData : MonoBehaviour
 {
     public IItem Item { get; set; }
 }
+
+
 #endregion
 #endregion

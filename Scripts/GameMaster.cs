@@ -45,9 +45,9 @@ public class GameMaster : MonoBehaviour
     //Settings Events
     [HideInInspector] public UnityEvent gm_SettingsChanged;
 
-    [HideInInspector] public UnityEvent<InventoryType> gm_InventoryOpened;
+    [HideInInspector] public UnityEvent gm_InventoryOpened;
 
-    [HideInInspector] public UnityEvent<InventoryType> gm_InventoryClosed;
+    [HideInInspector] public UnityEvent gm_InventoryClosed;
 
     // Dialogue Events
     [HideInInspector] public UnityEvent gm_DialogueStarted;

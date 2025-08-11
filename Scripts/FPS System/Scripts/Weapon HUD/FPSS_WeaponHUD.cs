@@ -1,10 +1,10 @@
-using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 
+#region FPSS_WeaponHUD
 /// <summary>
 /// Manages the weapon HUD, displaying the current weapon information.
 /// </summary>
@@ -29,7 +29,7 @@ public class FPSS_WeaponHUD : MonoBehaviour
         }
         private set => _instance = value;
     }
-    
+
     private GameObject player;
     private FPSS_Pool c_WeaponPool;
     private WPO_Gun primaryWeaponComponent;
@@ -73,9 +73,9 @@ public class FPSS_WeaponHUD : MonoBehaviour
         if (secondaryIconImg == null)
             Debug.LogError($"{nameof(FPSS_WeaponHUD)}: Secondary weapon icon image component is missing!");
     }
-    
+
     [Header("Primary Weapon Objects")]
-    [Space(10)] 
+    [Space(10)]
 
     [SerializeField] private TMP_Text primaryNameText;
     [SerializeField] private TMP_Text primarySlotNumber; //DO NOT CHANGE THIS TEXT, only color
@@ -128,7 +128,7 @@ public class FPSS_WeaponHUD : MonoBehaviour
             SBGDebug.LogInfo("WeaponHUD initialized successfully", "FPSS_WeaponHUD");
         }
     }
-    
+
     void Start()
     {
         StartCoroutine(Init());
@@ -201,29 +201,29 @@ public class FPSS_WeaponHUD : MonoBehaviour
     public void RefreshWeaponHUD()
     {
         Debug.Log("WEAPON HUD: Refreshing elements...");
-        CacheWeaponComponents();            
-        
+        CacheWeaponComponents();
+
         switch (FPSS_Main.Instance.currentWeaponSlot)
         {
             case WeaponSlot.Primary:
                 Debug.Log("WEAPON HUD: Current Weapon Slot: " + FPSS_Main.Instance.currentWeaponSlot);
 
                 UpdateHUDTextColors(0);
-                
+
                 primaryNameText.text = primaryWeaponComponent.HUDData.weaponDisplayName;
                 break;
             case WeaponSlot.Secondary:
                 Debug.Log("WEAPON HUD: Current Weapon Slot: " + FPSS_Main.Instance.currentWeaponSlot);
 
                 UpdateHUDTextColors(1);
-                
+
                 secondaryNameText.text = secondaryWeaponComponent.HUDData.weaponDisplayName;
                 break;
             case WeaponSlot.Melee:
                 Debug.Log("WEAPON HUD: Current Weapon Slot: " + FPSS_Main.Instance.currentWeaponSlot);
 
                 UpdateHUDTextColors(2);
-                
+
                 primaryNameText.text = "Unarmed";
                 secondaryNameText.text = "Unarmed";
                 break;
@@ -238,7 +238,7 @@ public class FPSS_WeaponHUD : MonoBehaviour
     void UpdateIconSprites()
     {
         FPSS_WeaponSlotObject primaryWeaponObject = c_WeaponPool.assignedPrimaryWPO;
-        FPSS_WeaponSlotObject secondaryWeaponObject =  c_WeaponPool.assignedSecondaryWPO;             
+        FPSS_WeaponSlotObject secondaryWeaponObject = c_WeaponPool.assignedSecondaryWPO;
 
         if (FPSS_Main.Instance.currentWeaponSlot == WeaponSlot.Primary)
         {
@@ -257,18 +257,6 @@ public class FPSS_WeaponHUD : MonoBehaviour
         }
     }
 
-
-
-
-
-
-
-
-    private void UpdateWeaponDisplayData()
-    {
-        //
-    }
-
     /// <summary>
     /// 0 = Primary active; 1 = Secondary active; 2 = both inactive
     /// </summary>
@@ -280,7 +268,7 @@ public class FPSS_WeaponHUD : MonoBehaviour
             primaryNameText.color = color_NameActiveText;
             primarySlotNumber.color = color_SlotActiveText;
             primaryAmmoText.color = color_AmmoActiveText;
-            
+
             secondaryNameText.color = color_NameInactiveText;
             secondarySlotNumber.color = color_SlotInactiveText;
             secondaryAmmoText.color = color_AmmoInactiveText;
@@ -290,7 +278,7 @@ public class FPSS_WeaponHUD : MonoBehaviour
             primaryNameText.color = color_NameInactiveText;
             primarySlotNumber.color = color_SlotInactiveText;
             primaryAmmoText.color = color_AmmoInactiveText;
-            
+
             secondaryNameText.color = color_NameActiveText;
             secondarySlotNumber.color = color_SlotActiveText;
             secondaryAmmoText.color = color_AmmoActiveText;
@@ -300,35 +288,39 @@ public class FPSS_WeaponHUD : MonoBehaviour
             primaryNameText.color = color_NameInactiveText;
             primarySlotNumber.color = color_SlotInactiveText;
             primaryAmmoText.color = color_AmmoInactiveText;
-            
+
             secondaryNameText.color = color_NameInactiveText;
             secondarySlotNumber.color = color_SlotInactiveText;
             secondaryAmmoText.color = color_AmmoInactiveText;
         }
     }
 
-
-
-
-
-
-
-
+    #region Hide
     public void Hide(bool hide)
     {
         RectTransform rectTransform = GetComponent<RectTransform>();
-        
+
         if (hide && !hidden)
         {
             // Move the entire HUD downwards to hide it
-            rectTransform.DOAnchorPos(new Vector2(0, -80), 0);
+            rectTransform.DOAnchorPos(new Vector2(0, -80), 0)
+                .OnComplete(() =>
+                {
+                    HUD_Controller.Instance?.he_WeaponHidden.Invoke(true);
+                });
             hidden = true;
         }
         else if (!hide && hidden)
         {
             // Move the entire HUD upwards to show it
-            rectTransform.DOAnchorPos(new Vector2(0, 0), 0);
+            rectTransform.DOAnchorPos(new Vector2(0, 0), 0)
+                .OnComplete(() =>
+                {
+                    HUD_Controller.Instance?.he_WeaponHidden.Invoke(false);
+                });
             hidden = false;
         }
     }
+    #endregion
 }
+#endregion

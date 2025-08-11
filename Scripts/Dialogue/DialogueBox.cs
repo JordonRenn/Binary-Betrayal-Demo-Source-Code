@@ -102,7 +102,7 @@ public class DialogueBox : MonoBehaviour
         }
         else
         {
-            SBGDebug.LogInfo("No more messages in the dialogue queue.", "DialogueBox");
+            //SBGDebug.LogInfo("No more messages in the dialogue queue.", "DialogueBox");
             dialogueFinished.Invoke();
             CloseDialogueBox();
         }
@@ -139,7 +139,7 @@ public class DialogueBox : MonoBehaviour
             .SetEase(Ease.OutBack)
             .OnComplete(() =>
             {
-                SBGDebug.LogInfo("Dialogue box opened with animation.", "DialogueBox");
+                //SBGDebug.LogInfo("Dialogue box opened with animation.", "DialogueBox");
                 input.lint_InteractTriggered.AddListener(NextDialogue);
                 dialogueBoxOpened.Invoke();
                 if (GameMaster.Instance != null)
@@ -149,14 +149,14 @@ public class DialogueBox : MonoBehaviour
             });
 
         yield return new WaitForSeconds(0.5f);
-        SBGDebug.LogInfo("Dialogue box opened.", "DialogueBox");
+        //SBGDebug.LogInfo("Dialogue box opened.", "DialogueBox");
     }
 
     //CLOSE DIALOGUE BOX
     public void CloseDialogueBox()
     {
         StartCoroutine(CloseBoxRoutine());
-        SBGDebug.LogInfo("Closing dialogue box...", "DialogueBox");
+        //SBGDebug.LogInfo("Closing dialogue box...", "DialogueBox");
         ClearDialogueQueue();
     }
     
@@ -173,7 +173,7 @@ public class DialogueBox : MonoBehaviour
                 characterNameText.text = string.Empty;
                 characterMessageText.text = string.Empty;
                 avatarImage.sprite = null;
-                SBGDebug.LogInfo("Dialogue box closed with animation.", "DialogueBox");
+                //SBGDebug.LogInfo("Dialogue box closed with animation.", "DialogueBox");
                 dialogueBoxClosed.Invoke();
                 if (GameMaster.Instance != null)
                 {
