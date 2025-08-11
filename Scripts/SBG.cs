@@ -21,6 +21,14 @@ public enum SurfaceType
 }
 #endregion
 
+#region Phone
+public enum PhoneCallEvent
+{
+    Incoming,
+    Outgoing
+}
+#endregion
+
 #region Graphics
 public enum VolumeType //post process volume
 {
@@ -141,7 +149,8 @@ public enum LockedDoorDialogueVariation
 {
     LockedKeyNeeded,
     LockedCanLockPick,
-    LockedHasKey
+    LockedHasKey,
+    StillLocked
 
 }
 

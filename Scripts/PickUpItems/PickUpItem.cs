@@ -20,20 +20,13 @@ public class PickUpItem : SauceObject
     [SerializeField] protected GameObject item3dIcon;
     [SerializeField] protected Sprite itemInventoryIcon;
 
-    /* [Header("Pick-Up Item Components")]
-    [Space(10)] */
-
-    /* [SerializeField] */ private protected Collider pickUpTrigger;
-    /* [SerializeField] */ private protected LayerMask playerLayer;
+    private protected LayerMask playerLayer;
     private const string PLAYER_LAYER_NAME = "playerObject";
 
-    /* [Header("SFX")]
-    [Space(10)] */
+    private protected EventReference sfx_PickUp;
+    private const string SFX_REFERENCE = "event:/Player/player_PickUp";
 
-    /* [SerializeField] */ private protected EventReference sfx_PickUp;
-
-    private const string SFX_REFERENCE = "event:/Player/player_Hurt";
-
+    private protected Collider pickUpTrigger;
 
     protected float spinSpeed = 120f;
     protected float bobSpeed = 1.25f;
@@ -58,7 +51,7 @@ public class PickUpItem : SauceObject
         pickUpTrigger = GetComponent<Collider>();
     }
 
-    protected virtual void CreateItem()
+    protected void CreateItem()
     {
         // Try to create from database first
         if (ItemFactory.ItemExists(objectID))
@@ -67,9 +60,13 @@ public class PickUpItem : SauceObject
         }
         else
         {
-            // Fallback to manual creation for misc items
-            item = new ItemData(objectID, objectDisplayName, itemDescription, itemInventoryIcon, itemType, weight, itemRarity, itemViewLogic);
+            ManuallyCreateItem();
         }
+    }
+
+    protected virtual void ManuallyCreateItem()
+    {
+        item = new ItemData(objectID, objectDisplayName, itemDescription, itemInventoryIcon, itemType, weight, itemRarity, itemViewLogic);
     }
 
     void Update()

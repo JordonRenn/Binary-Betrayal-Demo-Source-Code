@@ -283,7 +283,7 @@ public class PS_Main : SauceObject
         {
             yield return new WaitForSeconds(rickBackLength);
 
-            GameMaster.Instance?.objective_PhoneCallMade?.Invoke(phoneID, number);
+            GameMaster.Instance?.oe_PhoneCallEvent?.Invoke(phoneID, number, PhoneCallEvent.Outgoing);
 
             try
             {

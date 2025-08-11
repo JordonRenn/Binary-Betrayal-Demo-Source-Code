@@ -161,7 +161,7 @@ public class LockPickingQuickTimeEvent : MonoBehaviour // : SauceObject
         }
     } */
 
-    // DO NOT EDIT THIS REGION UNLESS YOU KNOW WHAT YOU ARE DOING and IT'S NECESSARY
+    // DO NOT EDIT BELOW THIS UNLESS YOU KNOW WHAT YOU ARE DOING and IT'S NECESSARY
     // IT'S HELD TOGETHR BY HOPES AND DREAMS
     #region Lock Pick GUI
     private IEnumerator OpenLockGUI()

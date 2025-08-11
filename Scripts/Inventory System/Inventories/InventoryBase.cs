@@ -34,6 +34,7 @@ public abstract class InventoryBase : IInventory
         return Items.ContainsKey(item) && Items[item] >= quantity;
     }
 
+    // call from inventory manager, not directly
     public void AddItem(IItem item, int quantity)
     {
         int newWeight = totalWeight() + (item.weight * quantity);
@@ -79,7 +80,7 @@ public abstract class InventoryBase : IInventory
 
         if (GameMaster.Instance != null)
         {
-            GameMaster.Instance.gm_InventoryItemAdded?.Invoke();
+            GameMaster.Instance?.oe_ItemAdded?.Invoke(Type, item.ItemId, item.Name);
         }
 
         SBGDebug.LogInfo($"Item added: {item.Name} x{quantity}. Total in inventory: {Items[item]}", $"class: InventoryBase | inventoryId:  {InventoryId}");
@@ -96,6 +97,8 @@ public abstract class InventoryBase : IInventory
             {
                 Items.Remove(item);
             }
+
+            GameMaster.Instance?.oe_ItemRemoved?.Invoke(Type, item.ItemId, item.Name);
         }
 
         if (NotificationSystem.Instance != null)

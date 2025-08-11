@@ -1,0 +1,10 @@
+{
+    "dialogueID": "container_locked_keyNeeded_firstTime",
+    "entries": [
+        {
+            "characterName": "Player",
+            "avatarPath": "john",
+            "message": "This is locked tight. I need to find the right key."
+        }
+    ]
+}

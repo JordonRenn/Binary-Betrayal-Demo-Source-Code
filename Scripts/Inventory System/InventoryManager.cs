@@ -93,8 +93,7 @@ public class InventoryManager : MonoBehaviour
             Debug.Log($"Adding item to player inventory: {item.Name} x{quantity}");
             playerInventory.AddItem(item, quantity);
             SBGDebug.LogInfo($"Item {item.Name} added to inventory. Total count: {quantity}", "InventoryManager");
-            //GameMaster.Instance?.gm_InventoryItemAdded?.Invoke();
-            GameMaster.Instance?.objective_ItemCollected?.Invoke(item.ItemId, item.Name);
+            //GameMaster.Instance?.gm_ItemAdded?.Invoke(InventoryType.Player, item.ItemId, item.Name);
         }
         else
         {
@@ -110,7 +109,7 @@ public class InventoryManager : MonoBehaviour
         if (playerInventory != null)
         {
             playerInventory.RemoveItem(item, quantity);
-            GameMaster.Instance?.gm_InventoryItemRemoved?.Invoke();
+            //GameMaster.Instance?.gm_ItemRemoved?.Invoke(InventoryType.Player, item.ItemId, item.Name);
         }
     }
 

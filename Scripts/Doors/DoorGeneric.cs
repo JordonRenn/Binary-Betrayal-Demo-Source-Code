@@ -64,6 +64,8 @@ public class DoorGeneric : Door
     #region Door Actions
     public override void Interact()
     {
+        GameMaster.Instance?.oe_InteractionEvent?.Invoke(this.objectID);
+        
         if (doorState == DoorState.Closed)
         {
             HandleDoorOpen();

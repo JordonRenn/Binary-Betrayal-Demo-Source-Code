@@ -43,7 +43,7 @@ public class SauceObjectEditor : Editor
         serializedObject.Update();
 
         // Object Properties section
-        EditorGUILayout.LabelField("Object Properties", EditorStyles.boldLabel);
+        EditorGUILayout.LabelField("Sauce Object Properties", EditorStyles.boldLabel);
         EditorGUILayout.Space(10);
         
         EditorGUILayout.PropertyField(objectID);

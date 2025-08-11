@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -22,6 +23,10 @@ public class GameMaster : MonoBehaviour
     public List<SauceObject> allTrackableSauceObjects = new List<SauceObject>();
     public GameObject playerObject; //reference assigned when player is instantiated
 
+    [SerializeField] private PlayerSettings playerSettings = new PlayerSettings();
+    private const string SETTINGS_KEY = "PlayerSettings";
+
+    #region Game Events
     //Player Object Instantiations
     [HideInInspector] public UnityEvent gm_PlayerSpawned;
     [HideInInspector] public UnityEvent gm_WeaponHudSpawned;
@@ -40,41 +45,90 @@ public class GameMaster : MonoBehaviour
     //Settings Events
     [HideInInspector] public UnityEvent gm_SettingsChanged;
 
-    //Inventory Events
-    [HideInInspector] public UnityEvent gm_InventoryMenuOpened;
-    [HideInInspector] public UnityEvent gm_InventoryMenuOpened_Container;
-    [HideInInspector] public UnityEvent gm_InventoryMenuOpened_NPC;
-    [HideInInspector] public UnityEvent gm_InventoryMenuClosed;
-    [HideInInspector] public UnityEvent gm_InventoryMenuClosed_Container;
-    [HideInInspector] public UnityEvent gm_InventoryMenuClosed_NPC;
-    [HideInInspector] public UnityEvent gm_InventoryItemAdded;
-    [HideInInspector] public UnityEvent gm_InventoryItemAdded_Container;
-    [HideInInspector] public UnityEvent gm_InventoryItemAdded_NPC;
-    [HideInInspector] public UnityEvent gm_InventoryItemRemoved;
-    [HideInInspector] public UnityEvent gm_InventoryItemRemoved_Container;
-    [HideInInspector] public UnityEvent gm_InventoryItemRemoved_NPC;
+    [HideInInspector] public UnityEvent<InventoryType> gm_InventoryOpened;
+
+    [HideInInspector] public UnityEvent<InventoryType> gm_InventoryClosed;
 
     // Dialogue Events
     [HideInInspector] public UnityEvent gm_DialogueStarted;
     [HideInInspector] public UnityEvent gm_DialogueEnded;
+    #endregion
 
-    // Objective Events
-    // <<string (ObjectId), string (context)>>
-    [HideInInspector] public UnityEvent<string, string> objective_DoorLocked; //invoked in DoorLockable
-    [HideInInspector] public UnityEvent<string, string> objective_DoorUnlocked; //invoked in DoorLockable
+    #region UI Events
+    [HideInInspector] public UnityEvent uie_HUDInitialized;
+
+    /// <summary>
+    /// Event triggered when the HUD is hidden.
+    /// Params: bool (isHidden)
+    /// </summary>
+    [HideInInspector] public UnityEvent<bool> uie_HUDHidden;
+    /// <summary>
+    /// Event triggered when the inventory is closed.
+    /// Params: bool (isClosed)
+    /// </summary>
+    [HideInInspector] public UnityEvent<bool> uie_InventoryClosed;
+    /// <summary>
+    /// Event triggered when the dialogue is closed.
+    /// Params: bool (isClosed)
+    /// </summary>
+    [HideInInspector] public UnityEvent<bool> uie_DialogueClosed;
+    /// <summary>
+    /// Event triggered when the pause menu is closed.
+    /// Params: bool (isClosed)
+    /// </summary>
+    [HideInInspector] public UnityEvent<bool> uie_PauseMenuClosed;
+    /// <summary>
+    /// Event triggered when the journal is closed.
+    /// Params: bool (isClosed)
+    /// </summary>
+    [HideInInspector] public UnityEvent<bool> uie_JournalClosed;
+    /// <summary>
+    /// Event triggered when the player stats menu is closed.
+    /// Params: bool (isClosed)
+    /// </summary>
+    [HideInInspector] public UnityEvent<bool> uie_PlayerStatsClosed;
+    #endregion
+
+    #region Objective Events
+    /// <summary>
+    /// Event triggered when an item is added to the inventory.
+    /// Parameters: InventoryType (inventory type), string (itemID), string (display name)
+    /// </summary>
+    [HideInInspector] public UnityEvent<InventoryType, string, string> oe_ItemAdded;
+    /// <summary>
+    /// Event triggered when an item is removed from the inventory.
+    /// Parameters: InventoryType (inventory type), string (itemID), string (display  name)
+    /// </summary>
+    [HideInInspector] public UnityEvent<InventoryType, string, string> oe_ItemRemoved;
+    /// <summary>
+    /// Event triggered when a specific dialogue is triggered.
+    /// Parameters: string (dialogueID)
+    /// </summary>
+    [HideInInspector] public UnityEvent<string> oe_TalkEvent; // when a specific DialogueID is triggered
+    /// <summary>
+    /// Event triggered when a door lock state changes.
+    /// Parameters: string (objectID), DoorLockState (lock state)
+    /// </summary>
+    [HideInInspector] public UnityEvent<string, DoorLockState> oe_DoorLockEvent; //invoked in DoorLockable
+    /// <summary>
+    /// Event triggered when a phone call is made.
+    /// Parameters: string (objectID), string (phone number), PhoneCallEvent (event type)
+    /// </summary>
+    [HideInInspector] public UnityEvent<string, string, PhoneCallEvent> oe_PhoneCallEvent;
+    [HideInInspector] public UnityEvent<string> oe_InteractionEvent;
+
+    /* [Obsolete()]
     [HideInInspector] public UnityEvent<string, string> objective_ItemUsed; //invoked in specific item classes
-    [HideInInspector] public UnityEvent<string, string> objective_InteractableInteracted; // invoked in FirstPersonInteraction
-    [HideInInspector] public UnityEvent<string, string> objective_ItemCollected; //should be invoked in Inventory system, not the scripts that use Inventory System
-    [HideInInspector] public UnityEvent<string, string> objective_ItemRemoved; //should be invoked in Inventory system, not the scripts that use Inventory System
+    [Obsolete()]
     [HideInInspector] public UnityEvent<string, string> objective_NPCTalkedTo;
-    [HideInInspector] public UnityEvent<string, string> objective_PhoneCallMade; // invoked in PS_Main
-    [HideInInspector] public UnityEvent<string, string> objective_PhoneCallAnswered; // invoked in PS_Main
+    [Obsolete()]
     [HideInInspector] public UnityEvent<string, string> objective_ExploredLocation;
-    [HideInInspector] public UnityEvent<string, string> objective_NPCKilled;
+    [Obsolete()]
+    [HideInInspector] public UnityEvent<string, string> objective_NPCKilled; */
+    #endregion
 
     //Settings Management
-    [SerializeField] private PlayerSettings playerSettings = new PlayerSettings();
-    private const string SETTINGS_KEY = "PlayerSettings";
+    
 
     void Awake() 
     {

@@ -10,17 +10,8 @@ public class PUI_Quest : PickUpItem
     [SerializeField] private ItemEffect_Quest effectType = ItemEffect_Quest.None;
     [SerializeField] private int effectValue = 1;
 
-    protected override void CreateItem()
+    protected override void ManuallyCreateItem()
     {
-        // Try to create from database first
-        if (ItemFactory.ItemExists(objectID))
-        {
-            item = ItemFactory.CreateItemFromDatabase(objectID, itemInventoryIcon);
-        }
-        else
-        {
-            // Fallback to manual creation if not in database
-            item = ItemFactory.CreateQuestItem(objectID, objectDisplayName, itemDescription, itemInventoryIcon, questType, questID);
-        }
+        item = ItemFactory.CreateQuestItem(objectID, objectDisplayName, itemDescription, itemInventoryIcon, questType, questID);
     }
 }

@@ -1,0 +1,10 @@
+{
+    "dialogueID": "container_locked_stillLocked",
+    "entries": [
+        {
+            "characterName": "Player",
+            "avatarPath": "john",
+            "message": "Todavía cerrado. Necesito la llave para abrirlo."
+        }
+    ]
+}

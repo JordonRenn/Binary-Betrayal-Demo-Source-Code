@@ -9,17 +9,8 @@ public class PUI_Medical : PickUpItem
     [SerializeField] private ItemEffect_Medical effectType = ItemEffect_Medical.Heal;
     [SerializeField] private int effectValue = 50;
 
-    protected override void CreateItem()
+    protected override void ManuallyCreateItem()
     {
-        // Try to create from database first
-        if (ItemFactory.ItemExists(objectID))
-        {
-            item = ItemFactory.CreateItemFromDatabase(objectID, itemInventoryIcon);
-        }
-        else
-        {
-            // Fallback to manual creation if not in database
-            item = ItemFactory.CreateMedicalItem(objectID, objectDisplayName, itemDescription, itemInventoryIcon, medicalType);
-        }
+        item = ItemFactory.CreateMedicalItem(objectID, objectDisplayName, itemDescription, itemInventoryIcon, medicalType);
     }
 }

@@ -1,0 +1,10 @@
+{
+    "dialogueID": "container_locked_hasKey_firstTime",
+    "entries": [
+        {
+            "characterName": "Player",
+            "avatarPath": "john",
+            "message": "Está asegurado, ¡pero tengo lo que necesito para abrirlo!"
+        }
+    ]
+}

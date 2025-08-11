@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class UI_Master : MonoBehaviour
@@ -85,6 +86,7 @@ public class UI_Master : MonoBehaviour
         });
     }
 
+    [Obsolete("Old ported method from UI_Master, update to use state switch")]
     private void ToggleInventory()
     {
         isInventoryOpen = !isInventoryOpen;
@@ -117,48 +119,61 @@ public class UI_Master : MonoBehaviour
     }
 
     #region Inventory
-    private void ShowInventory()
+    [Obsolete("Old ported method from UI_Master, update to use state switch")]
+    private void ShowInventory(InventoryType inventoryType = InventoryType.Player, IInventory inventory = null)
     {
         if (inventoryMenu == null) return;
+
+        GameMaster.Instance.gm_InventoryOpened.Invoke(inventoryType);
         
-        inventoryMenu.RefreshInventory();
-
-        GameMaster.Instance.gm_InventoryMenuOpened.Invoke();
-
         HideAllHUD();
-
         VolumeManager.Instance.SetVolume(VolumeType.PauseMenu);
-
         Time.timeScale = 0f;
-
         FPS_InputHandler.Instance.SetInputState(InputState.MenuNavigation);
 
+        if (inventoryType == InventoryType.Player)
+        {
+            IInventory playerInventory = null;
+
+            if (InventoryManager.Instance != null)
+            {
+                playerInventory = InventoryManager.Instance.GetPlayerInventory();
+            }
+
+            if (playerInventory == null)
+            {
+                playerInventory = new Inv_Player("player", "Player Inventory", 100);
+                Debug.LogWarning("No inventory found, generating empty inventory");
+            }
+
+            inventoryMenu.Initialize(playerInventory); //also calls RefreshInventory
+
+            FPS_InputHandler.Instance.inventoryMenuButtonTriggered.RemoveListener(ToggleInventory);
+            FPS_InputHandler.Instance.menu_CancelTriggered.AddListener(ToggleInventory);
+        }
+        else if (inventoryType == InventoryType.Container && inventory != null)
+        {
+            inventoryMenu.Initialize(inventory); //also calls RefreshInventory
+
+            FPS_InputHandler.Instance.inventoryMenuButtonTriggered.RemoveListener(ToggleInventory);
+            FPS_InputHandler.Instance.menu_CancelTriggered.AddListener(ToggleInventory);
+        }
+        else if (inventoryType == InventoryType.NPC && inventory != null)
+        {
+            inventoryMenu.Initialize(inventory); //also calls RefreshInventory
+
+            FPS_InputHandler.Instance.inventoryMenuButtonTriggered.RemoveListener(ToggleInventory);
+            FPS_InputHandler.Instance.menu_CancelTriggered.AddListener(ToggleInventory);
+        }
         inventoryMenu.gameObject.SetActive(true);
-
-        IInventory playerInventory = null;
-
-        if (InventoryManager.Instance != null)
-        {
-            playerInventory = InventoryManager.Instance.GetPlayerInventory();
-        }
-
-        if (playerInventory == null)
-        {
-            playerInventory = new Inv_Player("player", "Player Inventory", 100);
-            Debug.LogWarning("No inventory found, generating empty inventory");
-        }
-
-        inventoryMenu.Initialize(playerInventory);
-
-        FPS_InputHandler.Instance.inventoryMenuButtonTriggered.RemoveListener(ToggleInventory);
-        FPS_InputHandler.Instance.menu_CancelTriggered.AddListener(ToggleInventory);
     }
 
-    private void HideInventory()
+    [Obsolete("Old ported method from UI_Master, update to use state switch")]
+    private void HideInventory(InventoryType inventoryType = InventoryType.Player)
     {
         if (inventoryMenu == null) return;
 
-        GameMaster.Instance.gm_InventoryMenuClosed.Invoke();
+        GameMaster.Instance.gm_InventoryClosed.Invoke(inventoryType);
 
         inventoryMenu.gameObject.SetActive(false);
 

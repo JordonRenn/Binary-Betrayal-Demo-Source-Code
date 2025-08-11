@@ -13,8 +13,6 @@ using UnityEngine.UI;
 // Class has Custom Editor script ***
 public class SauceObject : MonoBehaviour
 {
-    [Header("Object Properties")]
-    [Space(10)]
     [SerializeField] public string objectID;
     [SerializeField] public string objectDisplayName;
 

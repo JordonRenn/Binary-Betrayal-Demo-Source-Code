@@ -1,0 +1,10 @@
+{
+    "dialogueID": "container_locked_keyNeeded_firstTime",
+    "entries": [
+        {
+            "characterName": "Player",
+            "avatarPath": "john",
+            "message": "C'est bien verrouillé. Je dois trouver la bonne clé."
+        }
+    ]
+}

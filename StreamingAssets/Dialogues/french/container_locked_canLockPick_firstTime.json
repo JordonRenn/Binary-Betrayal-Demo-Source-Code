@@ -1,0 +1,10 @@
+{
+    "dialogueID": "container_locked_canLockPick_firstTime",
+    "entries": [
+        {
+            "characterName": "Player",
+            "avatarPath": "john",
+            "message": "Verrouillé... mais ça ressemble à quelque chose que je peux crocheter."
+        }
+    ]
+}

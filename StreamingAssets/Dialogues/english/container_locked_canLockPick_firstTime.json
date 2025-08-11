@@ -1,0 +1,10 @@
+{
+    "dialogueID": "container_locked_canLockPick_firstTime",
+    "entries": [
+        {
+            "characterName": "Player",
+            "avatarPath": "john",
+            "message": "Locked... but this looks like something I can pick open."
+        }
+    ]
+}
