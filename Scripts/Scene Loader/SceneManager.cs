@@ -23,7 +23,6 @@ public class CustomSceneManager : MonoBehaviour
     [Header("Settings")]
     [Space(10)]
 
-    [SerializeField] float playerLoadDelay = 0.25f;
     [SerializeField] float fadeDuration = 1f;
     [SerializeField] GameObject fadeImgObj;
     [SerializeField] CanvasGroup fadeCanvasGroup;
@@ -183,7 +182,7 @@ public class CustomSceneManager : MonoBehaviour
 
         ContentLoader.Instance.LoadScene(SceneName.MainMenu);
 
-        FPS_InputHandler.Instance.SetInputState(InputState.MenuNavigation);
+        InputHandler.Instance.SetInputState(InputState.UI);
     }
 
     private IEnumerator ACTIVATESCENE_DEV1(string sceneName)
@@ -201,7 +200,7 @@ public class CustomSceneManager : MonoBehaviour
         ContentLoader.Instance.LoadScene(SceneName.Dev_1);
         Debug.Log($"CUSTOM SCENE MANAGER | Calling content loader to load content for scene: {sceneName}");
 
-        FPS_InputHandler.Instance.SetInputState(InputState.FirstPerson);
+        InputHandler.Instance.SetInputState(InputState.FirstPerson);
         Debug.Log("CUSTOM SCENE MANAGER | Calling ''PlayerSpawner'' to spawn the Player");
         PlayerSpawner.Instance.SpawnPlayer();
     }
@@ -220,7 +219,7 @@ public class CustomSceneManager : MonoBehaviour
         ContentLoader.Instance.LoadScene(SceneName.C01_03);
         Debug.Log($"CUSTOM SCENE MANAGER | Calling content loader to load content for scene: {sceneName}");
 
-        FPS_InputHandler.Instance.SetInputState(InputState.FirstPerson);
+        InputHandler.Instance.SetInputState(InputState.FirstPerson);
         Debug.Log("CUSTOM SCENE MANAGER | Calling ''PlayerSpawner'' to spawn the Player");
         PlayerSpawner.Instance.SpawnPlayer();
     }

@@ -23,7 +23,6 @@ public class DoorLockable : DoorGeneric
     [SerializeField] private bool isKeyRequired = false;
     [SerializeField] private string keyId = "";
     [SerializeField] private KeyType keyType = KeyType.Key;
-    private float unlockTime = 1f;
 
     [Header("Lock State")]
     [Space(10)]
@@ -131,7 +130,7 @@ public class DoorLockable : DoorGeneric
     public IEnumerator DoorLockDialogueSequence(LockedDoorDialogueVariation v)
     {
         // Lock input during dialogue to prevent interference
-        FPS_InputHandler.Instance.SetInputState(InputState.LockedInteraction);
+        InputHandler.Instance.SetInputState(InputState.Focus);
 
         switch (v)
         {
@@ -159,7 +158,7 @@ public class DoorLockable : DoorGeneric
 
             if (v == LockedDoorDialogueVariation.LockedHasKey)
             {
-                FPS_InputHandler.Instance.SetInputState(InputState.FirstPerson);
+                InputHandler.Instance.SetInputState(InputState.FirstPerson);
 
                 LockDoor(false);
                 HandleDoorOpen();
@@ -171,7 +170,7 @@ public class DoorLockable : DoorGeneric
             }
             else
             {
-                FPS_InputHandler.Instance.SetInputState(InputState.FirstPerson);
+                InputHandler.Instance.SetInputState(InputState.FirstPerson);
             }
         }
         GameMaster.Instance.gm_DialogueEnded.AddListener(OnDialogueEnded);

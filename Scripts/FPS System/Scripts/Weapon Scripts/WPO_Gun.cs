@@ -97,7 +97,7 @@ public class WPO_Gun : FPSS_WeaponSlotObject
             CalculateSpread(); //find a way to get this the hell out of the Update loop
         }
 
-        if (!FPS_InputHandler.Instance.FireInput) //seems jank but works, i guess..
+        if (!InputHandler.Instance.FireInput) //seems jank but works, i guess..
         {
             spreadIndex = 0;
         }

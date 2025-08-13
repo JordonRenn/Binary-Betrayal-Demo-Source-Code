@@ -206,9 +206,9 @@ public class GameMaster : MonoBehaviour
     private void ApplySettings()
     {
         // Notify any systems that need to update when settings change
-        if (FPS_InputHandler.Instance != null)
+        if (InputHandler.Instance != null)
         {
-            FPS_InputHandler.Instance.UpdateSensitivitySettings();
+            InputHandler.Instance.UpdateSensitivitySettings();
         }
 
         // Notify all listeners that settings have changed

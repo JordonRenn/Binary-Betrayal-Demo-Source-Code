@@ -4,6 +4,10 @@ using UnityEngine.UI;
 using DG.Tweening;
 using System.Linq;
 
+/* 
+Visibility controlled by HUD_Controller class
+ */
+
 public class NavCompass : MonoBehaviour
 {
     public static NavCompass _instance;
@@ -19,11 +23,11 @@ public class NavCompass : MonoBehaviour
         }
         private set => _instance = value;
     }
-    
+
     [SerializeField] private RawImage compassImg;
     [SerializeField] private GameObject iconPrefab;
     [SerializeField] private float updateFrequency = 0.1f; // Update every 0.1 seconds instead of every frame
-    
+
     private GameObject playerObject;
     //private Dictionary<Trackable, CompassIcon> activeIcons = new Dictionary<Trackable, CompassIcon>();
     private Dictionary<SauceObject, CompassIcon> activeIcons = new Dictionary<SauceObject, CompassIcon>();
@@ -67,7 +71,7 @@ public class NavCompass : MonoBehaviour
     {
         // Get all trackables that should be displayed
         var trackablesToShow = GetTrackablesInRange();
-        
+
         // Remove icons that are no longer needed
         var iconsToRemove = activeIcons.Keys.Where(t => t == null || t.gameObject == null || !trackablesToShow.Contains(t)).ToList();
         foreach (var trackable in iconsToRemove)
@@ -96,7 +100,7 @@ public class NavCompass : MonoBehaviour
             return new List<SauceObject>();
 
         Vector2 playerPos = new Vector2(playerObject.transform.position.x, playerObject.transform.position.z);
-        
+
         return GameMaster.Instance.allTrackableSauceObjects
             .Where(t => t != null && t.gameObject != null)
             .Where(t => Vector2.Distance(playerPos, t.position) <= t.nav_CompassDrawDistance)
@@ -109,7 +113,7 @@ public class NavCompass : MonoBehaviour
 
         GameObject iconObj = Instantiate(iconPrefab, compassImg.transform);
         CompassIcon icon = iconObj.GetComponent<CompassIcon>();
-        
+
         icon.Initialize(trackable);
         activeIcons[trackable] = icon;
 

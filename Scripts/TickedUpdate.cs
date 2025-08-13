@@ -8,7 +8,6 @@ public class TickedUpdateBehavior : MonoBehaviour
     private double tick =0;
 
     [SerializeField] private GameMaster gameMaster;
-    private bool initalized = false;
     
     protected virtual void Start()
     {

@@ -3,10 +3,14 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using UnityEngine.Events;
 
 #region Inventory Menu
 public class InventoryMenu : MonoBehaviour
 {
+    [SerializeField] private Canvas inventoryCanvas;
+    [SerializeField] private GameObject inventoryCanvasGameObject;
+
     [Header("Panel References")]
     [SerializeField] private GameObject itemTypePanel;     // Left panel
     [SerializeField] private GameObject itemListPanel;     // Middle panel
@@ -32,11 +36,16 @@ public class InventoryMenu : MonoBehaviour
     private ItemType currentType;
     private IItem currentItem;
 
+    public bool isOpen { get; private set; }
+    public UnityEvent OnOpen;
+    public UnityEvent OnClose;
+
     #region Initialization
     private void Start()
     {
         // Subscribe to inventory change events if you have any
         SetupLayoutGroups();
+        inventoryCanvasGameObject.SetActive(false);
     }
 
     private void SetupLayoutGroups()
@@ -348,15 +357,19 @@ public class InventoryMenu : MonoBehaviour
         itemWeightText.text = "";
     }
 
-    #region Helper Methods
-    public void OnMenuClose()
+    #region Public Methods
+    public void ShowInventory()
     {
-        GameMaster.Instance.gm_InventoryClosed.Invoke();
+        inventoryCanvasGameObject.SetActive(true);
+        OnOpen?.Invoke();
+        isOpen = true;
     }
 
-    public void OnMenuOpen()
+    public void HideInventory()
     {
-        GameMaster.Instance.gm_InventoryOpened.Invoke();
+        inventoryCanvasGameObject.SetActive(false);
+        OnClose?.Invoke();
+        isOpen = false;
     }
     #endregion
 }

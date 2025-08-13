@@ -11,7 +11,6 @@ public class PlayerSpawner : MonoBehaviour
     
     [SerializeField] private GameObject player;
     [SerializeField] private Transform spawnPoint;
-    float spawnDelay = 0.1f;
 
     void Awake()
     {

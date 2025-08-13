@@ -41,6 +41,11 @@ public class HUD_Controller : MonoBehaviour
 
     public void HideAllHUD(bool hide)
     {
+        // Remove any existing listeners to prevent duplicates
+        he_WeaponHidden.RemoveAllListeners();
+        he_CompassHidden.RemoveAllListeners();
+        he_ReticleHidden.RemoveAllListeners();
+
         he_WeaponHidden.AddListener((hidden) =>
         {
             hud_weapon_Hidden = hidden;
@@ -93,10 +98,14 @@ public class HUD_Controller : MonoBehaviour
     public void HideCompass(bool hide)
     {
         //hud_compass.Hide(hide); // (should) invokes "he_CompassHidden"
+        // Temporarily invoke the event directly since compass hide is not implemented
+        he_CompassHidden?.Invoke(hide);
     }
 
     public void HideReticle(bool hide)
     {
         //hud_reticle.Hide(hide); // (should) invokes "he_ReticleHidden"
+        // Temporarily invoke the event directly since reticle hide is not implemented
+        he_ReticleHidden?.Invoke(hide);
     }
 }

@@ -20,7 +20,7 @@ using FMODUnity;
 public class DialogueBox : MonoBehaviour
 {
     public static DialogueBox Instance { get; private set; }
-    private FPS_InputHandler input;
+    private InputHandler input;
 
     [SerializeField] private GameObject dialogueBoxUI;
     [SerializeField] private TMP_Text characterNameText;
@@ -51,7 +51,7 @@ public class DialogueBox : MonoBehaviour
     void Start()
     {
         dialogueLoader = DialogueLoader.Instance;
-        input = FPS_InputHandler.Instance;
+        input = InputHandler.Instance;
 
         if (dialogueBoxUI == null || characterNameText == null ||
             characterMessageText == null || avatarImage == null)
@@ -140,7 +140,7 @@ public class DialogueBox : MonoBehaviour
             .OnComplete(() =>
             {
                 //SBGDebug.LogInfo("Dialogue box opened with animation.", "DialogueBox");
-                input.lint_InteractTriggered.AddListener(NextDialogue);
+                input.OnFocus_InteractInput.AddListener(NextDialogue);
                 dialogueBoxOpened.Invoke();
                 if (GameMaster.Instance != null)
                 {
@@ -168,17 +168,14 @@ public class DialogueBox : MonoBehaviour
             .SetEase(Ease.InBack)
             .OnComplete(() =>
             {
-                input.lint_InteractTriggered.RemoveListener(NextDialogue);
+                input.OnFocus_InteractInput.RemoveListener(NextDialogue);
                 dialogueBoxUI.SetActive(false);
                 characterNameText.text = string.Empty;
                 characterMessageText.text = string.Empty;
                 avatarImage.sprite = null;
                 //SBGDebug.LogInfo("Dialogue box closed with animation.", "DialogueBox");
                 dialogueBoxClosed.Invoke();
-                if (GameMaster.Instance != null)
-                {
-                    GameMaster.Instance.gm_DialogueEnded.Invoke();
-                }
+                GameMaster.Instance?.gm_DialogueEnded?.Invoke();
             });
 
         yield return new WaitForSeconds(0.5f);

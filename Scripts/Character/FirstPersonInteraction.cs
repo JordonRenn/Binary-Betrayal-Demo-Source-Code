@@ -36,7 +36,7 @@ public class FirstPersonInteraction : MonoBehaviour
 
     [SerializeField] float interactionCooldown = 0.25f;
     [SerializeField] float reachDistance = 3f;
-    private FPS_InputHandler input;
+    private InputHandler input;
     private TMP_Text objctInfoText;
     private float lastInteractionTime = 0f;
 
@@ -55,7 +55,7 @@ public class FirstPersonInteraction : MonoBehaviour
 
     void Start()
     {
-        input = FPS_InputHandler.Instance;
+        input = InputHandler.Instance;
         objctInfoText = FPSS_ReticleSystem.Instance.objectInfoText;
     }
 

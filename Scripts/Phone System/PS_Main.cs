@@ -43,7 +43,7 @@ public class PS_Main : SauceObject
     [Header("Dev Options")]
     [Space(10)]
 
-    [SerializeField] private float initDelay = 0.1f;
+    //[SerializeField] private float initDelay = 0.1f;
     [SerializeField] private float initTimeout = 10f;
 
     //substates
@@ -130,11 +130,11 @@ public class PS_Main : SauceObject
 
         FPSS_Pool.Instance.currentActiveWPO.SetCurrentWeaponActive(false);
         characterMovement.moveDisabled = true; //needed to stop Update loop from running so controller can be disabled so player can teleport
-        FPS_InputHandler.Instance.SetInputState(InputState.LockedInteraction);
-        FPS_InputHandler.Instance.lint_CancelTriggered.AddListener(DeactivePhone);
+        InputHandler.Instance.SetInputState(InputState.Focus);
+        InputHandler.Instance.OnFocus_CancelInput.AddListener(DeactivePhone);
         interactCollider.enabled = false;
 
-        UI_Master.Instance.HideAllHUD();
+        UIManager.Instance.HideAllHUD(true);
 
         yield return new WaitForSeconds(0.2f);
 
@@ -166,7 +166,7 @@ public class PS_Main : SauceObject
     private IEnumerator DeactivePhoneRoutine()
     {
         c_Keypad.enabled = false;
-        FPS_InputHandler.Instance.lint_CancelTriggered.RemoveListener(DeactivePhone);
+        InputHandler.Instance.OnFocus_CancelInput.RemoveListener(DeactivePhone);
 
         // Only play hangup animation and sound if we haven't already
         if (usingPhone)
@@ -201,9 +201,9 @@ public class PS_Main : SauceObject
 
         // Re-enable movement and input
         characterMovement.moveDisabled = false;
-        FPS_InputHandler.Instance.SetInputState(InputState.FirstPerson);
+        InputHandler.Instance.SetInputState(InputState.FirstPerson);
 
-        UI_Master.Instance.ShowAllHUD();
+        UIManager.Instance.HideAllHUD(false);
     }
 
     private void SetPhoneState(bool active)

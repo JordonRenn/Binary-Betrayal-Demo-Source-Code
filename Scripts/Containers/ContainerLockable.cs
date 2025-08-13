@@ -105,7 +105,7 @@ public class ContainerLockable : ContainerBase
     public IEnumerator ContainerLockDialogueSequence(LockedDoorDialogueVariation v)
     {
         // Lock input during dialogue to prevent interference
-        FPS_InputHandler.Instance.SetInputState(InputState.LockedInteraction);
+        InputHandler.Instance.SetInputState(InputState.Focus);
 
         switch (v)
         {
@@ -133,7 +133,7 @@ public class ContainerLockable : ContainerBase
 
             if (v == LockedDoorDialogueVariation.LockedHasKey)
             {
-                FPS_InputHandler.Instance.SetInputState(InputState.FirstPerson);
+                InputHandler.Instance.SetInputState(InputState.FirstPerson);
 
                 HandleContainerOpen();
             }
@@ -143,7 +143,7 @@ public class ContainerLockable : ContainerBase
             }
             else
             {
-                FPS_InputHandler.Instance.SetInputState(InputState.FirstPerson);
+                InputHandler.Instance.SetInputState(InputState.FirstPerson);
             }
         }
         GameMaster.Instance.gm_DialogueEnded.AddListener(OnDialogueEnded);

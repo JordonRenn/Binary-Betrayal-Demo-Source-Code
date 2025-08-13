@@ -1,36 +1,27 @@
 using UnityEngine;
 using UnityEngine.Events;
 using System.Collections;
-
-
-// intended replacement for UI_Master
-// uses state machine to manage UI states
-// brings in Pause Menu as a child object to simplify management
-// allow for more seemless transitions between states
-
-// POSSIBLE ABSTRACTION / EXTRACTION:
-// move Post Process volume management here? would consolidate a lot of logic
-// possible to bring Time Scale here to bring more consistency to time-related effects
+using System.Threading.Tasks;
 
 /* 
-
 UNITY OBJECT HIERARCHY
 UI_Master
 ├── HUD_Controller
 │   ├── FPSS_WeaponHUD
 │   ├── NavCompass
 │   └── FPSS_ReticleSystem
-├── PauseMenu
-│   └── SettingsMenu (**possibility to abstract settings menu into own class/object**)
-├── InventoryMenu
 ├── DialogueBox
+├── PauseMenu
+├── InventoryMenu
 ├── JournalMenu (**needs to be developed**)
 ├── PlayerStats (**needs to be developed**)
-└── LockPickingQuickTimeEvent (**possibility to be moved into this system**)
 
 INFO:
 - DialogueBox is not handled by state machine as it can display over other menus
-
+- Can pause game while in first person
+    - While paused, you can enter the Inventory, Journal or Player Stats Menu
+    - Pressing cancel while in any of these menus will return to First Person
+- You can enter the Inventory, Journal or Player Stats Menu from First Person as well
  */
 
 #region UI_Master
@@ -50,14 +41,6 @@ public class UIManager : MonoBehaviour
         private set => _instance = value;
     }
 
-    // moved to HUD_Controller
-    /* [Header("HUD Elements")]
-    [Space(10)]
-
-    [SerializeField] private GameObject[] HUD_Status_Elements;
-    [SerializeField] private GameObject[] HUD_Weapon_Elements;
-    [SerializeField] private GameObject[] HUD_Utility_Elements; */
-
     private HUD_Controller hudController;
     private DialogueBox dialogueBox;
     private InventoryMenu inventoryMenu;
@@ -67,22 +50,22 @@ public class UIManager : MonoBehaviour
     public UIMasterState defaultState { get; private set; } = UIMasterState.FirstPerson;
     public UIMasterState currentState { get; private set; }
     public UIMasterState previousState { get; private set; }
-    private UIMasterState queuedState;
+    private UIMasterState queuedState = UIMasterState.None;
     private bool alwaysHideHUD;
 
     /// <summary>
-    /// Event triggered when the UI state finishes changing.
+    /// Event triggered when the UI state has completely changed. Provides (fromState, toState).
     /// </summary>
-    [HideInInspector] public UnityEvent<UIMasterState> onUIStateChanged;
+    [HideInInspector] public UnityEvent<UIMasterState, UIMasterState> onUIStateChanged;
 
-    private const string SETTINGS_KEY = "PlayerSettings";
+    // FOR FUTURE UPDATE FOR MULTI-LANGUAGE SUPPORT
+    /* private const string SETTINGS_KEY = "PlayerSettings";
     private const string PATH_LABEL_DATA = "StreamingAssets/MenuLabelData/";
-
     private const string FILE_LABEL_DATA_HUD = "labelData_HUD.json";
     private const string FILE_LABEL_DATA_INVENTORY = "labelData_InventoryMenu.json";
     private const string FILE_LABEL_DATA_PAUSE = "labelData_PauseMenu.json";
     private const string FILE_LABEL_DATA_JOURNAL = "labelData_JournalMenu.json";
-    private const string FILE_LABEL_DATA_PLAYER_STATS = "labelData_PlayerStatsMenu.json";
+    private const string FILE_LABEL_DATA_PLAYER_STATS = "labelData_PlayerStatsMenu.json"; */
 
     public enum UIMasterState
     {
@@ -104,9 +87,16 @@ public class UIManager : MonoBehaviour
         // persist accross scenes
         if (this.InitializeSingleton(ref _instance, true) == this)
         {
+            SBGDebug.LogInfo("UIManager initialized as singleton", "UIManager | Awake");
+
             InitializeComponents();
             SubscribeToEvents();
-            SetState(defaultState);
+            currentState = defaultState;
+        }
+        else
+        {
+            SBGDebug.LogError("UIManager instance already exists, destroying duplicate.", "UIManager | Awake");
+            Destroy(gameObject);
         }
     }
 
@@ -115,123 +105,151 @@ public class UIManager : MonoBehaviour
         // MENUS
         pauseMenu = GetComponentInChildren<PauseMenu>();
         inventoryMenu = GetComponentInChildren<InventoryMenu>(true);
-        journalMenu = GetComponentInChildren<JournalMenu>(true);
+        //journalMenu = GetComponentInChildren<JournalMenu>(true);
         // HUD
         hudController = GetComponentInChildren<HUD_Controller>(true);
         // DIALOGUE
         dialogueBox = GetComponentInChildren<DialogueBox>(true);
 
-        if (pauseMenu == null) SBGDebug.LogError("PauseMenu not found as child component", "UI_Master");
-        if (inventoryMenu == null) SBGDebug.LogError("InventoryMenu not found as child component", "UI_Master");
-        if (journalMenu == null) SBGDebug.LogError("JournalMenu not found as child component", "UI_Master");
-        if (hudController == null) SBGDebug.LogError("HUD_Controller not found as child component", "UI_Master");
-        if (dialogueBox == null) SBGDebug.LogError("DialogueBox not found as child component", "UI_Master");
+        if (pauseMenu == null) SBGDebug.LogError("PauseMenu not found as child component", "UI_Master | InitializeComponents");
+        if (inventoryMenu == null) SBGDebug.LogError("InventoryMenu not found as child component", "UI_Master | InitializeComponents");
+        if (hudController == null) SBGDebug.LogError("HUD_Controller not found as child component", "UI_Master | InitializeComponents");
+        if (dialogueBox == null) SBGDebug.LogError("DialogueBox not found as child component", "UI_Master | InitializeComponents");
     }
 
     private void SubscribeToEvents()
     {
-        FPS_InputHandler.Instance?.inventoryMenuButtonTriggered?.AddListener(() => SetState(UIMasterState.Inventory));
-        FPS_InputHandler.Instance?.pauseMenuButtonTriggered?.AddListener(() => SetState(UIMasterState.Pause));
-        //FPS_InputHandler.Instance?.journalButtonTriggered?.AddListener(() => SetState(UIMasterState.Journal));
-
-        if (FPS_InputHandler.Instance == null) SBGDebug.LogError("FPS_InputHandler instance is null, unable to subscribe to events", "UI_Master");
+        if (InputHandler.Instance == null)
+        {
+            SBGDebug.LogError("InputHandler instance is null, unable to subscribe to events", "UI_Master | SubscribeToEvents");
+            return;
+        }
+        else
+        {
+            SBGDebug.LogInfo("InputHandler instance found, subscribing to events", "UI_Master | SubscribeToEvents");
+            InputHandler.Instance?.OnInventoryMenuInput?.AddListener(() => SetState(UIMasterState.Inventory));
+            InputHandler.Instance?.OnPauseMenuInput?.AddListener(() => SetState(UIMasterState.Pause));
+            InputHandler.Instance?.OnPlayerMenuInput?.AddListener(() => SetState(UIMasterState.PlayerStats));
+        }
     }
     #endregion
 
     #region State Management
 
-    public void SetState(UIMasterState newState)
+    public async void SetState(UIMasterState newState)
     {
-        if (newState == currentState) return;
+        SBGDebug.LogInfo($"Setting UI state to: {newState}", "UIManager | SetState");
+
+        if (newState == currentState)
+        {
+            SBGDebug.LogWarning($"Requested State is same as Current State: {currentState}", "UIManager | SetState");
+            return;
+        }
+
+        // Validate state transition
+        if (newState == UIMasterState.ExitingState || newState == UIMasterState.EnteringState)
+        {
+            SBGDebug.LogError($"Cannot manually set state to '{newState}'. This is used internally.", "UIManager | SetState");
+            return;
+        }
 
         if (currentState == UIMasterState.ExitingState)
         {
-            // simply replace the queued state with the new state and continue exiting
+            SBGDebug.LogWarning($"State change requested while exiting current state. Queuing new state: {newState}", "UIManager | SetState");
             queuedState = newState;
             return;
         }
 
         if (currentState == UIMasterState.EnteringState)
         {
-            // do nothing
+            SBGDebug.LogWarning($"State change requested while entering current state. Doing nothing.", "UIManager | SetState");
             return;
         }
 
-        StartCoroutine(ChangeStateRoutine(newState));
+        SBGDebug.LogInfo($"Changing UI state from {currentState} to {newState}", "UIManager | SetState");
+        await PerformStateChangeAsync(newState);
     }
 
-    private IEnumerator ChangeStateRoutine(UIMasterState newState)
+    private async Task PerformStateChangeAsync(UIMasterState newState)
     {
-        queuedState = newState;
+        SBGDebug.LogInfo($"Starting State Change | {currentState} to {newState}", "UIManager | PerformStateChangeAsync");
+
+        var fromState = currentState;
         previousState = currentState;
+        queuedState = newState;
 
-        // exit current state
-        bool stateExited = false;
-        onUIStateChanged.AddListener(OnOldStateExited);
-        ExitState();
-        void OnOldStateExited(UIMasterState exitedState)
-        {
-            onUIStateChanged.RemoveListener(OnOldStateExited);
-            stateExited = true;
-        }
+        // Exit current state
+        SBGDebug.LogInfo("About to exit current state", "UIManager | PerformStateChangeAsync");
+        await ExitStateAsync();
+        SBGDebug.LogInfo("Finished exiting current state", "UIManager | PerformStateChangeAsync");
 
-        //wait until after "onUIStateChanged" has been invoked
-        yield return new WaitUntil(() => stateExited);
+        // Enter new state
+        SBGDebug.LogInfo("About to enter new state", "UIManager | PerformStateChangeAsync");
+        await EnterStateAsync(queuedState);
+        SBGDebug.LogInfo("Finished entering new state", "UIManager | PerformStateChangeAsync");
 
-        // enter new state
-        bool stateEntered = false;
-        onUIStateChanged.AddListener(OnNewStateEntered);
-        EnterState(queuedState);
-        void OnNewStateEntered(UIMasterState enteredState)
-        {
-            onUIStateChanged.RemoveListener(OnNewStateEntered);
-            queuedState = UIMasterState.None;
-            currentState = enteredState;
-            stateEntered = true;
+        // Update state and notify
+        currentState = queuedState;
+        queuedState = UIMasterState.None;
 
-        }
-
-        //wait until after "onUIStateChanged" has been invoked, again
-        yield return new WaitUntil(() => stateEntered);
+        // Notify external systems that state change is complete
+        onUIStateChanged?.Invoke(fromState, currentState);
+        
+        SBGDebug.LogInfo($"State change complete: {fromState} -> {currentState}", "UIManager | PerformStateChangeAsync");
     }
 
-    
-
-    private void EnterState(UIMasterState state)
+    private async Task EnterStateAsync(UIMasterState state)
     {
-        currentState = UIMasterState.EnteringState;
+        SBGDebug.LogInfo($"Entering state: {state}", "UIManager | EnterStateAsync");
 
         switch (state)
         {
             case UIMasterState.FirstPerson:
-                ShowFirstPerson();
-                //FPS_InputHandler.Instance.SetInputState(InputState.FirstPerson);
+                await ShowFirstPersonAsync();
                 break;
             case UIMasterState.Inventory:
-                ShowInventory();
-                //FPS_InputHandler.Instance.SetInputState(InputState.MenuNavigation);
+                await ShowInventoryAsync();
                 break;
             case UIMasterState.Pause:
-                ShowPauseMenu();
-                //FPS_InputHandler.Instance.SetInputState(InputState.MenuNavigation);
+                await ShowPauseMenuAsync();
+                break;
+            default:
+                SBGDebug.LogError($"EnterStateAsync: Unhandled state '{state}'", "UIManager");
+                // Fallback to FirstPerson state
+                queuedState = UIMasterState.FirstPerson;
+                await ShowFirstPersonAsync();
                 break;
         }
     }
 
-    private void ExitState()
+    private async Task ExitStateAsync()
     {
-        currentState = UIMasterState.ExitingState;
+        // Validate previousState before using it
+        if (previousState == UIMasterState.None || 
+            previousState == UIMasterState.ExitingState || 
+            previousState == UIMasterState.EnteringState)
+        {
+            SBGDebug.LogWarning($"Invalid previousState '{previousState}' in ExitStateAsync. Skipping exit.", "UIManager | ExitStateAsync");
+            return;
+        }
+
+        SBGDebug.LogInfo($"Exiting state: {previousState}", "UIManager | ExitStateAsync");
 
         switch (previousState)
         {
-            case UIMasterState.FirstPerson: //Coming from FirstPerson View
-                HideFirstPerson();
+            case UIMasterState.FirstPerson:
+                SBGDebug.LogInfo("Starting to hide FirstPerson state", "UIManager | ExitStateAsync");
+                await HideFirstPersonAsync();
+                SBGDebug.LogInfo("Finished hiding FirstPerson state", "UIManager | ExitStateAsync");
                 break;
-            case UIMasterState.Inventory: // coming from Inventory Menu
-                HideInventory();
+            case UIMasterState.Inventory:
+                await HideInventoryAsync();
                 break;
-            case UIMasterState.Pause: // coming from Pause Menu
-                HidePauseMenu();
+            case UIMasterState.Pause:
+                await HidePauseMenuAsync();
+                break;
+            default:
+                SBGDebug.LogError($"ExitStateAsync: Unhandled previous state '{previousState}'", "UIManager | ExitStateAsync");
                 break;
         }
     }
@@ -240,121 +258,158 @@ public class UIManager : MonoBehaviour
     // ported methods
 
     #region First Person
-    private void ShowFirstPerson()
-    {
-        FPS_InputHandler.Instance.SetInputState(InputState.FirstPerson);
-        StartCoroutine(ShowFirstPersonRoutine());
-    }
-
-    private void HideFirstPerson()
-    {
-        StartCoroutine(HideFirstPersonRoutine());
-    }
-
-    private IEnumerator ShowFirstPersonRoutine()
+    private async Task ShowFirstPersonAsync()
     {
         hudController.HideAllHUD(false);
-        yield return new WaitUntil(() => !hudController.hud_Hidden);
 
-        FPS_InputHandler.Instance.SetInputState(InputState.FirstPerson);
+        // Wait until HUD is shown
+        while (hudController.hud_Hidden)
+        {
+            await Task.Yield(); // Yield control back to Unity's main thread
+        }
+
+        InputHandler.Instance.SetInputState(InputState.FirstPerson);
         StopGamePlay(false);
-
-        onUIStateChanged?.Invoke(UIMasterState.FirstPerson);
     }
 
-    private IEnumerator HideFirstPersonRoutine()
+    private async Task HideFirstPersonAsync()
     {
+        SBGDebug.LogInfo("HideFirstPersonAsync started", "UIManager | HideFirstPersonAsync");
         hudController.HideAllHUD(true);
-        yield return new WaitUntil(() => hudController.hud_Hidden);
+        
+        SBGDebug.LogInfo($"Initial hud_Hidden state: {hudController.hud_Hidden}", "UIManager | HideFirstPersonAsync");
+        
+        // Wait until HUD is hidden
+        while (!hudController.hud_Hidden)
+        {
+            await Task.Yield(); // Yield control back to Unity's main thread
+        }
+        
+        SBGDebug.LogInfo("HUD is now hidden, HideFirstPersonAsync complete", "UIManager | HideFirstPersonAsync");
+    }
+    #endregion
 
-        onUIStateChanged?.Invoke(previousState);
+    #region Dialogue
+    // does not use state machine as it can overlay during any state. 
+    public void DisplayDialogue(string dialogueID)
+    {
+        if (dialogueBox == null) return;
+        if (DialogueLoader.Instance == null) return;
+        DialogueLoader.Instance?.LoadDialogue(dialogueID);
+
+        StartCoroutine(DisplayDialogueRoutine());
+    }
+
+    private IEnumerator DisplayDialogueRoutine()
+    {
+        var previousInputState = InputHandler.Instance.currentState;
+        bool dialogueFinished = false;
+        dialogueBox.dialogueBoxClosed.AddListener(() => dialogueFinished = true);
+        InputHandler.Instance.SetInputState(InputState.Focus);
+        dialogueBox.OpenDialogueBox();
+
+        yield return new WaitUntil(() => dialogueFinished);
+
+        InputHandler.Instance.SetInputState(previousInputState);
     }
     #endregion
 
     #region Inventory Menu
     /// <summary>
-    /// you must Initialize the inventory menu before showing it.
+    /// You must Initialize the inventory menu before showing it.
     /// </summary>
-    private void ShowInventory()
+    private async Task ShowInventoryAsync()
     {
         if (inventoryMenu == null) return;
-        FPS_InputHandler.Instance.SetInputState(InputState.MenuNavigation);
-        StartCoroutine(ShowInventoryRoutine());
-    }
 
-    private void HideInventory()
-    {
-        if (inventoryMenu == null) return;
-        StartCoroutine(HideInventoryRoutine());
-    }
-
-
-    private IEnumerator ShowInventoryRoutine()
-    {
+        // Set input state first
+        InputHandler.Instance.SetInputState(InputState.UI);
+        
         // handle subscriptions
-        FPS_InputHandler.Instance.inventoryMenuButtonTriggered.RemoveListener(() => ShowInventory());
-        FPS_InputHandler.Instance.menu_CancelTriggered.AddListener(() => SetState(UIMasterState.FirstPerson));
+        InputHandler.Instance.OnInventoryMenuInput.RemoveListener(() => SetState(UIMasterState.Inventory));
+        InputHandler.Instance.OnUI_CancelInput.AddListener(() => SetState(UIMasterState.FirstPerson));
 
         StopGamePlay(true);
         hudController.HideAllHUD(true);
-        yield return new WaitUntil(() => hudController.hud_Hidden);
+        inventoryMenu.ShowInventory();
 
-        inventoryMenu.gameObject.SetActive(true);
+        // Wait until inventory is open
+        while (!inventoryMenu.isOpen)
+        {
+            await Task.Yield();
+        }
 
-        inventoryMenu.OnMenuOpen();
-        onUIStateChanged?.Invoke(UIMasterState.Inventory);
+        GameMaster.Instance?.gm_InventoryOpened?.Invoke();
     }
 
-    private IEnumerator HideInventoryRoutine()
+    private async Task HideInventoryAsync()
     {
-        if (inventoryMenu == null) yield break;
+        if (inventoryMenu == null) return;
 
-        FPS_InputHandler.Instance.menu_CancelTriggered.RemoveListener(() => SetState(UIMasterState.FirstPerson));
+        // Remove cancel listener
+        InputHandler.Instance?.OnUI_CancelInput?.RemoveListener(() => SetState(UIMasterState.FirstPerson));
 
-        inventoryMenu.gameObject.SetActive(false);
+        inventoryMenu.HideInventory();
+        hudController.HideAllHUD(false);
+
+        // Wait until inventory is closed
+        while (inventoryMenu.isOpen)
+        {
+            await Task.Yield();
+        }
 
         StopGamePlay(false);
-        hudController.HideAllHUD(false);
-        yield return new WaitUntil(() => !hudController.hud_Hidden);
 
-        inventoryMenu.OnMenuClose();
-        onUIStateChanged?.Invoke(previousState);
+        // Restore inventory button listener
+        InputHandler.Instance?.OnInventoryMenuInput?.AddListener(() => SetState(UIMasterState.Inventory));
+
+        GameMaster.Instance?.gm_InventoryClosed?.Invoke();
     }
     #endregion
 
     #region Pause Menu
-    private void ShowPauseMenu()
+    private async Task ShowPauseMenuAsync()
     {
         if (pauseMenu == null) return;
+        
+        InputHandler.Instance?.OnPauseMenuInput?.RemoveListener(() => SetState(UIMasterState.Pause));
 
-        FPS_InputHandler.Instance.SetInputState(InputState.MenuNavigation);
+        // Set input state
+        InputHandler.Instance?.SetInputState(InputState.UI);
+        
+        pauseMenu.ShowPauseMenu();
+        GameMaster.Instance?.gm_GamePaused?.Invoke();
 
-        StartCoroutine(ShowPauseMenuRoutine());
-    }
-
-    private void HidePauseMenu()
-    {
-        if (pauseMenu == null) return;
-
-        StartCoroutine(HidePauseMenuRoutine());
-    }
-
-    private IEnumerator ShowPauseMenuRoutine()
-    {
-        FPS_InputHandler.Instance.menu_CancelTriggered.AddListener(() => SetState(UIMasterState.FirstPerson));
+        // Add cancel listener
+        InputHandler.Instance?.OnUI_CancelInput?.AddListener(() => SetState(UIMasterState.FirstPerson));
 
         StopGamePlay(true);
 
-        return null;
+        // Pause menu doesn't have async show/hide, so we just yield once
+        await Task.Yield();
     }
 
-    private IEnumerator HidePauseMenuRoutine()
+    private async Task HidePauseMenuAsync()
     {
-        FPS_InputHandler.Instance.menu_CancelTriggered.RemoveListener(() => SetState(UIMasterState.FirstPerson));
+        if (pauseMenu == null) return;
 
-        return null;
+        // Remove cancel listener
+        InputHandler.Instance?.OnUI_CancelInput?.RemoveListener(() => SetState(UIMasterState.FirstPerson));
+
+        pauseMenu.HidePauseMenu();
+
+        // Restore pause button listener
+        InputHandler.Instance?.OnPauseMenuInput?.AddListener(() => SetState(UIMasterState.Pause));
+
+        // Save settings when exiting pause
+        GameMaster.Instance.SaveAndApplySettings();
+        GameMaster.Instance.gm_GameUnpaused.Invoke();
+
+        StopGamePlay(false);
+        
+        // Pause menu doesn't have async show/hide, so we just yield once
+        await Task.Yield();
     }
-
     #endregion
 
     #region Helper Methods

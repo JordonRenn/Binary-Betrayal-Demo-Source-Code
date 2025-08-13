@@ -60,11 +60,11 @@ public class NotificationSystem : MonoBehaviour
     [SerializeField] private EventReference sfx_Error; //FMOD event reference
     [SerializeField] [Range(0, 100)]float sfx_Volume = 80; //sfx volume
 
-    [Header("Console Options")]
+    /* [Header("Console Options")]
     [Space(10)]
 
     [SerializeField] private TMP_InputField consoleInput; //console input field
-    private bool isConsoleInputOpen = false; //is the input showing?
+    private bool isConsoleInputOpen = false; //is the input showing? */
 
     enum NotificationDisplayState
     {

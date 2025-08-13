@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
-using System.Collections.Generic;
 using FMODUnity;
 using DG.Tweening;
 
@@ -56,7 +55,6 @@ public class LockPickingQuickTimeEvent : MonoBehaviour // : SauceObject
     [SerializeField] private EventReference sfx_QTE_Fail;
 
     //dev options
-    bool initialized = false;
     int unlockedPins;
     private bool isInQTE1Phase = false;
     private bool isInQTE2Phase = false;
@@ -76,7 +74,6 @@ public class LockPickingQuickTimeEvent : MonoBehaviour // : SauceObject
     {
         SetQTESpeedValues(); // Initialize QTE_Speed
         SetSuccessArea(difficulty);
-        initialized = true;
     }
 
     void SetQTESpeedValues()
@@ -135,8 +132,8 @@ public class LockPickingQuickTimeEvent : MonoBehaviour // : SauceObject
     {
         if (door.doorLockState != DoorLockState.Unlocked && isPickable)
         {
-            //prevInputState = FPS_InputHandler.Instance.currentState;
-            FPS_InputHandler.Instance.SetInputState(InputState.LockedInteraction);
+            //prevInputState = InputHandler.Instance.currentState;
+            InputHandler.Instance.SetInputState(InputState.Focus);
 
             StartCoroutine(OpenLockGUI());
         }
@@ -167,8 +164,10 @@ public class LockPickingQuickTimeEvent : MonoBehaviour // : SauceObject
     private IEnumerator OpenLockGUI()
     {
         VolumeManager.Instance.SetVolume(VolumeType.LockPick);
-        if (UI_Master.Instance != null) { UI_Master.Instance.HideAllHUD(); }
-        if (FPSS_Pool.Instance != null) { FPSS_Pool.Instance.currentActiveWPO.SetCurrentWeaponActive(false); }
+        if (UIManager.Instance != null) UIManager.Instance.HideAllHUD(true);
+        if (FPSS_Pool.Instance != null) FPSS_Pool.Instance.currentActiveWPO.SetCurrentWeaponActive(false);
+
+        InputHandler.Instance.SetInputState(InputState.Focus);
 
         isPicking = true;
 
@@ -188,8 +187,8 @@ public class LockPickingQuickTimeEvent : MonoBehaviour // : SauceObject
         }
         canvasGroup.alpha = 1;
 
-        FPS_InputHandler.Instance.lint_InteractTriggered.AddListener(StartInitialQTE1);
-        FPS_InputHandler.Instance.lint_CancelTriggered.AddListener(ResetLockPicking);
+        InputHandler.Instance.OnFocus_InteractInput.AddListener(StartInitialQTE1);
+        InputHandler.Instance.OnFocus_CancelInput.AddListener(ResetLockPicking);
     }
 
     private void StartPickWiggle()
@@ -208,7 +207,7 @@ public class LockPickingQuickTimeEvent : MonoBehaviour // : SauceObject
     void StartInitialQTE1()
     {
         // Remove initial listener
-        FPS_InputHandler.Instance.lint_InteractTriggered.RemoveListener(StartInitialQTE1);
+        InputHandler.Instance.OnFocus_InteractInput.RemoveListener(StartInitialQTE1);
         QTE_1();
     }
 
@@ -221,9 +220,9 @@ public class LockPickingQuickTimeEvent : MonoBehaviour // : SauceObject
 
     void CleanupEventListeners()
     {
-        FPS_InputHandler.Instance.lint_InteractTriggered.RemoveListener(StartInitialQTE1);
-        FPS_InputHandler.Instance.lint_InteractTriggered.RemoveListener(QTE_2_Check);
-        FPS_InputHandler.Instance.lint_InteractReleased.RemoveListener(QTE_1_Check);
+        InputHandler.Instance.OnFocus_InteractInput.RemoveListener(StartInitialQTE1);
+        InputHandler.Instance.OnFocus_InteractInput.RemoveListener(QTE_2_Check);
+        InputHandler.Instance.OffFocus_InteractInput.RemoveListener(QTE_1_Check);
     }
 
     void ResetLockPicking()
@@ -272,9 +271,9 @@ public class LockPickingQuickTimeEvent : MonoBehaviour // : SauceObject
 
         VolumeManager.Instance.SetVolume(VolumeType.Default);
 
-        if (FPSS_Pool.Instance != null) { FPSS_Pool.Instance.currentActiveWPO.SetCurrentWeaponActive(true); }
-        if (UI_Master.Instance != null) { UI_Master.Instance.ShowAllHUD(); }
-        FPS_InputHandler.Instance.SetInputState(InputState.FirstPerson);
+        if (FPSS_Pool.Instance != null) FPSS_Pool.Instance.currentActiveWPO.SetCurrentWeaponActive(true);
+        if (UIManager.Instance != null) UIManager.Instance.HideAllHUD(false);
+        InputHandler.Instance.SetInputState(InputState.FirstPerson);
     }
 
     #region QTEs
@@ -332,13 +331,13 @@ public class LockPickingQuickTimeEvent : MonoBehaviour // : SauceObject
         isInQTE1Phase = true;
         isInQTE2Phase = false;
 
-        FPS_InputHandler.Instance.lint_InteractReleased.AddListener(QTE_1_Check);
+        InputHandler.Instance.OffFocus_InteractInput.AddListener(QTE_1_Check);
     }
 
     void QTE_1_Check()
     {
         isInQTE1Phase = false;
-        FPS_InputHandler.Instance.lint_InteractReleased.RemoveListener(QTE_1_Check);
+        InputHandler.Instance.OffFocus_InteractInput.RemoveListener(QTE_1_Check);
 
         float currentRotation = continuousAngle % 360f;
         if (currentRotation < 0) currentRotation += 360f;
@@ -358,12 +357,12 @@ public class LockPickingQuickTimeEvent : MonoBehaviour // : SauceObject
     void QTE_2()
     {
         isInQTE2Phase = true;
-        FPS_InputHandler.Instance.lint_InteractTriggered.AddListener(QTE_2_Check);
+        InputHandler.Instance.OnFocus_InteractInput.AddListener(QTE_2_Check);
     }
 
     void QTE_2_Check()
     {
-        FPS_InputHandler.Instance.lint_InteractTriggered.RemoveListener(QTE_2_Check);
+        InputHandler.Instance.OnFocus_InteractInput.RemoveListener(QTE_2_Check);
 
         float currentRotation;
         currentRotation = continuousAngle % 360f;

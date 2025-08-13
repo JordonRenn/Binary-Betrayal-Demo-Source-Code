@@ -69,12 +69,6 @@ public class FPSS_Pool : MonoBehaviour
     [SerializeField] WeaponSlot defaultActiveSlot;              //TEMP FOR DEV/DEBUG --- CREATE SYSTEM TO SELECT EXTERNALLY
     [HideInInspector] public WeaponSlot currentWeaponSlot;
 
-    [Header("DEV OPTIONS")]
-    [Space(10)]
-
-    [SerializeField] private float initDelay = 0.2f;
-    [SerializeField] private float initTimeout = 10f;
-
     // Events
     [Header("Weapon Events")]
     [Space(10)]
@@ -189,15 +183,17 @@ public class FPSS_Pool : MonoBehaviour
     #region Event Subcription
     void SubscribeToEvents()
     {
-        FPS_InputHandler.Instance.fireTriggered.AddListener(Fire);
-        FPS_InputHandler.Instance.reloadTriggered.AddListener(Reload);
+        InputHandler.Instance.OnFireInput.AddListener(Fire);
+        InputHandler.Instance.OnReloadInput.AddListener(Reload);
 
-        FPS_InputHandler.Instance.activatePrimaryTriggered.AddListener(SelectPrimary);
-        FPS_InputHandler.Instance.activateSecondaryTriggered.AddListener(SelectSecondary);
-        //FPS_InputHandler.Instance.weaponSlotKnifeTriggered.AddListener(SelectMelee);          //update input handler before implementation
-        //FPS_InputHandler.Instance.weaponSlotKnifeTriggered.AddListener(SelectUtility);        //update input handler before implementation
+        InputHandler.Instance.OnSlot1Input.AddListener(SelectPrimary);
+        InputHandler.Instance.OnSlot2Input.AddListener(SelectSecondary);
+        InputHandler.Instance.OnMeleeInput.AddListener(SelectMelee);        
+        // probably will be renamed to Tools or something different idfk 
+        //InputHandler.Instance.OnEquipmentInput.AddListener(SelectUtility);
+        //InputHandler.Instance.OnUnarmedInput.AddListener(SelectUnarmed);
 
-        FPS_InputHandler.Instance.swapTriggered.AddListener(SwapPrimarySecondary);
+        InputHandler.Instance.OnSwapInput.AddListener(SwapPrimarySecondary);
 
         onWeaponSwitchStarted.AddListener((slot) =>
         {

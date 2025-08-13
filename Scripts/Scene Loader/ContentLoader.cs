@@ -27,7 +27,7 @@ public class ContentLoader : MonoBehaviour
     [SerializeField] private GameObject GlobalVolume;
     [SerializeField] private GameObject UI_Master;
     [SerializeField] private GameObject NotificationSystem;
-    [SerializeField] private GameObject PauseMenu;
+    //[SerializeField] private GameObject PauseMenu;
 
     private bool freshGame = true;
 
@@ -55,8 +55,8 @@ public class ContentLoader : MonoBehaviour
             Debug.LogError($"{nameof(ContentLoader)}: UI Master prefab is missing!");
         if (!NotificationSystem)
             Debug.LogError($"{nameof(ContentLoader)}: Notification System prefab is missing!");
-        if (!PauseMenu)
-            Debug.LogError($"{nameof(ContentLoader)}: Pause Menu prefab is missing!");
+        /* if (!PauseMenu)
+            Debug.LogError($"{nameof(ContentLoader)}: Pause Menu prefab is missing!"); */
     }
 
     private void Awake()
@@ -129,8 +129,8 @@ public class ContentLoader : MonoBehaviour
         Instantiate(NotificationSystem);
         Debug.Log($"CONTENT LOADER | NotificationSystem Instantiated");
 
-        Instantiate(PauseMenu);
-        Debug.Log($"CONTENT LOADER | PauseMenu Instantiated");
+        /* Instantiate(PauseMenu);
+        Debug.Log($"CONTENT LOADER | PauseMenu Instantiated"); */
     }
 
     private IEnumerator LOAD_SAMPLESCENE()

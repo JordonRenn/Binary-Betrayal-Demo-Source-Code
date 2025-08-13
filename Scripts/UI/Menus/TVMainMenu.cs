@@ -31,20 +31,18 @@ public class TVMainMenu : MonoBehaviour
         videoPlayer.clip = clip_Main;
         videoPlayer.Play();
 
-        FPS_InputHandler.Instance.menu_MovePerformed.AddListener(OnMenuMove);
+        InputHandler.Instance.OnUI_NavigateInput.AddListener(OnMenuMove);
         InputSystem.onAnyButtonPress.CallOnce(ctrl => EnterMenu());
     }
 
     void OnDestroy()
     {
-        FPS_InputHandler.Instance.menu_MovePerformed.RemoveListener(OnMenuMove);
+        InputHandler.Instance.OnUI_NavigateInput.RemoveListener(OnMenuMove);
     }
 
-    private void OnMenuMove()
+    private void OnMenuMove(Vector2 input)
     {
         if (isTransitioning) return;
-
-        Vector2 input = FPS_InputHandler.Instance.Menu_MoveInput;
 
         // Simplified directional check
         if (Mathf.Abs(input.x) > 0.5f)
@@ -69,13 +67,16 @@ public class TVMainMenu : MonoBehaviour
         switch (currentState)
         {
             case MainMenuState.Play:
+                SBGDebug.LogInfo("Starting game...", "TVMainMenu | OnMenuSelection");
                 StartCoroutine(TransitionToState(MainMenuState.StartingGame));
                 break;
             case MainMenuState.Settings:
-                //
+                SBGDebug.LogInfo("Opening settings...", "TVMainMenu | OnMenuSelection");
+                StartCoroutine(TransitionToState(MainMenuState.Settings));
                 break;
             case MainMenuState.Credits:
-                //
+                SBGDebug.LogInfo("Opening credits...", "TVMainMenu | OnMenuSelection");
+                StartCoroutine(TransitionToState(MainMenuState.Credits));
                 break;
             case MainMenuState.StartingGame:
                 //too late bozo
@@ -121,19 +122,24 @@ public class TVMainMenu : MonoBehaviour
         switch (newState)
         {
             case MainMenuState.Main:
+                SBGDebug.LogInfo("Transitioning to Main Menu...", "TVMainMenu | TransitionToState");
                 videoPlayer.clip = clip_Main;
                 InputSystem.onEvent += (eventPtr, device) => EnterMenu();
                 break;
             case MainMenuState.Play:
+                SBGDebug.LogInfo("Transitioning to Play Menu...", "TVMainMenu | TransitionToState");    
                 videoPlayer.clip = clip_Play;
                 break;
             case MainMenuState.Settings:
+                SBGDebug.LogInfo("Transitioning to Settings Menu...", "TVMainMenu | TransitionToState");
                 videoPlayer.clip = clip_Settings;
                 break;
             case MainMenuState.Credits:
+                SBGDebug.LogInfo("Transitioning to Credits Menu...", "TVMainMenu | TransitionToState");
                 videoPlayer.clip = clip_Credits;
                 break;
             case MainMenuState.StartingGame:
+                SBGDebug.LogInfo("Transitioning to Starting Game...", "TVMainMenu | TransitionToState");
                 videoPlayer.clip = clip_StaticLong;
                 yield return new WaitForSeconds((float)clip_StaticLong.length * 0.5f);
                 CustomSceneManager.Instance.LoadScene(SceneName.Dev_1);
@@ -151,15 +157,14 @@ public class TVMainMenu : MonoBehaviour
         {
             StartCoroutine(TransitionToState(MainMenuState.Play));
 
-            ////////menu_ClickTriggered
-            FPS_InputHandler.Instance.menu_ClickTriggered.AddListener(OnMenuSelction);
-            FPS_InputHandler.Instance.menu_CancelTriggered.AddListener(OnMenuCancellation);
+            InputHandler.Instance.OnUI_ClickInput.AddListener(OnMenuSelction);
+            InputHandler.Instance.OnUI_CancelInput.AddListener(OnMenuCancellation);
         }
     }
 
     void OnDestroyMenu()
     {
-        FPS_InputHandler.Instance.menu_ClickTriggered.RemoveListener(OnMenuSelction);
-        FPS_InputHandler.Instance.menu_CancelTriggered.RemoveListener(OnMenuCancellation);
+        InputHandler.Instance.OnUI_ClickInput.RemoveListener(OnMenuSelction);
+        InputHandler.Instance.OnUI_CancelInput.RemoveListener(OnMenuCancellation);
     }
 }

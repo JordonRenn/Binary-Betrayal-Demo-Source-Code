@@ -4,7 +4,9 @@ using TMPro;
 
 public class PauseMenu : MonoBehaviour
 {
-    private FPS_InputHandler input;
+    private InputHandler input;
+
+    public bool isOpen { get; private set; }
 
     [Header("Main Menus")]
     [SerializeField] private Canvas pauseMenuCanvas;
@@ -55,9 +57,9 @@ public class PauseMenu : MonoBehaviour
 
     private void Start()
     {
-        input = FPS_InputHandler.Instance;
+        input = InputHandler.Instance;
 
-        input.pauseMenuButtonTriggered.AddListener(TogglePauseMenu);
+        //input.pauseMenuButtonTriggered.AddListener(TogglePauseMenu);
         SetupButtonListeners();
 
         pauseMenuCanvas.gameObject.SetActive(false);
@@ -74,32 +76,14 @@ public class PauseMenu : MonoBehaviour
         btnImg_Credits = b_Credits.GetComponent<Image>();
     }
 
-    private void TogglePauseMenu()
+    public void ShowPauseMenu()
     {
-        isPaused = !isPaused;
-
-        if (isPaused)
-            ShowPauseMenu();
-        else
-            HidePauseMenu();
-    }
-
-    private void ShowPauseMenu()
-    {
-        GameMaster.Instance.gm_GamePaused.Invoke();
         pMenuState = PauseMenuState.Main;
         sMenuState = SettingsMenuState.NotDisplayed;
 
-        UI_Master.Instance.HideAllHUD();
-        VolumeManager.Instance.SetVolume(VolumeType.PauseMenu);
-        Time.timeScale = 0f;
-
-        input.pauseMenuButtonTriggered.RemoveListener(TogglePauseMenu);
-        input.menu_CancelTriggered.AddListener(TogglePauseMenu);
-        input.SetInputState(InputState.MenuNavigation);
-
         pauseMenuCanvas.gameObject.SetActive(true);
         settingsMenuCanvas.gameObject.SetActive(false);
+        isOpen = true;
     }
 
     public void HidePauseMenu()
@@ -107,22 +91,12 @@ public class PauseMenu : MonoBehaviour
         pMenuState = PauseMenuState.NotDisplayed;
         sMenuState = SettingsMenuState.NotDisplayed;
 
-        input.pauseMenuButtonTriggered.AddListener(TogglePauseMenu);
-        input.menu_CancelTriggered.RemoveListener(TogglePauseMenu);
-        input.SetInputState(InputState.FirstPerson);
-
         pauseMenuCanvas.gameObject.SetActive(false);
         settingsMenuCanvas.gameObject.SetActive(false);
-
-        UI_Master.Instance.ShowAllHUD();
-        VolumeManager.Instance.SetVolume(VolumeType.Default);
-        Time.timeScale = 1f;
-
-        // Save settings when exiting pause
-        GameMaster.Instance.SaveAndApplySettings();
-        GameMaster.Instance.gm_GameUnpaused.Invoke();
+        isOpen = false;
     }
 
+    #region Settings Menu
     // ---- Settings Menu Logic ----
     private void ToggleSettingsMenu()
     {
@@ -199,7 +173,7 @@ public class PauseMenu : MonoBehaviour
     // ---- Button Listeners Setup ----
     private void SetupButtonListeners()
     {
-        b_Resume.onClick.AddListener(TogglePauseMenu);
+        b_Resume.onClick.AddListener(() => UIManager.Instance.SetState(UIManager.Instance.previousState)); // maybe works like it should?
         b_Settings.onClick.AddListener(ToggleSettingsMenu);
         b_Quit.onClick.AddListener(QuitGame);
 
@@ -258,4 +232,5 @@ public class PauseMenu : MonoBehaviour
         t_InvertY.SetIsOnWithoutNotify(settings.invertYAxis);
         d_Language.SetValueWithoutNotify((int)settings.language);
     }
+    #endregion
 }

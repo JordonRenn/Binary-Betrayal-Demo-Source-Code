@@ -97,7 +97,7 @@ public class FirstPersonCamController : MonoBehaviour
     {
         if (!initialized || isOverridden) { return; }
 
-        lookInput = FPS_InputHandler.Instance.LookInput;
+        lookInput = InputHandler.Instance.LookInput;
 
         // Direct mouse-to-view conversion, scaled by sensitivity and deltaTime
         yRotation += lookInput.x * sensitivityX * Time.deltaTime;

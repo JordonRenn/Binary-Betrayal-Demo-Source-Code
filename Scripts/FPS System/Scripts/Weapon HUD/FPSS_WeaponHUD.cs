@@ -35,7 +35,7 @@ public class FPSS_WeaponHUD : MonoBehaviour
     private WPO_Gun primaryWeaponComponent;
     private WPO_Gun secondaryWeaponComponent;
 
-    private bool isHidden = false;
+    //private bool isHidden = false;
 
 #if UNITY_EDITOR
     private void OnValidate()

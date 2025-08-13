@@ -79,12 +79,12 @@ public class CharacterMovement : MonoBehaviour
 
     //
 
-    private Vector3 moveDirection;
+    //private Vector3 moveDirection;
 	private Vector3 moveDirectionNorm;
 	private Vector3 playerVelocity;
 	Vector3 wishdir;
 	Vector3 vec;
-    private float previousMouseX = 0f; // For tracking mouse movement
+    //private float previousMouseX = 0f; // For tracking mouse movement
     private float moveX;
     private float moveZ;
 
@@ -137,7 +137,7 @@ public class CharacterMovement : MonoBehaviour
 
 	void SubscribeToEvents()
     {
-        FPS_InputHandler.Instance.jumpTriggered.AddListener(Jump);
+        InputHandler.Instance.OnJumpInput.AddListener(Jump);
     }
 
     void Update()
@@ -257,7 +257,7 @@ public class CharacterMovement : MonoBehaviour
 
 		SetMovementDir();
 
-		wishdir = new Vector3(FPS_InputHandler.Instance.MoveInput.x, 0, FPS_InputHandler.Instance.MoveInput.y);
+		wishdir = new Vector3(InputHandler.Instance.MoveInput.x, 0, InputHandler.Instance.MoveInput.y);
 
 		wishdir = transform.TransformDirection(wishdir);
 		
@@ -265,7 +265,7 @@ public class CharacterMovement : MonoBehaviour
 		moveDirectionNorm = wishdir;
 
 		wishspeed = wishdir.magnitude;
-		wishspeed *= moveSpeed * (FPS_InputHandler.Instance.SlowWalkInput ? slowWalkSpeedMultiplier : 1.0f);
+		wishspeed *= moveSpeed * (InputHandler.Instance.SlowWalkInput ? slowWalkSpeedMultiplier : 1.0f);
 
 		Accelerate(wishdir, wishspeed, runAcceleration);
 
@@ -314,23 +314,23 @@ public class CharacterMovement : MonoBehaviour
 		SetMovementDir();
 
         // Get mouse movement delta from the input system and make it frame-rate independent
-        float mouseDelta = FPS_InputHandler.Instance.LookInput.x;
+        float mouseDelta = InputHandler.Instance.LookInput.x;
         float frameIndependentDelta = mouseDelta * Time.fixedDeltaTime * 60f; // Normalize to 60fps feel
 
-		wishdir = new Vector3(FPS_InputHandler.Instance.MoveInput.x, 0, FPS_InputHandler.Instance.MoveInput.y);
+		wishdir = new Vector3(InputHandler.Instance.MoveInput.x, 0, InputHandler.Instance.MoveInput.y);
 
 		wishdir = transform.TransformDirection(wishdir);
 
         // Apply mouse movement influence when strafing
-        if (FPS_InputHandler.Instance.MoveInput.x != 0 && Mathf.Abs(mouseDelta) > 0.1f)
+        if (InputHandler.Instance.MoveInput.x != 0 && Mathf.Abs(mouseDelta) > 0.1f)
         {
             // Adjust direction based on mouse movement - strafe in the direction you're looking
-            float mouseInfluence = Mathf.Sign(FPS_InputHandler.Instance.MoveInput.x) * frameIndependentDelta * airControl * airStrafeInfluence; // Configurable scale factor
+            float mouseInfluence = Mathf.Sign(InputHandler.Instance.MoveInput.x) * frameIndependentDelta * airControl * airStrafeInfluence; // Configurable scale factor
             wishdir = Quaternion.Euler(0, mouseInfluence, 0) * wishdir;
         }
 
 		wishspeed = wishdir.magnitude;
-		wishspeed *= moveSpeed * (FPS_InputHandler.Instance.SlowWalkInput ? slowWalkSpeedMultiplier : 1.0f);
+		wishspeed *= moveSpeed * (InputHandler.Instance.SlowWalkInput ? slowWalkSpeedMultiplier : 1.0f);
 
 		wishdir.Normalize();
 		moveDirectionNorm = wishdir;
@@ -343,7 +343,7 @@ public class CharacterMovement : MonoBehaviour
 			accel = airAcceleration;
 
 		// If the player is ONLY strafing left or right
-		if (FPS_InputHandler.Instance.MoveInput.x == 0 && FPS_InputHandler.Instance.MoveInput.y != 0)
+		if (InputHandler.Instance.MoveInput.x == 0 && InputHandler.Instance.MoveInput.y != 0)
 		{
 			if (wishspeed > sideStrafeSpeed)
 				wishspeed = sideStrafeSpeed;
@@ -368,7 +368,7 @@ public class CharacterMovement : MonoBehaviour
 		void AirControl(Vector3 wishdir, float wishspeed)
 		{
 			// Can't control movement if not moving forward or backward
-			if (FPS_InputHandler.Instance.MoveInput.x == 0 || wishspeed == 0)
+			if (InputHandler.Instance.MoveInput.x == 0 || wishspeed == 0)
 				return;
 
 			zspeed = playerVelocity.y;
@@ -415,10 +415,10 @@ public class CharacterMovement : MonoBehaviour
 
     public void SetMovementDir()
 	{
-		// Replace old Input system with new input system through FPS_InputHandler
+		// Replace old Input system with new input system through InputHandler
 		// Previous code: x = Input.GetAxis("Horizontal"); z = Input.GetAxis("Vertical");
-		moveX = FPS_InputHandler.Instance.MoveInput.x;
-		moveZ = FPS_InputHandler.Instance.MoveInput.y;
+		moveX = InputHandler.Instance.MoveInput.x;
+		moveZ = InputHandler.Instance.MoveInput.y;
 	}
 
     void GroundCheck()

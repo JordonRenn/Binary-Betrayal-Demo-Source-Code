@@ -2,10 +2,11 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using FMODUnity;
 using FMOD.Studio;
+using System;
 
 public class PS_Keypad : MonoBehaviour
 {
-    private FPS_InputHandler input;
+    private InputHandler input;
 
     [SerializeField] private PS_Main c_PhoneMain;
     [SerializeField] private Collider phoneHook;
@@ -34,14 +35,37 @@ public class PS_Keypad : MonoBehaviour
 
     void Start()
     {
-        input = FPS_InputHandler.Instance;
+        input = InputHandler.Instance;
 
-        input.lint_ClickTriggered.AddListener(OnMouseClick);
+        input.OnFocus_ClickInput.AddListener(OnMouseClick);
     }
 
-    void Update()
+    private void SubscribeToNumpadEvents()
     {
-        //
+        InputHandler.Instance.OnFocus_Num0Input.AddListener(() => AddDigit("0"));
+        InputHandler.Instance.OnFocus_Num1Input.AddListener(() => AddDigit("1"));
+        InputHandler.Instance.OnFocus_Num2Input.AddListener(() => AddDigit("2"));
+        InputHandler.Instance.OnFocus_Num3Input.AddListener(() => AddDigit("3"));
+        InputHandler.Instance.OnFocus_Num4Input.AddListener(() => AddDigit("4"));
+        InputHandler.Instance.OnFocus_Num5Input.AddListener(() => AddDigit("5"));
+        InputHandler.Instance.OnFocus_Num6Input.AddListener(() => AddDigit("6"));
+        InputHandler.Instance.OnFocus_Num7Input.AddListener(() => AddDigit("7"));
+        InputHandler.Instance.OnFocus_Num8Input.AddListener(() => AddDigit("8"));
+        InputHandler.Instance.OnFocus_Num9Input.AddListener(() => AddDigit("9"));
+    }
+
+    private void UnsubscribeFromNumpadEvents()
+    {
+        InputHandler.Instance.OnFocus_Num0Input.RemoveListener(() => AddDigit("0"));
+        InputHandler.Instance.OnFocus_Num1Input.RemoveListener(() => AddDigit("1"));
+        InputHandler.Instance.OnFocus_Num2Input.RemoveListener(() => AddDigit("2"));
+        InputHandler.Instance.OnFocus_Num3Input.RemoveListener(() => AddDigit("3"));
+        InputHandler.Instance.OnFocus_Num4Input.RemoveListener(() => AddDigit("4"));
+        InputHandler.Instance.OnFocus_Num5Input.RemoveListener(() => AddDigit("5"));
+        InputHandler.Instance.OnFocus_Num6Input.RemoveListener(() => AddDigit("6"));
+        InputHandler.Instance.OnFocus_Num7Input.RemoveListener(() => AddDigit("7"));
+        InputHandler.Instance.OnFocus_Num8Input.RemoveListener(() => AddDigit("8"));
+        InputHandler.Instance.OnFocus_Num9Input.RemoveListener(() => AddDigit("9"));
     }
 
     private void OnMouseClick()
@@ -191,10 +215,14 @@ public class PS_Keypad : MonoBehaviour
         dialSoundInstance.set3DAttributes(RuntimeUtils.To3DAttributes(gameObject.transform));
         dialSoundInstance.start();
         dialTonePlaying = true;
+        
+        SubscribeToNumpadEvents();
     }
 
     private void OnDisable()
     {
+        UnsubscribeFromNumpadEvents();
+
         if (dialTonePlaying)
         {
             dialSoundInstance.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
