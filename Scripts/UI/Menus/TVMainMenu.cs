@@ -31,13 +31,31 @@ public class TVMainMenu : MonoBehaviour
         videoPlayer.clip = clip_Main;
         videoPlayer.Play();
 
-        InputHandler.Instance.OnUI_NavigateInput.AddListener(OnMenuMove);
+        // Wait for InputHandler to be available before subscribing to events
+        StartCoroutine(WaitForInputHandler());
         InputSystem.onAnyButtonPress.CallOnce(ctrl => EnterMenu());
+    }
+
+    private IEnumerator WaitForInputHandler()
+    {
+        // Wait until InputHandler is available
+        while (InputHandler.Instance == null)
+        {
+            SBGDebug.LogInfo("Waiting for InputHandler to be available...", "TVMainMenu | WaitForInputHandler");
+            yield return null;
+        }
+        
+        SBGDebug.LogInfo("InputHandler is now available, proceeding with menu setup...", "TVMainMenu | WaitForInputHandler");
+        // Now safely subscribe to events
+        InputHandler.Instance.OnUI_NavigateInput.AddListener(OnMenuMove);
     }
 
     void OnDestroy()
     {
-        InputHandler.Instance.OnUI_NavigateInput.RemoveListener(OnMenuMove);
+        if (InputHandler.Instance != null)
+        {
+            InputHandler.Instance.OnUI_NavigateInput.RemoveListener(OnMenuMove);
+        }
     }
 
     private void OnMenuMove(Vector2 input)
@@ -124,7 +142,7 @@ public class TVMainMenu : MonoBehaviour
             case MainMenuState.Main:
                 SBGDebug.LogInfo("Transitioning to Main Menu...", "TVMainMenu | TransitionToState");
                 videoPlayer.clip = clip_Main;
-                InputSystem.onEvent += (eventPtr, device) => EnterMenu();
+                InputSystem.onAnyButtonPress.CallOnce(ctrl => EnterMenu());
                 break;
             case MainMenuState.Play:
                 SBGDebug.LogInfo("Transitioning to Play Menu...", "TVMainMenu | TransitionToState");    
@@ -153,18 +171,42 @@ public class TVMainMenu : MonoBehaviour
 
     void EnterMenu()
     {
+        SBGDebug.LogInfo("Entering Main Menu...", "TVMainMenu | EnterMenu");
+
         if (currentState == MainMenuState.Main)
         {
+
             StartCoroutine(TransitionToState(MainMenuState.Play));
 
-            InputHandler.Instance.OnUI_ClickInput.AddListener(OnMenuSelction);
-            InputHandler.Instance.OnUI_CancelInput.AddListener(OnMenuCancellation);
+            InputHandler.Instance?.OnUI_ClickInput?.AddListener(OnMenuSelction);
+            InputHandler.Instance?.OnUI_InteractInput?.AddListener(OnMenuSelction);
+            InputHandler.Instance?.OnUI_CancelInput?.AddListener(OnMenuCancellation);
+
+            if (InputHandler.Instance == null)
+            {
+                SBGDebug.LogWarning("InputHandler instance is null", "TVMainMenu | EnterMenu");
+            }
+
+            if (InputHandler.Instance?.OnUI_CancelInput == null || InputHandler.Instance?.OnUI_InteractInput == null)
+            {
+                SBGDebug.LogWarning("One or more InputHandler actions are null... Cannot subscribe to events", "TVMainMenu | EnterMenu");
+            }
         }
     }
 
     void OnDestroyMenu()
     {
-        InputHandler.Instance.OnUI_ClickInput.RemoveListener(OnMenuSelction);
-        InputHandler.Instance.OnUI_CancelInput.RemoveListener(OnMenuCancellation);
+        InputHandler.Instance?.OnUI_ClickInput?.RemoveListener(OnMenuSelction);
+        InputHandler.Instance?.OnUI_CancelInput?.RemoveListener(OnMenuCancellation);
+
+        if (InputHandler.Instance == null)
+        {
+            SBGDebug.LogWarning("InputHandler instance is null", "TVMainMenu | OnDestroyMenu");
+        }
+
+        if (InputHandler.Instance?.OnUI_CancelInput == null || InputHandler.Instance?.OnUI_InteractInput == null)
+        {
+            SBGDebug.LogWarning("One or more InputHandler actions are null... Cannot unsubscribe from events", "TVMainMenu | OnDestroyMenu");
+        }
     }
 }

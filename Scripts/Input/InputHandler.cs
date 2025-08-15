@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
@@ -56,7 +55,7 @@ public class InputHandler : MonoBehaviour
     // FIRST PERSON ACTION NAME REFS
     private const string fp_an_move = "Move";
     private const string fp_an_look = "Look";
-    private const string fp_an_slowWalk = "SlowWalk";
+    private const string fp_an_slowWalk = "Slow Walk";
     private const string fp_an_crouch = "Crouch";
     private const string fp_an_jump = "Jump";
     private const string fp_an_interact = "Interact";
@@ -105,6 +104,7 @@ public class InputHandler : MonoBehaviour
     private const string ui_an_rightClick = "RightClick";
     private const string ui_an_middleClick = "MiddleClick";
     private const string ui_an_scroll = "ScrollWheel";
+    private const string ui_an_interact = "Interact";
     #endregion
 
     #region Input Actions
@@ -160,6 +160,7 @@ public class InputHandler : MonoBehaviour
     private InputAction ui_rightClickAction;
     private InputAction ui_middleClickAction;
     private InputAction ui_scrollAction;
+    private InputAction ui_interactAction;
     #endregion
 
     #region Public Values
@@ -215,6 +216,7 @@ public class InputHandler : MonoBehaviour
     public bool UI_RightClickInput { get; private set; }
     public bool UI_MiddleClickInput { get; private set; }
     public Vector2 UI_ScrollInput { get; private set; }
+    public bool UI_InteractInput { get; private set; }
     #endregion
 
     #region Unity Events
@@ -278,6 +280,7 @@ public class InputHandler : MonoBehaviour
     [HideInInspector] public UnityEvent OnUI_RightClickInput = new UnityEvent();
     [HideInInspector] public UnityEvent OnUI_MiddleClickInput = new UnityEvent();
     [HideInInspector] public UnityEvent<Vector2> OnUI_ScrollInput = new UnityEvent<Vector2>();
+    [HideInInspector] public UnityEvent OnUI_InteractInput = new UnityEvent();
     #endregion
 
     public InputState currentState { get; private set; }
@@ -285,13 +288,16 @@ public class InputHandler : MonoBehaviour
     #region Initialization
     void Awake()
     {
-        if (this.InitializeSingleton(ref _instance, true) == this)
+        if (this.InitializeSingleton(ref _instance, true) != this)
         {
-            if (inputActionAsset == null)
-            {
-                Debug.LogError($"{nameof(InputHandler)}: Required Input Action Asset is missing!");
-                return;
-            }
+            // This is a duplicate instance, it will be destroyed
+            return;
+        }
+
+        if (inputActionAsset == null)
+        {
+            Debug.LogError($"{nameof(InputHandler)}: Required Input Action Asset is missing!");
+            return;
         }
 
         InputActionMap actionMap_FirstPerson = inputActionAsset.FindActionMap("FirstPerson");
@@ -351,6 +357,7 @@ public class InputHandler : MonoBehaviour
         ui_rightClickAction = actionMap_UI.FindAction(ui_an_rightClick);
         ui_middleClickAction = actionMap_UI.FindAction(ui_an_middleClick);
         ui_scrollAction = actionMap_UI.FindAction(ui_an_scroll);
+        ui_interactAction = actionMap_UI.FindAction(ui_an_interact);
 
         //UpdateSensitivitySettings();
         RegisterInputActions();
@@ -571,6 +578,10 @@ public class InputHandler : MonoBehaviour
             OnUI_ScrollInput.Invoke(UI_ScrollInput);
         };
         ui_scrollAction.canceled += context => UI_ScrollInput = Vector2.zero;
+
+        ui_interactAction.started += context => OnUI_InteractInput.Invoke();
+        ui_interactAction.performed += context => UI_InteractInput = true;
+        ui_interactAction.canceled += context => UI_InteractInput = false;
 
     }
     #endregion

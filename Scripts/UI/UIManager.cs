@@ -136,10 +136,14 @@ public class UIManager : MonoBehaviour
 
     #region State Management
 
+    // Flag to track if a state change is in progress
+    private bool isChangingState = false;
+
     public async void SetState(UIMasterState newState)
     {
         SBGDebug.LogInfo($"Setting UI state to: {newState}", "UIManager | SetState");
 
+        // Ignore repeated requests for the same state
         if (newState == currentState)
         {
             SBGDebug.LogWarning($"Requested State is same as Current State: {currentState}", "UIManager | SetState");
@@ -153,21 +157,31 @@ public class UIManager : MonoBehaviour
             return;
         }
 
-        if (currentState == UIMasterState.ExitingState)
+        // If we're already changing state, queue the new state
+        if (isChangingState)
         {
-            SBGDebug.LogWarning($"State change requested while exiting current state. Queuing new state: {newState}", "UIManager | SetState");
+            SBGDebug.LogWarning($"State change already in progress. Queuing new state: {newState}", "UIManager | SetState");
             queuedState = newState;
             return;
         }
 
-        if (currentState == UIMasterState.EnteringState)
-        {
-            SBGDebug.LogWarning($"State change requested while entering current state. Doing nothing.", "UIManager | SetState");
-            return;
-        }
+        // Lock state changes
+        isChangingState = true;
 
-        SBGDebug.LogInfo($"Changing UI state from {currentState} to {newState}", "UIManager | SetState");
-        await PerformStateChangeAsync(newState);
+        try
+        {
+            SBGDebug.LogInfo($"Changing UI state from {currentState} to {newState}", "UIManager | SetState");
+            await PerformStateChangeAsync(newState);
+        }
+        catch (System.Exception ex)
+        {
+            SBGDebug.LogError($"Error during state change: {ex.Message}", "UIManager | SetState");
+        }
+        finally
+        {
+            // Always unlock state changes when done
+            isChangingState = false;
+        }
     }
 
     private async Task PerformStateChangeAsync(UIMasterState newState)
@@ -178,24 +192,38 @@ public class UIManager : MonoBehaviour
         previousState = currentState;
         queuedState = newState;
 
-        // Exit current state
-        SBGDebug.LogInfo("About to exit current state", "UIManager | PerformStateChangeAsync");
-        await ExitStateAsync();
-        SBGDebug.LogInfo("Finished exiting current state", "UIManager | PerformStateChangeAsync");
+        try {
+            // Exit current state
+            SBGDebug.LogInfo("About to exit current state", "UIManager | PerformStateChangeAsync");
+            await ExitStateAsync();
+            SBGDebug.LogInfo("Finished exiting current state", "UIManager | PerformStateChangeAsync");
 
-        // Enter new state
-        SBGDebug.LogInfo("About to enter new state", "UIManager | PerformStateChangeAsync");
-        await EnterStateAsync(queuedState);
-        SBGDebug.LogInfo("Finished entering new state", "UIManager | PerformStateChangeAsync");
+            // Small delay between exiting and entering states
+            await Task.Delay(50);
 
-        // Update state and notify
-        currentState = queuedState;
-        queuedState = UIMasterState.None;
+            // Enter new state
+            SBGDebug.LogInfo("About to enter new state", "UIManager | PerformStateChangeAsync");
+            await EnterStateAsync(queuedState);
+            SBGDebug.LogInfo("Finished entering new state", "UIManager | PerformStateChangeAsync");
 
-        // Notify external systems that state change is complete
-        onUIStateChanged?.Invoke(fromState, currentState);
-        
-        SBGDebug.LogInfo($"State change complete: {fromState} -> {currentState}", "UIManager | PerformStateChangeAsync");
+            // Update state and notify
+            currentState = queuedState;
+            queuedState = UIMasterState.None;
+
+            // Notify external systems that state change is complete
+            onUIStateChanged?.Invoke(fromState, currentState);
+            
+            SBGDebug.LogInfo($"State change complete: {fromState} -> {currentState}", "UIManager | PerformStateChangeAsync");
+        }
+        catch (System.Exception ex) {
+            // If anything goes wrong, try to recover to a stable state
+            SBGDebug.LogError($"Error during state change: {ex.Message}\nStack trace: {ex.StackTrace}", "UIManager | PerformStateChangeAsync");
+            
+            // Reset to FirstPerson as a fallback if we encounter an error
+            currentState = UIMasterState.FirstPerson;
+            await EnterStateAsync(UIMasterState.FirstPerson);
+            queuedState = UIMasterState.None;
+        }
     }
 
     private async Task EnterStateAsync(UIMasterState state)
@@ -372,43 +400,55 @@ public class UIManager : MonoBehaviour
     {
         if (pauseMenu == null) return;
         
+        // First ensure we're not still processing any previous input events
+        await Task.Yield();
+        
+        // Remove pause menu listener to prevent double-triggering
         InputHandler.Instance?.OnPauseMenuInput?.RemoveListener(() => SetState(UIMasterState.Pause));
 
         // Set input state
         InputHandler.Instance?.SetInputState(InputState.UI);
         
+        // Show the pause menu UI
         pauseMenu.ShowPauseMenu();
         GameMaster.Instance?.gm_GamePaused?.Invoke();
 
-        // Add cancel listener
+        // Add cancel listener after a short delay to avoid accidental immediate cancellation
+        await Task.Delay(100);
         InputHandler.Instance?.OnUI_CancelInput?.AddListener(() => SetState(UIMasterState.FirstPerson));
 
         StopGamePlay(true);
 
-        // Pause menu doesn't have async show/hide, so we just yield once
-        await Task.Yield();
+        // Give time for the UI to fully appear
+        await Task.Delay(50);
     }
 
     private async Task HidePauseMenuAsync()
     {
         if (pauseMenu == null) return;
 
+        // First ensure we're not still processing any previous input events
+        await Task.Yield();
+
         // Remove cancel listener
         InputHandler.Instance?.OnUI_CancelInput?.RemoveListener(() => SetState(UIMasterState.FirstPerson));
 
+        // Hide the pause menu UI
         pauseMenu.HidePauseMenu();
 
-        // Restore pause button listener
-        InputHandler.Instance?.OnPauseMenuInput?.AddListener(() => SetState(UIMasterState.Pause));
-
         // Save settings when exiting pause
-        GameMaster.Instance.SaveAndApplySettings();
-        GameMaster.Instance.gm_GameUnpaused.Invoke();
+        GameMaster.Instance?.SaveAndApplySettings();
+        GameMaster.Instance?.gm_GameUnpaused?.Invoke();
 
+        // Restore normal gameplay
         StopGamePlay(false);
         
-        // Pause menu doesn't have async show/hide, so we just yield once
-        await Task.Yield();
+        // Give time for the UI to fully disappear
+        await Task.Delay(50);
+        
+        // Only restore the pause button listener after a delay to prevent accidental re-triggering
+        await Task.Delay(100);
+        InputHandler.Instance?.OnPauseMenuInput?.AddListener(() => SetState(UIMasterState.Pause));
     }
     #endregion
 

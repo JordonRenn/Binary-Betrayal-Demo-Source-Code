@@ -173,7 +173,8 @@ public class PauseMenu : MonoBehaviour
     // ---- Button Listeners Setup ----
     private void SetupButtonListeners()
     {
-        b_Resume.onClick.AddListener(() => UIManager.Instance.SetState(UIManager.Instance.previousState)); // maybe works like it should?
+        // Always return to FirstPerson state when resuming from pause menu
+        b_Resume.onClick.AddListener(() => UIManager.Instance.SetState(UIManager.UIMasterState.FirstPerson));
         b_Settings.onClick.AddListener(ToggleSettingsMenu);
         b_Quit.onClick.AddListener(QuitGame);
 

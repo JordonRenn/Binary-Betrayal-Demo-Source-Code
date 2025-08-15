@@ -70,6 +70,12 @@ public class ContentLoader : MonoBehaviour
 
     void Start()
     {
+        if (inputHandler && InputHandler.Instance == null)
+        {
+            Instantiate(inputHandler);
+            Debug.Log($"CONTENT LOADER | InputHandler Instantiated");
+        }
+        
         if (GlobalVolume)
         {
             Instantiate(GlobalVolume);
