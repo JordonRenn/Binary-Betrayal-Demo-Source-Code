@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public interface WPO_Grenade
+public class WPO_Grenade : FPSS_WeaponSlotObject
 {
-    public void Fire();
+    //
 }

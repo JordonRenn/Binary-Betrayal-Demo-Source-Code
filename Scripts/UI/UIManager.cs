@@ -414,13 +414,13 @@ public class UIManager : MonoBehaviour
         GameMaster.Instance?.gm_GamePaused?.Invoke();
 
         // Add cancel listener after a short delay to avoid accidental immediate cancellation
-        await Task.Delay(100);
+        await Task.Delay(50);
         InputHandler.Instance?.OnUI_CancelInput?.AddListener(() => SetState(UIMasterState.FirstPerson));
 
         StopGamePlay(true);
 
         // Give time for the UI to fully appear
-        await Task.Delay(50);
+        await Task.Delay(20);
     }
 
     private async Task HidePauseMenuAsync()
@@ -444,10 +444,10 @@ public class UIManager : MonoBehaviour
         StopGamePlay(false);
         
         // Give time for the UI to fully disappear
-        await Task.Delay(50);
+        await Task.Delay(20);
         
         // Only restore the pause button listener after a delay to prevent accidental re-triggering
-        await Task.Delay(100);
+        await Task.Delay(50);
         InputHandler.Instance?.OnPauseMenuInput?.AddListener(() => SetState(UIMasterState.Pause));
     }
     #endregion

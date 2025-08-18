@@ -5,11 +5,11 @@ using FMODUnity;
 
 public class WPO_Gun : FPSS_WeaponSlotObject
 {
-    [Header("Weapon Properties")]
+    [Header("Gun Properties")]
     [Space(10)]
 
     [SerializeField] public WeaponFireMode fireMode;
-    [SerializeField] private bool isScoped;
+    [SerializeField] private bool hasScope;
     
     [Header("Ammunition")]
     [Space(10)]
@@ -35,18 +35,19 @@ public class WPO_Gun : FPSS_WeaponSlotObject
     [SerializeField] private float spread = 3; //additional randomization applied
     [SerializeField] private float spreadPatternRandomization = 0.015f; //small amount of randomization to be applied to the predefined spread pattern array values at start up
     [SerializeField] private Vector2[] spreadPattern;
-    private int spreadPatternArrayLength;
     [SerializeField] private float spreadRecoveryRate = 0.25f;
+
+    private int spreadPatternArrayLength;
     private int spreadIndex = 0;
     private float currentSpread = 0f;
 
-    [Header("Position Targets")]
+    [Header("Effect Transforms")]
     [Space(10)]
 
     [SerializeField] private Transform pos_Muzzle;
     [SerializeField] private Transform pos_ShellEject;
 
-    [Header("WEAPON SFX")]
+    [Header("Weapon SFX")]
     [Space(10)]
 
     [SerializeField] protected EventReference sfx_Fire;
@@ -58,7 +59,6 @@ public class WPO_Gun : FPSS_WeaponSlotObject
     [SerializeField] private EventReference sfx_Slide;
     [SerializeField] private float slideSFXDelay;
     [SerializeField] private EventReference sfx_gun_shell;
-    [SerializeField] private EventReference sfx_AdsLayerIn;
 
     [Header("VFX")] 
     [Space(10)] 
@@ -70,7 +70,7 @@ public class WPO_Gun : FPSS_WeaponSlotObject
     protected bool isReloading = false;
     protected bool canReload = true;
 
-    public UnityEvent AmmoChange;
+    public UnityEvent AmmoChange = new UnityEvent();
 
     void Awake()
     {
@@ -78,11 +78,6 @@ public class WPO_Gun : FPSS_WeaponSlotObject
         spreadPatternArrayLength = spreadPattern.Length;
         ConstructSpreadPattern(); 
     }
-    
-    /* void Start()
-    {
-        base.Start();
-    } */
 
     void Update()
     {
@@ -131,7 +126,7 @@ public class WPO_Gun : FPSS_WeaponSlotObject
 
         Vector2 spreadOffset = spreadPattern[spreadIndex] * currentSpread;
 
-        camController.ApplySpread(spreadOffset);
+        FirstPersonCamController.Instance.ApplySpread(spreadOffset);
 
         currentSpread = Mathf.Clamp(currentSpread + spread, spread, spreadPatternArrayLength);
         spreadIndex++;

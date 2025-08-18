@@ -19,11 +19,11 @@ public class Gun_AK47 : WPO_Gun, IWPO_Gun //inherits from FPSS_WeaponSlotObject 
             canFire = false;
             
             PlaySfx(sfx_Fire, pos_GunAudio.position);
-            animator.Play(fireAnimStateName, -1, 0f);
+            animator.Play("Fire");
             
             FireHitScan();
 
-            reticleSystem.GunFire(reticleFallOffSpeed);
+            FPSS_ReticleSystem.Instance.GunFire(reticleFallOffSpeed);
             
             ApplySpread();
             

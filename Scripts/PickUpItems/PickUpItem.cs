@@ -2,6 +2,7 @@ using UnityEngine;
 using FMODUnity;
 using DG.Tweening;
 using System.Collections;
+using System;
 
 /* 
 Only use this class for Misc items that do not fit into other categories and need no extra properties.
@@ -12,11 +13,9 @@ public class PickUpItem : SauceObject
     [Header("Pick-Up Item Properties")]
     [Space(10)]
 
+    [SerializeField] protected string itemID;
+    [SerializeField] protected string itemDisplayName;
     [SerializeField] protected string itemDescription;
-    [SerializeField] protected ItemType itemType;
-    [SerializeField] protected ItemRarity itemRarity;
-    [SerializeField] protected ItemViewLogicType itemViewLogic;
-    [SerializeField] protected int weight = 0;
     [SerializeField] protected GameObject item3dIcon;
     [SerializeField] protected Sprite itemInventoryIcon;
 
@@ -34,6 +33,8 @@ public class PickUpItem : SauceObject
 
     private Vector3 initialPosition;
     protected IItem item;
+    private const float PLAYER_ANIMATION_RENDER_DISTANCE = 30f;
+    private bool playerInRange = false;
 
     protected virtual void Start()
     {
@@ -49,29 +50,41 @@ public class PickUpItem : SauceObject
         sfx_PickUp = EventReference.Find(SFX_REFERENCE);
         playerLayer = LayerMask.GetMask(PLAYER_LAYER_NAME);
         pickUpTrigger = GetComponent<Collider>();
+
+        GameMaster.Instance?.globalTick.AddListener(() =>
+        {
+            playerInRange = CheckPlayerDistance();
+        });
+    }
+
+    void Update()
+    {
+        if (playerInRange) AnimateObject();
+    }
+
+    private bool CheckPlayerDistance()
+    {
+        Vector3 playerPosition = GameMaster.Instance.playerObject.transform.position;
+        return Vector3.Distance(transform.position, playerPosition) < PLAYER_ANIMATION_RENDER_DISTANCE;
     }
 
     protected void CreateItem()
     {
         // Try to create from database first
-        if (ItemFactory.ItemExists(objectID))
+        if (ItemFactory.ItemExists(itemID))
         {
-            item = ItemFactory.CreateItemFromDatabase(objectID, itemInventoryIcon);
+            item = ItemFactory.CreateItemFromDatabase(itemID, itemInventoryIcon);
         }
         else
         {
+            SBGDebug.LogWarning($"Item with ID {itemID} does not exist in the database. Creating a fallback item.", $"PickUpItem | CreateItem");
             ManuallyCreateItem();
         }
     }
 
     protected virtual void ManuallyCreateItem()
     {
-        item = new ItemData(objectID, objectDisplayName, itemDescription, itemInventoryIcon, itemType, weight, itemRarity, itemViewLogic);
-    }
-
-    void Update()
-    {
-        AnimateObject();
+        item = new ItemData(itemID, itemDisplayName, itemDescription, itemInventoryIcon, ItemType.Misc, 0, ItemRarity.Common, ItemViewLogicType.Static);
     }
 
     protected void OnTriggerEnter(Collider c)
@@ -86,7 +99,7 @@ public class PickUpItem : SauceObject
 
     public virtual void PickUp()
     {
-        Debug.Log($"Picking up {objectDisplayName}");
+        Debug.Log($"Picking up {itemDisplayName}");
         StartCoroutine(PickUpRoutine());
     }
 
@@ -115,14 +128,7 @@ public class PickUpItem : SauceObject
 
     private void CreateInventoryItem()
     {
-        Debug.Log($"Creating inventory item: {objectDisplayName} (ID: {objectID}, Type: {itemType}, Weight: {weight})");
-
-        // Use the item created in Start() or CreateItem()
-        if (item == null)
-        {
-            SBGDebug.LogError($"Item is null for {objectDisplayName}! Creating fallback item.", $"PICK UP ITEM: {objectDisplayName}");
-            item = new ItemData(objectID, objectDisplayName, itemDescription, itemInventoryIcon, itemType, weight, itemRarity, itemViewLogic);
-        }
+        Debug.Log($"Creating inventory item: {itemDisplayName} (ID: {itemID})");
 
         // Check if InventoryManager exists
         if (InventoryManager.Instance != null)
@@ -130,7 +136,7 @@ public class PickUpItem : SauceObject
             // Check if player inventory exists, if not create a temporary one
             if (InventoryManager.Instance.GetPlayerInventory() == null)
             {
-                SBGDebug.LogError($"Player inventory is null! Item not added to inventory.", $"PICK UP ITEM: {objectDisplayName}");
+                SBGDebug.LogError($"Player inventory is null! Item not added to inventory.", $"PICK UP ITEM: {itemDisplayName}");
                 return; // Exit if no inventory is available
             }
 

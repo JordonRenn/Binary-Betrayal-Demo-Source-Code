@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public interface WPO_Melee
+public class WPO_Melee : FPSS_WeaponSlotObject
 {
-    public void Fire();
+    //
 }

@@ -1,3 +1,5 @@
+using System;
+
 #region General
 
 public enum Language
@@ -93,6 +95,7 @@ public enum SceneName
 /// <summary>
 /// Enum representing the weapon ref IDs.
 /// </summary>
+[Obsolete("Use WeaponID instead")]
 public enum WeaponRefID
 {
     Rifle,
@@ -104,6 +107,17 @@ public enum WeaponRefID
     SmokeGrenade,
     FlashGrenade,
     Unarmed,
+}
+
+public enum WeaponID
+{
+    Rifle,
+    Sniper,
+    Handgun,
+    Shotgun,
+    Knife,
+    Grenade,
+    None, //used for unarmed
 }
 
 /// <summary>
@@ -124,7 +138,8 @@ public enum WeaponSlot
     Primary,
     Secondary,
     Melee,
-    Utility
+    Utility,
+    Unarmed
 }
 #endregion
 

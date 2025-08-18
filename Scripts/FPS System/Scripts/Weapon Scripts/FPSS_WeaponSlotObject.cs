@@ -1,4 +1,5 @@
 using System.Collections;
+using System;
 using FMODUnity;
 using UnityEngine;
 using Unity.Cinemachine;
@@ -13,12 +14,14 @@ using Unity.Cinemachine;
                 - FPS_WeaponObjectPool (FPSS_Pool.cs)                   
                     - POS_GUN_AUDIO
                     - 0_0_Ak-47 (Gun_AK47.cs)
-                        - AK_47
-                            - MuzzleFlash (MuzzleFlash.cs)
+                        - Hands_AK_47 (Weapon and Arm meshes)
+                            - AK_47
+                                - MuzzleFlash (MuzzleFlash.cs)
                     - 0_1_SniperRifle (FPSS_WeaponSlotObject.cs)        <--- THIS SCRIPT
                     - 1_0_HandGun (Gun_HandGun.cs)
-                        - HandGun
-                            - MuzzleFlash (MuzzleFlash.cs)
+                        - Hands_HandGun (Weapon and Arm meshes)
+                            - HandGun
+                                - MuzzleFlash (MuzzleFlash.cs)
                     - 1_1_ShotGun (FPSS_WeaponSlotObject.cs)            <--- THIS SCRIPT
                     - 2_0_Knife (FPSS_WeaponSlotObject.cs)              <--- THIS SCRIPT
                     - 3_0_Grenade (FPSS_WeaponSlotObject.cs)            <--- THIS SCRIPT
@@ -31,54 +34,42 @@ using Unity.Cinemachine;
 /// <summary>
 /// Class representing a weapon slot object in the FPS system.
 /// 
-/// SHOULD NOT BE USING AS A BASE CLASS!!!
+/// SHOULD NOT BE USED ON OBJECTS
 /// MAKE CHILD CLASSES FOR EACH WEAPON TYPE (GUN, MELEE, GRENADE, UNARMED)
 /// 
 /// </summary>
-public class FPSS_WeaponSlotObject : MonoBehaviour
+public abstract class FPSS_WeaponSlotObject : MonoBehaviour
 {
-    [SerializeField] public WeaponRefID refID;
-    [SerializeField] public WeaponHUDData HUDData;
-
-    [Header("References")]
+    [Header("Weapon Slot Object Properties")]
     [Space(10)]
 
-    protected FPSS_ReticleSystem reticleSystem;
-    private FPSS_WeaponHUD hud;
+    [HideInInspector] public WeaponData weaponData; // set by WeaponPool on instantiation
 
-    [SerializeField] protected FPSS_Pool weaponPool;
-    [SerializeField] protected CamShake camShake;
-    [Tooltip("Intensity of camera shake, 0-1 (1 being the most intense)")]
-    [SerializeField] protected float camShakeIntensity;
-    [SerializeField] protected CinemachineCamera cam;
-    [SerializeField] public Animator animator;
-    [SerializeField] protected FirstPersonCamController camController;
+    [Tooltip("Animated arms and weapon mesh, should be a single object, with animator , with both arms and weapon mesh as children")]
+    [SerializeField] private GameObject firstPersonMeshObject;
 
-    [SerializeField] private WeaponSlot weaponSlot;
-
-    [Header("Objects")]
-    [Space(10)]
-
-    /* [SerializeField] public Sprite img_activeIcon;
-    [SerializeField] public Sprite img_inactiveIcon; */
-
-    [SerializeField] private GameObject weaponObject;
-    [SerializeField] private GameObject weaponArms;
-
-    [SerializeField] private float armSpeed;
-    [SerializeField] private float disarmSpeed;
-    [SerializeField] protected string fireAnimStateName;
+    [SerializeField] private float armSpeed = 0.23f; // target time -- TODO -> figure out how to extract from anim clips automatically
+    [SerializeField] private float disarmSpeed = 0.1f; // target time -- TODO -> figure out how to extract from anim clips automatically
 
     [Header("Range and Damage")]
     [Space(10)]
 
-    [SerializeField] private int damagePerShot;
-    [SerializeField] private float headshotMultiplier;
-    [SerializeField] private float armourPenetration;
-    [SerializeField] protected float range;
+    [SerializeField] private int baseDamage;
     [SerializeField] private AnimationCurve damageFalloff;
+    [Tooltip("Intensity of camera shake, 0-1 (1 being the most intense)")]
+    [SerializeField] protected float camShakeIntensity;
+    [SerializeField] protected float range;
+
+
+    [Header("Audio Positioning")]
+    [Space(10)]
 
     [SerializeField] protected Transform pos_GunAudio;
+
+    // Private References
+    protected CinemachineCamera cam;
+    [HideInInspector] public Animator animator;
+    protected CamShake camShake;
 
     protected bool isActive = false;
     protected bool canFire = true;
@@ -91,7 +82,6 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
 
     void OnEnable()
     {
-        //SBGDebug.LogInfo("Instantiated" , $"WeaponSlotObject: {HUDData.weaponDisplayName}");
         initialized = false;
         StartCoroutine(Init());
     }
@@ -99,98 +89,102 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
     #region Init
     IEnumerator Init()
     {
-        Debug.Log("FPS_WEAPONSLOTOBJECT | Initialization started");
-
         float initTime = Time.time;
 
-        while (reticleSystem == null && Time.time - initTime <= initTimeout)
+        if (firstPersonMeshObject == null)
         {
-            try
-            {
-                reticleSystem = GameObject.FindAnyObjectByType<FPSS_ReticleSystem>();
-            }
-            finally
-            {
-                //Debug.Log("FPSS_WEAPONSLOTOBJECT | Searching for ''Reticle System''");
-            }
-
-            yield return null;
+            SBGDebug.LogError($"Weapon Slot Object {weaponData.displayName} does not have a First Person Mesh Object assigned.", $"FPSS_WeaponSlotObject ({weaponData.displayName}) | Initialization");
+            yield break;
         }
 
-        while (hud == null && Time.time - initTime <= initTimeout)
+        bool allDependenciesLoaded = false;
+        while (!allDependenciesLoaded && Time.time - initTime <= initTimeout)
         {
-            try
-            {
-                hud = GameObject.FindAnyObjectByType<FPSS_WeaponHUD>();
-            }
-            finally
-            {
-                //Debug.Log("FPSS_WEAPONSLOTOBJECT | Searching for ''Weapon HUD''");
-            }
+            bool reticleSystemReady = FPSS_ReticleSystem.Instance != null;
+            bool weaponHUDReady = FPSS_WeaponHUD.Instance != null;
+            bool poolReady = WeaponPool.Instance != null;
+            bool camControllerReady = FirstPersonCamController.Instance != null;
 
-            yield return null;
+            // uncomment for testing if needed
+            /* if (!reticleSystemReady)
+                SBGDebug.LogInfo("Waiting for ''Reticle System'' ....", "FPSS_WeaponSlotObject | Initialization");
+            if (!weaponHUDReady)
+                SBGDebug.LogInfo("Waiting for ''Weapon HUD'' ....", "FPSS_WeaponSlotObject | Initialization");
+            if (!poolReady)
+                SBGDebug.LogInfo("Waiting for ''Weapon Pool'' ....", "FPSS_WeaponSlotObject | Initialization");
+            if (!mainReady)
+                SBGDebug.LogInfo("Waiting for ''FPS Main'' ....", "FPSS_WeaponSlotObject | Initialization"); */
+
+            allDependenciesLoaded = reticleSystemReady && weaponHUDReady && poolReady && camControllerReady;
+
+            if (!allDependenciesLoaded)
+                yield return null;
         }
 
-        initialized = true;
+        if (allDependenciesLoaded)
+        {
+            initialized = true;
+            
+            camShake = FirstPersonCamController.Instance.gameObject.GetComponent<CamShake>();
+            if (camShake == null) SBGDebug.LogError($"CamShake component not found on FirstPersonCamController", "FPSS_WeaponSlotObject | Initialization");
 
-        //SBGDebug.LogInfo($"Initialization time: {Time.time - initTime} seconds." , $"WeaponSlotObject: {HUDData.weaponDisplayName}" );
+            cam = FirstPersonCamController.Instance.gameObject.GetComponent<CinemachineCamera>();
+            if (cam == null) SBGDebug.LogError($"CinemachineCamera component not found on FirstPersonCamController", "FPSS_WeaponSlotObject | Initialization");
 
-
+            animator = firstPersonMeshObject.GetComponent<Animator>();
+            if (animator == null) SBGDebug.LogError($"Animator component not found on First Person Mesh Object", "FPSS_WeaponSlotObject | Initialization");
+        }
+        else
+        {
+            SBGDebug.LogError($"Initialization timed out for weapon {weaponData.displayName}. Some dependencies were not loaded.", "FPSS_WeaponSlotObject | Initialization");
+        }
     }
     #endregion
 
     #region WEAPON ACTIONS
     public IEnumerator SetWeaponActive()
     {
-        if (weaponPool == null)
-        {
-            //SBGDebug.LogError("'SetWeaponActive()' No Weapon pool found." , $"WeaponSlotObject: {HUDData.weaponDisplayName}");
-            yield break;
-        }
-
-        if (FPSS_Main.Instance == null)
-        {
-            //SBGDebug.LogError("'SetWeaponActive()' No FPS_Main found." , $"WeaponSlotObject: {HUDData.weaponDisplayName}");
-            yield break;
-        }
-
         isActive = true;
+        firstPersonMeshObject?.SetActive(true);
 
-        if (weaponObject != null)
+        try
         {
-            weaponObject.SetActive(true);
+            animator?.SetTrigger("Arm");
         }
-
-        if (weaponArms != null)
+        catch (System.Exception ex)
         {
-            weaponArms.SetActive(true);
+            SBGDebug.LogError($"Error setting weapon active: {ex.Message}", "FPSS_WeaponSlotObject | SetWeaponActive");
         }
-
-        animator.SetTrigger("Arm");
 
         yield return new WaitForSeconds(armSpeed);
 
         animator.SetTrigger("Idle");
-
-        weaponPool.currentWeaponSlot = weaponSlot;
-        FPSS_Main.Instance.currentWeaponSlot = weaponSlot;
-
-        if (hud != null)
-        {
-            hud.RefreshWeaponHUD();
-        }
+        FPSS_WeaponHUD.Instance?.RefreshWeaponHUD();
+        WeaponPool.Instance?.onWeaponActivationComplete.Invoke();
     }
 
     public IEnumerator SetWeaponInactive()
     {
-        animator.SetTrigger("Disarm");
+        try
+        {
+            animator?.SetTrigger("Disarm");
+        }
+        catch (System.Exception ex)
+        {
+            SBGDebug.LogError($"Error setting weapon inactive: {ex.Message}", "FPSS_WeaponSlotObject | SetWeaponInactive");
+        }
 
         yield return new WaitForSeconds(disarmSpeed);
-
-        weaponObject.SetActive(false);
-        weaponArms.SetActive(false);
+        
+        firstPersonMeshObject?.SetActive(false);
+        WeaponPool.Instance?.onWeaponDeactivationComplete.Invoke();
 
         isActive = false;
+
+        if (!firstPersonMeshObject)
+        {
+            SBGDebug.LogInfo("Deactivated First Person Mesh Object", $"WeaponSlotObject: {weaponData.displayName}");
+        }
     }
 
     /// <summary>
@@ -214,8 +208,8 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
     protected void CalculateDamage(Vector3 hitPoint)
     {
         float distance = Vector3.Distance(cam.transform.position, hitPoint);
-        float damageMultiplier = damageFalloff.Evaluate(distance / range);
-        float damage = damagePerShot * damageMultiplier;
+        float falloffMultiplier = damageFalloff.Evaluate(distance / range);
+        float damage = baseDamage * falloffMultiplier;
     }
     #endregion
 
@@ -227,12 +221,9 @@ public class FPSS_WeaponSlotObject : MonoBehaviour
             int layerMask = hit.collider.gameObject.layer;
             SurfaceInfo surfaceInfo = hit.collider.gameObject.GetComponent<SurfaceInfo>();
 
-            if (surfaceInfo == null)
-            {
-                return;
-            }
+            if (surfaceInfo == null) return;
 
-            GameObject impactDecal = surfaceInfo.bulletHolePrefab[Random.Range(0, surfaceInfo.bulletHolePrefab.Length)];
+            GameObject impactDecal = surfaceInfo.bulletHolePrefab[UnityEngine.Random.Range(0, surfaceInfo.bulletHolePrefab.Length)];
             GameObject instantiatedDecal = Instantiate(impactDecal, hit.point, Quaternion.LookRotation(hit.normal));
             instantiatedDecal.transform.SetParent(hit.collider.gameObject.transform); // Set impactDecal as a child
 

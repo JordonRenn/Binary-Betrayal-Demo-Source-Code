@@ -62,6 +62,7 @@ public class InputHandler : MonoBehaviour
     private const string fp_an_slot1 = "Equip Weapon Slot 1";
     private const string fp_an_slot2 = "Equip Weapon Slot 2";
     private const string fp_an_melee = "Equip Melee";
+    private const string fp_an_utility = "Equip Utility";
     private const string fp_an_unarmed = "Equip Unarmed";
     private const string fp_an_swap = "Weapon Swap";
     private const string fp_an_aim = "Aim";
@@ -118,6 +119,7 @@ public class InputHandler : MonoBehaviour
     private InputAction slot1Action;
     private InputAction slot2Action;
     private InputAction meleeAction;
+    private InputAction utilityAction;
     private InputAction unarmedAction;
     private InputAction swapAction;
     private InputAction aimAction;
@@ -174,6 +176,7 @@ public class InputHandler : MonoBehaviour
     public bool Slot1Input { get; private set; }
     public bool Slot2Input { get; private set; }
     public bool MeleeInput { get; private set; }
+    public bool UtilityInput { get; private set; }
     public bool UnarmedInput { get; private set; }
     public bool SwapInput { get; private set; }
     public bool AimInput { get; private set; }
@@ -232,7 +235,7 @@ public class InputHandler : MonoBehaviour
     [HideInInspector] public UnityEvent OnSlot1Input = new UnityEvent();
     [HideInInspector] public UnityEvent OnSlot2Input = new UnityEvent();
     [HideInInspector] public UnityEvent OnMeleeInput = new UnityEvent();
-    //[HideInInspector] public UnityEvent OnEquipmentInput = new UnityEvent();
+    [HideInInspector] public UnityEvent OnUtilityInput = new UnityEvent(); //TODO ---> Check this
     [HideInInspector] public UnityEvent OnUnarmedInput = new UnityEvent();
     [HideInInspector] public UnityEvent OnSwapInput = new UnityEvent();
     [HideInInspector] public UnityEvent OnAimInput = new UnityEvent();
@@ -315,6 +318,7 @@ public class InputHandler : MonoBehaviour
         slot1Action = actionMap_FirstPerson.FindAction(fp_an_slot1);
         slot2Action = actionMap_FirstPerson.FindAction(fp_an_slot2);
         meleeAction = actionMap_FirstPerson.FindAction(fp_an_melee);
+        utilityAction = actionMap_FirstPerson.FindAction(fp_an_utility);
         unarmedAction = actionMap_FirstPerson.FindAction(fp_an_unarmed);
         swapAction = actionMap_FirstPerson.FindAction(fp_an_swap);
         aimAction = actionMap_FirstPerson.FindAction(fp_an_aim);
@@ -415,6 +419,10 @@ public class InputHandler : MonoBehaviour
         meleeAction.started += context => OnMeleeInput.Invoke();
         meleeAction.performed += context => MeleeInput = true;
         meleeAction.canceled += context => MeleeInput = false;
+
+        utilityAction.started += context => OnUtilityInput.Invoke();
+        utilityAction.performed += context => UtilityInput = true;
+        utilityAction.canceled += context => UtilityInput = false;
 
         unarmedAction.started += context => OnUnarmedInput.Invoke();
         unarmedAction.performed += context => UnarmedInput = true;

@@ -60,9 +60,8 @@ public class LockPickingQuickTimeEvent : MonoBehaviour // : SauceObject
     private bool isInQTE2Phase = false;
     private bool isPicking = false;
     //InputState prevInputState;
-    private float totalRotation = 0f; // Add this field near other private fields
-    //private float currentAngle = 0f;  // Add this near other private fields
-    private float continuousAngle = 0f;  // Add this field - never gets reset
+    private float totalRotation = 0f;
+    private float continuousAngle = 0f; 
 
     #region Init
     void Awake()
@@ -165,7 +164,7 @@ public class LockPickingQuickTimeEvent : MonoBehaviour // : SauceObject
     {
         VolumeManager.Instance.SetVolume(VolumeType.LockPick);
         if (UIManager.Instance != null) UIManager.Instance.HideAllHUD(true);
-        if (FPSS_Pool.Instance != null) FPSS_Pool.Instance.currentActiveWPO.SetCurrentWeaponActive(false);
+        if (WeaponPool.Instance != null) WeaponPool.Instance.activeWSO.SetCurrentWeaponActive(false);
 
         InputHandler.Instance.SetInputState(InputState.Focus);
 
@@ -271,7 +270,7 @@ public class LockPickingQuickTimeEvent : MonoBehaviour // : SauceObject
 
         VolumeManager.Instance.SetVolume(VolumeType.Default);
 
-        if (FPSS_Pool.Instance != null) FPSS_Pool.Instance.currentActiveWPO.SetCurrentWeaponActive(true);
+        if (WeaponPool.Instance != null) WeaponPool.Instance.activeWSO.SetCurrentWeaponActive(true);
         if (UIManager.Instance != null) UIManager.Instance.HideAllHUD(false);
         InputHandler.Instance.SetInputState(InputState.FirstPerson);
     }

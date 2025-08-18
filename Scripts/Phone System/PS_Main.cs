@@ -128,7 +128,7 @@ public class PS_Main : SauceObject
     {
         usingPhone = true;
 
-        FPSS_Pool.Instance.currentActiveWPO.SetCurrentWeaponActive(false);
+        WeaponPool.Instance.activeWSO.SetCurrentWeaponActive(false);
         characterMovement.moveDisabled = true; //needed to stop Update loop from running so controller can be disabled so player can teleport
         InputHandler.Instance.SetInputState(InputState.Focus);
         InputHandler.Instance.OnFocus_CancelInput.AddListener(DeactivePhone);
@@ -195,7 +195,7 @@ public class PS_Main : SauceObject
         usingPhone = false;
 
         // Re-enable weapon
-        FPSS_Pool.Instance.currentActiveWPO.SetCurrentWeaponActive(true);
+        WeaponPool.Instance.activeWSO.SetCurrentWeaponActive(true);
 
         yield return new WaitForSeconds(0.2f); //allow time for weapon to be re-enabled
 
