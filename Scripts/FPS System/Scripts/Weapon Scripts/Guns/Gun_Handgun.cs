@@ -25,7 +25,7 @@ public class Gun_Handgun :  WPO_Gun, IWPO_Gun //inherits from FPSS_WeaponSlotObj
             canFire = false;
             
             PlaySfx(sfx_Fire, pos_GunAudio.position);
-            animator.Play("Fire");
+            animator.Play("Fire", -1, 0f); 
             
             FireHitScan();
 

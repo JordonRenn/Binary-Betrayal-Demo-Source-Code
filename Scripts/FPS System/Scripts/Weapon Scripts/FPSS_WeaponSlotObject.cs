@@ -50,6 +50,7 @@ public abstract class FPSS_WeaponSlotObject : MonoBehaviour
 
     [SerializeField] private float armSpeed = 0.23f; // target time -- TODO -> figure out how to extract from anim clips automatically
     [SerializeField] private float disarmSpeed = 0.1f; // target time -- TODO -> figure out how to extract from anim clips automatically
+    [SerializeField] protected float reloadTime = 1f; // target time -- TODO -> figure out how to extract from anim clips automatically   
 
     [Header("Range and Damage")]
     [Space(10)]
@@ -131,7 +132,7 @@ public abstract class FPSS_WeaponSlotObject : MonoBehaviour
             cam = FirstPersonCamController.Instance.gameObject.GetComponent<CinemachineCamera>();
             if (cam == null) SBGDebug.LogError($"CinemachineCamera component not found on FirstPersonCamController", "FPSS_WeaponSlotObject | Initialization");
 
-            animator = firstPersonMeshObject.GetComponent<Animator>();
+            animator = firstPersonMeshObject.GetComponentInChildren<Animator>();
             if (animator == null) SBGDebug.LogError($"Animator component not found on First Person Mesh Object", "FPSS_WeaponSlotObject | Initialization");
         }
         else

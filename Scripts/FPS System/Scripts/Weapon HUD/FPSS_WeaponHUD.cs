@@ -80,7 +80,7 @@ public class FPSS_WeaponHUD : MonoBehaviour
     {
         float initTime = Time.time;
 
-        // add any hard conditionals here
+        yield return null; // Wait for the next frame to ensure all components are ready
 
         bool allDependenciesLoaded = false;
         while (!allDependenciesLoaded && Time.time - initTime <= initTimeout)

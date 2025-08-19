@@ -163,15 +163,9 @@ public class WPO_Gun : FPSS_WeaponSlotObject
             isReloading = true;
             canReload = false;
 
-            yield return new WaitForSeconds(clipOutSFXDelay);
-            PlaySfx(sfx_ClipOut, pos_GunAudio.position);
-
-            yield return new WaitForSeconds(clipInSFXDelay);
-            PlaySfx(sfx_ClipIn, pos_GunAudio.position);
+            yield return new WaitForSeconds(reloadTime);
+            
             currentClip = clipSize;
-
-            yield return new WaitForSeconds(slideSFXDelay);
-            PlaySfx(sfx_Slide, pos_GunAudio.position);
 
             animator.SetTrigger("Idle");
         }

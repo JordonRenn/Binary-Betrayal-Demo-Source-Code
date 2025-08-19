@@ -101,6 +101,8 @@ public class WeaponPool : MonoBehaviour
                         continue;
                     }
                     weaponInstance.transform.SetParent(transform);
+                    weaponInstance.transform.localPosition = new Vector3(0, -0.6f, 0);
+                    weaponInstance.transform.localRotation = Quaternion.Euler(0, 21, 0);
                     primaryWSO = weaponInstance.GetComponent<FPSS_WeaponSlotObject>();
                     primaryWSO.weaponData = weaponData;
                     if (primaryWSO == null)
@@ -125,6 +127,8 @@ public class WeaponPool : MonoBehaviour
                         continue;
                     }
                     secondaryInstance.transform.SetParent(transform);
+                    secondaryInstance.transform.localPosition = new Vector3(0, -0.6f, 0);
+                    secondaryInstance.transform.localRotation = Quaternion.Euler(0, 21, 0);
                     secondaryWSO = secondaryInstance.GetComponent<FPSS_WeaponSlotObject>();
                     secondaryWSO.weaponData = weaponData;
                     if (secondaryWSO == null)
@@ -149,6 +153,8 @@ public class WeaponPool : MonoBehaviour
                         continue;
                     }
                     meleeInstance.transform.SetParent(transform);
+                    meleeInstance.transform.localPosition = new Vector3(0, -0.6f, 0);
+                    meleeInstance.transform.localRotation = Quaternion.Euler(0, 21, 0);
                     meleeWSO = meleeInstance.GetComponent<FPSS_WeaponSlotObject>();
                     meleeWSO.weaponData = weaponData;
                     if (meleeWSO == null)
@@ -167,6 +173,8 @@ public class WeaponPool : MonoBehaviour
                         continue;
                     }
                     utilityInstance.transform.SetParent(transform);
+                    utilityInstance.transform.localPosition = new Vector3(0, -0.6f, 0);
+                    utilityInstance.transform.localRotation = Quaternion.Euler(0, 21, 0);
                     utilityWSO = utilityInstance.GetComponent<FPSS_WeaponSlotObject>();
                     utilityWSO.weaponData = weaponData;
                     if (utilityWSO == null)
@@ -185,6 +193,8 @@ public class WeaponPool : MonoBehaviour
                         continue;
                     }
                     unarmedInstance.transform.SetParent(transform);
+                    unarmedInstance.transform.localPosition = new Vector3(0, -0.6f, 0);
+                    unarmedInstance.transform.localRotation = Quaternion.Euler(0, 21, 0);
                     unarmedWSO = unarmedInstance.GetComponent<FPSS_WeaponSlotObject>();
                     unarmedWSO.weaponData = weaponData;
                     if (unarmedWSO == null)
