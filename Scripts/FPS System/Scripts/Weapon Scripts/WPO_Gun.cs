@@ -157,17 +157,40 @@ public class WPO_Gun : FPSS_WeaponSlotObject
 
     public IEnumerator ReloadWeapon()
     {
+        var waitTime = reloadTime;
+
         if (currentClip < clipSize)
         {
-            animator.SetTrigger("Reload");
+            animator.Play("Reload", 0, 0f);
             isReloading = true;
             canReload = false;
 
-            yield return new WaitForSeconds(reloadTime);
-            
+            yield return new WaitForSeconds(0.1f);
+
+            try
+            {
+                // Get the currently playing animation clip info
+                if (animator != null)
+                {
+                    AnimatorClipInfo[] clipInfo = animator.GetCurrentAnimatorClipInfo(0);
+                    if (clipInfo.Length > 0)
+                    {
+                        waitTime = clipInfo[0].clip.length;
+                        SBGDebug.LogInfo($"Reload animation length: {waitTime}s for {weaponData.displayName}", "WPO_Gun | ReloadWeapon");
+                    }
+                }
+            }
+            catch (System.Exception ex)
+            {
+                SBGDebug.LogWarning($"Couldn't get reload animation length, using default: {ex.Message}", "WPO_Gun | ReloadWeapon");
+            }
+
+            // Wait for the animation to complete
+            yield return new WaitForSeconds(waitTime);
+
             currentClip = clipSize;
 
-            animator.SetTrigger("Idle");
+            animator.Play("Idle", 0, 0f);
         }
 
         AmmoChange.Invoke();

@@ -19,7 +19,10 @@ public class Gun_AK47 : WPO_Gun, IWPO_Gun //inherits from FPSS_WeaponSlotObject 
             canFire = false;
             
             PlaySfx(sfx_Fire, pos_GunAudio.position);
-            animator.Play("Fire");
+            animator.Play("Fire", 0, 0f); // Play from beginning with no blending
+            
+            // Decrement ammo count BEFORE calling FireHitScan
+            currentClip--;
             
             FireHitScan();
 
@@ -28,8 +31,6 @@ public class Gun_AK47 : WPO_Gun, IWPO_Gun //inherits from FPSS_WeaponSlotObject 
             ApplySpread();
             
             camShake.Shake(camShakeIntensity, 2f);
-
-            currentClip--;
 
             yield return new WaitForSeconds(fireRate);
             canFire = true;

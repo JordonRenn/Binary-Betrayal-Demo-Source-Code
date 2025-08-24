@@ -67,7 +67,8 @@ public class WeaponPool : MonoBehaviour
         yield return new WaitUntil(() => poolFilled);
         
         // Set the initial active weapon based on defaultActiveSlot
-        yield return StartCoroutine(ActivateWeaponSlot(defaultActiveSlot));
+        ActivateWeaponSlotSync(defaultActiveSlot);
+        yield return StartCoroutine(activeWSO.SetWeaponActive());
         
         SubscribeToEvents();
         initialized = true;
@@ -101,10 +102,10 @@ public class WeaponPool : MonoBehaviour
                         continue;
                     }
                     weaponInstance.transform.SetParent(transform);
-                    weaponInstance.transform.localPosition = new Vector3(0, -0.6f, 0);
-                    weaponInstance.transform.localRotation = Quaternion.Euler(0, 21, 0);
+                    weaponInstance.transform.localPosition = Vector3.zero;
+                    weaponInstance.transform.localRotation = Quaternion.Euler(Vector3.zero);
                     primaryWSO = weaponInstance.GetComponent<FPSS_WeaponSlotObject>();
-                    primaryWSO.weaponData = weaponData;
+                    primaryWSO.firstPersonMeshObject.gameObject.SetActive(false);
                     if (primaryWSO == null)
                     {
                         SBGDebug.LogError($"Failed to get FPSS_WeaponSlotObject component for {weaponData.displayName}. Check if the component is attached correctly.", "WeaponPool | FillWeaponPool");
@@ -127,10 +128,10 @@ public class WeaponPool : MonoBehaviour
                         continue;
                     }
                     secondaryInstance.transform.SetParent(transform);
-                    secondaryInstance.transform.localPosition = new Vector3(0, -0.6f, 0);
-                    secondaryInstance.transform.localRotation = Quaternion.Euler(0, 21, 0);
+                    secondaryInstance.transform.localPosition = Vector3.zero;
+                    secondaryInstance.transform.localRotation = Quaternion.Euler(Vector3.zero);
                     secondaryWSO = secondaryInstance.GetComponent<FPSS_WeaponSlotObject>();
-                    secondaryWSO.weaponData = weaponData;
+                    secondaryWSO.firstPersonMeshObject.gameObject.SetActive(false);
                     if (secondaryWSO == null)
                     {
                         SBGDebug.LogError($"Failed to get FPSS_WeaponSlotObject component for {weaponData.displayName}. Check if the component is attached correctly.", "WeaponPool | FillWeaponPool");
@@ -153,10 +154,10 @@ public class WeaponPool : MonoBehaviour
                         continue;
                     }
                     meleeInstance.transform.SetParent(transform);
-                    meleeInstance.transform.localPosition = new Vector3(0, -0.6f, 0);
-                    meleeInstance.transform.localRotation = Quaternion.Euler(0, 21, 0);
+                    meleeInstance.transform.localPosition = Vector3.zero;
+                    meleeInstance.transform.localRotation = Quaternion.Euler(Vector3.zero);
                     meleeWSO = meleeInstance.GetComponent<FPSS_WeaponSlotObject>();
-                    meleeWSO.weaponData = weaponData;
+                    meleeWSO.firstPersonMeshObject.gameObject.SetActive(false);
                     if (meleeWSO == null)
                     {
                         SBGDebug.LogError($"Failed to get FPSS_WeaponSlotObject component for {weaponData.displayName}. Check if the component is attached correctly.", "WeaponPool | FillWeaponPool");
@@ -173,10 +174,10 @@ public class WeaponPool : MonoBehaviour
                         continue;
                     }
                     utilityInstance.transform.SetParent(transform);
-                    utilityInstance.transform.localPosition = new Vector3(0, -0.6f, 0);
-                    utilityInstance.transform.localRotation = Quaternion.Euler(0, 21, 0);
+                    utilityInstance.transform.localPosition = Vector3.zero;
+                    utilityInstance.transform.localRotation = Quaternion.Euler(Vector3.zero);
                     utilityWSO = utilityInstance.GetComponent<FPSS_WeaponSlotObject>();
-                    utilityWSO.weaponData = weaponData;
+                    utilityWSO.firstPersonMeshObject.gameObject.SetActive(false);
                     if (utilityWSO == null)
                     {
                         SBGDebug.LogError($"Failed to get FPSS_WeaponSlotObject component for {weaponData.displayName}. Check if the component is attached correctly.", "WeaponPool | FillWeaponPool");
@@ -193,10 +194,10 @@ public class WeaponPool : MonoBehaviour
                         continue;
                     }
                     unarmedInstance.transform.SetParent(transform);
-                    unarmedInstance.transform.localPosition = new Vector3(0, -0.6f, 0);
-                    unarmedInstance.transform.localRotation = Quaternion.Euler(0, 21, 0);
+                    unarmedInstance.transform.localPosition = Vector3.zero;
+                    unarmedInstance.transform.localRotation = Quaternion.Euler(Vector3.zero);
                     unarmedWSO = unarmedInstance.GetComponent<FPSS_WeaponSlotObject>();
-                    unarmedWSO.weaponData = weaponData;
+                    unarmedWSO.firstPersonMeshObject.gameObject.SetActive(false);
                     if (unarmedWSO == null)
                     {
                         SBGDebug.LogError($"Failed to get FPSS_WeaponSlotObject component for {weaponData.displayName}. Check if the component is attached correctly.", "WeaponPool | FillWeaponPool");
@@ -274,6 +275,7 @@ public class WeaponPool : MonoBehaviour
     #region Weapon Switching
     private void SwapPrimarySecondary()
     {
+        // Determine which slot to switch to
         WeaponSlot targetSlot = activeSlot switch
         {
             WeaponSlot.Primary => WeaponSlot.Secondary,
@@ -281,38 +283,72 @@ public class WeaponPool : MonoBehaviour
             _ => WeaponSlot.Primary
         };
 
-        StartCoroutine(UpdateActiveWeaponSlot(targetSlot));
+        // Check if we have a weapon in the target slot
+        FPSS_WeaponSlotObject targetWeapon = targetSlot switch
+        {
+            WeaponSlot.Primary => primaryWSO,
+            WeaponSlot.Secondary => secondaryWSO,
+            _ => null
+        };
+
+        // Only swap if the target weapon exists
+        if (targetWeapon != null)
+        {
+            StartCoroutine(UpdateActiveWeaponSlot(targetSlot));
+        }
+        else
+        {
+            SBGDebug.LogInfo($"Cannot swap to {targetSlot} - no weapon in that slot", "WeaponPool | SwapPrimarySecondary");
+        }
     }
 
     private IEnumerator UpdateActiveWeaponSlot(WeaponSlot slot)
     {
+        // Don't switch if already switching
         if (isSwitching) yield break;
+        
+        // Don't switch if trying to switch to the already active slot
+        if (slot == activeSlot)
+        {
+            SBGDebug.LogInfo($"Already using weapon slot {slot}, ignoring switch request", "WeaponPool | UpdateActiveWeaponSlot");
+            yield break;
+        }
+        
+        // If no weapon is active, just set the new one
+        if (activeWSO == null) 
+        {
+            ActivateWeaponSlotSync(slot);
+            yield return StartCoroutine(activeWSO.SetWeaponActive());
+            yield break;
+        }
 
         isSwitching = true;
+        SBGDebug.LogInfo($"Switching weapon to {slot}", "WeaponPool | UpdateActiveWeaponSlot");
 
-        bool switchSuccessful = true;
-        try
+        // Save previous WSO for deactivation
+        FPSS_WeaponSlotObject previousWSO = activeWSO;
+        
+        // Wait for the current weapon to fully deactivate
+        yield return StartCoroutine(previousWSO.SetWeaponInactive());
+        
+        // Ensure the first person mesh is really disabled
+        if (previousWSO.firstPersonMeshObject != null)
         {
-            activeWSO.SetWeaponInactive();
-            ActivateWeaponSlot(slot);
+            previousWSO.firstPersonMeshObject.SetActive(false);
+            SBGDebug.LogInfo($"Forced deactivation of {previousWSO.weaponData.displayName} mesh", "WeaponPool | UpdateActiveWeaponSlot");
         }
-        catch (Exception e)
-        {
-            SBGDebug.LogError($"Failed to switch weapon slot: {e.Message}", "WeaponPool | UpdateActiveWeaponSlot");
-            switchSuccessful = false;
-        }
-        finally
-        {
-            isSwitching = false;
-        }
-
-        if (switchSuccessful)
-        {
-            yield return StartCoroutine(ActivateWeaponSlot(slot));
-        }
+        
+        // Activate the new weapon slot (setting activeWSO to the new weapon)
+        ActivateWeaponSlotSync(slot);
+        
+        // Now activate the new weapon mesh
+        yield return StartCoroutine(activeWSO.SetWeaponActive());
+        
+        isSwitching = false;
     }
-
-    private IEnumerator ActivateWeaponSlot(WeaponSlot slot)
+    
+    // Non-coroutine version that just sets up the active weapon reference
+    private void ActivateWeaponSlotSync(WeaponSlot slot)
     {
         switch (slot)
         {
@@ -337,7 +373,16 @@ public class WeaponPool : MonoBehaviour
                 activeSlot = WeaponSlot.Unarmed;
                 break;
         }
-        yield return activeWSO.SetWeaponActive();
+    }
+
+    private IEnumerator ActivateWeaponSlot(WeaponSlot slot)
+    {
+        // Set the active weapon reference
+        ActivateWeaponSlotSync(slot);
+        
+        // Activate the weapon mesh
+        yield return StartCoroutine(activeWSO.SetWeaponActive());
+        
         //FPSS_Main.Instance.currentWeaponSlot = slot; trying to remove FPSS_Main from codebase if possible
     }
     #endregion

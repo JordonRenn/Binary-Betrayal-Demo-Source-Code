@@ -43,13 +43,16 @@ public abstract class FPSS_WeaponSlotObject : MonoBehaviour
     [Header("Weapon Slot Object Properties")]
     [Space(10)]
 
-    [HideInInspector] public WeaponData weaponData; // set by WeaponPool on instantiation
+    [SerializeField] public WeaponData weaponData; // set by WeaponPool on instantiation
 
     [Tooltip("Animated arms and weapon mesh, should be a single object, with animator , with both arms and weapon mesh as children")]
-    [SerializeField] private GameObject firstPersonMeshObject;
+    [SerializeField] public GameObject firstPersonMeshObject; // set by WeaponPool on instantiation
 
+    [Tooltip("Default, fallback value")]
     [SerializeField] private float armSpeed = 0.23f; // target time -- TODO -> figure out how to extract from anim clips automatically
+    [Tooltip("Default, fallback value")]
     [SerializeField] private float disarmSpeed = 0.1f; // target time -- TODO -> figure out how to extract from anim clips automatically
+    [Tooltip("Default, fallback value")]
     [SerializeField] protected float reloadTime = 1f; // target time -- TODO -> figure out how to extract from anim clips automatically   
 
     [Header("Range and Damage")]
@@ -148,34 +151,93 @@ public abstract class FPSS_WeaponSlotObject : MonoBehaviour
         isActive = true;
         firstPersonMeshObject?.SetActive(true);
 
+        // Play the Arm animation from the beginning with no blending
+        float waitTime = armSpeed; // Default fallback time
+        
         try
         {
-            animator?.SetTrigger("Arm");
+            animator?.Play("Arm", 0, 0f);
         }
         catch (System.Exception ex)
         {
-            SBGDebug.LogError($"Error setting weapon active: {ex.Message}", "FPSS_WeaponSlotObject | SetWeaponActive");
+            SBGDebug.LogError($"Error playing Arm animation: {ex.Message}", "FPSS_WeaponSlotObject | SetWeaponActive");
         }
+        
+        // Wait a tiny bit for the animation to actually start
+        yield return new WaitForSeconds(0.1f);
+        
+        try
+        {
+            // Get the currently playing animation clip info
+            if (animator != null)
+            {
+                AnimatorClipInfo[] clipInfo = animator.GetCurrentAnimatorClipInfo(0);
+                if (clipInfo.Length > 0)
+                {
+                    waitTime = clipInfo[0].clip.length;
+                    SBGDebug.LogInfo($"Arm animation length: {waitTime}s for {weaponData.displayName}", "FPSS_WeaponSlotObject");
+                }
+            }
+        }
+        catch (System.Exception ex)
+        {
+            SBGDebug.LogWarning($"Couldn't get animation length, using default: {ex.Message}", "FPSS_WeaponSlotObject | SetWeaponActive");
+        }
+        
+        // Wait for the animation to complete
+        yield return new WaitForSeconds(waitTime);
 
-        yield return new WaitForSeconds(armSpeed);
-
-        animator.SetTrigger("Idle");
+        // Play the Idle animation from the beginning
+        try
+        {
+            animator?.Play("Idle", 0, 0f);
+        }
+        catch (System.Exception ex)
+        {
+            SBGDebug.LogError($"Error playing Idle animation: {ex.Message}", "FPSS_WeaponSlotObject | SetWeaponActive");
+        }
+        
         FPSS_WeaponHUD.Instance?.RefreshWeaponHUD();
         WeaponPool.Instance?.onWeaponActivationComplete.Invoke();
     }
 
     public IEnumerator SetWeaponInactive()
     {
+        // Play the Disarm animation from the beginning with no blending
+        float waitTime = disarmSpeed; // Default fallback time
+        
         try
         {
-            animator?.SetTrigger("Disarm");
+            animator?.Play("Disarm", 0, 0f);
         }
         catch (System.Exception ex)
         {
-            SBGDebug.LogError($"Error setting weapon inactive: {ex.Message}", "FPSS_WeaponSlotObject | SetWeaponInactive");
+            SBGDebug.LogError($"Error playing Disarm animation: {ex.Message}", "FPSS_WeaponSlotObject | SetWeaponInactive");
         }
-
-        yield return new WaitForSeconds(disarmSpeed);
+        
+        // Wait a tiny bit for the animation to actually start
+        yield return new WaitForSeconds(0.1f);
+        
+        try
+        {
+            // Get the currently playing animation clip info
+            if (animator != null)
+            {
+                AnimatorClipInfo[] clipInfo = animator.GetCurrentAnimatorClipInfo(0);
+                if (clipInfo.Length > 0)
+                {
+                    waitTime = clipInfo[0].clip.length;
+                    SBGDebug.LogInfo($"Disarm animation length: {waitTime}s for {weaponData.displayName}", "FPSS_WeaponSlotObject");
+                }
+            }
+        }
+        catch (System.Exception ex)
+        {
+            SBGDebug.LogWarning($"Couldn't get disarm animation length, using default: {ex.Message}", "FPSS_WeaponSlotObject | SetWeaponInactive");
+        }
+        
+        // Wait for the animation to complete
+        yield return new WaitForSeconds(waitTime);
         
         firstPersonMeshObject?.SetActive(false);
         WeaponPool.Instance?.onWeaponDeactivationComplete.Invoke();
