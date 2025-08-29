@@ -1,113 +1,44 @@
 {
-  "playerInventory": {
-    "inventoryId": "player_inv",
-    "name": "Player's Inventory",
-    "capacity": 100,
-    "items": [
-      {
-        "itemId": "wpn_001",
-        "name": "Combat Pistol",
-        "description": "A reliable sidearm for close quarters combat. Standard issue for security personnel.",
-        "type": "Weapon",
-        "weight": 2,
-        "quantity": 1
-      },
-      {
-        "itemId": "wpn_002",
-        "name": "Tactical Rifle",
-        "description": "Military-grade assault rifle with excellent accuracy and stopping power.",
-        "type": "Weapon",
-        "weight": 5,
-        "quantity": 1
-      },
-      {
-        "itemId": "amm_001",
-        "name": "9mm Rounds",
-        "description": "Standard pistol ammunition. Reliable and effective for small arms.",
-        "type": "Ammo",
-        "weight": 1,
-        "quantity": 50
-      },
-      {
-        "itemId": "amm_002",
-        "name": "5.56mm Rounds",
-        "description": "High-velocity rifle ammunition designed for maximum penetration.",
-        "type": "Ammo",
-        "weight": 1,
-        "quantity": 100
-      },
-      {
-        "itemId": "med_001",
-        "name": "Medkit",
-        "description": "Advanced medical supplies that can treat serious injuries and restore health.",
-        "type": "Medical",
-        "weight": 2,
-        "quantity": 3
-      },
-      {
-        "itemId": "med_002",
-        "name": "Bandage",
-        "description": "Basic medical supplies for treating minor wounds and stopping bleeding.",
-        "type": "Medical",
-        "weight": 1,
-        "quantity": 5
-      },
-      {
-        "itemId": "res_001",
-        "name": "Scrap Metal",
-        "description": "Recycled metal components useful for crafting and repairs.",
-        "type": "Resource",
-        "weight": 1,
-        "quantity": 15
-      },
-      {
-        "itemId": "res_002",
-        "name": "Electronic Parts",
-        "description": "High-tech components salvaged from various devices. Essential for advanced crafting.",
-        "type": "Resource",
-        "weight": 1,
-        "quantity": 8
-      },
-      {
-        "itemId": "con_001",
-        "name": "Energy Drink",
-        "description": "A high-caffeine beverage that temporarily increases stamina and alertness.",
-        "type": "Consumable",
-        "weight": 1,
-        "quantity": 2
-      },
-      {
-        "itemId": "con_002",
-        "name": "MRE",
-        "description": "Military Meal Ready-to-Eat. Provides substantial nutrition and energy.",
-        "type": "Consumable",
-        "weight": 1,
-        "quantity": 3
-      },
-      {
-        "itemId": "key_001",
-        "name": "Security Keycard",
-        "description": "A high-level access card that opens restricted areas.",
-        "type": "KeyItem",
-        "weight": 0,
-        "quantity": 1
-      },
-      {
-        "itemId": "qst_001",
-        "name": "Data Chip",
-        "description": "A encrypted data storage device containing critical mission information.",
-        "type": "QuestItem",
-        "weight": 0,
-        "quantity": 1
-      },
-      {
-        "itemId": "msc_001",
-        "name": "Old Photo",
-        "description": "A faded photograph of unknown significance. Might be important to someone.",
-        "type": "Misc",
-        "weight": 0,
-        "quantity": 1
-      }
-    ]
-  }
+  "inventoryId": "player_inv",
+  "items": [
+    { "itemId": "mat_metalScraps", "quantity": 1 },
+    { "itemId": "mat_plasticScraps", "quantity": 1 },
+    { "itemId": "mat_circuitBoards", "quantity": 1 },
+    { "itemId": "mat_wires", "quantity": 1 },
+    { "itemId": "mat_cloth", "quantity": 1 },
+    { "itemId": "food_Chips_01", "quantity": 1 },
+    { "itemId": "food_Chips_02", "quantity": 1 },
+    { "itemId": "food_cannedBeans", "quantity": 1 },
+    { "itemId": "food_energyDrink", "quantity": 1 },
+    { "itemId": "food_mealRation", "quantity": 1 },
+    { "itemId": "food_proteinBar", "quantity": 1 },
+    { "itemId": "food_vitaminPills", "quantity": 1 },
+    { "itemId": "food_staminaPills", "quantity": 1 },
+    { "itemId": "key_cardRed", "quantity": 1 },
+    { "itemId": "key_cardBlue", "quantity": 1 },
+    { "itemId": "key_cardGreen", "quantity": 1 },
+    { "itemId": "key_cardYellow", "quantity": 1 },
+    { "itemId": "key_cardOrange", "quantity": 1 },
+    { "itemId": "key_cardPurple", "quantity": 1 },
+    { "itemId": "key_containerCard", "quantity": 1 },
+    { "itemId": "key_code_0000", "quantity": 1 },
+    { "itemId": "key_0000", "quantity": 1 },
+    { "itemId": "key_containerKey", "quantity": 1 },
+    { "itemId": "quest_docs_001", "quantity": 1 },
+    { "itemId": "quest_data_001", "quantity": 1 },
+    { "itemId": "quest_book_001", "quantity": 1 },
+    { "itemId": "quest_hiddenNote", "quantity": 1 },
+    { "itemId": "med_kit", "quantity": 1 },
+    { "itemId": "med_supplement", "quantity": 1 },
+    { "itemId": "med_bandage", "quantity": 1 },
+    { "itemId": "med_painKiller", "quantity": 1 },
+    { "itemId": "med_antidote", "quantity": 1 },
+    { "itemId": "med_antibiotics", "quantity": 1 },
+    { "itemId": "med_maxHealthBooster", "quantity": 1 },
+    { "itemId": "phone_4206969", "quantity": 1 },
+    { "itemId": "tool_camJammer", "quantity": 1 },
+    { "itemId": "tool_keyJammer", "quantity": 1 },
+    { "itemId": "tool_alarmJammer", "quantity": 1 },
+    { "itemId": "tool_radioJammer", "quantity": 1 }
+  ]
 }

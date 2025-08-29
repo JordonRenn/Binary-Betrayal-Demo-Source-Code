@@ -9,6 +9,7 @@ public class DialogueLoader : MonoBehaviour
 
     private const string DIALOGUE_FOLDER = "Dialogues";
     private string currentLanguage;
+    private Dictionary<string, DialogueData> cachedDialogues = new Dictionary<string, DialogueData>();
 
     void Awake()
     {
@@ -50,10 +51,19 @@ public class DialogueLoader : MonoBehaviour
             Directory.CreateDirectory(langPath);
             SBGDebug.LogInfo($"Created language directory at: {langPath}", "DialogueLoader");
         }
+        
+        // Clear cache when language changes
+        cachedDialogues.Clear();
     }
 
     public DialogueData LoadDialogue(string dialogueId)
     {
+        // Check cache first
+        if (cachedDialogues.TryGetValue(dialogueId, out DialogueData cachedDialogue))
+        {
+            return cachedDialogue;
+        }
+        
         string filePath = Path.Combine(Application.streamingAssetsPath, DIALOGUE_FOLDER, currentLanguage, $"{dialogueId}.json");
 
         if (!File.Exists(filePath))
@@ -64,14 +74,33 @@ public class DialogueLoader : MonoBehaviour
 
         try
         {
-            string jsonContent = File.ReadAllText(filePath);
-            return JsonUtility.FromJson<DialogueData>(jsonContent);
+            // Load the file as a TextAsset
+            byte[] fileBytes = File.ReadAllBytes(filePath);
+            TextAsset jsonAsset = new TextAsset(System.Text.Encoding.UTF8.GetString(fileBytes));
+            
+            // Parse using our SimdJsonSharp parser
+            var dialogues = DialogueJsonParser.ParseDialogueData(jsonAsset);
+            if (dialogues != null && dialogues.Length > 0)
+            {
+                // Cache the result
+                cachedDialogues[dialogueId] = dialogues[0];
+                return dialogues[0];
+            }
+            
+            SBGDebug.LogError($"Failed to parse dialogue: {dialogueId}", "DialogueLoader");
+            return null;
         }
         catch (System.Exception e)
         {
             SBGDebug.LogException(e, "DialogueLoader");
             return null;
         }
+    }
+    
+    public void ClearCache()
+    {
+        cachedDialogues.Clear();
+        SBGDebug.LogInfo("Dialogue cache cleared", "DialogueLoader");
     }
 }
 

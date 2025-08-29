@@ -16,11 +16,11 @@ public abstract class ItemBase : IItem
     public string Description { get; protected set; }
     public abstract ItemType Type { get; }
     public Sprite Icon { get; protected set; }
-    public int weight { get; protected set; }
+    public float weight { get; protected set; }
     public virtual ItemRarity Rarity { get; protected set; }
     public virtual ItemViewLogicType ViewLogic { get; protected set; }
 
-    protected ItemBase(string id, string name, string description, Sprite icon, ItemType type = ItemType.Misc, int weight = 0, ItemRarity rarity = ItemRarity.Common, ItemViewLogicType viewLogic = ItemViewLogicType.Static)
+    protected ItemBase(string id, string name, string description, Sprite icon, ItemType type = ItemType.Misc, float weight = 0, ItemRarity rarity = ItemRarity.Common, ItemViewLogicType viewLogic = ItemViewLogicType.Static)
     {
         ItemId = id;
         Name = name;

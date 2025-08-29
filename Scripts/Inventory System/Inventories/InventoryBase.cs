@@ -16,11 +16,11 @@ public abstract class InventoryBase : IInventory
 {
     public string InventoryId { get; protected set; }
     public string Name { get; protected set; }
-    public int Capacity { get; protected set; }
+    public float Capacity { get; protected set; }
     public Dictionary<IItem, int> Items { get; protected set; }
     public InventoryType Type { get; protected set; }
 
-    protected InventoryBase(string inventoryId, string name, int capacity, InventoryType type)
+    protected InventoryBase(string inventoryId, string name, float capacity, InventoryType type)
     {
         InventoryId = inventoryId;
         Name = name;
@@ -37,7 +37,7 @@ public abstract class InventoryBase : IInventory
     // call from inventory manager, not directly
     public void AddItem(IItem item, int quantity)
     {
-        int newWeight = totalWeight() + (item.weight * quantity);
+        float newWeight = totalWeight() + (item.weight * quantity);
         if (newWeight > Capacity)
         {
             //if player inventory, show error notification
@@ -117,9 +117,9 @@ public abstract class InventoryBase : IInventory
         return new List<IItem>(Items.Keys).ToArray();
     }
 
-    public int totalWeight()
+    public float totalWeight()
     {
-        int total = 0;
+        float total = 0;
         foreach (var item in Items)
         {
             total += item.Key.weight * item.Value;

@@ -10,10 +10,10 @@ public class WPO_Gun : FPSS_WeaponSlotObject
 
     [SerializeField] public WeaponFireMode fireMode;
     [SerializeField] private bool hasScope;
-    
+
     [Header("Ammunition")]
     [Space(10)]
-    
+
     [SerializeField] private bool infiniteAmmo;
     [SerializeField] protected float fireRate;
     [SerializeField] private float bulletSpeed = 300f;
@@ -22,10 +22,10 @@ public class WPO_Gun : FPSS_WeaponSlotObject
     [SerializeField] public int currentClip;
     [SerializeField] private int maxAmmo = 69420;
     [SerializeField] public int currentAmmo;
-    
+
     [Header("Shell")]
     [Space(10)]
-    
+
     [SerializeField] private GameObject shellObject;
     [SerializeField] private float sfx_ShellDelay;
 
@@ -52,16 +52,16 @@ public class WPO_Gun : FPSS_WeaponSlotObject
 
     [SerializeField] protected EventReference sfx_Fire;
     [SerializeField] protected EventReference sfx_Empty;
-    [SerializeField] private EventReference sfx_ClipOut;
-    [SerializeField] private float clipOutSFXDelay;
-    [SerializeField] private EventReference sfx_ClipIn;
-    [SerializeField] private float clipInSFXDelay;
-    [SerializeField] private EventReference sfx_Slide;
-    [SerializeField] private float slideSFXDelay;
+    [SerializeField] public EventReference sfx_ClipOut;
+    [SerializeField] public EventReference sfx_ClipIn;
+    [SerializeField] public EventReference sfx_Slide;
+    [SerializeField] public EventReference sfx_Grab;
+    [SerializeField] public EventReference sfx_Handling_1;
+    [SerializeField] public EventReference sfx_Handling_2;
     [SerializeField] private EventReference sfx_gun_shell;
 
-    [Header("VFX")] 
-    [Space(10)] 
+    [Header("VFX")]
+    [Space(10)]
 
     [SerializeField] private GameObject bullettrail;
     [SerializeField] private MuzzleFlash mFlash;
@@ -76,12 +76,12 @@ public class WPO_Gun : FPSS_WeaponSlotObject
     {
         //base.Awake();
         spreadPatternArrayLength = spreadPattern.Length;
-        ConstructSpreadPattern(); 
+        ConstructSpreadPattern();
     }
 
     void Update()
     {
-        if (!initialized) 
+        if (!initialized)
         {
             //Debug.LogWarning("WEAPON SLOT OBJECT: Initializing...");
             return;
@@ -134,22 +134,22 @@ public class WPO_Gun : FPSS_WeaponSlotObject
 
     protected void FireHitScan()
     {
-        //Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));     //old
+        EjectShell();
 
-        Transform camTransform = cam.transform;                             //new
-        Ray ray = new Ray(camTransform.position, camTransform.forward);     //new
+        Transform camTransform = cam.transform;     
+        Ray ray = new Ray(camTransform.position, camTransform.forward); 
 
-        RaycastHit hit; 
+        RaycastHit hit;
 
         if (Physics.Raycast(ray, out hit, range))
         {
             Vector3 targetPos = hit.point;
 
-            StartCoroutine(ApplyBulletVisualEffects(targetPos)); 
+            StartCoroutine(ApplyBulletVisualEffects(targetPos));
 
             CalculateDamage(hit.point);
 
-            ApplyHitSurfaceEffects(ray, out hit);  
+            ApplyHitSurfaceEffects(ray, out hit);
         }
 
         AmmoChange.Invoke();
@@ -201,8 +201,8 @@ public class WPO_Gun : FPSS_WeaponSlotObject
 
     private IEnumerator ApplyBulletVisualEffects(Vector3 targetPos)
     {
-        mFlash.Flash();
-        
+        //mFlash.Flash();
+
         GameObject bulletTrail = Instantiate(bullettrail, pos_Muzzle.position, Quaternion.identity);
 
         while (bulletTrail != null && Vector3.Distance(bulletTrail.transform.position, targetPos) > 0.1f)
@@ -220,4 +220,11 @@ public class WPO_Gun : FPSS_WeaponSlotObject
         StartCoroutine(PlaySfxDelay(sfx_gun_shell, sfx_ShellDelay, pos_GunAudio.position)); //??? Posittioning will need to get fixed, lazy temp fix
         GameObject shell = Instantiate(shellObject, pos_ShellEject.position, pos_ShellEject.rotation);
     }
+
+    #region AUDIO
+    public void PlaySfx(EventReference eventRef)
+    {
+        RuntimeManager.PlayOneShotAttached(eventRef, pos_GunAudio.gameObject);
+    }
+    #endregion
 }

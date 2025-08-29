@@ -22,64 +22,7 @@ HOW TO USE ItemFactory:
       (uses default subtypes, only use when CSV is not appropriate)
  */
 
-#region ItemMasterData
-[System.Serializable]
-public class ItemMasterData
-{
-    public string itemId;
-    public string displayName;
-    public string description;
-    public int weight;
-    public string category;
-    public string subtype;
-    public string effectType;
-    public string effectValue;
-    public string rarity;
-    public string viewLogic;
-    public int value;
 
-    // Parsed enum properties
-    public ItemType ItemType { get; private set; }
-    public ItemRarity ItemRarity { get; private set; }
-    public ItemViewLogicType ViewLogicType { get; private set; }
-
-    public void ParseEnums()
-    {
-        // Parse ItemType
-        if (!Enum.TryParse<ItemType>(this.category, true, out ItemType itemType))
-        {
-            Debug.LogWarning($"Invalid ItemType '{this.category}' for item '{this.itemId}', defaulting to Misc");
-            this.ItemType = ItemType.Misc;
-        }
-        else
-        {
-            this.ItemType = itemType;
-        }
-
-        // Parse ItemRarity
-        if (!Enum.TryParse<ItemRarity>(this.rarity, true, out ItemRarity itemRarity))
-        {
-            Debug.LogWarning($"Invalid ItemRarity '{this.rarity}' for item '{this.itemId}', defaulting to Common");
-            this.ItemRarity = ItemRarity.Common;
-        }
-        else
-        {
-            this.ItemRarity = itemRarity;
-        }
-
-        // Parse ItemViewLogicType
-        if (!Enum.TryParse<ItemViewLogicType>(this.viewLogic, true, out ItemViewLogicType viewLogicType))
-        {
-            Debug.LogWarning($"Invalid ViewLogicType '{this.viewLogic}' for item '{this.itemId}', defaulting to Static");
-            this.ViewLogicType = ItemViewLogicType.Static;
-        }
-        else
-        {
-            this.ViewLogicType = viewLogicType;
-        }
-    }
-}
-#endregion
 
 #region Item Factory Class
 public class ItemFactory : MonoBehaviour
@@ -184,11 +127,12 @@ public class ItemFactory : MonoBehaviour
     /// <summary>
     /// Parses a single CSV line into ItemMasterData
     /// </summary>
+    // Update the ParseCsvLine method to handle the new fields
     private ItemMasterData ParseCsvLine(string line)
     {
         string[] values = SplitCsvLine(line);
 
-        if (values.Length < 11)
+        if (values.Length < 14) // Updated minimum column count
         {
             SBGDebug.LogWarning($"CSV line has insufficient columns: {line}", "ItemFactory");
             return null;
@@ -199,15 +143,39 @@ public class ItemFactory : MonoBehaviour
             itemId = values[0].Trim(),
             displayName = values[1].Trim(),
             description = values[2].Trim(),
-            weight = int.TryParse(values[3].Trim(), out int weight) ? weight : 0,
+            weight = float.TryParse(values[3].Trim(), out float weight) ? weight : 0,
             category = values[4].Trim(),
             subtype = values[5].Trim(),
             effectType = values[6].Trim(),
             effectValue = values[7].Trim(),
             rarity = values[8].Trim(),
             viewLogic = values[9].Trim(),
-            value = int.TryParse(values[10].Trim(), out int val) ? val : 0
+            value = float.TryParse(values[10].Trim(), out float val) ? val : 0,
+            iconPath = values.Length > 11 ? values[11].Trim() : "",
+            isUsableStr = values.Length > 12 ? values[12].Trim() : "false",
+            isEquippableStr = values.Length > 13 ? values[13].Trim() : "false",
+            isQuestItemStr = values.Length > 14 ? values[14].Trim() : "false",
+            maxStack = values.Length > 15 && int.TryParse(values[15].Trim(), out int maxStack) ? maxStack : 99
         };
+
+        // Initialize attributes dictionary
+        item.attributes = new Dictionary<string, float>();
+        
+        // Parse any attributes (if provided in additional columns)
+        if (values.Length > 16)
+        {
+            for (int i = 16; i < values.Length; i += 2)
+            {
+                if (i + 1 < values.Length)
+                {
+                    string attrName = values[i].Trim();
+                    if (float.TryParse(values[i + 1].Trim(), out float attrValue) && !string.IsNullOrEmpty(attrName))
+                    {
+                        item.attributes[attrName] = attrValue;
+                    }
+                }
+            }
+        }
 
         return item;
     }
@@ -361,17 +329,17 @@ public class ItemFactory : MonoBehaviour
                 return null;
             }
 
-            return itemData.Type switch
+            return itemData.itemType switch
             {
-                ItemType.Misc => ValidateAndCreate(() => new Item_Misc(itemData.ItemId, itemData.Name, itemData.Description, itemData.Icon, null, itemData.weight), "Misc"),
-                ItemType.Material => ValidateAndCreate(() => new Item_Material(itemData.ItemId, itemData.Name, itemData.Description, itemData.Icon, null, Item_MaterialType.MetalScraps, ItemEffect_Material.CraftMetal, 0, itemData.weight), "Material"),
-                ItemType.Food => ValidateAndCreate(() => new Item_Food(itemData.ItemId, itemData.Name, itemData.Description, itemData.Icon, null, Item_FoodType.Snack, ItemEffect_Food.BoostHealth, 0, itemData.weight), "Food"),
-                ItemType.Keys => ValidateAndCreate(() => new Item_Keys(itemData.ItemId, itemData.Name, itemData.Description, itemData.Icon, null, KeyType.Key, ItemEffect_Key.UnlockDoor, itemData.weight), "Keys"),
-                ItemType.Quest => ValidateAndCreate(() => new Item_Quest(itemData.ItemId, itemData.Name, itemData.Description, itemData.Icon, null, Item_QuestType.Main, string.Empty, ItemEffect_Quest.None, itemData.weight), "Quest"),
-                ItemType.Medical => ValidateAndCreate(() => new Item_Medical(itemData.ItemId, itemData.Name, itemData.Description, itemData.Icon, null, Item_MedicalType.FirstAidKit, ItemEffect_Medical.Heal, 0, itemData.weight), "Medical"),
-                ItemType.Phone => ValidateAndCreate(() => new Item_Phone(itemData.ItemId, itemData.Name, itemData.Description, itemData.Icon, null, Item_PhoneType.Number, string.Empty, ItemEffect_Phone.None, itemData.weight), "Phone"),
-                ItemType.Tools => ValidateAndCreate(() => new Item_Tools(itemData.ItemId, itemData.Name, itemData.Description, itemData.Icon, null, Item_ToolType.KeyJammer, ItemEffect_Tool.DisableKeypad, itemData.weight), "Tools"),
-                _ => throw new ArgumentOutOfRangeException($"Unsupported item type: {itemData.Type}")
+                ItemType.Misc => ValidateAndCreate(() => new Item_Misc(itemData.itemId, itemData.name, itemData.description, itemData.icon, null, itemData.weight), "Misc"),
+                ItemType.Material => ValidateAndCreate(() => new Item_Material(itemData.itemId, itemData.name, itemData.description, itemData.icon, null, Item_MaterialType.MetalScraps, ItemEffect_Material.CraftMetal, 0, itemData.weight), "Material"),
+                ItemType.Food => ValidateAndCreate(() => new Item_Food(itemData.itemId, itemData.name, itemData.description, itemData.icon, null, Item_FoodType.Snack, ItemEffect_Food.BoostHealth, 0, itemData.weight), "Food"),
+                ItemType.Keys => ValidateAndCreate(() => new Item_Keys(itemData.itemId, itemData.name, itemData.description, itemData.icon, null, KeyType.Key, ItemEffect_Key.UnlockDoor, itemData.weight), "Keys"),
+                ItemType.Quest => ValidateAndCreate(() => new Item_Quest(itemData.itemId, itemData.name, itemData.description, itemData.icon, null, Item_QuestType.Main, string.Empty, ItemEffect_Quest.None, itemData.weight), "Quest"),
+                ItemType.Medical => ValidateAndCreate(() => new Item_Medical(itemData.itemId, itemData.name, itemData.description, itemData.icon, null, Item_MedicalType.FirstAidKit, ItemEffect_Medical.Heal, 0, itemData.weight), "Medical"),
+                ItemType.Phone => ValidateAndCreate(() => new Item_Phone(itemData.itemId, itemData.name, itemData.description, itemData.icon, null, Item_PhoneType.Number, string.Empty, ItemEffect_Phone.None, itemData.weight), "Phone"),
+                ItemType.Tools => ValidateAndCreate(() => new Item_Tools(itemData.itemId, itemData.name, itemData.description, itemData.icon, null, Item_ToolType.KeyJammer, ItemEffect_Tool.DisableKeypad, itemData.weight), "Tools"),
+                _ => throw new ArgumentOutOfRangeException($"Unsupported item type: {itemData.itemType}")
             };
         }
         catch (Exception ex)
@@ -514,16 +482,7 @@ public class ItemFactory : MonoBehaviour
 
     private static ItemData CreateItemData(ItemMasterData data, Sprite icon)
     {
-        return new ItemData(
-            data.itemId,
-            data.displayName,
-            data.description,
-            icon,
-            data.ItemType,
-            data.weight,
-            data.ItemRarity,
-            data.ViewLogicType
-        );
+        return data.ToItemData(icon);
     }
 
     private static IItem CreateMaterialFromData(ItemMasterData data, Sprite icon)

@@ -1,39 +1,95 @@
 using UnityEngine;
 using System;
-
-/* 
-INHERITANCE STRUCTURE:
-IInventory
-├── InventoryBase (abstract class)
-│   ├── Inv_Container
-│   ├── Inv_NPC
-│   ├── Inv_Container
-│   └── Inv_Player
-InventoryData (struct)
-IInventoryExchange 
- */
-
- /* 
- HOW TO USE:
- 1. Create an instance of InventoryData with the required parameters.
- 2. Call InventoryFactory.CreateInventory(data) to create the inventory.
-  */
+using System.Collections.Generic;
 
 public static class InventoryFactory
 {
     public static IInventory CreateInventory(InventoryData data)
     {
-        if (data.Items == null)
-            throw new ArgumentNullException(nameof(data.Items), "Items dictionary cannot be null.");
+        if (data == null)
+            throw new ArgumentNullException(nameof(data), "InventoryData cannot be null.");
 
-        // Determine inventory type based on InventoryId prefix
-        return data.InventoryId switch
+        // Determine inventory type using switch statement
+        IInventory inventory;
+        
+        // Try to determine inventory type from explicit type first, then fallback to ID prefix
+        switch (data.inventoryType)
         {
-            string id when id.StartsWith("PLAYER_") => CreatePlayerInventory(data.InventoryId, data.Name, data.Capacity),
-            string id when id.StartsWith("CONTAINER_") => CreateContainerInventory(data.InventoryId, data.Name, data.Capacity),
-            string id when id.StartsWith("NPC_") => CreateNPCInventory(data.InventoryId, data.Name, data.Capacity),
-            _ => throw new ArgumentException($"Unknown inventory type for ID: {data.InventoryId}")
+            case InventoryType.Player:
+                inventory = CreatePlayerInventory(data.inventoryId, data.displayName, (int)data.maxWeight);
+                break;
+            case InventoryType.Container:
+                inventory = CreateContainerInventory(data.inventoryId, data.displayName, (int)data.maxWeight);
+                break;
+            case InventoryType.NPC:
+                inventory = CreateNPCInventory(data.inventoryId, data.displayName, (int)data.maxWeight);
+                break;
+            default:
+                // Fall back to ID prefix detection if inventoryType isn't specified or recognized
+                inventory = data.inventoryId switch
+                {
+                    string id when id.StartsWith("PLAYER_") => CreatePlayerInventory(data.inventoryId, data.displayName, (int)data.maxWeight),
+                    string id when id.StartsWith("CONTAINER_") => CreateContainerInventory(data.inventoryId, data.displayName, (int)data.maxWeight),
+                    string id when id.StartsWith("NPC_") => CreateNPCInventory(data.inventoryId, data.displayName, (int)data.maxWeight),
+                    _ => throw new ArgumentException($"Unknown inventory type for ID: {data.inventoryId}")
+                };
+                break;
+        }
+
+        // Populate the inventory with items if available
+        if (data.items != null)
+        {
+            foreach (var itemData in data.items)
+            {
+                var item = ItemFactory.CreateItemFromDatabase(itemData.itemId);
+                if (item != null)
+                {
+                    // check if item already exists in inventory
+                    if (!inventory.Items.ContainsKey(item))
+                    {
+                        inventory.AddItem(item, 1);
+                    }
+                    else
+                    {
+                        inventory.Items[item] += 1; // Increment quantity
+                    }
+                }
+            }
+        }
+        else
+        {
+            SBGDebug.LogInfo("No items found in inventory data.", "InventoryFactory | CreateInventory");
+        }
+
+        return inventory;
+    }
+    
+    public static InventoryData CreateInventoryDataFromContext (InventoryContextData data)
+    {
+        if (data == null)
+            throw new ArgumentNullException(nameof(data), "InventoryContextData cannot be null.");
+
+        var inventoryData = new InventoryData
+        {
+            inventoryId = data.InventoryId,
+            // Map other fields as necessary
         };
+
+        // Convert ItemContextData to ItemData using ItemFactory
+        foreach (var ctxItem in data.Items)
+        {
+            var item = ItemFactory.CreateItemFromDatabase(ctxItem.ItemId) as ItemData;
+            if (item != null)
+            {
+                inventoryData.items.Add(item);
+            }
+            else
+            {
+                SBGDebug.LogWarning($"ItemFactory could not create item for id: {ctxItem.ItemId}", "InventoryFactory");
+            }
+        }
+
+        return inventoryData;
     }
 
     public static IInventory CreatePlayerInventory(string inventoryId, string name, int capacity)

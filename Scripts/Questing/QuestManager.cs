@@ -1,61 +1,78 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using System.IO;
 
-[System.Serializable]
-public class QuestsWrapper
+/* 
+888     888 888b    888 88888888888 8888888888 .d8888b. 88888888888 8888888888 8888888b.  
+888     888 8888b   888     888     888       d88P  Y88b    888     888        888  "Y88b 
+888     888 88888b  888     888     888       Y88b.         888     888        888    888 
+888     888 888Y88b 888     888     8888888    "Y888b.      888     8888888    888    888 
+888     888 888 Y88b888     888     888           "Y88b.    888     888        888    888 
+888     888 888  Y88888     888     888             "888    888     888        888    888 
+Y88b. .d88P 888   Y8888     888     888       Y88b  d88P    888     888        888  .d88P 
+ "Y88888P"  888    Y888     888     8888888888 "Y8888P"     888     8888888888 8888888P"  
+
+ UNTESTED-UNTESTED-UNTESTED-UNTESTED-UNTESTED-UNTESTED-UNTESTED-UNTESTED-UNTESTED-UNTESTED
+ */
+
+ /*
+    Need to update objective to work with new Objective Event System
+ */
+
+
+
+public static class QuestManager
 {
-    public QuestData[] quests;
-}
+    private static TextAsset questJSON;
 
-public sealed class QuestManager : MonoBehaviour
-{
-    private static QuestManager _instance;
-    public static QuestManager Instance
+    public static Dictionary<int, RuntimeQuest> QuestByID { get; private set; }
+    public static List<RuntimeQuest> activeQuests = new List<RuntimeQuest>();
+    public static Dictionary<int, RuntimeQuest> completedQuests { get; private set; }
+
+    public static bool questsLoaded { get; private set; }
+    public static bool jsonValidated { get; private set; }
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    public static async void Init()
     {
-        get
-        {
-            if (_instance == null)
-            {
-                Debug.LogError($"Attempting to access {nameof(QuestManager)} before it is initialized.");
-            }
-            return _instance;
-        }
-        private set => _instance = value;
+        QuestByID = new Dictionary<int, RuntimeQuest>();
+        completedQuests = new Dictionary<int, RuntimeQuest>();
+        await Task.Run(() => new WaitUntil(() => GameMaster.Instance != null));
+        LoadQuestJson();
+        //LoadQuestData();
+        await Task.Run(() => new WaitUntil(() => questJSON != null));
+        //ValidateJSON();
     }
-
-    [Header("Quest Data")]
-    [SerializeField] private TextAsset questJSON;
-
-    public Dictionary<int, RuntimeQuest> QuestByID { get; private set; }
-    public List<RuntimeQuest> activeQuests = new List<RuntimeQuest>();
-    public Dictionary<int, RuntimeQuest> completedQuests { get; private set; }
-
-    void Awake()
+    
+    private static void LoadQuestJson()
     {
-        // Initialize as singleton and persist across scenes since quest data is persistent
-        if (this.InitializeSingleton(ref _instance, true) == this)
+        try
         {
-            // Initialize collections
-            QuestByID = new Dictionary<int, RuntimeQuest>();
-            completedQuests = new Dictionary<int, RuntimeQuest>();
-
-            // Validate required data
-            if (questJSON == null)
+            string questFilePath = Path.Combine(Application.streamingAssetsPath, "Quests/Quests.json");
+            
+            if (File.Exists(questFilePath))
             {
-                Debug.LogError($"{nameof(QuestManager)}: Quest JSON data file is missing!");
-                return;
+                string jsonContent = File.ReadAllText(questFilePath);
+                questJSON = new TextAsset(jsonContent);
+                SBGDebug.LogInfo($"Successfully loaded quest file from {questFilePath}", "QuestManager");
             }
-
-            LoadQuestData();
+            else
+            {
+                SBGDebug.LogError($"Quest file not found at path: {questFilePath}", "QuestManager");
+            }
+        }
+        catch (System.Exception e)
+        {
+            SBGDebug.LogError($"Failed to load quest JSON file: {e.Message}", "QuestManager");
         }
     }
-
-    private void LoadQuestData()
+    private static void LoadQuestData()
     {
-        try 
+        try
         {
-            var questDataArray = JsonUtility.FromJson<QuestsWrapper>(questJSON.text).quests;
+            var questDataArray = QuestJsonParser.ParseQuestsData(questJSON);
             if (questDataArray == null || questDataArray.Length == 0)
             {
                 Debug.LogWarning($"{nameof(QuestManager)}: No quests found in JSON data!");
@@ -72,10 +89,10 @@ public sealed class QuestManager : MonoBehaviour
         {
             SBGDebug.LogError($"Failed to parse quest JSON: {e.Message}", "QuestManager");
         }
-    }
 
-#if UNITY_EDITOR
-    private void OnValidate()
+        questsLoaded = true;
+    }
+    private static void ValidateJSON()
     {
         if (questJSON == null)
         {
@@ -83,10 +100,10 @@ public sealed class QuestManager : MonoBehaviour
         }
         else
         {
-            // Validate quest data structure in editor
-            try 
+            var questDataArray = null as QuestData[];
+            try
             {
-                var questDataArray = JsonUtility.FromJson<QuestsWrapper>(questJSON.text).quests;
+                questDataArray = QuestJsonParser.ParseQuestsData(questJSON);
                 if (questDataArray == null || questDataArray.Length == 0)
                 {
                     Debug.LogWarning($"{nameof(QuestManager)}: Quest JSON file contains no quest data!");
@@ -96,41 +113,37 @@ public sealed class QuestManager : MonoBehaviour
             {
                 Debug.LogError($"{nameof(QuestManager)}: Invalid quest JSON data structure: {e.Message}");
             }
+            finally
+            {
+                if (questDataArray != null && questDataArray.Length > 0) jsonValidated = true;
+            }
         }
     }
 
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-    private static void ResetStatics()
-    {
-        // Reset static instance when entering play mode in editor
-        _instance = null;
-    }
-#endif
-
-    private void AddQuest(QuestData questData)
+    private static void AddQuest(QuestData questData)
     {
         var quest = new RuntimeQuest(questData);
         QuestByID[quest.ID] = quest;
     }
 
-    private void MarkQuestAsComplete(int questId)
+    private static void MarkQuestAsComplete(int questId)
     {
         if (QuestByID.TryGetValue(questId, out var quest))
         {
             quest.Complete();
-            
+
             // Move from active to completed
             if (activeQuests.Contains(quest))
             {
                 activeQuests.Remove(quest);
             }
             completedQuests[questId] = quest;
-            
+
             SBGDebug.LogInfo($"Quest {questId} marked as complete", "QuestManager");
         }
     }
 
-    public void StartQuest(int questID)
+    public static void StartQuest(int questID)
     {
         if (QuestByID.TryGetValue(questID, out var quest))
         {
@@ -151,27 +164,33 @@ public sealed class QuestManager : MonoBehaviour
         }
     }
 
-    public bool IsQuestCompleted(int questID)
+    public static bool IsQuestCompleted(int questID)
     {
         return completedQuests.ContainsKey(questID);
     }
 
-    public IEnumerable<RuntimeQuest> GetQuestsByType(QuestType type)
+    public static RuntimeQuest GetQuestByID(int questID)
     {
-        return QuestByID.Values.Where(q => q.Type == type);
+        QuestByID.TryGetValue(questID, out var quest);
+        return quest;
     }
 
-    public IEnumerable<RuntimeQuest> GetActiveQuestsByType(QuestType type)
+    public static RuntimeQuest[] GetQuestsByType(QuestType type)
     {
-        return activeQuests.Where(q => q.Type == type);
+        return QuestByID.Values.Where(q => q.Type == type).ToArray();
     }
 
-    public IEnumerable<RuntimeQuest> GetCompletedQuestsByType(QuestType type)
+    public static RuntimeQuest[] GetActiveQuestsByType(QuestType type)
     {
-        return completedQuests.Values.Where(q => q.Type == type);
+        return activeQuests.Where(q => q.Type == type).ToArray();
     }
 
-    public float GetQuestCompletionPercentage(int questID)
+    public static RuntimeQuest[] GetCompletedQuestsByType(QuestType type)
+    {
+        return completedQuests.Values.Where(q => q.Type == type).ToArray();
+    }
+
+    public static float GetQuestCompletionPercentage(int questID)
     {
         if (QuestByID.TryGetValue(questID, out var quest))
         {
@@ -181,7 +200,7 @@ public sealed class QuestManager : MonoBehaviour
         return 0f;
     }
 
-    public void CompleteObjective(int objectiveID, ObjectiveStatus status = ObjectiveStatus.CompletedSuccess)
+    public static void CompleteObjective(int objectiveID, ObjectiveStatus status = ObjectiveStatus.CompletedSuccess)
     {
         foreach (var quest in activeQuests)
         {
@@ -197,7 +216,7 @@ public sealed class QuestManager : MonoBehaviour
         SBGDebug.LogError($"Objective {objectiveID} not found.", "QuestManager");
     }
 
-    public void CompleteQuest(int questID, ObjectiveStatus status = ObjectiveStatus.CompletedSuccess)
+    public static void CompleteQuest(int questID, ObjectiveStatus status = ObjectiveStatus.CompletedSuccess)
     {
         if (QuestByID.TryGetValue(questID, out var quest))
         {
@@ -226,7 +245,7 @@ public sealed class QuestManager : MonoBehaviour
     }
 
     // Helper query methods
-    public bool HasFailedObjectives(int questID)
+    public static bool HasFailedObjectives(int questID)
     {
         if (QuestByID.TryGetValue(questID, out var quest))
         {
@@ -235,7 +254,7 @@ public sealed class QuestManager : MonoBehaviour
         return false;
     }
 
-    public IEnumerable<IObjective> GetFailedObjectives(int questID)
+    public static IEnumerable<IObjective> GetFailedObjectives(int questID)
     {
         if (QuestByID.TryGetValue(questID, out var quest))
         {
@@ -244,7 +263,7 @@ public sealed class QuestManager : MonoBehaviour
         return Enumerable.Empty<IObjective>();
     }
 
-    public IEnumerable<IObjective> GetObjectivesByStatus(int questID, ObjectiveStatus status)
+    public static IEnumerable<IObjective> GetObjectivesByStatus(int questID, ObjectiveStatus status)
     {
         if (QuestByID.TryGetValue(questID, out var quest))
         {
@@ -253,7 +272,7 @@ public sealed class QuestManager : MonoBehaviour
         return Enumerable.Empty<IObjective>();
     }
 
-    public ObjectiveStatus GetQuestOverallStatus(int questID)
+    public static ObjectiveStatus GetQuestOverallStatus(int questID)
     {
         if (QuestByID.TryGetValue(questID, out var quest))
         {
@@ -274,10 +293,10 @@ public sealed class QuestManager : MonoBehaviour
         return ObjectiveStatus.CompletedFailure;
     }
 
-    private void CheckIfAllObjectivesAreComplete(RuntimeQuest quest)
+    private static void CheckIfAllObjectivesAreComplete(RuntimeQuest quest)
     {
         if (quest.Objectives == null) return;
-        
+
         var allCompleted = quest.Objectives.All(obj => obj.IsCompleted);
         if (allCompleted)
         {

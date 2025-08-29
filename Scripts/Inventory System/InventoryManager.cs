@@ -1,18 +1,6 @@
 using UnityEngine;
 using System.IO;
 
-/* 
-INHERITANCE STRUCTURE:
-IInventory
-├── InventoryBase (abstract class)
-│   ├── Inv_Container
-│   ├── Inv_NPC
-│   ├── Inv_Container
-│   └── Inv_Player
-InventoryData (struct)
-IInventoryExchange 
- */
-
 public class InventoryManager : MonoBehaviour
 {
     private static InventoryManager _instance;
@@ -37,14 +25,29 @@ public class InventoryManager : MonoBehaviour
     [Header("Developer Options")]
     [Space(10)]
     private const string JSON_INVENTORY_FILE_PATH = "Inventories/";
-    [SerializeField] private bool GenerateDummyInventory = false;
-    [SerializeField] private bool GenerateEmptyInventory = false;
+    private bool GenerateDummyInventory = true;
+    private bool GenerateEmptyInventory = false;
+    private bool testParsing = true;
 
     void Awake()
     {
-        if (this.InitializeSingleton(ref _instance, true) == this)
+        if (testParsing)
         {
-            // Initialize any default values if needed
+            TestJsonParsing();
+        }
+    }
+
+    private void TestJsonParsing()
+    {
+        var jsonAsset = new TextAsset("{\"inventoryId\":\"test\",\"items\":[]}");
+        var result = InventoryJsonParser.ParseInventoryJsonData(jsonAsset);
+        if (result == null || result.InventoryId != "test")
+        {
+            SBGDebug.LogError("SimdJson parser test failed!", "InventoryManager");
+        }
+        else
+        {
+            SBGDebug.LogInfo("SimdJson parser test succeeded.", "InventoryManager");
         }
     }
 
@@ -141,12 +144,23 @@ public class InventoryManager : MonoBehaviour
                 return null;
             }
 
-            string jsonContent = File.ReadAllText(filePath);
+            // Read file as bytes and create TextAsset for the parser
+            byte[] fileBytes = File.ReadAllBytes(filePath);
+            TextAsset jsonAsset = new TextAsset(System.Text.Encoding.UTF8.GetString(fileBytes));
+            
+            // Use our SimdJson parser
+            var inventoryContextData = InventoryJsonParser.ParseInventoryJsonData(jsonAsset);
+            if (inventoryContextData == null)
+            {
+                Debug.LogError($"Failed to parse inventory data for {inventoryId}");
+                return null;
+            }
 
-            var inventoryData = JsonUtility.FromJson<InventoryData>(jsonContent);
+            // Create the inventory
+            var loadedContextInventory = InventoryFactory.CreateInventoryDataFromContext(inventoryContextData);
+            SBGDebug.LogInfo($"Successfully loaded inventory: {inventoryContextData.InventoryId} with {inventoryContextData.Items?.Count ?? 0} items", "InventoryManager");
 
-            // Create the player inventory
-            var loadedInventory = InventoryFactory.CreateInventory(inventoryData);
+            var loadedInventory = InventoryFactory.CreateInventory(loadedContextInventory);
 
             return loadedInventory;
         }
@@ -157,6 +171,21 @@ public class InventoryManager : MonoBehaviour
         }
     }
     #endregion
+
+    public static InventoryData ConvertContextToInventoryData(InventoryContextData context)
+    {
+        var inventoryData = new InventoryData
+        {
+            inventoryId = context.InventoryId,
+            // Set other fields as needed
+        };
+
+        // convert context data into inventorydata
+        // 
+        // 
+
+        return inventoryData;
+    }
 
     public void ConnectInventory(IInventory inventory)
     {

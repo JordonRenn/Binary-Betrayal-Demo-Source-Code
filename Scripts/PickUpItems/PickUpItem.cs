@@ -18,6 +18,14 @@ public class PickUpItem : SauceObject
     [SerializeField] protected string itemDescription;
     [SerializeField] protected GameObject item3dIcon;
     [SerializeField] protected Sprite itemInventoryIcon;
+    
+    // Default fallback values
+    protected ItemType itemType = ItemType.Misc;
+    protected float itemWeight = 1.0f;
+    protected float itemValue = 0.0f;
+    protected bool isUsable = false;
+    protected bool isEquippable = false;
+    protected bool isQuestItem = false;
 
     private protected LayerMask playerLayer;
     private const string PLAYER_LAYER_NAME = "playerObject";
@@ -84,7 +92,27 @@ public class PickUpItem : SauceObject
 
     protected virtual void ManuallyCreateItem()
     {
-        item = new ItemData(itemID, itemDisplayName, itemDescription, itemInventoryIcon, ItemType.Misc, 0, ItemRarity.Common, ItemViewLogicType.Static);
+        // Create an ItemData instance using the new constructor
+        ItemData itemData = new ItemData(
+            itemID,
+            itemDisplayName,
+            itemDescription,
+            itemValue,
+            itemWeight,
+            itemType,
+            itemInventoryIcon,
+            isUsable,
+            isEquippable,
+            isQuestItem
+        );
+
+        // Create the IItem from this ItemData
+        item = ItemFactory.CreateItem(itemData);
+        
+        if (item == null)
+        {
+            SBGDebug.LogError($"Failed to create item {itemID} manually.", $"PickUpItem | ManuallyCreateItem");
+        }
     }
 
     protected void OnTriggerEnter(Collider c)

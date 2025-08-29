@@ -13,7 +13,7 @@ class Item_Misc : ItemBase
 {
     public override ItemType Type => ItemType.Misc;
 
-    public Item_Misc(string id, string name, string description, Sprite icon, GameObject modelPrefab, int weight = 0)
+    public Item_Misc(string id, string name, string description, Sprite icon, GameObject modelPrefab, float weight = 0f)
         : base(id, name, description, icon, ItemType.Misc, weight, ItemRarity.Common, ItemViewLogicType.Static)
     {
         // Additional initialization for misc items if needed
@@ -28,7 +28,7 @@ class Item_Material : ItemBase
     public ItemEffect_Material EffectType { get; private set; }
     public int EffectValue { get; private set; }
 
-    public Item_Material(string id, string name, string description, Sprite icon, GameObject modelPrefab, Item_MaterialType materialType, ItemEffect_Material effectType, int effectValue, int weight = 0)
+    public Item_Material(string id, string name, string description, Sprite icon, GameObject modelPrefab, Item_MaterialType materialType, ItemEffect_Material effectType, int effectValue, float weight = 0f)
         : base(id, name, description, icon, ItemType.Material, weight, ItemRarity.Common, ItemViewLogicType.Static)
     {
         MaterialType = materialType;
@@ -45,7 +45,7 @@ class Item_Food : ItemBase
     public ItemEffect_Food EffectType { get; private set; }
     public int EffectValue { get; private set; }
 
-    public Item_Food(string id, string name, string description, Sprite icon, GameObject modelPrefab, Item_FoodType foodType, ItemEffect_Food effectType, int effectValue, int weight = 0)
+    public Item_Food(string id, string name, string description, Sprite icon, GameObject modelPrefab, Item_FoodType foodType, ItemEffect_Food effectType, int effectValue, float weight = 0f)
         : base(id, name, description, icon, ItemType.Food, weight, ItemRarity.Common, ItemViewLogicType.Consumable)
     {
         FoodType = foodType;
@@ -61,7 +61,7 @@ class Item_Keys : ItemBase
     public KeyType KeyType { get; private set; }
     public ItemEffect_Key EffectType { get; private set; }
 
-    public Item_Keys(string id, string name, string description, Sprite icon, GameObject modelPrefab, KeyType keyType, ItemEffect_Key effectType, int weight = 0)
+    public Item_Keys(string id, string name, string description, Sprite icon, GameObject modelPrefab, KeyType keyType, ItemEffect_Key effectType, float weight = 0f)
         : base(id, name, description, icon, ItemType.Keys, weight, ItemRarity.Common, ItemViewLogicType.Static)
     {
         KeyType = keyType;
@@ -77,7 +77,7 @@ class Item_Quest : ItemBase
     public string QuestID { get; private set; }
     public ItemEffect_Quest EffectType { get; private set; }
 
-    public Item_Quest(string id, string name, string description, Sprite icon, GameObject modelPrefab, Item_QuestType questType, string questId, ItemEffect_Quest effectType = ItemEffect_Quest.None, int weight = 0)
+    public Item_Quest(string id, string name, string description, Sprite icon, GameObject modelPrefab, Item_QuestType questType, string questId, ItemEffect_Quest effectType = ItemEffect_Quest.None, float weight = 0f)
         : base(id, name, description, icon, ItemType.Quest, weight, ItemRarity.Quest, ItemViewLogicType.Static)
     {
         QuestType = questType;
@@ -94,7 +94,7 @@ class Item_Medical : ItemBase
     public ItemEffect_Medical EffectType { get; private set; }
     public int EffectValue { get; private set; }
 
-    public Item_Medical(string id, string name, string description, Sprite icon, GameObject modelPrefab, Item_MedicalType medicalType, ItemEffect_Medical effectType, int effectValue, int weight = 0)
+    public Item_Medical(string id, string name, string description, Sprite icon, GameObject modelPrefab, Item_MedicalType medicalType, ItemEffect_Medical effectType, int effectValue, float weight = 0f)
         : base(id, name, description, icon, ItemType.Medical, weight, ItemRarity.Common, ItemViewLogicType.Consumable)
     {
         MedicalType = medicalType;
@@ -111,7 +111,7 @@ class Item_Phone : ItemBase
     public string PhoneNumber { get; private set; }
     public ItemEffect_Phone EffectType { get; private set; }
 
-    public Item_Phone(string id, string name, string description, Sprite icon, GameObject modelPrefab, Item_PhoneType phoneType, string phoneNumber, ItemEffect_Phone effectType = ItemEffect_Phone.None, int weight = 0)
+    public Item_Phone(string id, string name, string description, Sprite icon, GameObject modelPrefab, Item_PhoneType phoneType, string phoneNumber, ItemEffect_Phone effectType = ItemEffect_Phone.None, float weight = 0f)
         : base(id, name, description, icon, ItemType.Phone, weight, ItemRarity.Common, ItemViewLogicType.Usable)
     {
         PhoneType = phoneType;
@@ -127,7 +127,7 @@ class Item_Tools : ItemBase
     public Item_ToolType ToolType { get; private set; }
     public ItemEffect_Tool EffectType { get; private set; }
 
-    public Item_Tools(string id, string name, string description, Sprite icon, GameObject modelPrefab, Item_ToolType toolType, ItemEffect_Tool effectType, int weight = 0)
+    public Item_Tools(string id, string name, string description, Sprite icon, GameObject modelPrefab, Item_ToolType toolType, ItemEffect_Tool effectType, float weight = 0f)
         : base(id, name, description, icon, ItemType.Tools, weight, ItemRarity.Common, ItemViewLogicType.Usable)
     {
         ToolType = toolType;

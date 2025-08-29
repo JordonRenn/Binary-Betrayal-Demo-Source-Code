@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 /* 
@@ -18,25 +19,16 @@ Y88b. .d88P 888   Y8888     888     888       Y88b  d88P    888     888        8
     Need to update objective to work with new Objective Event System
  */
 
-public static class ObjectiveEventManager
+public static class ObjectiveEventManager 
 {
     private static string validationLogFilePath = "Assets/Logs/ObjectiveValidationLog.txt";
     private static bool isInitialized = false;
     private static List<ObjectiveType> activeObjectiveTypes = new List<ObjectiveType>();
 
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-    public static void Initialize()
-    {
-        if (!isInitialized)
-        {
-            // Force static constructor to run
-            var temp = validationLogFilePath;
-            isInitialized = true;
-            SBGDebug.LogInfo("ObjectiveEventManager initialized", "ObjectiveEventManager");
-        }
-    }
+    private static float subscriptionTimeOut = 5f;
 
-    static ObjectiveEventManager()
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    public static async void Init()
     {
         // Ensure log directory exists
         var directory = System.IO.Path.GetDirectoryName(validationLogFilePath);
@@ -51,7 +43,15 @@ public static class ObjectiveEventManager
             System.IO.File.WriteAllText(validationLogFilePath, "Objective Validation Log\n");
         }
 
+        // Await initialization logic
+        await Initialize();
+    }
+
+    private static async Task Initialize()
+    {
+        await Task.Run(() => new WaitUntil(() => GameMaster.Instance != null));
         SubscribeToEvents();
+        await Task.Run(() => new WaitUntil(() => QuestManager.questsLoaded));
         GetActiveObjectiveTypes();
     }
 
@@ -60,7 +60,7 @@ public static class ObjectiveEventManager
         // Subscribe to GameMaster events for each objective type
         if (GameMaster.Instance != null)
         {
-            // OLD EVENTS THE NEED REPLACED
+            // OLD EVENTS THAT NEED REPLACED
             //GameMaster.Instance.objective_ItemUsed.AddListener(ValidateUseItemEvent);
             //GameMaster.Instance.objective_ExploredLocation.AddListener(ValidateExploreEvent);
             //GameMaster.Instance.objective_NPCKilled.AddListener(ValidateKillEvent);
@@ -81,25 +81,19 @@ public static class ObjectiveEventManager
     
     static void GetActiveObjectiveTypes()
     {
-        if (QuestManager.Instance != null)
-        {
-            activeObjectiveTypes.Clear();
-            foreach (var quest in QuestManager.Instance.activeQuests)
-            {
-                if (quest.Objectives == null) continue;
+        activeObjectiveTypes.Clear();
 
-                foreach (var objective in quest.Objectives)
+        foreach (var quest in QuestManager.activeQuests)
+        {
+            if (quest.Objectives == null) continue;
+
+            foreach (var objective in quest.Objectives)
+            {
+                if (!activeObjectiveTypes.Contains(objective.Type))
                 {
-                    if (!activeObjectiveTypes.Contains(objective.Type))
-                    {
-                        activeObjectiveTypes.Add(objective.Type);
-                    }
+                    activeObjectiveTypes.Add(objective.Type);
                 }
             }
-        }
-        else
-        {
-            SBGDebug.LogError("QuestManager.Instance is null when trying to get active objective types", "ObjectiveEventManager");
         }
     }
 
@@ -107,10 +101,7 @@ public static class ObjectiveEventManager
 
     static void ValidateKillEvent(string objectId, string context = "")
     {
-        if (QuestManager.Instance == null) return;
-
-        // Check all active objectives of type Kill
-        foreach (var quest in QuestManager.Instance.activeQuests)
+        foreach (var quest in QuestManager.activeQuests)
         {
             if (quest.Objectives == null) continue;
 
@@ -134,10 +125,7 @@ public static class ObjectiveEventManager
 
     static void ValidateExploreEvent(string objectId, string context = "")
     {
-        if (QuestManager.Instance == null) return;
-
-        // Check all active objectives of type Explore
-        foreach (var quest in QuestManager.Instance.activeQuests)
+        foreach (var quest in QuestManager.activeQuests)
         {
             if (quest.Objectives == null) continue;
 
@@ -161,10 +149,7 @@ public static class ObjectiveEventManager
 
     static void ValidateUseItemEvent(string objectId, string context = "")
     {
-        if (QuestManager.Instance == null) return;
-
-        // Check all active objectives of type UseItem
-        foreach (var quest in QuestManager.Instance.activeQuests)
+        foreach (var quest in QuestManager.activeQuests)
         {
             if (quest.Objectives == null) continue;
 
@@ -195,8 +180,6 @@ public static class ObjectiveEventManager
     /// <param name="objectID"></param>
     static void ValidateInteractionEvent(string objectID)
     {
-        if (QuestManager.Instance == null) return;
-
         // NEED TO UPDATE OBJECTIVES BEFORE IMPLEMENTATION
     }
 
@@ -208,8 +191,6 @@ public static class ObjectiveEventManager
     /// <param name="callEvent"></param>
     static void ValidatePhoneCallEvent(string phoneId, string number, PhoneCallEvent callEvent)
     {
-        if (QuestManager.Instance == null) return;
-
         // NEED TO UPDATE OBJECTIVES BEFORE IMPLEMENTATION
     }
 
@@ -220,8 +201,6 @@ public static class ObjectiveEventManager
     /// <param name="lockState"></param>
     static void ValidateDoorLockEvent(string objectId, DoorLockState lockState)
     {
-        if (QuestManager.Instance == null) return;
-
         // NEED TO UPDATE OBJECTIVES BEFORE IMPLEMENTATION
     }
 
@@ -231,8 +210,6 @@ public static class ObjectiveEventManager
     /// <param name="dialogueId"></param>
     static void ValidateTalkEvent(string dialogueId)
     {
-        if (QuestManager.Instance == null) return;
-
         // NEED TO UPDATE OBJECTIVES BEFORE IMPLEMENTATION
     }
 
@@ -244,8 +221,6 @@ public static class ObjectiveEventManager
     /// <param name="inventoryName"></param>
     static void ValidateItemAddEvent(InventoryType inventoryType, string itemId, string inventoryName)
     {
-        if (QuestManager.Instance == null) return;
-
         // NEED TO UPDATE OBJECTIVES BEFORE IMPLEMENTATION
     }
 
@@ -257,8 +232,6 @@ public static class ObjectiveEventManager
     /// <param name="inventoryName"></param>
     static void ValidateItemRemoveEvent(InventoryType inventoryType, string itemId, string inventoryName)
     {
-        if (QuestManager.Instance == null) return;
-
         // NEED TO UPDATE OBJECTIVES BEFORE IMPLEMENTATION
     }
     #endregion

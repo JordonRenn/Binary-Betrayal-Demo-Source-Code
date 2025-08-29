@@ -1,0 +1,39 @@
+{
+  "quests": [
+    {
+      "quest_id": 1,
+      "type": 0,
+      "title": "The Big Test Quest",
+      "description": "Talk to Victor, collect item, and kill the cubes.",
+      "objectives": [
+        {
+          "objective_id": 1,
+          "type": 0,
+          "message": "Talk to Victor Greyson.",
+          "dialogID": "test_dialogue",
+          "target": ["victorGreyson"]
+        },
+        {
+          "objective_id": 2,
+          "type": 1,
+          "message": "Collect 2 chips from the ground.",
+          "item": ["chips_01"],
+          "quantity": 2
+        },
+        {
+          "objective_id": 3,
+          "type": 2,
+          "message": "Kill 5 Cubes.",
+          "enemy": ["TestNPCCube"],
+          "quantity": 5
+        }
+      ],
+      "rewards": [
+        { "type": 0, "itemId": "TestObjectOfPower", "quantity": 1, "experiencePoints": 0, "currency": 500 }
+      ],
+      "prerequisiteQuestIds": [1, 2],
+      "isRepeatable": false,
+      "timeLimit": 0.0
+    }
+  ]
+}
