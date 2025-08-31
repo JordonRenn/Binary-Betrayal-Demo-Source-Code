@@ -1,6 +1,4 @@
-using UnityEngine;
 using System;
-using System.Collections.Generic;
 
 public static class InventoryFactory
 {
@@ -41,7 +39,7 @@ public static class InventoryFactory
         {
             foreach (var itemData in data.items)
             {
-                var item = ItemFactory.CreateItemFromDatabase(itemData.itemId);
+                var item = ItemFactory.GetItemFromDatabase(itemData.itemId);
                 if (item != null)
                 {
                     // check if item already exists in inventory
@@ -78,7 +76,8 @@ public static class InventoryFactory
         // Convert ItemContextData to ItemData using ItemFactory
         foreach (var ctxItem in data.Items)
         {
-            var item = ItemFactory.CreateItemFromDatabase(ctxItem.ItemId) as ItemData;
+            var item = ItemFactory.GetItemFromDatabase(ctxItem.ItemId) as ItemData;
+
             if (item != null)
             {
                 inventoryData.items.Add(item);

@@ -11,22 +11,22 @@ IItem
 [System.Serializable]
 public abstract class ItemBase : IItem
 {
-    public string ItemId { get; protected set; }
-    public string Name { get; protected set; }
-    public string Description { get; protected set; }
+    public string ItemId { get; }
+    public string Name { get; }
+    public string Description { get; }
     public abstract ItemType Type { get; }
-    public Sprite Icon { get; protected set; }
-    public float weight { get; protected set; }
-    public virtual ItemRarity Rarity { get; protected set; }
-    public virtual ItemViewLogicType ViewLogic { get; protected set; }
+    public Sprite Icon { get; }
+    public float Weight { get; }
+    public ItemRarity Rarity { get; }
+    public ItemViewLogicType ViewLogic { get; }
 
-    protected ItemBase(string id, string name, string description, Sprite icon, ItemType type = ItemType.Misc, float weight = 0, ItemRarity rarity = ItemRarity.Common, ItemViewLogicType viewLogic = ItemViewLogicType.Static)
+    protected ItemBase(string id, string name, string description, Sprite icon, ItemType type, float weight, ItemRarity rarity, ItemViewLogicType viewLogic)
     {
         ItemId = id;
         Name = name;
         Description = description;
         Icon = icon;
-        this.weight = weight;
+        Weight = weight;
         Rarity = rarity;
         ViewLogic = viewLogic;
     }

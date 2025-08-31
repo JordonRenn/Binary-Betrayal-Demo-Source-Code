@@ -345,7 +345,7 @@ public class InventoryMenu : MonoBehaviour
         itemNameText.text = item.Name;
         itemDescriptionText.text = item.Description;
         itemTypeText.text = $"Type: {item.Type}";
-        itemWeightText.text = $"Weight: {item.weight}";
+        itemWeightText.text = $"Weight: {item.Weight}";
     }
 
     private void ClearItemDetails()

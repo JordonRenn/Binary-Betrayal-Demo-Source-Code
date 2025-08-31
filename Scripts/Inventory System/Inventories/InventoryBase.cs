@@ -37,7 +37,7 @@ public abstract class InventoryBase : IInventory
     // call from inventory manager, not directly
     public void AddItem(IItem item, int quantity)
     {
-        float newWeight = totalWeight() + (item.weight * quantity);
+        float newWeight = totalWeight() + (item.Weight * quantity);
         if (newWeight > Capacity)
         {
             //if player inventory, show error notification
@@ -122,7 +122,7 @@ public abstract class InventoryBase : IInventory
         float total = 0;
         foreach (var item in Items)
         {
-            total += item.Key.weight * item.Value;
+            total += item.Key.Weight * item.Value;
         }
         return total;
     }

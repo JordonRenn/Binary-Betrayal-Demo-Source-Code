@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 public class DialogueLoader : MonoBehaviour
 {
+    // TODO -> remove instance declaration
     public static DialogueLoader Instance { get; private set; }
 
     private const string DIALOGUE_FOLDER = "Dialogues";

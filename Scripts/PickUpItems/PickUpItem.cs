@@ -78,40 +78,11 @@ public class PickUpItem : SauceObject
 
     protected void CreateItem()
     {
-        // Try to create from database first
-        if (ItemFactory.ItemExists(itemID))
-        {
-            item = ItemFactory.CreateItemFromDatabase(itemID, itemInventoryIcon);
-        }
-        else
-        {
-            SBGDebug.LogWarning($"Item with ID {itemID} does not exist in the database. Creating a fallback item.", $"PickUpItem | CreateItem");
-            ManuallyCreateItem();
-        }
-    }
-
-    protected virtual void ManuallyCreateItem()
-    {
-        // Create an ItemData instance using the new constructor
-        ItemData itemData = new ItemData(
-            itemID,
-            itemDisplayName,
-            itemDescription,
-            itemValue,
-            itemWeight,
-            itemType,
-            itemInventoryIcon,
-            isUsable,
-            isEquippable,
-            isQuestItem
-        );
-
-        // Create the IItem from this ItemData
-        item = ItemFactory.CreateItem(itemData);
-        
+        item = ItemFactory.GetItemFromDatabase(itemID);
         if (item == null)
         {
-            SBGDebug.LogError($"Failed to create item {itemID} manually.", $"PickUpItem | ManuallyCreateItem");
+            SBGDebug.LogWarning($"Item with ID {itemID} does not exist in the database. Creating a fallback item.", $"PickUpItem | CreateItem");
+            //ManuallyCreateItem();
         }
     }
 

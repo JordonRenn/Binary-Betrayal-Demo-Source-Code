@@ -13,8 +13,8 @@ class Item_Misc : ItemBase
 {
     public override ItemType Type => ItemType.Misc;
 
-    public Item_Misc(string id, string name, string description, Sprite icon, GameObject modelPrefab, float weight = 0f)
-        : base(id, name, description, icon, ItemType.Misc, weight, ItemRarity.Common, ItemViewLogicType.Static)
+    public Item_Misc(string id, string name, string description, Sprite icon, float weight, ItemRarity rarity, ItemViewLogicType viewLogic)
+        : base(id, name, description, icon, ItemType.Misc, weight, rarity, viewLogic)
     {
         // Additional initialization for misc items if needed
     }
@@ -24,12 +24,12 @@ class Item_Misc : ItemBase
 class Item_Material : ItemBase
 {
     public override ItemType Type => ItemType.Material;
-    public Item_MaterialType MaterialType { get; private set; }
-    public ItemEffect_Material EffectType { get; private set; }
-    public int EffectValue { get; private set; }
+    public Item_MaterialType MaterialType { get; }
+    public ItemEffect_Material EffectType { get; }
+    public int EffectValue { get; }
 
-    public Item_Material(string id, string name, string description, Sprite icon, GameObject modelPrefab, Item_MaterialType materialType, ItemEffect_Material effectType, int effectValue, float weight = 0f)
-        : base(id, name, description, icon, ItemType.Material, weight, ItemRarity.Common, ItemViewLogicType.Static)
+    public Item_Material(string id, string name, string description, Sprite icon, Item_MaterialType materialType, ItemEffect_Material effectType, int effectValue, float weight, ItemRarity rarity, ItemViewLogicType viewLogic)
+        : base(id, name, description, icon, ItemType.Material, weight, rarity, viewLogic)
     {
         MaterialType = materialType;
         EffectType = effectType;
@@ -41,12 +41,12 @@ class Item_Material : ItemBase
 class Item_Food : ItemBase
 {
     public override ItemType Type => ItemType.Food;
-    public Item_FoodType FoodType { get; private set; }
-    public ItemEffect_Food EffectType { get; private set; }
-    public int EffectValue { get; private set; }
+    public Item_FoodType FoodType { get; }
+    public ItemEffect_Food EffectType { get; }
+    public int EffectValue { get; }
 
-    public Item_Food(string id, string name, string description, Sprite icon, GameObject modelPrefab, Item_FoodType foodType, ItemEffect_Food effectType, int effectValue, float weight = 0f)
-        : base(id, name, description, icon, ItemType.Food, weight, ItemRarity.Common, ItemViewLogicType.Consumable)
+    public Item_Food(string id, string name, string description, Sprite icon, Item_FoodType foodType, ItemEffect_Food effectType, int effectValue, float weight, ItemRarity rarity, ItemViewLogicType viewLogic)
+        : base(id, name, description, icon, ItemType.Food, weight, rarity, viewLogic)
     {
         FoodType = foodType;
         EffectType = effectType;
@@ -58,11 +58,11 @@ class Item_Food : ItemBase
 class Item_Keys : ItemBase
 {
     public override ItemType Type => ItemType.Keys;
-    public KeyType KeyType { get; private set; }
-    public ItemEffect_Key EffectType { get; private set; }
+    public KeyType KeyType { get; }
+    public ItemEffect_Key EffectType { get; }
 
-    public Item_Keys(string id, string name, string description, Sprite icon, GameObject modelPrefab, KeyType keyType, ItemEffect_Key effectType, float weight = 0f)
-        : base(id, name, description, icon, ItemType.Keys, weight, ItemRarity.Common, ItemViewLogicType.Static)
+    public Item_Keys(string id, string name, string description, Sprite icon, KeyType keyType, ItemEffect_Key effectType, float weight, ItemRarity rarity, ItemViewLogicType viewLogic)
+        : base(id, name, description, icon, ItemType.Keys, weight, rarity, viewLogic)
     {
         KeyType = keyType;
         EffectType = effectType;
@@ -73,12 +73,12 @@ class Item_Keys : ItemBase
 class Item_Quest : ItemBase
 {
     public override ItemType Type => ItemType.Quest;
-    public Item_QuestType QuestType { get; private set; }
-    public string QuestID { get; private set; }
-    public ItemEffect_Quest EffectType { get; private set; }
+    public Item_QuestType QuestType { get; }
+    public string QuestID { get; }
+    public ItemEffect_Quest EffectType { get; }
 
-    public Item_Quest(string id, string name, string description, Sprite icon, GameObject modelPrefab, Item_QuestType questType, string questId, ItemEffect_Quest effectType = ItemEffect_Quest.None, float weight = 0f)
-        : base(id, name, description, icon, ItemType.Quest, weight, ItemRarity.Quest, ItemViewLogicType.Static)
+    public Item_Quest(string id, string name, string description, Sprite icon, Item_QuestType questType, string questId, ItemEffect_Quest effectType, float weight, ItemRarity rarity, ItemViewLogicType viewLogic)
+        : base(id, name, description, icon, ItemType.Quest, weight, rarity, viewLogic)
     {
         QuestType = questType;
         QuestID = questId;
@@ -90,12 +90,12 @@ class Item_Quest : ItemBase
 class Item_Medical : ItemBase
 {
     public override ItemType Type => ItemType.Medical;
-    public Item_MedicalType MedicalType { get; private set; }
-    public ItemEffect_Medical EffectType { get; private set; }
-    public int EffectValue { get; private set; }
+    public Item_MedicalType MedicalType { get; }
+    public ItemEffect_Medical EffectType { get; }
+    public int EffectValue { get; }
 
-    public Item_Medical(string id, string name, string description, Sprite icon, GameObject modelPrefab, Item_MedicalType medicalType, ItemEffect_Medical effectType, int effectValue, float weight = 0f)
-        : base(id, name, description, icon, ItemType.Medical, weight, ItemRarity.Common, ItemViewLogicType.Consumable)
+    public Item_Medical(string id, string name, string description, Sprite icon, Item_MedicalType medicalType, ItemEffect_Medical effectType, int effectValue, float weight, ItemRarity rarity, ItemViewLogicType viewLogic)
+        : base(id, name, description, icon, ItemType.Medical, weight, rarity, viewLogic)
     {
         MedicalType = medicalType;
         EffectType = effectType;
@@ -107,12 +107,12 @@ class Item_Medical : ItemBase
 class Item_Phone : ItemBase
 {
     public override ItemType Type => ItemType.Phone;
-    public Item_PhoneType PhoneType { get; private set; }
-    public string PhoneNumber { get; private set; }
-    public ItemEffect_Phone EffectType { get; private set; }
+    public Item_PhoneType PhoneType { get; }
+    public string PhoneNumber { get; }
+    public ItemEffect_Phone EffectType { get; }
 
-    public Item_Phone(string id, string name, string description, Sprite icon, GameObject modelPrefab, Item_PhoneType phoneType, string phoneNumber, ItemEffect_Phone effectType = ItemEffect_Phone.None, float weight = 0f)
-        : base(id, name, description, icon, ItemType.Phone, weight, ItemRarity.Common, ItemViewLogicType.Usable)
+    public Item_Phone(string id, string name, string description, Sprite icon, Item_PhoneType phoneType, string phoneNumber, ItemEffect_Phone effectType, float weight, ItemRarity rarity, ItemViewLogicType viewLogic)
+        : base(id, name, description, icon, ItemType.Phone, weight, rarity, viewLogic)
     {
         PhoneType = phoneType;
         PhoneNumber = phoneNumber;
@@ -124,11 +124,11 @@ class Item_Phone : ItemBase
 class Item_Tools : ItemBase
 {
     public override ItemType Type => ItemType.Tools;
-    public Item_ToolType ToolType { get; private set; }
-    public ItemEffect_Tool EffectType { get; private set; }
+    public Item_ToolType ToolType { get; }
+    public ItemEffect_Tool EffectType { get; }
 
-    public Item_Tools(string id, string name, string description, Sprite icon, GameObject modelPrefab, Item_ToolType toolType, ItemEffect_Tool effectType, float weight = 0f)
-        : base(id, name, description, icon, ItemType.Tools, weight, ItemRarity.Common, ItemViewLogicType.Usable)
+    public Item_Tools(string id, string name, string description, Sprite icon, Item_ToolType toolType, ItemEffect_Tool effectType, float weight, ItemRarity rarity, ItemViewLogicType viewLogic)
+        : base(id, name, description, icon, ItemType.Tools, weight, rarity, viewLogic)
     {
         ToolType = toolType;
         EffectType = effectType;

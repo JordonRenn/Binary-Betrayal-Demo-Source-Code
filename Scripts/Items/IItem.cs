@@ -15,7 +15,7 @@ public interface IItem
     string Description { get; }
     Sprite Icon { get; }
     ItemType Type { get; }
-    float weight { get; }
+    float Weight { get; }
     ItemRarity Rarity { get; }
     ItemViewLogicType ViewLogic { get; }
 }
