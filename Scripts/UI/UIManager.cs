@@ -359,6 +359,7 @@ public class UIManager : MonoBehaviour
 
         StopGamePlay(true);
         hudController.HideAllHUD(true);
+        inventoryMenu.Initialize(InventoryManager.Instance.playerInventory);
         inventoryMenu.ShowInventory();
 
         // Wait until inventory is open

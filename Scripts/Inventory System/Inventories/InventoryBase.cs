@@ -37,55 +37,41 @@ public abstract class InventoryBase : IInventory
     // call from inventory manager, not directly
     public void AddItem(IItem item, int quantity)
     {
-        float newWeight = totalWeight() + (item.Weight * quantity);
-        if (newWeight > Capacity)
+        try
         {
-            //if player inventory, show error notification
-            if (InventoryManager.Instance.playerInventory.Type == InventoryType.Player)
+            if (Items.ContainsKey(item))
             {
-                Notification notification = new Notification
-                {
-                    message = "You are trying to add too many items to your inventory.",
-                    type = NotificationType.Warning
-                };
-                NotificationSystem.Instance.DisplayNotification(notification);
-
-                // eventually add encumberance logic here
-                // continue on with adding item
+                Items[item] += quantity;
             }
             else
             {
-                throw new System.InvalidOperationException("Cannot add item: Inventory is full.");
+                Items[item] = quantity;
             }
-        }
 
-        if (Items.ContainsKey(item))
-        {
-            Items[item] += quantity;
-        }
-        else
-        {
-            Items[item] = quantity;
-        }
-
-        if (NotificationSystem.Instance != null)
-        {
-            Notification notification = new Notification
+            if (NotificationSystem.Instance != null)
             {
-                message = $"Added {quantity}x {item.Name} to your inventory.",
-                type = NotificationType.Normal
-            };
-            NotificationSystem.Instance.DisplayNotification(notification);
-        }
+                Notification notification = new Notification
+                {
+                    message = $"Added {quantity}x {item.Name} to your inventory.",
+                    type = NotificationType.Normal
+                };
+                NotificationSystem.Instance.DisplayNotification(notification);
+            }
 
-        if (GameMaster.Instance != null)
+            if (GameMaster.Instance != null)
+            {
+                GameMaster.Instance?.oe_ItemAdded?.Invoke(Type, item.ItemId, item.Name);
+            }
+
+            SBGDebug.LogInfo($"Item added: {item.Name} x{quantity}. Total in inventory: {Items[item]}", $"class: InventoryBase | inventoryId:  {InventoryId}");
+
+            // Optionally, you can also handle item-specific logic here
+        }
+        catch (System.Exception ex)
         {
-            GameMaster.Instance?.oe_ItemAdded?.Invoke(Type, item.ItemId, item.Name);
+            SBGDebug.LogError($"Exception in InventoryBase.AddItem: {ex.Message}\n{ex.StackTrace}", "InventoryBase | AddItem");
+            throw;
         }
-
-        SBGDebug.LogInfo($"Item added: {item.Name} x{quantity}. Total in inventory: {Items[item]}", $"class: InventoryBase | inventoryId:  {InventoryId}");
-
-        // Optionally, you can also handle item-specific logic here
     }
 
     public void RemoveItem(IItem item, int quantity)

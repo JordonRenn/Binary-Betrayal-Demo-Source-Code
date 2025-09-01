@@ -8,11 +8,11 @@ public class InventoryData
     public string displayName;
     public float maxWeight;
     public InventoryType inventoryType;
-    public List<ItemData> items;
+    public List<IItem> items;
 
     public InventoryData()
     {
-        items = new List<ItemData>();
+        items = new List<IItem>();
     }
 }
 

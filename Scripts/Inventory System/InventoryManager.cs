@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.IO;
+using System;
 
 public class InventoryManager : MonoBehaviour
 {
@@ -31,9 +32,12 @@ public class InventoryManager : MonoBehaviour
 
     void Awake()
     {
-        if (testParsing)
+        if (this.InitializeSingleton(ref _instance, true) == this)
         {
-            TestJsonParsing();
+            if (testParsing)
+            {
+                TestJsonParsing();
+            }
         }
     }
 
@@ -137,6 +141,8 @@ public class InventoryManager : MonoBehaviour
     {
         try
         {
+            SBGDebug.LogInfo($"Begin attempt to load inventory from JSON: {inventoryId}", "InventoryManager | LoadInventoryFromJSON");
+
             string filePath = Path.Combine(Application.streamingAssetsPath, JSON_INVENTORY_FILE_PATH, $"{inventoryId}.json");
             if (!File.Exists(filePath))
             {
@@ -146,8 +152,19 @@ public class InventoryManager : MonoBehaviour
 
             // Read file as bytes and create TextAsset for the parser
             byte[] fileBytes = File.ReadAllBytes(filePath);
+            if (fileBytes == null || fileBytes.Length == 0)
+            {
+                Debug.LogError($"Failed to read file or file is empty: {filePath}");
+                return null;
+            }
+
             TextAsset jsonAsset = new TextAsset(System.Text.Encoding.UTF8.GetString(fileBytes));
-            
+            if (jsonAsset == null)
+            {
+                Debug.LogError($"Failed to create TextAsset from file bytes: {filePath}");
+                return null;
+            }
+
             // Use our SimdJson parser
             var inventoryContextData = InventoryJsonParser.ParseInventoryJsonData(jsonAsset);
             if (inventoryContextData == null)
@@ -156,15 +173,25 @@ public class InventoryManager : MonoBehaviour
                 return null;
             }
 
-            // Create the inventory
             var loadedContextInventory = InventoryFactory.CreateInventoryDataFromContext(inventoryContextData);
+            if (loadedContextInventory == null)
+            {
+                Debug.LogError($"InventoryFactory.CreateInventoryDataFromContext returned null for {inventoryId}");
+                return null;
+            }
+
             SBGDebug.LogInfo($"Successfully loaded inventory: {inventoryContextData.InventoryId} with {inventoryContextData.Items?.Count ?? 0} items", "InventoryManager");
 
             var loadedInventory = InventoryFactory.CreateInventory(loadedContextInventory);
+            if (loadedInventory == null)
+            {
+                Debug.LogError($"InventoryFactory.CreateInventory returned null for {inventoryId}");
+                return null;
+            }
 
             return loadedInventory;
         }
-        catch (System.Exception e)
+        catch (Exception e)
         {
             Debug.LogError($"Error loading inventory from JSON: {e.Message}");
             return null;
@@ -180,9 +207,21 @@ public class InventoryManager : MonoBehaviour
             // Set other fields as needed
         };
 
-        // convert context data into inventorydata
-        // 
-        // 
+        // Convert ItemContextData to IItem and add to inventoryData.items
+        if (context.Items != null)
+        {
+            foreach (var ctxItem in context.Items)
+            {
+                var item = ItemFactory.GetItemFromDatabase(ctxItem.ItemId);
+                if (item != null)
+                {
+                    for (int i = 0; i < ctxItem.Quantity; i++)
+                    {
+                        inventoryData.items.Add(item);
+                    }
+                }
+            }
+        }
 
         return inventoryData;
     }

@@ -35,28 +35,40 @@ public static class InventoryFactory
         }
 
         // Populate the inventory with items if available
-        if (data.items != null)
+        try
         {
-            foreach (var itemData in data.items)
+            if (data.items != null)
             {
-                var item = ItemFactory.GetItemFromDatabase(itemData.itemId);
-                if (item != null)
+                foreach (var itemData in data.items)
                 {
-                    // check if item already exists in inventory
-                    if (!inventory.Items.ContainsKey(item))
+                    var item = ItemFactory.GetItemFromDatabase(itemData.ItemId);
+                    if (item != null)
                     {
-                        inventory.AddItem(item, 1);
+                        // check if item already exists in inventory
+                        if (!inventory.Items.ContainsKey(item))
+                        {
+                            inventory.AddItem(item, 1);
+                        }
+                        else
+                        {
+                            inventory.Items[item] += 1; // Increment quantity
+                        }
                     }
                     else
                     {
-                        inventory.Items[item] += 1; // Increment quantity
+                        SBGDebug.LogError($"Null item found in data.items during inventory creation.", "InventoryFactory | CreateInventory");
                     }
                 }
             }
+            else
+            {
+                SBGDebug.LogInfo("No items found in inventory data.", "InventoryFactory | CreateInventory");
+            }
         }
-        else
+        catch (Exception ex)
         {
-            SBGDebug.LogInfo("No items found in inventory data.", "InventoryFactory | CreateInventory");
+            SBGDebug.LogError($"Exception in InventoryFactory.CreateInventory while adding items: {ex.Message}\n{ex.StackTrace}", "InventoryFactory | CreateInventory");
+            throw;
         }
 
         return inventory;
@@ -76,7 +88,7 @@ public static class InventoryFactory
         // Convert ItemContextData to ItemData using ItemFactory
         foreach (var ctxItem in data.Items)
         {
-            var item = ItemFactory.GetItemFromDatabase(ctxItem.ItemId) as ItemData;
+            var item = ItemFactory.GetItemFromDatabase(ctxItem.ItemId);
 
             if (item != null)
             {
@@ -104,19 +116,5 @@ public static class InventoryFactory
     public static IInventory CreateNPCInventory(string inventoryId, string name, int capacity)
     {
         return new Inv_NPC(inventoryId, name, capacity);
-    }
-
-    private static IItem ValidateAndCreate(Func<IInventory> inventorySupplier, Func<IItem> itemSupplier)
-    {
-        var inventory = inventorySupplier();
-        var item = itemSupplier();
-
-        if (inventory == null)
-            throw new ArgumentNullException(nameof(inventory), "Inventory cannot be null.");
-
-        if (item == null)
-            throw new ArgumentNullException(nameof(item), "Item cannot be null.");
-
-        return item;
     }
 }
