@@ -77,12 +77,32 @@ public class DialogueLoader : MonoBehaviour
         {
             // Load the file as a TextAsset
             byte[] fileBytes = File.ReadAllBytes(filePath);
-            TextAsset jsonAsset = new TextAsset(System.Text.Encoding.UTF8.GetString(fileBytes));
+            string jsonContent = System.Text.Encoding.UTF8.GetString(fileBytes);
+            TextAsset jsonAsset = new TextAsset(jsonContent);
+            
+            SBGDebug.LogInfo($"Loading dialogue file content:\n{jsonContent}", "DialogueLoader");
             
             // Parse using our SimdJsonSharp parser
             var dialogues = DialogueJsonParser.ParseDialogueData(jsonAsset);
-            if (dialogues != null && dialogues.Length > 0)
+            
+            if (dialogues == null)
             {
+                SBGDebug.LogError("DialogueJsonParser returned null", "DialogueLoader");
+                return null;
+            }
+            
+            SBGDebug.LogInfo($"Parsed {dialogues.Length} dialogue(s)", "DialogueLoader");
+            
+            if (dialogues.Length > 0)
+            {
+                if (dialogues[0].entries == null)
+                {
+                    SBGDebug.LogError("Parsed dialogue has null entries list", "DialogueLoader");
+                    return null;
+                }
+                
+                SBGDebug.LogInfo($"Dialogue has {dialogues[0].entries.Count} entries", "DialogueLoader");
+                
                 // Cache the result
                 cachedDialogues[dialogueId] = dialogues[0];
                 return dialogues[0];
