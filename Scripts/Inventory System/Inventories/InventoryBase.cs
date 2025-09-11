@@ -18,6 +18,7 @@ public abstract class InventoryBase : IInventory
     public string Name { get; protected set; }
     public float Capacity { get; protected set; }
     public Dictionary<IItem, int> Items { get; protected set; }
+    public List<InventoryListItem> InventoryListViewItems { get; protected set; } = new List<InventoryListItem>();
     public InventoryType Type { get; protected set; }
 
     protected InventoryBase(string inventoryId, string name, float capacity, InventoryType type)
@@ -42,10 +43,19 @@ public abstract class InventoryBase : IInventory
             if (Items.ContainsKey(item))
             {
                 Items[item] += quantity;
+                // Update existing item in list view items
+                var existingItem = InventoryListViewItems.Find(x => x.Item.ItemId == item.ItemId);
+                if (existingItem.Item != null)
+                {
+                    InventoryListViewItems.Remove(existingItem);
+                    InventoryListViewItems.Add(new InventoryListItem { Item = item, Quantity = Items[item] });
+                }
             }
             else
             {
                 Items[item] = quantity;
+                // Add new item to list view items
+                InventoryListViewItems.Add(new InventoryListItem { Item = item, Quantity = quantity });
             }
 
             if (NotificationSystem.Instance != null)
@@ -79,6 +89,17 @@ public abstract class InventoryBase : IInventory
         if (HasItem(item, quantity))
         {
             Items[item] -= quantity;
+            // Update or remove from list view items
+            var existingItem = InventoryListViewItems.Find(x => x.Item.ItemId == item.ItemId);
+            if (existingItem.Item != null)
+            {
+                InventoryListViewItems.Remove(existingItem);
+                if (Items[item] > 0)
+                {
+                    InventoryListViewItems.Add(new InventoryListItem { Item = item, Quantity = Items[item] });
+                }
+            }
+            
             if (Items[item] <= 0)
             {
                 Items.Remove(item);

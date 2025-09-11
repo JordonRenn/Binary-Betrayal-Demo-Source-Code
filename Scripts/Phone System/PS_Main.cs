@@ -6,7 +6,7 @@ using FMODUnity;
 
 public class PS_Main : SauceObject
 {
-    private FPSS_WeaponHUD c_WeaponHud;
+    /* private FPSS_WeaponHUD c_WeaponHud; */
     private FPSS_ReticleSystem c_ReticleSystem;
     private GameObject playerObj;
     private CharacterMovement characterMovement;
@@ -85,11 +85,11 @@ public class PS_Main : SauceObject
             yield return null;
         }
 
-        while (c_WeaponHud == null && Time.time - initTime < initTimeout) // WEAPON HUD
+        /* while (c_WeaponHud == null && Time.time - initTime < initTimeout) // WEAPON HUD
         {
             SBGDebug.LogDebug($"PAY PHONE | {this.gameObject.transform.position} | Searching for WEAPON HUD", "PS_Main");
             yield return null;
-        }
+        } */
 
         initialized = true;
         SBGDebug.LogInfo($"PAY PHONE | {this.gameObject.transform.position} | Initialization COMPLETE", "PS_Main");
@@ -108,7 +108,7 @@ public class PS_Main : SauceObject
 
     private void _GetWeaponHUD()
     {
-        c_WeaponHud = FindFirstObjectByType<FPSS_WeaponHUD>();
+        /* c_WeaponHud = FindFirstObjectByType<FPSS_WeaponHUD>(); */
     }
     #endregion
 

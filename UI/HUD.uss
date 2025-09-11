@@ -1,0 +1,177 @@
+.hud-map__container {
+    flex-grow: 1;
+    position: absolute;
+    height: 240px;
+    width: 240px;
+    top: auto;
+    left: 30px;
+    right: auto;
+    bottom: 30px;
+    background-color: rgba(74, 161, 118, 0.5);
+    padding-top: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+}
+
+.map__render-txture {
+}
+
+.hud-notification__container {
+    flex-grow: 1;
+    position: absolute;
+    height: 200px;
+    width: 360px;
+    top: auto;
+    left: 280px;
+    bottom: 30px;
+    background-color: rgba(0, 0, 0, 0.27);
+}
+
+.hud-weapon__container {
+    flex-grow: 1;
+    position: absolute;
+    right: 30px;
+    bottom: 30px;
+    height: 210px;
+    width: 520px;
+}
+
+.weapon__ammo-container {
+    flex-grow: 1;
+    height: 80px;
+    max-height: 80px;
+}
+
+.weapon__ammo-vert-divider {
+    width: 5px;
+    max-width: 5px;
+    background-color: rgba(255, 255, 255, 0.5);
+    margin-right: 5px;
+    margin-left: 5px;
+}
+
+.weapon__ammo-label__current-mag {
+    -unity-font-definition: resource('Fonts/Frohburg');
+    -unity-text-align: upper-right;
+    font-size: 98px;
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    color: rgba(255, 255, 255, 0.5);
+    -unity-text-outline-width: 2px;
+    -unity-text-outline-color: rgba(0, 0, 0, 0.5);
+}
+
+.weapon__ammo-label__mag-capacity {
+    -unity-font-definition: resource('Fonts/Frohburg');
+    -unity-text-align: upper-right;
+    font-size: 42px;
+    height: 40px;
+    max-height: 40px;
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    -unity-text-outline-color: rgba(255, 255, 255, 0.5);
+    -unity-text-outline-width: 2px;
+    color: rgba(27, 27, 27, 0.5);
+}
+
+.weapon__ammo-label__total {
+    -unity-font-definition: resource('Fonts/Frohburg');
+    -unity-text-align: upper-right;
+    font-size: 42px;
+    height: 40px;
+    max-height: 40px;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    -unity-text-outline-color: rgba(0, 0, 0, 0.5);
+    -unity-text-outline-width: 2px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.weapon__player-stat-container {
+    flex-grow: 1;
+    padding-top: 5px;
+    padding-right: 0;
+    padding-bottom: 5px;
+    padding-left: 0;
+}
+
+.weapon__icon-container {
+    background-color: rgba(74, 161, 118, 0.5);
+    flex-grow: 1;
+    height: 90px;
+    max-height: 90px;
+}
+
+.square {
+    height: 70px;
+    width: 70px;
+    max-width: 70px;
+    max-height: 70px;
+}
+
+.weapon__icon {
+    background-color: rgba(255, 255, 255, 0.25);
+    width: 125px;
+}
+
+.weapon__icon:checked {
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+.hud-compass-container {
+    flex-grow: 1;
+    bottom: 30px;
+    position: absolute;
+    align-self: center;
+    width: 700px;
+    height: 80px;
+    justify-content: flex-end;
+}
+
+.compass__texture {
+    flex-grow: 1;
+    height: 50px;
+    max-height: 50px;
+}
+
+.compass-needle {
+    flex-grow: 1;
+    position: absolute;
+    height: 32px;
+    top: 0;
+    width: 32px;
+    align-self: center;
+    background-image: resource('Textures/UI/HUD/compass-needle');
+}
+
+.hud-popup__container {
+    flex-grow: 1;
+    position: absolute;
+    top: 30px;
+    align-self: center;
+    height: 250px;
+    width: 800px;
+    background-color: rgba(0, 0, 0, 0.49);
+}
+
+.map__render-txture {
+}

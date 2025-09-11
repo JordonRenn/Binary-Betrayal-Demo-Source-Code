@@ -20,6 +20,7 @@ public class InventoryManager : MonoBehaviour
 
     //[Header("Player Inventory")]
     public IInventory playerInventory { get; private set; } //player's inventory
+    public bool inventoryLoaded { get; private set; } = false;
 
     private IInventory connectedInventory; //inventory of the currently interacted NPC or container
 
@@ -28,20 +29,20 @@ public class InventoryManager : MonoBehaviour
     private const string JSON_INVENTORY_FILE_PATH = "Inventories/";
     private bool GenerateDummyInventory = true;
     private bool GenerateEmptyInventory = false;
-    private bool testParsing = true;
+    /* private bool testParsing = true; */
 
     void Awake()
     {
         if (this.InitializeSingleton(ref _instance, true) == this)
         {
-            if (testParsing)
+            /* if (testParsing)
             {
                 TestJsonParsing();
-            }
+            } */
         }
     }
 
-    private void TestJsonParsing()
+    /* private void TestJsonParsing()
     {
         var jsonAsset = new TextAsset("{\"inventoryId\":\"test\",\"items\":[]}");
         var result = InventoryJsonParser.ParseInventoryJsonData(jsonAsset);
@@ -53,7 +54,7 @@ public class InventoryManager : MonoBehaviour
         {
             SBGDebug.LogInfo("SimdJson parser test succeeded.", "InventoryManager");
         }
-    }
+    } */
 
     void Start()
     {
@@ -65,6 +66,12 @@ public class InventoryManager : MonoBehaviour
         {
             SetPlayerInventory(new Inv_Player("PlayerInventory", "Player Inventory", 100));
             Debug.Log("Generated empty player inventory.");
+
+            inventoryLoaded = true; // I guess? might break some stuff.. idk
+        }
+        else
+        {
+            Debug.LogWarning("HEY DUMBASS, YOU NEED TO LOAD A GOD DAMN INVENTORY FOR THE PLAYER, OR THEY WON'T HAVE ONE. FIX IT.");
         }
     }
 
@@ -80,6 +87,7 @@ public class InventoryManager : MonoBehaviour
         // Set the new inventory
         playerInventory = inventory;
         Debug.Log($"Player inventory set: {inventory.Name} with {inventory.GetItems().Length} unique item types");
+        inventoryLoaded = true;
     }
 
     /// <summary>
@@ -180,7 +188,7 @@ public class InventoryManager : MonoBehaviour
                 return null;
             }
 
-            SBGDebug.LogInfo($"Successfully loaded inventory: {inventoryContextData.InventoryId} with {inventoryContextData.Items?.Count ?? 0} items", "InventoryManager");
+            SBGDebug.LogInfo($"Successfully loaded inventory: {inventoryContextData.InventoryId} with {inventoryContextData.Items?.Count ?? 0} items", "InventoryManager | LoadInventoryFromJSON");
 
             var loadedInventory = InventoryFactory.CreateInventory(loadedContextInventory);
             if (loadedInventory == null)

@@ -1,237 +1,239 @@
 using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
+using UnityEngine.UIElements;
+using System.Linq;
+using System.Threading.Tasks;
 
 public class PauseMenu : MonoBehaviour
 {
-    private InputHandler input;
+    private UIDocument document;
+    private VisualElement root;
+    private VisualElement mainPanel;
+    private VisualElement settingsPanel;
+    private UIManager uiManager;
+    // private TabView settingsTabView;
+    // private int currentTabIndex = 0;
 
-    public bool isOpen { get; private set; }
-
-    [Header("Main Menus")]
-    [SerializeField] private Canvas pauseMenuCanvas;
-    [SerializeField] private Canvas settingsMenuCanvas;
-
-    [Header("Pause Menu Buttons")]
-    [SerializeField] private Button b_Resume;
-    [SerializeField] private Button b_Settings;
-    [SerializeField] private Button b_Quit;
-
-    [Header("Settings Menu")]
-    [SerializeField] private Button b_BackToMenu;
-
-    [Header("Settings Tabs")]
-    [SerializeField] private Button b_Gameplay;
-    [SerializeField] private Button b_Video;
-    [SerializeField] private Button b_Audio;
-    [SerializeField] private Button b_Controls;
-    [SerializeField] private Button b_Credits;
-    [Space(10)]
-    [SerializeField] private Color activeTabColor;
-    [SerializeField] private Color inactiveTabColor;
-
-    private Image btnImg_Gameplay;
-    private Image btnImg_Video;
-    private Image btnImg_Audio;
-    private Image btnImg_Controls;
-    private Image btnImg_Credits;
-
-    [Header("Settings Panels")]
-    [SerializeField] private Canvas gameplayPanel;
-    [SerializeField] private Canvas videoPanel;
-    [SerializeField] private Canvas audioPanel;
-    [SerializeField] private Canvas controlsPanel;
-    [SerializeField] private Canvas creditsPanel;
-
-    [Header("Gameplay Elements")]
-    [SerializeField] private Slider s_VertSensitivity;
-    [SerializeField] private Slider s_HorizSensitivity;
-    [SerializeField] private Toggle t_InvertY;
-    [SerializeField] private TMP_Dropdown d_Language;
-
-
-    // Internal states
-    public bool isPaused { get; private set; } = false;
-    private PauseMenuState pMenuState = PauseMenuState.NotDisplayed;
-    private SettingsMenuState sMenuState = SettingsMenuState.NotDisplayed;
-
-    private void Start()
+    private void Awake()
     {
-        input = InputHandler.Instance;
+        document = GetComponent<UIDocument>();
+        root = document.rootVisualElement;
+        uiManager = GetComponentInParent<UIManager>();
 
-        //input.pauseMenuButtonTriggered.AddListener(TogglePauseMenu);
-        SetupButtonListeners();
+        mainPanel = root.Q<VisualElement>("Pause-Container");
+        settingsPanel = root.Q<VisualElement>("Settings-Container");
+        // settingsTabView = root.Q<TabView>("Settings-TabView");
 
-        pauseMenuCanvas.gameObject.SetActive(false);
-        settingsMenuCanvas.gameObject.SetActive(false);
-        HideAllSettingsPanels();
-
-        // Setup settings UI listeners
-        SetupSettingsUIBindings();
-
-        btnImg_Gameplay = b_Gameplay.GetComponent<Image>();
-        btnImg_Video = b_Video.GetComponent<Image>();
-        btnImg_Audio = b_Audio.GetComponent<Image>();
-        btnImg_Controls = b_Controls.GetComponent<Image>();
-        btnImg_Credits = b_Credits.GetComponent<Image>();
+        SubscribeMainPanelButtons();
     }
 
-    public void ShowPauseMenu()
+    private void OnEnable()
     {
-        pMenuState = PauseMenuState.Main;
-        sMenuState = SettingsMenuState.NotDisplayed;
-
-        pauseMenuCanvas.gameObject.SetActive(true);
-        settingsMenuCanvas.gameObject.SetActive(false);
-        isOpen = true;
+        // Show the main panel and hide the settings panel
+        mainPanel.style.display = DisplayStyle.Flex;
+        settingsPanel.style.display = DisplayStyle.None;
+        
+        // Setup controls panel
+        SetupControlsPanel();
     }
 
-    public void HidePauseMenu()
+    private void OnDisable()
     {
-        pMenuState = PauseMenuState.NotDisplayed;
-        sMenuState = SettingsMenuState.NotDisplayed;
-
-        pauseMenuCanvas.gameObject.SetActive(false);
-        settingsMenuCanvas.gameObject.SetActive(false);
-        isOpen = false;
+        // Hide the main panel and settings panel
+        mainPanel.style.display = DisplayStyle.None;
+        settingsPanel.style.display = DisplayStyle.None;
     }
 
-    #region Settings Menu
-    // ---- Settings Menu Logic ----
-    private void ToggleSettingsMenu()
+    #region Button Subscriptions
+    private void SubscribeMainPanelButtons()
     {
-        if (pMenuState == PauseMenuState.Main)
-        {
-            pMenuState = PauseMenuState.Settings;
-            SwitchSettingsTab(SettingsMenuState.Gameplay);
+        var resumeButton = mainPanel.Q<Button>("Resume-Button");
+        var settingsButton = mainPanel.Q<Button>("Settings-Button");
+        var exitButton = mainPanel.Q<Button>("Exit-Button");
 
-            // Load settings into UI when entering settings menu
-            LoadSettingsToUI();
-
-            pauseMenuCanvas.gameObject.SetActive(false);
-            settingsMenuCanvas.gameObject.SetActive(true);
-        }
-        else if (pMenuState == PauseMenuState.Settings)
-        {
-            pMenuState = PauseMenuState.Main;
-            sMenuState = SettingsMenuState.NotDisplayed;
-
-            settingsMenuCanvas.gameObject.SetActive(false);
-            pauseMenuCanvas.gameObject.SetActive(true);
-        }
+        resumeButton.clicked += OnResumeClicked;
+        settingsButton.clicked += OnSettingsClicked;
+        exitButton.clicked += OnExitClicked;
     }
 
-    private void SwitchSettingsTab(SettingsMenuState tab)
+    private void UnsubscribeMainPanelButtons()
     {
-        sMenuState = tab;
-        HideAllSettingsPanels();
-        UnhighlightAllButtons();
+        var resumeButton = mainPanel.Q<Button>("Resume-Button");
+        var settingsButton = mainPanel.Q<Button>("Settings-Button");
+        var exitButton = mainPanel.Q<Button>("Exit-Button");
 
-        switch (tab)
-        {
-            case SettingsMenuState.Gameplay:
-                gameplayPanel.gameObject.SetActive(true);
-                btnImg_Gameplay.color = activeTabColor;
-                break;
-            case SettingsMenuState.Video:
-                videoPanel.gameObject.SetActive(true);
-                btnImg_Video.color = activeTabColor;
-                break;
-            case SettingsMenuState.Audio:
-                audioPanel.gameObject.SetActive(true);
-                btnImg_Audio.color = activeTabColor;
-                break;
-            case SettingsMenuState.Controls:
-                controlsPanel.gameObject.SetActive(true);
-                btnImg_Controls.color = activeTabColor;
-                break;
-            case SettingsMenuState.Credits:
-                creditsPanel.gameObject.SetActive(true);
-                btnImg_Credits.color = activeTabColor;
-                break;
-        }
+        resumeButton.clicked -= OnResumeClicked;
+        settingsButton.clicked -= OnSettingsClicked;
+        exitButton.clicked -= OnExitClicked;
     }
 
-    private void HideAllSettingsPanels()
+    private void SubscribeSettingsPanelButtons()
     {
-        gameplayPanel.gameObject.SetActive(false);
-        videoPanel.gameObject.SetActive(false);
-        audioPanel.gameObject.SetActive(false);
-        controlsPanel.gameObject.SetActive(false);
-        creditsPanel.gameObject.SetActive(false);
+        var backButton = settingsPanel.Q<Button>("Back-Button");
+        var ApplyButton = settingsPanel.Q<Button>("Apply-Button");
+
+        backButton.clicked += OnBackClicked;
+        ApplyButton.clicked += OnApplyClicked;
     }
 
-    private void UnhighlightAllButtons()
+    private void UnsubscribeSettingsPanelButtons()
     {
-        btnImg_Gameplay.color = inactiveTabColor;
-        btnImg_Video.color = inactiveTabColor;
-        btnImg_Audio.color = inactiveTabColor;
-        btnImg_Controls.color = inactiveTabColor;
-        btnImg_Credits.color = inactiveTabColor;
+        var backButton = settingsPanel.Q<Button>("Back-Button");
+        var ApplyButton = settingsPanel.Q<Button>("Apply-Button");
+
+        backButton.clicked -= OnBackClicked;
+        ApplyButton.clicked -= OnApplyClicked;
+    }
+    #endregion
+
+    #region Button Actions
+    private void OnResumeClicked()
+    {
+        _ = uiManager.HideAllMenus();
     }
 
-    // ---- Button Listeners Setup ----
-    private void SetupButtonListeners()
+    private void OnSettingsClicked()
     {
-        // Always return to FirstPerson state when resuming from pause menu
-        b_Resume.onClick.AddListener(() => UIManager.Instance.SetState(UIManager.UIMasterState.FirstPerson));
-        b_Settings.onClick.AddListener(ToggleSettingsMenu);
-        b_Quit.onClick.AddListener(QuitGame);
-
-        b_BackToMenu.onClick.AddListener(ToggleSettingsMenu);
-
-        b_Gameplay.onClick.AddListener(() => SwitchSettingsTab(SettingsMenuState.Gameplay));
-        b_Video.onClick.AddListener(() => SwitchSettingsTab(SettingsMenuState.Video));
-        b_Audio.onClick.AddListener(() => SwitchSettingsTab(SettingsMenuState.Audio));
-        b_Controls.onClick.AddListener(() => SwitchSettingsTab(SettingsMenuState.Controls));
-        b_Credits.onClick.AddListener(() => SwitchSettingsTab(SettingsMenuState.Credits));
+        // Logic to switch to settings panel
+        mainPanel.style.display = DisplayStyle.None;
+        settingsPanel.style.display = DisplayStyle.Flex;
+        UnsubscribeMainPanelButtons();
+        SubscribeSettingsPanelButtons();
     }
+
+    private void OnExitClicked()
+    {
+        // Logic to exit to main menu or quit game
+        Debug.Log("Exit button clicked");
+        QuitGame();
+    }
+
+    private void OnBackClicked()
+    {
+        // Logic to switch back to main panel
+        settingsPanel.style.display = DisplayStyle.None;
+        mainPanel.style.display = DisplayStyle.Flex;
+        UnsubscribeSettingsPanelButtons();
+        SubscribeMainPanelButtons();
+    }
+
+    private void OnApplyClicked()
+    {
+        // You might want to add specific apply logic here
+        // For example, if you want to batch-apply changes or show a confirmation
+        GameMaster.Instance.SaveAndApplySettings();
+    }
+    #endregion
 
     private void QuitGame()
     {
         Application.Quit();
     }
 
-    // ---- Settings UI Binding ----
-    private void SetupSettingsUIBindings()
+    #region Settings
+    private void SetupControlsPanel()
     {
-        s_VertSensitivity.onValueChanged.AddListener(value =>
+        var controlsPanel = root.Q<VisualElement>("Controls-Panel");
+        var gameplayPanel = root.Q<VisualElement>("Gameplay-Panel");
+        
+        if (controlsPanel != null)
         {
-            var settings = GameMaster.Instance.GetSettings();
-            settings.mouseSensitivityVertical = value;
-            GameMaster.Instance.SaveAndApplySettings();
-        });
+            // Setup sensitivity sliders
+            var vertSlider = controlsPanel.Q<Slider>("VertSensitivity-Slider");
+            var vertLabel = controlsPanel.Q<Label>("VertSensitivity-Value");
+            var horizSlider = controlsPanel.Q<Slider>("HorizSensitivity-Slider");
+            var horizLabel = controlsPanel.Q<Label>("HorizSensitivity-Value");
+            
+            SetupSensitivitySlider(vertSlider, vertLabel, true);
+            SetupSensitivitySlider(horizSlider, horizLabel, false);
+            
+            // Setup invert Y switch
+            var invertYSwitch = controlsPanel.Q<Switch>();
+            if (invertYSwitch != null)
+            {
+                invertYSwitch.onValueChanged = (value) => {
+                    var settings = GameMaster.Instance.GetSettings();
+                    settings.invertYAxis = value;
+                    GameMaster.Instance.SaveAndApplySettings();
+                };
+            }
+        }
 
-        s_HorizSensitivity.onValueChanged.AddListener(value =>
+        if (gameplayPanel != null)
         {
-            var settings = GameMaster.Instance.GetSettings();
-            settings.mouseSensitivityHorizontal = value;
-            GameMaster.Instance.SaveAndApplySettings();
-        });
+            // Setup language dropdown in Gameplay panel
+            var languageDropdown = gameplayPanel.Q<DropdownField>("Language-Dropdown");
+            if (languageDropdown != null)
+            {
+                languageDropdown.choices = System.Enum.GetNames(typeof(Language)).ToList();
+                languageDropdown.RegisterValueChangedCallback(evt => {
+                    var settings = GameMaster.Instance.GetSettings();
+                    settings.language = (Language)languageDropdown.index;
+                    GameMaster.Instance.SaveAndApplySettings();
+                });
+            }
+        }
 
-        t_InvertY.onValueChanged.AddListener(isOn =>
-        {
-            var settings = GameMaster.Instance.GetSettings();
-            settings.invertYAxis = isOn;
-            GameMaster.Instance.SaveAndApplySettings();
-        });
+        LoadControlSettings();
+    }
 
-        d_Language.onValueChanged.AddListener(index =>
-        {
+    private void SetupSensitivitySlider(Slider slider, Label valueLabel, bool isVertical)
+    {
+        slider.lowValue = 0f;
+        slider.highValue = 100f;
+        
+        slider.RegisterValueChangedCallback(evt => {
+            valueLabel.text = $"{evt.newValue:F0}%";
             var settings = GameMaster.Instance.GetSettings();
-            settings.language = (Language)index;
+            if (isVertical)
+                settings.mouseSensitivityVertical = evt.newValue;
+            else
+                settings.mouseSensitivityHorizontal = evt.newValue;
             GameMaster.Instance.SaveAndApplySettings();
         });
     }
 
-    private void LoadSettingsToUI()
+    private async void LoadControlSettings()
     {
+        await Task.Run(() => new WaitUntil(() => GameMaster.Instance != null));
+
         var settings = GameMaster.Instance.GetSettings();
+        var controlsPanel = root.Q<VisualElement>("Controls-Panel");
+        var gameplayPanel = root.Q<VisualElement>("Gameplay-Panel");
+        
+        if (controlsPanel != null)
+        {
+            var vertSlider = controlsPanel.Q<Slider>("VertSensitivity-Slider");
+            var horizSlider = controlsPanel.Q<Slider>("HorizSensitivity-Slider");
+            var invertYSwitch = controlsPanel.Q<Switch>();
+            
+            if (vertSlider != null)
+            {
+                vertSlider.value = settings.mouseSensitivityVertical;
+                controlsPanel.Q<Label>("VertSensitivity-Value").text = $"{settings.mouseSensitivityVertical:F0}%";
+            }
+            
+            if (horizSlider != null)
+            {
+                horizSlider.value = settings.mouseSensitivityHorizontal;
+                controlsPanel.Q<Label>("HorizSensitivity-Value").text = $"{settings.mouseSensitivityHorizontal:F0}%";
+            }
+            
+            if (invertYSwitch != null)
+            {
+                invertYSwitch.value = settings.invertYAxis;
+            }
+        }
 
-        s_VertSensitivity.SetValueWithoutNotify(settings.mouseSensitivityVertical);
-        s_HorizSensitivity.SetValueWithoutNotify(settings.mouseSensitivityHorizontal);
-        t_InvertY.SetIsOnWithoutNotify(settings.invertYAxis);
-        d_Language.SetValueWithoutNotify((int)settings.language);
+        if (gameplayPanel != null)
+        {
+            var languageDropdown = gameplayPanel.Q<DropdownField>("Language-Dropdown");
+            if (languageDropdown != null)
+            {
+                languageDropdown.index = (int)settings.language;
+            }
+        }
     }
+
+    
     #endregion
 }

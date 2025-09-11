@@ -270,6 +270,7 @@ public enum ItemType
     Keys,
     Quest,
     Medical,
+    Document,
     Phone,
     Tools
 }

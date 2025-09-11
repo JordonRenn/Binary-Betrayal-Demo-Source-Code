@@ -19,6 +19,7 @@ public interface IInventory
     InventoryType Type { get; }
     float Capacity { get; }
     Dictionary<IItem, int> Items { get; } // Key: ItemID, Value: Quantity
+    List<InventoryListItem> InventoryListViewItems { get; }
 
     bool HasItem(IItem item, int quantity);
     bool HasItemById(string itemId, int quantity);

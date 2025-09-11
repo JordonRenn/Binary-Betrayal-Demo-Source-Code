@@ -105,7 +105,7 @@ public abstract class FPSS_WeaponSlotObject : MonoBehaviour
         while (!allDependenciesLoaded && Time.time - initTime <= initTimeout)
         {
             bool reticleSystemReady = FPSS_ReticleSystem.Instance != null;
-            bool weaponHUDReady = FPSS_WeaponHUD.Instance != null;
+            //bool weaponHUDReady = FPSS_WeaponHUD.Instance != null;
             bool poolReady = WeaponPool.Instance != null;
             bool camControllerReady = FirstPersonCamController.Instance != null;
 
@@ -119,7 +119,7 @@ public abstract class FPSS_WeaponSlotObject : MonoBehaviour
             if (!mainReady)
                 SBGDebug.LogInfo("Waiting for ''FPS Main'' ....", "FPSS_WeaponSlotObject | Initialization"); */
 
-            allDependenciesLoaded = reticleSystemReady && weaponHUDReady && poolReady && camControllerReady;
+            allDependenciesLoaded = reticleSystemReady /* && weaponHUDReady */ && poolReady && camControllerReady;
 
             if (!allDependenciesLoaded)
                 yield return null;
@@ -197,7 +197,7 @@ public abstract class FPSS_WeaponSlotObject : MonoBehaviour
             SBGDebug.LogError($"Error playing Idle animation: {ex.Message}", "FPSS_WeaponSlotObject | SetWeaponActive");
         }
         
-        FPSS_WeaponHUD.Instance?.RefreshWeaponHUD();
+        /* FPSS_WeaponHUD.Instance?.RefreshWeaponHUD(); */
         WeaponPool.Instance?.onWeaponActivationComplete.Invoke();
     }
 

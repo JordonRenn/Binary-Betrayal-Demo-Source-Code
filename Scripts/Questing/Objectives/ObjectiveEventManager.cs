@@ -15,11 +15,12 @@ Y88b. .d88P 888   Y8888     888     888       Y88b  d88P    888     888        8
  UNTESTED-UNTESTED-UNTESTED-UNTESTED-UNTESTED-UNTESTED-UNTESTED-UNTESTED-UNTESTED-UNTESTED
  */
 
- /*
-    Need to update objective to work with new Objective Event System
- */
+/*
+   Need to update objective to work with new Objective Event System
+*/
 
-public static class ObjectiveEventManager 
+#region Objective Event Manager
+public static class ObjectiveEventManager
 {
     private static string validationLogFilePath = "Assets/Logs/ObjectiveValidationLog.txt";
     private static bool isInitialized = false;
@@ -78,7 +79,7 @@ public static class ObjectiveEventManager
             SBGDebug.LogError("GameMaster.Instance is null when trying to subscribe to events", "ObjectiveEventManager");
         }
     }
-    
+
     static void GetActiveObjectiveTypes()
     {
         activeObjectiveTypes.Clear();
@@ -112,7 +113,7 @@ public static class ObjectiveEventManager
                     if (objective is Objective_Kill killObjective)
                     {
                         killObjective.OnEnemyKilled(objectId);
-                        
+
                         if (objective.IsCompleted)
                         {
                             LogValidationResult($"Kill objective completed: {objective.Message} (Enemy: {objectId})");
@@ -136,7 +137,7 @@ public static class ObjectiveEventManager
                     if (objective is Objective_Explore exploreObjective)
                     {
                         exploreObjective.AreaExplored(objectId);
-                        
+
                         if (objective.IsCompleted)
                         {
                             LogValidationResult($"Explore objective completed: {objective.Message} (Area: {objectId})");
@@ -160,7 +161,7 @@ public static class ObjectiveEventManager
                     if (objective is Objective_UseItem useItemObjective)
                     {
                         useItemObjective.ItemUsed(objectId);
-                        
+
                         if (objective.IsCompleted)
                         {
                             LogValidationResult($"Use item objective completed: {objective.Message} (Item: {objectId})");
@@ -243,9 +244,9 @@ public static class ObjectiveEventManager
     private static void OnObjectiveCompletion()
     {
         GetActiveObjectiveTypes();
-
     }
 
+    #region Logging
     /// <summary>
     /// Logs the result of a validation check.
     /// </summary>
@@ -254,4 +255,6 @@ public static class ObjectiveEventManager
     {
         System.IO.File.AppendAllText(validationLogFilePath, $"{System.DateTime.Now}: {message}\n");
     }
+    #endregion
 }
+#endregion

@@ -1,0 +1,39 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/ui-theme.uss?fileID=7433441132597879392&amp;guid=887f04757fc284b4680e89c248ef0cd8&amp;type=3#ui-theme" />
+    <Style src="project://database/Assets/UI/HUD.uss?fileID=7433441132597879392&amp;guid=44c8e967f4f5e55408c67195f98236b3&amp;type=3#HUD" />
+    <ui:VisualElement name="HUD-MapConatiner" class="hud-map__container">
+        <ui:Image name="HUD-MapRenderTexture" class="map__render-txture" style="width: 100%; height: 100%;" />
+    </ui:VisualElement>
+    <ui:VisualElement name="HUD-NotificationContainer" class="hud-notification__container" />
+    <ui:VisualElement name="HUD-WeaponContainer" class="hud-weapon__container">
+        <ui:VisualElement name="WeaponAmmoContainer" class="weapon__ammo-container" style="align-self: flex-end; flex-direction: row; justify-content: flex-end;">
+            <ui:Label text="18&#10;" name="WeaponAmmoCurrentMag" class="weapon__ammo-label__current-mag" />
+            <ui:VisualElement name="VerticalDivider" class="weapon__ammo-vert-divider" style="flex-grow: 1;" />
+            <ui:VisualElement style="flex-grow: 1; width: 70px; max-width: 70px;">
+                <ui:Label text="25&#10;" name="WeaponAmmoMagCapacity" class="weapon__ammo-label__mag-capacity" />
+                <ui:Label text="150&#10;" name="WeaponAmmoTotal" class="weapon__ammo-label__total" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="WeaponPlayerStatusContainer" class="weapon__player-stat-container">
+            <ui:VisualElement name="WeaponPlayerArmor" style="flex-grow: 1; background-color: rgb(71, 92, 135); width: 80%; align-self: flex-end;" />
+            <ui:VisualElement name="EmptySpacer" style="flex-grow: 1; max-height: 3px;" />
+            <ui:VisualElement name="WeaponPlayerHealth" style="flex-grow: 1; background-color: rgb(67, 132, 71);" />
+        </ui:VisualElement>
+        <ui:VisualElement name="WeaoponIconContainer" class="weapon__icon-container" style="flex-direction: row; padding-top: 10px; padding-right: 10px; padding-bottom: 10px; padding-left: 10px;">
+            <ui:VisualElement name="WeaponPrimaryIcon" class="weapon__icon" style="flex-grow: 1;" />
+            <ui:VisualElement name="EmptySpacer" style="flex-grow: 1; width: 10px; max-width: 10px;" />
+            <ui:VisualElement name="WeaponSecondaryIcon" class="weapon__icon" style="flex-grow: 1;" />
+            <ui:VisualElement name="EmptySpacer" style="flex-grow: 1; width: 10px; max-width: 10px;" />
+            <ui:VisualElement name="WeaponMeleeIcon" class="weapon__icon square" style="flex-grow: 1;" />
+            <ui:VisualElement name="EmptySpacer" style="flex-grow: 1; width: 10px; max-width: 10px;" />
+            <ui:VisualElement name="WeaponUtilityIcon" class="weapon__icon square" style="flex-grow: 1;" />
+            <ui:VisualElement name="EmptySpacer" style="flex-grow: 1; width: 10px; max-width: 10px;" />
+            <ui:VisualElement name="WeaponUnarmedIcon" class="weapon__icon square" style="flex-grow: 1;" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+    <ui:VisualElement name="HUD-CompassContainer" class="hud-compass-container">
+        <ui:Image class="compass-needle" />
+        <GradientMask name="compass-texture" texture="project://database/Assets/Resources/Textures/UI/HUD/HUD_Compass_wht_100p.png?fileID=2800000&amp;guid=d27b7b783ba3c51468c38a10684896a8&amp;type=3#HUD_Compass_wht_100p" class="compass__texture" />
+    </ui:VisualElement>
+    <ui:VisualElement name="HUD-MissionPopUp" class="hud-popup__container" />
+</ui:UXML>

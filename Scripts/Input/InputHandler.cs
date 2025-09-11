@@ -31,13 +31,13 @@ public class InputHandler : MonoBehaviour
     [Header("Settings")]
     [Space(10)]
 
-    [SerializeField] private InputState defaultState;
+    private InputState defaultState = InputState.FirstPerson;
 
-    [SerializeField] private float horizontalLookSensitivity = 1.0f;
-    [SerializeField] private float verticalLookSensitivity = 1.0f;
+    private float horizontalLookSensitivity = 1.0f;
+    private float verticalLookSensitivity = 1.0f;
     private float horizontalSensitivityMultiplier = 1.0f;
     private float verticalSensitivityMultiplier = 1.0f;
-    [SerializeField] private bool invertYAxis = false;
+    private bool invertYAxis = false;
 
     [Header("Input Action Asset")]
     [Space(10)]
@@ -74,6 +74,7 @@ public class InputHandler : MonoBehaviour
     private const string fp_an_inventoryMenu = "Inventory Menu";
     private const string fp_an_journalMenu = "Journal Menu";
     private const string fp_an_playerMenu = "Player Menu";
+    private const string fp_an_mapMenu = "Map Menu";
 
     // FOCUS ACTION NAME REFS
     private const string f_an_point = "Point";
@@ -106,6 +107,10 @@ public class InputHandler : MonoBehaviour
     private const string ui_an_middleClick = "MiddleClick";
     private const string ui_an_scroll = "ScrollWheel";
     private const string ui_an_interact = "Interact";
+    private const string ui_an_inventory = "Inventory Menu";
+    private const string ui_an_journal = "Journal Menu";
+    private const string ui_an_player = "Player Menu";
+    private const string ui_an_map = "Map Menu";
     #endregion
 
     #region Input Actions
@@ -131,6 +136,7 @@ public class InputHandler : MonoBehaviour
     private InputAction inventoryMenuAction;
     private InputAction journalMenuAction;
     private InputAction playerMenuAction;
+    private InputAction mapMenuAction;
 
     // FOCUS INPUT ACTIONS
     private InputAction f_pointAction;
@@ -163,6 +169,10 @@ public class InputHandler : MonoBehaviour
     private InputAction ui_middleClickAction;
     private InputAction ui_scrollAction;
     private InputAction ui_interactAction;
+    private InputAction ui_inventoryAction;
+    private InputAction ui_journalAction;
+    private InputAction ui_playerAction;
+    private InputAction ui_mapAction;
     #endregion
 
     #region Public Values
@@ -188,6 +198,7 @@ public class InputHandler : MonoBehaviour
     public bool InventoryMenuInput { get; private set; }
     public bool JournalMenuInput { get; private set; }
     public bool PlayerMenuInput { get; private set; }
+    public bool MapMenuInput { get; private set; }
 
     //FOCUS PUBLIC VALUES
     public Vector2 F_PointInput { get; private set; }
@@ -220,6 +231,10 @@ public class InputHandler : MonoBehaviour
     public bool UI_MiddleClickInput { get; private set; }
     public Vector2 UI_ScrollInput { get; private set; }
     public bool UI_InteractInput { get; private set; }
+    public bool UI_InventoryInput { get; private set; }
+    public bool UI_JournalInput { get; private set; }
+    public bool UI_PlayerInput { get; private set; }
+    public bool UI_MapInput { get; private set; }
     #endregion
 
     #region Unity Events
@@ -249,6 +264,7 @@ public class InputHandler : MonoBehaviour
     [HideInInspector] public UnityEvent OnInventoryMenuInput = new UnityEvent();
     [HideInInspector] public UnityEvent OnJournalMenuInput = new UnityEvent();
     [HideInInspector] public UnityEvent OnPlayerMenuInput = new UnityEvent();
+    [HideInInspector] public UnityEvent OnMapMenuInput = new UnityEvent();
 
     // Focus Unity Events
     [HideInInspector] public UnityEvent<Vector2> OnFocus_PointInput = new UnityEvent<Vector2>();
@@ -284,6 +300,10 @@ public class InputHandler : MonoBehaviour
     [HideInInspector] public UnityEvent OnUI_MiddleClickInput = new UnityEvent();
     [HideInInspector] public UnityEvent<Vector2> OnUI_ScrollInput = new UnityEvent<Vector2>();
     [HideInInspector] public UnityEvent OnUI_InteractInput = new UnityEvent();
+    [HideInInspector] public UnityEvent OnUI_InventoryInput = new UnityEvent();
+    [HideInInspector] public UnityEvent OnUI_JournalInput = new UnityEvent();
+    [HideInInspector] public UnityEvent OnUI_PlayerInput = new UnityEvent();
+    [HideInInspector] public UnityEvent OnUI_MapInput = new UnityEvent();
     #endregion
 
     public InputState currentState { get; private set; }
@@ -330,6 +350,7 @@ public class InputHandler : MonoBehaviour
         inventoryMenuAction = actionMap_FirstPerson.FindAction(fp_an_inventoryMenu);
         journalMenuAction = actionMap_FirstPerson.FindAction(fp_an_journalMenu);
         playerMenuAction = actionMap_FirstPerson.FindAction(fp_an_playerMenu);
+        mapMenuAction = actionMap_FirstPerson.FindAction(fp_an_mapMenu);
 
         // ASSIGN FOCUS ACTIONS
         f_pointAction = actionMap_Focus.FindAction(f_an_point);
@@ -362,6 +383,10 @@ public class InputHandler : MonoBehaviour
         ui_middleClickAction = actionMap_UI.FindAction(ui_an_middleClick);
         ui_scrollAction = actionMap_UI.FindAction(ui_an_scroll);
         ui_interactAction = actionMap_UI.FindAction(ui_an_interact);
+        ui_inventoryAction = actionMap_UI.FindAction(ui_an_inventory);
+        ui_journalAction = actionMap_UI.FindAction(ui_an_journal);
+        ui_playerAction = actionMap_UI.FindAction(ui_an_player);
+        ui_mapAction = actionMap_UI.FindAction(ui_an_map);
 
         //UpdateSensitivitySettings();
         RegisterInputActions();
@@ -471,6 +496,10 @@ public class InputHandler : MonoBehaviour
         playerMenuAction.started += context => OnPlayerMenuInput.Invoke();
         playerMenuAction.performed += context => PlayerMenuInput = true;
         playerMenuAction.canceled += context => PlayerMenuInput = false;
+
+        mapMenuAction.started += context => OnMapMenuInput.Invoke();
+        mapMenuAction.performed += context => MapMenuInput = true;
+        mapMenuAction.canceled += context => MapMenuInput = false;
 
         // FOCUS INPUT ACTIONS
         f_pointAction.performed += context =>
@@ -590,6 +619,22 @@ public class InputHandler : MonoBehaviour
         ui_interactAction.started += context => OnUI_InteractInput.Invoke();
         ui_interactAction.performed += context => UI_InteractInput = true;
         ui_interactAction.canceled += context => UI_InteractInput = false;
+
+        ui_inventoryAction.started += context => OnUI_InventoryInput.Invoke();
+        ui_inventoryAction.performed += context => UI_InventoryInput = true;
+        ui_inventoryAction.canceled += context => UI_InventoryInput = false;
+
+        ui_journalAction.started += context => OnUI_JournalInput.Invoke();
+        ui_journalAction.performed += context => UI_JournalInput = true;
+        ui_journalAction.canceled += context => UI_JournalInput = false;
+
+        ui_playerAction.started += context => OnUI_PlayerInput.Invoke();
+        ui_playerAction.performed += context => UI_PlayerInput = true;
+        ui_playerAction.canceled += context => UI_PlayerInput = false;
+
+        ui_mapAction.started += context => OnUI_MapInput.Invoke();
+        ui_mapAction.performed += context => UI_MapInput = true;
+        ui_mapAction.canceled += context => UI_MapInput = false;
 
     }
     #endregion

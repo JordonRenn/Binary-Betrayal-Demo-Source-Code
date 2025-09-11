@@ -14,7 +14,7 @@ public class NotificationSystem : MonoBehaviour
         {
             if (_instance == null)
             {
-                Debug.LogError($"Attempting to access {nameof(NotificationSystem)} before it is initialized.");
+                Debug.LogWarning($"Attempting to access {nameof(NotificationSystem)} before it is initialized.");
             }
             return _instance;
         }

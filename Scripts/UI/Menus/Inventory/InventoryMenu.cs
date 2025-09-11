@@ -4,8 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine.Events;
+using System;
 
 #region Inventory Menu
+[Obsolete("This InventoryMenu is deprecated. Please use the new InventoryMenu in the UIManager.")]
 public class InventoryMenu : MonoBehaviour
 {
     [SerializeField] private Canvas inventoryCanvas;

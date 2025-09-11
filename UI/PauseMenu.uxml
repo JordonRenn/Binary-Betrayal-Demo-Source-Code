@@ -1,0 +1,116 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/ui-theme.uss?fileID=7433441132597879392&amp;guid=887f04757fc284b4680e89c248ef0cd8&amp;type=3#ui-theme" />
+    <Style src="project://database/Assets/UI/PauseMenu.uss?fileID=7433441132597879392&amp;guid=46ec369592a1c3145a0f3d173d27d30d&amp;type=3#PauseMenu" />
+    <ui:VisualElement name="MenuHeader" class="bb-menu-header">
+        <ui:Label text="PAUSED" name="PauseHeaderLabel" class="bb-menu-header__label" />
+        <ui:VisualElement name="PauseHeaderSpacer" style="max-height: 96px; min-height: 96px; min-width: 5%;" />
+        <ui:VisualElement name="PauseHeaderShortcutContainer" class="bb-menu-header__shortcut-container" style="flex-grow: 1; max-height: 96%; min-height: 96px; flex-direction: row-reverse;">
+            <MenuShortcut menu-name="Journal" shortcut-key="J" name="MenuShortcut-Journal" />
+            <MenuShortcut menu-name="Player" shortcut-key="P" name="MenuShortcut-Player" />
+            <MenuShortcut menu-name="Inventory" shortcut-key="I" name="MenuShortcut-Inventory" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+    <ui:VisualElement name="Panel" class="panel" style="flex-grow: 1; align-items: auto; align-content: center; align-self: auto; justify-content: center; flex-direction: column;">
+        <ui:VisualElement name="Pause-Container" class="pause-menu" style="flex-grow: 1; align-items: stretch; align-content: center; width: 20%; height: auto; align-self: center; max-height: 25%; top: auto; bottom: auto; justify-content: space-evenly; -unity-font-definition: url(&quot;project://database/Assets/Packages/TextMesh%20Pro/Fonts/LiberationSans.ttf?fileID=12800000&amp;guid=e3265ab4bf004d28a9537516768c1c75&amp;type=3#LiberationSans&quot;); font-size: 30px;">
+            <ui:Button text="Resume" name="Resume-Button" class="click-sfx__exit" />
+            <ui:Button text="Settings" name="Settings-Button" class="click-sfx__enter" />
+            <ui:Button text="Exit" name="Exit-Button" class="click-sfx__exit" />
+        </ui:VisualElement>
+        <ui:VisualElement name="Settings-Container" class="settings-menu" style="flex-grow: 1; width: 50%; align-self: center; max-height: 70%; display: none;">
+            <ui:TabView name="Settings-TabView" style="flex-grow: 1; flex-direction: column; flex-wrap: nowrap;">
+                <ui:Tab label="Graphics">
+                    <ui:VisualElement name="Graphics-Panel" class="settings-panel">
+                        <ui:Label text="Graphics Settings" class="settings-header" />
+                        <ui:VisualElement class="settings-group">
+                            <ui:VisualElement class="setting-row">
+                                <ui:Label text="Graphics Quality" class="setting-label" />
+                                <ui:DropdownField name="Quality-Dropdown" class="setting-dropdown" />
+                            </ui:VisualElement>
+                            <ui:VisualElement class="setting-row">
+                                <ui:Label text="Resolution" class="setting-label" />
+                                <ui:DropdownField name="Resolution-Dropdown" class="setting-dropdown" />
+                            </ui:VisualElement>
+                            <ui:VisualElement class="settings-divider" />
+                            <ui:VisualElement class="setting-row">
+                                <ui:Label text="Fullscreen" class="setting-label" />
+                                <ui:VisualElement class="setting-spacer" />
+                                <Switch value="true" style="width: 7.5%;" />
+                            </ui:VisualElement>
+                            <ui:VisualElement class="settings-divider" />
+                            <ui:VisualElement class="setting-row">
+                                <ui:Label text="V-Sync" class="setting-label" />
+                                <ui:VisualElement class="setting-spacer" />
+                                <Switch value="true" style="width: 7.5%;" />
+                            </ui:VisualElement>
+                            <ui:VisualElement class="settings-divider" />
+                            <ui:VisualElement class="setting-row">
+                                <ui:Label text="Anti-Aliasing" class="setting-label" />
+                                <ui:DropdownField name="AntiAliasing-Dropdown" class="setting-dropdown" />
+                            </ui:VisualElement>
+                            <ui:VisualElement class="settings-divider" />
+                            <ui:VisualElement class="setting-row">
+                                <ui:Label text="Shadow Quality" class="setting-label" />
+                                <ui:DropdownField name="ShadowQuality-Dropdown" class="setting-dropdown" />
+                            </ui:VisualElement>
+                            <ui:VisualElement class="settings-divider" />
+                            <ui:VisualElement class="setting-row">
+                                <ui:Label text="Gamma" class="setting-label" />
+                                <ui:Slider name="Gamma-Slider" class="setting-slider" />
+                                <ui:Label name="Gamma-Value" text="0%" class="setting-value" />
+                            </ui:VisualElement>
+                            <ui:VisualElement class="settings-divider" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:Tab>
+                <ui:Tab label="Audio">
+                    <ui:VisualElement name="Audio-Panel" class="settings-panel" />
+                </ui:Tab>
+                <ui:Tab label="Controls">
+                    <ui:VisualElement name="Controls-Panel" class="settings-panel">
+                        <ui:Label text="Mouse Settings" class="settings-header" />
+                        <ui:VisualElement class="settings-group">
+                            <ui:VisualElement class="setting-row">
+                                <ui:Label text="Vertical Sensitivity" class="setting-label" />
+                                <ui:Slider name="VertSensitivity-Slider" class="setting-slider" />
+                                <ui:Label name="VertSensitivity-Value" text="0%" class="setting-value" />
+                            </ui:VisualElement>
+                            <ui:VisualElement class="settings-divider" />
+                            <ui:VisualElement class="setting-row">
+                                <ui:Label text="Horizontal Sensitivity" class="setting-label" />
+                                <ui:Slider name="HorizSensitivity-Slider" class="setting-slider" />
+                                <ui:Label name="HorizSensitivity-Value" text="0%" class="setting-value" />
+                            </ui:VisualElement>
+                            <ui:VisualElement class="settings-divider" />
+                            <ui:VisualElement class="setting-row">
+                                <ui:Label text="Invert Y-Axis" class="setting-label" />
+                                <ui:VisualElement class="setting-spacer" />
+                                <Switch value="false" style="width: 7.5%;" />
+                            </ui:VisualElement>
+                            <ui:VisualElement class="settings-divider" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:Tab>
+                <ui:Tab label="Gameplay">
+                    <ui:VisualElement name="Gameplay-Panel" class="settings-panel">
+                        <ui:Label text="Game Settings" class="settings-header" />
+                        <ui:VisualElement class="settings-group">
+                            <ui:VisualElement class="setting-row">
+                                <ui:Label text="Language" class="setting-label" />
+                                <ui:DropdownField name="Language-Dropdown" class="setting-dropdown" />
+                            </ui:VisualElement>
+                            <ui:VisualElement class="settings-divider" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:Tab>
+                <ui:Tab label="Credits">
+                    <ui:VisualElement name="Credits-Panel" class="settings-panel" />
+                </ui:Tab>
+            </ui:TabView>
+            <ui:VisualElement name="Settings-Bottom" style="flex-direction: row; justify-content: space-between; margin-top: 10px;">
+                <ui:Button name="Back-Button" text="Back" class="click-sfx__exit" />
+                <ui:Button name="Apply-Button" text="Apply" class="click-sfx__enter" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+    <ui:VisualElement name="MenuFooter" class="bb-menu-footer" style="flex-grow: 1; height: 10%; max-height: 10%;" />
+</ui:UXML>

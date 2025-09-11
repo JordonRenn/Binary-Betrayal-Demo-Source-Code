@@ -1,0 +1,85 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/ui-theme.uss?fileID=7433441132597879392&amp;guid=887f04757fc284b4680e89c248ef0cd8&amp;type=3#ui-theme" />
+    <Style src="project://database/Assets/UI/InventoryMenu.uss?fileID=7433441132597879392&amp;guid=9e4b386f141616f46a3d45caec3fcbb7&amp;type=3#InventoryMenu" />
+    <ui:VisualElement name="InventoryHeader" class="bb-menu-header">
+        <ui:Label text="INVENTORY" name="InventoryHeaderLabel" class="bb-menu-header__label" />
+        <ui:VisualElement name="InventoryHeaderSpacer" style="max-height: 96px; min-height: 96px; min-width: 5%;" />
+        <ui:VisualElement name="InventoryHeaderShortcutContainer" class="bb-menu-header__shortcut-container" style="flex-grow: 1; max-height: 96%; min-height: 96px; flex-direction: row-reverse;">
+            <MenuShortcut menu-name="Journal" shortcut-key="J" name="MenuShortcut-Journal" />
+            <MenuShortcut menu-name="Player" shortcut-key="P" name="MenuShortcut-Player" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+    <ui:VisualElement name="InventoryContainer" class="panel" style="flex-grow: 1; flex-direction: row; margin-right: 5%; margin-bottom: 0; margin-left: 5%;">
+        <ui:VisualElement name="InventoryView" class="inventory-view" style="flex-grow: 1; margin-top: 2.5%; margin-right: 2.5%; margin-bottom: 2.5%; margin-left: 2.5%; max-width: 50%;">
+            <ui:TabView name="InventoryTabs" style="height: 100%; max-height: 100%;">
+                <ui:Tab label="FavoritesTab" icon-image="project://database/Assets/UI/Icons/01_Favorites.PNG?fileID=2800000&amp;guid=3197f48590810bf4590810eadcaa51cc&amp;type=3#01_Favorites" name="FavoriteTabContainer">
+                    <ui:VisualElement name="VisualElement" class="inventory-list-panel">
+                        <ui:Label text="Favorite Items" class="inventory-list__header" />
+                        <ui:VisualElement name="VisualElement" class="inventory-divider" />
+                        <ui:MultiColumnListView name="Favorites-ListView" class="inventory-list__list-view" />
+                    </ui:VisualElement>
+                </ui:Tab>
+                <ui:Tab label="MiscTab" icon-image="project://database/Assets/UI/Icons/02_misc.PNG?fileID=2800000&amp;guid=ab7afd04b70e9884eaec8a0aa4f84117&amp;type=3#02_misc" name="MiscTabContainer">
+                    <ui:VisualElement class="inventory-list-panel">
+                        <ui:Label text="Miscellaneous Items" class="inventory-list__header" />
+                        <ui:VisualElement class="inventory-divider" />
+                        <ui:MultiColumnListView name="Misc-ListView" class="inventory-list__list-view" />
+                    </ui:VisualElement>
+                </ui:Tab>
+                <ui:Tab label="MaterialTab" icon-image="project://database/Assets/UI/Icons/03_material.png?fileID=2800000&amp;guid=495e57a93cc6b0b448b4490cec2b7dbe&amp;type=3#03_material" name="MaterialTabContainer">
+                    <ui:VisualElement class="inventory-list-panel">
+                        <ui:Label text="Material Items" class="inventory-list__header" />
+                        <ui:VisualElement class="inventory-divider" />
+                        <ui:MultiColumnListView name="Materials-ListView" class="inventory-list__list-view" />
+                    </ui:VisualElement>
+                </ui:Tab>
+                <ui:Tab label="MedicalTab" icon-image="project://database/Assets/UI/Icons/04_medical.png?fileID=2800000&amp;guid=4c2bad08d5019ef41a2e4da6fa1f10b9&amp;type=3#04_medical" name="MedicalTabContainer">
+                    <ui:VisualElement class="inventory-list-panel">
+                        <ui:Label text="Medical Items" class="inventory-list__header" />
+                        <ui:VisualElement class="inventory-divider" />
+                        <ui:MultiColumnListView name="Medical-ListView" class="inventory-list__list-view" />
+                    </ui:VisualElement>
+                </ui:Tab>
+                <ui:Tab label="FoodTab" icon-image="project://database/Assets/UI/Icons/05_food.png?fileID=2800000&amp;guid=59ecdad9184dbc649a30ec614fe1ac54&amp;type=3#05_food" name="FoodTabContainer">
+                    <ui:VisualElement class="inventory-list-panel">
+                        <ui:Label text="Food Items" class="inventory-list__header" />
+                        <ui:VisualElement class="inventory-divider" />
+                        <ui:MultiColumnListView name="Food-ListView" class="inventory-list__list-view" />
+                    </ui:VisualElement>
+                </ui:Tab>
+                <ui:Tab label="KeysTab" icon-image="project://database/Assets/UI/Icons/06_keys.png?fileID=2800000&amp;guid=16b1a50c410b1bc4e892b9fcec1cca9b&amp;type=3#06_keys" name="KeysTabContainer">
+                    <ui:VisualElement class="inventory-list-panel">
+                        <ui:Label text="Key Items" class="inventory-list__header" />
+                        <ui:VisualElement class="inventory-divider" />
+                        <ui:MultiColumnListView name="Keys-ListView" class="inventory-list__list-view" />
+                    </ui:VisualElement>
+                </ui:Tab>
+                <ui:Tab label="DocumentsTab" icon-image="project://database/Assets/UI/Icons/07_documents.png?fileID=2800000&amp;guid=c1a01e0d11d17ea46a5d9164bf06f161&amp;type=3#07_documents" name="DocumentsTabContainer">
+                    <ui:VisualElement class="inventory-list-panel">
+                        <ui:Label text="Document Items" class="inventory-list__header" />
+                        <ui:VisualElement class="inventory-divider" />
+                        <ui:MultiColumnListView name="Documents-ListView" class="inventory-list__list-view" />
+                    </ui:VisualElement>
+                </ui:Tab>
+                <ui:Tab label="PhoneTab" icon-image="project://database/Assets/UI/Icons/08_phone.png?fileID=2800000&amp;guid=524024622b992024d830f45a1c19b841&amp;type=3#08_phone" name="PhoneTabContainer">
+                    <ui:VisualElement class="inventory-list-panel">
+                        <ui:Label text="Phone Items" class="inventory-list__header" />
+                        <ui:VisualElement class="inventory-divider" />
+                        <ui:MultiColumnListView name="Phone-ListView" class="inventory-list__list-view" />
+                    </ui:VisualElement>
+                </ui:Tab>
+                <ui:Tab label="ToolsTab" icon-image="project://database/Assets/UI/Icons/09_tools.png?fileID=2800000&amp;guid=56d8e7f51f23a214e824f0bca3dac722&amp;type=3#09_tools" name="ToolsTabContainer">
+                    <ui:VisualElement class="inventory-list-panel">
+                        <ui:Label text="Tool Items" class="inventory-list__header" />
+                        <ui:VisualElement class="inventory-divider" />
+                        <ui:MultiColumnListView name="Tools-ListView" class="inventory-list__list-view" />
+                    </ui:VisualElement>
+                </ui:Tab>
+            </ui:TabView>
+        </ui:VisualElement>
+        <ui:VisualElement name="ItemView" class="item-view" style="flex-grow: 1; margin-top: 2.5%; margin-right: 2.5%; margin-bottom: 2.5%; margin-left: 2.5%;">
+            <ui:VisualElement name="ItemViewContainer" class="item-view-container" style="flex-grow: 1;" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+    <ui:VisualElement name="MenuFooter" class="bb-menu-footer" style="flex-grow: 1; height: 10%; max-height: 10%;" />
+</ui:UXML>
