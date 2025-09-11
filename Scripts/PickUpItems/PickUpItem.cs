@@ -8,6 +8,7 @@ using System;
 Only use this class for Misc items that do not fit into other categories and need no extra properties.
  */
 
+[Obsolete("PickUpItem is deprecated. Create new PickUpItem/Collectible class to replace it.")]
 public class PickUpItem : SauceObject
 {
     [Header("Pick-Up Item Properties")]
@@ -18,7 +19,7 @@ public class PickUpItem : SauceObject
     [SerializeField] protected string itemDescription;
     [SerializeField] protected GameObject item3dIcon;
     [SerializeField] protected Sprite itemInventoryIcon;
-    
+
     // Default fallback values
     protected ItemType itemType = ItemType.Misc;
     protected float itemWeight = 1.0f;
@@ -104,10 +105,10 @@ public class PickUpItem : SauceObject
 
     private IEnumerator PickUpRoutine()
     {
-        if (NavCompass.Instance != null)
+        /* if (NavCompass.Instance != null)
         {
             NavCompass.Instance.RemoveCompassMarker(this);
-        }
+        } */
         // Play pick-up sound effect
         PlaySFX(sfx_PickUp);
 

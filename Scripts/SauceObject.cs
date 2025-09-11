@@ -69,7 +69,7 @@ public class SauceObject : MonoBehaviour
 
     void OnDestroy()
     {
-        RemoveFromNavCompass();
+        /* RemoveFromNavCompass(); */
         if (GameMaster.Instance != null && isSauceObjectInGameMaster)
         {
             if (isTrackable)
@@ -90,10 +90,10 @@ public class SauceObject : MonoBehaviour
 
     protected void RemoveFromNavCompass()
     {
-        if (NavCompass.Instance != null)
+        /* if (NavCompass.Instance != null)
         {
             NavCompass.Instance.RemoveCompassMarker(this);
-        }
+        } */
     }
     #endregion
 
