@@ -15,3 +15,6 @@
 /Animations/Weapon Pool Objects
 /UI/Icons
 /UMotionEditor
+*.mat
+*.prefab
+*.png
