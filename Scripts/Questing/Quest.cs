@@ -3,7 +3,7 @@ using System.Linq;
 
 public abstract class Quest
 {
-    public int ID { get; set; }
+    public string ID { get; set; }
     public QuestType Type { get; set; }
     public string Title { get; set; }
     public string Description { get; set; }
@@ -18,7 +18,7 @@ public abstract class Quest
 
     public virtual bool IsCompleted() => CurrentState == QuestState.Complete;
 
-    public List<int> Prerequisites { get; set; }
+    public List<string> Prerequisites { get; set; }
 
     public virtual void Complete()
     {
@@ -36,14 +36,24 @@ public abstract class Quest
 }
 
 [System.Serializable]
+public enum QuestState
+{
+    Incomplete,
+    InProgress,
+    Complete,
+    Failed,
+    Abandoned
+}
+
+[System.Serializable]
 public class QuestData
 {
-    public int quest_id;
+    public string quest_id;
     public QuestType type;
     public string title;
     public string description;
     public Objective[] objectives;
-    public int[] prerequisiteQuestIds; // For quest chains
+    public string[] prerequisiteQuestIds; // For quest chains
     public QuestReward[] rewards;
     public bool isRepeatable;
     public float timeLimit;
@@ -72,11 +82,10 @@ public class QuestData
 }
 
 [System.Serializable]
-public class QuestReward
+public struct QuestReward
 {
-    public RewardType type;
     public string itemId;
     public int quantity;
-    public int experiencePoints;
+    public float experiencePoints;
     public float currency;
 }

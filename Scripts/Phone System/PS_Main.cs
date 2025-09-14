@@ -58,6 +58,7 @@ public class PS_Main : SauceObject
         GameMaster.Instance.gm_PlayerSpawned.AddListener(_GetPlayer);
         GameMaster.Instance.gm_ReticleSystemSpawned.AddListener(_GetReticle);
         GameMaster.Instance.gm_WeaponHudSpawned.AddListener(_GetWeaponHUD);
+        GameMaster.Instance.gm_DialogueEnded.AddListener(OnDialogueEnded);
     }
 
     void Start()
@@ -181,7 +182,10 @@ public class PS_Main : SauceObject
         }
 
         // Clean up any ongoing dialogue
-        DialogueBox.Instance.CloseDialogueBox();
+        if (DialogueDisplayController.Instance != null && DialogueDisplayController.Instance.IsDialogueActive)
+        {
+            DialogueDisplayController.Instance.EndDialogue();
+        }
 
         yield return new WaitForSeconds(0.45f);
 
@@ -258,8 +262,18 @@ public class PS_Main : SauceObject
         }
 
         SBGDebug.LogInfo($"Dialing {number} for dialogue: {dialogueId}", "PS_Main");
-        DialogueLoader.Instance.LoadDialogue(dialogueId);
-        return true;
+        
+        // Use the new dialogue system
+        if (DialogueDisplayController.Instance != null)
+        {
+            var dialogueData = DialogueLoader.LoadDialogue(dialogueId);
+            return dialogueData != null;
+        }
+        else
+        {
+            SBGDebug.LogError("DialogueDisplayController.Instance is null", "PS_Main");
+            return false;
+        }
     }
 
     private IEnumerator ConnectingCall(string number)
@@ -288,8 +302,15 @@ public class PS_Main : SauceObject
             try
             {
                 SBGDebug.LogInfo($"Connected to {number}. Loading dialogue...", "PS_Main");
-                DialogueBox.Instance.LoadDialogue(phoneNumbers[number]);
-                DialogueBox.Instance.OpenDialogueBox();
+                if (DialogueDisplayController.Instance != null)
+                {
+                    DialogueDisplayController.Instance.StartDialogue(phoneNumbers[number]);
+                }
+                else
+                {
+                    SBGDebug.LogError("DialogueDisplayController.Instance is null", "PS_Main");
+                    StartCoroutine(InvalidCall(number));
+                }
             }
             catch (System.Exception e)
             {
@@ -320,7 +341,11 @@ public class PS_Main : SauceObject
             yield return new WaitForSeconds(invalidCallLength);
         }
 
-        DialogueBox.Instance.CloseDialogueBox(); //fail safe, probably not needed
+        // Fail safe - ensure dialogue is closed
+        if (DialogueDisplayController.Instance != null && DialogueDisplayController.Instance.IsDialogueActive)
+        {
+            DialogueDisplayController.Instance.EndDialogue();
+        }
         DeactivePhone();
     }
     #endregion
@@ -363,6 +388,23 @@ public class PS_Main : SauceObject
     }
     #endregion
     
+    #region Event Handlers
+    
+    /// <summary>
+    /// Called when any dialogue ends - used to clean up phone state if needed
+    /// </summary>
+    private void OnDialogueEnded()
+    {
+        // If we're using the phone and dialogue ends, we should deactivate the phone
+        if (usingPhone)
+        {
+            SBGDebug.LogInfo("Dialogue ended while using phone - deactivating phone", "PS_Main");
+            DeactivePhone();
+        }
+    }
+    
+    #endregion
+    
     private void OnDestroy()
     {
         RuntimeManager.StudioSystem.getBus("bus:/Pay Phone", out FMOD.Studio.Bus phoneBank);
@@ -371,5 +413,6 @@ public class PS_Main : SauceObject
         GameMaster.Instance.gm_PlayerSpawned.RemoveListener(_GetPlayer);
         GameMaster.Instance.gm_ReticleSystemSpawned.RemoveListener(_GetReticle);
         GameMaster.Instance.gm_WeaponHudSpawned.RemoveListener(_GetWeaponHUD);
+        GameMaster.Instance.gm_DialogueEnded.RemoveListener(OnDialogueEnded);
     }
 }

@@ -132,23 +132,34 @@ public class DoorLockable : DoorGeneric
         // Lock input during dialogue to prevent interference
         InputHandler.Instance.SetInputState(InputState.Focus);
 
+        string dialogueId = "";
         switch (v)
         {
             case LockedDoorDialogueVariation.LockedKeyNeeded:
-                DialogueBox.Instance.LoadDialogue(FILE_DIALOGUE_ID_KEYNEEDED);
+                dialogueId = FILE_DIALOGUE_ID_KEYNEEDED;
                 break;
             case LockedDoorDialogueVariation.LockedCanLockPick:
-                DialogueBox.Instance.LoadDialogue(FILE_DIALOGUE_ID_CANLOCKPICK);
+                dialogueId = FILE_DIALOGUE_ID_CANLOCKPICK;
                 break;
             case LockedDoorDialogueVariation.LockedHasKey:
-                DialogueBox.Instance.LoadDialogue(FILE_DIALOGUE_ID_HASKEY);
+                dialogueId = FILE_DIALOGUE_ID_HASKEY;
                 break;
             case LockedDoorDialogueVariation.StillLocked:
-                DialogueBox.Instance.LoadDialogue(FILE_DIALOGUE_ID_STILLLOCKED);
+                dialogueId = FILE_DIALOGUE_ID_STILLLOCKED;
                 break;
         }
 
-        DialogueBox.Instance.OpenDialogueBox();
+        // Start dialogue using new system
+        if (DialogueDisplayController.Instance != null)
+        {
+            DialogueDisplayController.Instance.StartDialogue(dialogueId);
+        }
+        else
+        {
+            SBGDebug.LogError("DialogueDisplayController.Instance is null", "DoorLockable");
+            InputHandler.Instance.SetInputState(InputState.FirstPerson);
+            yield break;
+        }
 
         bool dialogueEnded = false;
         void OnDialogueEnded()

@@ -1,0 +1,161 @@
+.dialogue-node {
+    background-color: var(--node-color);
+    border-width: 1px;
+    border-color: var(--node-border);
+    border-radius: 5px;
+    min-width: 250px;
+    margin: 16px;
+    padding: 8px;
+}
+
+.dialogue-node:hover {
+    border-color: var(--node-selected-border);
+}
+
+.dialogue-node:selected {
+    border-color: var(--node-selected-border);
+    border-width: 2px;
+}
+
+.dialogue-node__title {
+    background-color: var(--node-color);
+    padding: 4px;
+    border-bottom-width: 1px;
+    border-bottom-color: var(--divider-color);
+}
+
+.dialogue-node__title-text {
+    font-size: 14px;
+    color: var(--text-color);
+    -unity-font-style: bold;
+}
+
+.dialogue-node__title-text > .unity-text-field__input {
+    background-color: var(--input-background);
+    border-color: var(--input-border);
+    border-width: 1px;
+    border-radius: 3px;
+    padding: 4px;
+}
+
+.dialogue-node__title-text > .unity-text-field__input:hover {
+    border-color: var(--input-hover-border);
+}
+
+.dialogue-node__input,
+.dialogue-node__output {
+    margin: 8px;
+}
+
+.dialogue-node__data-container {
+    padding: 8px;
+}
+
+.dialogue-node__character-field,
+.dialogue-node__message-field {
+    margin: 4px 0;
+}
+
+.dialogue-node__character-field > .unity-label,
+.dialogue-node__message-field > .unity-label {
+    color: var(--label-color);
+    font-size: 12px;
+    margin-bottom: 2px;
+}
+
+.dialogue-node__character-field > .unity-text-field__input,
+.dialogue-node__message-field > .unity-text-field__input {
+    background-color: var(--input-background);
+    border-color: var(--input-border);
+    border-width: 1px;
+    border-radius: 3px;
+    padding: 4px;
+    color: var(--text-color);
+}
+
+.dialogue-node__message-field > .unity-text-field__input {
+    min-height: 60px;
+    white-space: normal;
+}
+
+.unity-foldout {
+    margin: 4px 0;
+}
+
+.unity-foldout__toggle {
+    margin-left: -12px;
+    color: var(--label-color);
+}
+
+.unity-foldout__content {
+    margin-left: 12px;
+}
+
+/* Choice node specific styles */
+.dialogue-node--choice {
+    min-width: 300px;
+}
+
+.dialogue-node__choice-container {
+    margin: 8px 0;
+}
+
+.dialogue-node__choice-element {
+    background-color: var(--input-background);
+    border-radius: 3px;
+    padding: 8px;
+    margin: 4px 0;
+}
+
+.dialogue-node__choice-element .unity-text-field {
+    margin: 4px 0;
+}
+
+.dialogue-node__choice-element .unity-integer-field {
+    margin: 4px 0;
+}
+
+/* Buttons */
+.unity-button {
+    background-color: var(--button-color);
+    border-color: var(--input-border);
+    border-width: 1px;
+    border-radius: 3px;
+    padding: 4px 8px;
+    color: var(--text-color);
+    margin: 4px 0;
+}
+
+.unity-button:hover {
+    background-color: var(--button-hover);
+    border-color: var(--input-hover-border);
+}
+
+.unity-button:active {
+    background-color: var(--button-active);
+}
+
+/* Dropdown */
+.unity-popup-field {
+    margin: 4px 4px 4px 0;
+}
+
+.unity-popup-field__input {
+    background-color: var(--input-background);
+    border-color: var(--input-border);
+    border-width: 1px;
+    border-radius: 3px;
+    padding: 4px;
+    color: var(--text-color);
+}
+
+.unity-popup-field__input:hover {
+    border-color: var(--input-hover-border);
+}
+
+/* Edge styles */
+.dialogue-connection {
+    --edge-width: 2;
+    --layer: -1;
+    --selected-edge-color: var(--node-selected-border);
+}

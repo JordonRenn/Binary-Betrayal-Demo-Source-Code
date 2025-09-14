@@ -1,0 +1,91 @@
+.choice-box {
+    flex-grow: 1;
+    position: absolute;
+    right: 150px;
+    flex-direction: row;
+    top: auto;
+    bottom: auto;
+    width: 400px;
+    height: 100%;
+}
+
+.choice-list {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+    position: relative;
+    z-index: 10;
+}
+
+.dialogue-box {
+    flex-grow: 1;
+    bottom: 175px;
+    position: absolute;
+    align-self: center;
+    width: 900px;
+    height: 150px;
+}
+
+.dialogue-box-label {
+    flex-grow: 1;
+    font-size: 24px;
+    -unity-font-style: bold;
+    -unity-text-align: upper-center;
+    -unity-text-outline-width: 2px;
+    -unity-text-outline-color: rgb(255, 255, 255);
+    -unity-font-definition: resource('FlatSkin/Font/Roboto-Bold');
+    white-space: normal;
+    text-overflow: ellipsis;
+}
+
+.choice-button {
+    white-space: nowrap;
+    border: 2px solid lime;
+    background-color: rgba(0, 255, 0, 0.3);
+    width: 350px;
+    min-width: 350px;
+    min-height: 40px;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 10px;
+    position: relative;
+    z-index: 100;
+    font-size: 24px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-left;
+    -unity-text-outline-width: 2px;
+    -unity-text-outline-color: rgb(255, 255, 255);
+    -unity-font-definition: resource('FlatSkin/Font/Roboto-Bold');
+}
+
+.choice-button:hover {
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 5px;
+    border-color: yellow;
+}
+
+.choice-button-label {
+    font-size: 24px;
+    -unity-font-style: bold;
+    -unity-text-align: upper-center;
+    -unity-text-outline-width: 2px;
+    -unity-text-outline-color: rgb(255, 255, 255);
+    -unity-font-definition: resource('FlatSkin/Font/Roboto-Bold');
+}
+
+.choice-button-icon {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+}
+
+.blurred-box {
+    flex-grow: 1;
+    position: absolute;
+    width: 110%;
+    height: 110%;
+    top: -10%;
+    align-self: center;
+}

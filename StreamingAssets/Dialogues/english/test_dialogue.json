@@ -1,15 +1,119 @@
 {
-    "dialogueId": "test_dialogue",
-    "entries": [
+    "dialogueId": "",
+    "freezePlayer": false,
+    "nodes": [
         {
-            "characterName": "John",
-            "avatarPath": "Characters/John/avatar",
-            "message": "Did you hear about the security breach?"
+            "id": "340b7451-c503-4198-85ac-4f3b75c57a75",
+            "type": 0,
+            "characterName": "john",
+            "message": "hello",
+            "position": {
+                "x": 149.0,
+                "y": 322.0
+            },
+            "choices": [],
+            "nextDialogueId": ""
         },
         {
-            "characterName": "Sarah",
-            "avatarPath": "Characters/Sarah/avatar",
-            "message": "Yes, it's concerning. We need to investigate."
+            "id": "f9b03380-5e60-47c0-81cf-9569ba2878cc",
+            "type": 1,
+            "characterName": "sarah",
+            "message": "What do you need?",
+            "position": {
+                "x": 587.0,
+                "y": 258.0
+            },
+            "choices": [
+                {
+                    "choiceType": 0,
+                    "text": "Option A",
+                    "nextEntryIndex": -1,
+                    "nextDialogueId": "",
+                    "outputNodeId": "d44813e6-0de3-4e9e-a7cf-2ce85cad533a",
+                    "itemId": "",
+                    "quantity": 0,
+                    "questId": ""
+                },
+                {
+                    "choiceType": 0,
+                    "text": "Option b",
+                    "nextEntryIndex": -1,
+                    "nextDialogueId": "",
+                    "outputNodeId": "f41cbb26-bdb1-46ad-90f1-9e4c0541a571",
+                    "itemId": "",
+                    "quantity": 0,
+                    "questId": ""
+                }
+            ],
+            "nextDialogueId": ""
+        },
+        {
+            "id": "d44813e6-0de3-4e9e-a7cf-2ce85cad533a",
+            "type": 0,
+            "characterName": "john",
+            "message": "I need option A",
+            "position": {
+                "x": 1161.0,
+                "y": 287.0
+            },
+            "choices": [],
+            "nextDialogueId": ""
+        },
+        {
+            "id": "f41cbb26-bdb1-46ad-90f1-9e4c0541a571",
+            "type": 0,
+            "characterName": "john",
+            "message": "i want option B",
+            "position": {
+                "x": 1167.0,
+                "y": 686.0
+            },
+            "choices": [],
+            "nextDialogueId": ""
+        },
+        {
+            "id": "721e78a0-0584-4eb3-80cc-521ef41d8c46",
+            "type": 0,
+            "characterName": "sarah",
+            "message": "sounds good!",
+            "position": {
+                "x": 1647.0,
+                "y": 502.0
+            },
+            "choices": [],
+            "nextDialogueId": ""
+        }
+    ],
+    "connections": [
+        {
+            "outputNodeId": "340b7451-c503-4198-85ac-4f3b75c57a75",
+            "inputNodeId": "f9b03380-5e60-47c0-81cf-9569ba2878cc",
+            "outputPortName": "Output",
+            "inputPortName": "Input"
+        },
+        {
+            "outputNodeId": "d44813e6-0de3-4e9e-a7cf-2ce85cad533a",
+            "inputNodeId": "721e78a0-0584-4eb3-80cc-521ef41d8c46",
+            "outputPortName": "Output",
+            "inputPortName": "Input"
+        },
+        {
+            "outputNodeId": "f41cbb26-bdb1-46ad-90f1-9e4c0541a571",
+            "inputNodeId": "721e78a0-0584-4eb3-80cc-521ef41d8c46",
+            "outputPortName": "Output",
+            "inputPortName": "Input"
+        },
+        {
+            "outputNodeId": "f9b03380-5e60-47c0-81cf-9569ba2878cc",
+            "inputNodeId": "d44813e6-0de3-4e9e-a7cf-2ce85cad533a",
+            "outputPortName": "Choice 1 Output",
+            "inputPortName": "Input"
+        },
+        {
+            "outputNodeId": "f9b03380-5e60-47c0-81cf-9569ba2878cc",
+            "inputNodeId": "f41cbb26-bdb1-46ad-90f1-9e4c0541a571",
+            "outputPortName": "Choice 2 Output",
+            "inputPortName": "Input"
         }
     ]
 }

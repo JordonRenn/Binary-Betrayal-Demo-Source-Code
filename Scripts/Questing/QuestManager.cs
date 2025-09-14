@@ -27,9 +27,9 @@ public static class QuestManager
 {
     private static TextAsset questJSON;
 
-    public static Dictionary<int, RuntimeQuest> QuestByID { get; private set; }
+    public static Dictionary<string, RuntimeQuest> QuestByID { get; private set; }
     public static List<RuntimeQuest> activeQuests = new List<RuntimeQuest>();
-    public static Dictionary<int, RuntimeQuest> completedQuests { get; private set; }
+    public static Dictionary<string, RuntimeQuest> completedQuests { get; private set; }
 
     public static bool questsLoaded { get; private set; }
     public static bool jsonValidated { get; private set; }
@@ -37,8 +37,8 @@ public static class QuestManager
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     public static async void Init()
     {
-        QuestByID = new Dictionary<int, RuntimeQuest>();
-        completedQuests = new Dictionary<int, RuntimeQuest>();
+        QuestByID = new Dictionary<string, RuntimeQuest>();
+        completedQuests = new Dictionary<string, RuntimeQuest>();
         await Task.Run(() => new WaitUntil(() => GameMaster.Instance != null));
         LoadQuestJson();
         //LoadQuestData();
@@ -126,7 +126,7 @@ public static class QuestManager
         QuestByID[quest.ID] = quest;
     }
 
-    private static void MarkQuestAsComplete(int questId)
+    private static void MarkQuestAsComplete(string questId)
     {
         if (QuestByID.TryGetValue(questId, out var quest))
         {
@@ -143,7 +143,7 @@ public static class QuestManager
         }
     }
 
-    public static void StartQuest(int questID)
+    public static void StartQuest(string questID)
     {
         if (QuestByID.TryGetValue(questID, out var quest))
         {
@@ -162,14 +162,24 @@ public static class QuestManager
                 SBGDebug.LogWarning($"Cannot start quest {questID}: Already active", "QuestManager");
             }
         }
+        else
+        {
+            SBGDebug.LogError($"Quest with ID {questID} not found", "QuestManager");
+        }
     }
 
-    public static bool IsQuestCompleted(int questID)
+    public static void StartQuest(int questID)
+    {
+        // Convert int to string for backwards compatibility
+        StartQuest(questID.ToString());
+    }
+
+    public static bool IsQuestCompleted(string questID)
     {
         return completedQuests.ContainsKey(questID);
     }
 
-    public static RuntimeQuest GetQuestByID(int questID)
+    public static RuntimeQuest GetQuestByID(string questID)
     {
         QuestByID.TryGetValue(questID, out var quest);
         return quest;
@@ -190,7 +200,7 @@ public static class QuestManager
         return completedQuests.Values.Where(q => q.Type == type).ToArray();
     }
 
-    public static float GetQuestCompletionPercentage(int questID)
+    public static float GetQuestCompletionPercentage(string questID)
     {
         if (QuestByID.TryGetValue(questID, out var quest))
         {
@@ -216,7 +226,7 @@ public static class QuestManager
         SBGDebug.LogError($"Objective {objectiveID} not found.", "QuestManager");
     }
 
-    public static void CompleteQuest(int questID, ObjectiveStatus status = ObjectiveStatus.CompletedSuccess)
+    public static void CompleteQuest(string questID, ObjectiveStatus status = ObjectiveStatus.CompletedSuccess)
     {
         if (QuestByID.TryGetValue(questID, out var quest))
         {
@@ -245,7 +255,7 @@ public static class QuestManager
     }
 
     // Helper query methods
-    public static bool HasFailedObjectives(int questID)
+    public static bool HasFailedObjectives(string questID)
     {
         if (QuestByID.TryGetValue(questID, out var quest))
         {
@@ -254,7 +264,7 @@ public static class QuestManager
         return false;
     }
 
-    public static IEnumerable<IObjective> GetFailedObjectives(int questID)
+    public static IEnumerable<IObjective> GetFailedObjectives(string questID)
     {
         if (QuestByID.TryGetValue(questID, out var quest))
         {
@@ -263,7 +273,7 @@ public static class QuestManager
         return Enumerable.Empty<IObjective>();
     }
 
-    public static IEnumerable<IObjective> GetObjectivesByStatus(int questID, ObjectiveStatus status)
+    public static IEnumerable<IObjective> GetObjectivesByStatus(string questID, ObjectiveStatus status)
     {
         if (QuestByID.TryGetValue(questID, out var quest))
         {
@@ -272,7 +282,7 @@ public static class QuestManager
         return Enumerable.Empty<IObjective>();
     }
 
-    public static ObjectiveStatus GetQuestOverallStatus(int questID)
+    public static ObjectiveStatus GetQuestOverallStatus(string questID)
     {
         if (QuestByID.TryGetValue(questID, out var quest))
         {

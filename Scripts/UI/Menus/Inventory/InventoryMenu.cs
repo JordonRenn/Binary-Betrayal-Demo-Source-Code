@@ -1,395 +1,223 @@
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.UIElements;
 using System.Collections.Generic;
-using System.Linq;
-using TMPro;
-using UnityEngine.Events;
-using System;
+using System.Threading.Tasks;
 
 #region Inventory Menu
-[Obsolete("This InventoryMenu is deprecated. Please use the new InventoryMenu in the UIManager.")]
 public class InventoryMenu : MonoBehaviour
 {
-    [SerializeField] private Canvas inventoryCanvas;
-    [SerializeField] private GameObject inventoryCanvasGameObject;
+    private UIDocument document;
 
-    [Header("Panel References")]
-    [SerializeField] private GameObject itemTypePanel;     // Left panel
-    [SerializeField] private GameObject itemListPanel;     // Middle panel
-    [SerializeField] private GameObject itemDetailsPanel;  // Right panel
+    private MultiColumnListView listViewFavorites;
+    private MultiColumnListView listViewMisc;
+    private MultiColumnListView listViewMaterials;
+    private MultiColumnListView listViewMedical;
+    private MultiColumnListView listViewFood;
+    private MultiColumnListView listViewKeys;
+    private MultiColumnListView listViewDocuments;
+    private MultiColumnListView listViewPhone;
+    private MultiColumnListView listViewTools;
 
-    [Header("Type List")]
-    [SerializeField] private Transform typeListContent;    // Content transform for type buttons
-    [SerializeField] private GameObject typeButtonPrefab;  // Prefab for type buttons
+    private Dictionary<ItemType, List<InventoryListItem>> itemsByType = new Dictionary<ItemType, List<InventoryListItem>>();
+    private List<InventoryListItem> favorites = new List<InventoryListItem>();
 
-    [Header("Item List")]
-    [SerializeField] private Transform itemListContent;    // Content transform for item buttons
-    [SerializeField] private GameObject itemButtonPrefab;  // Prefab for item buttons
+    #region Column Generation
+    private void Awake()
+    {
+        document = GetComponent<UIDocument>();
 
-    [Header("Item Details")]
-    //[SerializeField] private Image itemIcon;
-    [SerializeField] private TextMeshProUGUI itemNameText;
-    [SerializeField] private TextMeshProUGUI itemDescriptionText;
-    [SerializeField] private TextMeshProUGUI itemTypeText;
-    [SerializeField] private TextMeshProUGUI itemWeightText;
+        // Initialize lists for each item type
+        foreach (ItemType type in System.Enum.GetValues(typeof(ItemType)))
+        {
+            itemsByType[type] = new List<InventoryListItem>();
+        }
 
-    private IInventory currentInventory;
-    private Dictionary<ItemType, List<IItem>> itemsByType = new Dictionary<ItemType, List<IItem>>();
-    private ItemType currentType;
-    private IItem currentItem;
+        var root = document.rootVisualElement;
 
-    public bool isOpen { get; private set; }
-    public UnityEvent OnOpen;
-    public UnityEvent OnClose;
+        listViewFavorites = root.Q<MultiColumnListView>("Favorites-ListView");
+        listViewMisc = root.Q<MultiColumnListView>("Misc-ListView");
+        listViewMaterials = root.Q<MultiColumnListView>("Materials-ListView");
+        listViewMedical = root.Q<MultiColumnListView>("Medical-ListView");
+        listViewFood = root.Q<MultiColumnListView>("Food-ListView");
+        listViewKeys = root.Q<MultiColumnListView>("Keys-ListView");
+        listViewDocuments = root.Q<MultiColumnListView>("Documents-ListView");
+        listViewPhone = root.Q<MultiColumnListView>("Phone-ListView");
+        listViewTools = root.Q<MultiColumnListView>("Tools-ListView");
 
-    #region Initialization
+        var listViews = new List<MultiColumnListView>
+        {
+            listViewFavorites,
+            listViewMisc,
+            listViewMaterials,
+            listViewMedical,
+            listViewFood,
+            listViewKeys,
+            listViewDocuments,
+            listViewPhone,
+            listViewTools
+        };
+
+        foreach (var listView in listViews)
+        {
+            GenerateColumns(listView);
+        }
+    }
+
+    private void GenerateColumns(MultiColumnListView listView)
+    {
+        // Get the appropriate item type for this list view
+        ItemType listType = GetListViewType(listView);
+        var typeItems = itemsByType[listType];
+
+        listView.columns.Clear();
+
+        // Enable sorting
+        listView.sortingMode = ColumnSortingMode.Default;
+
+        // Item name
+        var nameColumn = new Column
+        {
+            title = "Item",
+            name = "ItemName",
+            width = Length.Percent(80),
+            makeCell = () => new Label(),
+            bindCell = (element, i) =>
+            {
+                if (element is Label label && i >= 0 && i < typeItems.Count)
+                {
+                    label.text = typeItems[i].Item.Name;
+                }
+            },
+            comparison = (a, b) => string.Compare(typeItems[a].Item.Name, typeItems[b].Item.Name)
+        };
+        listView.columns.Add(nameColumn);
+
+        // Item weight
+        var weightColumn = new Column
+        {
+            title = "Weight",
+            name = "ItemWeight",
+            width = Length.Percent(10),
+            makeCell = () => new Label(),
+            bindCell = (element, i) =>
+            {
+                if (element is Label label && i >= 0 && i < typeItems.Count)
+                {
+                    float totalWeight = typeItems[i].Item.Weight * typeItems[i].Quantity;
+                    string format = totalWeight % 1 == 0 ? "F0" : "F1";
+                    label.text = totalWeight.ToString(format);
+                }
+            },
+            comparison = (a, b) =>
+            {
+                float weightA = typeItems[a].Item.Weight * typeItems[a].Quantity;
+                float weightB = typeItems[b].Item.Weight * typeItems[b].Quantity;
+                return weightA.CompareTo(weightB);
+            }
+        };
+        listView.columns.Add(weightColumn);
+
+        // Item quantity
+        var quantityColumn = new Column
+        {
+            title = "Quantity",
+            name = "ItemQuantity",
+            width = Length.Percent(10),
+            makeCell = () => new Label(),
+            bindCell = (element, i) =>
+            {
+                if (element is Label label && i >= 0 && i < typeItems.Count)
+                {
+                    label.text = typeItems[i].Quantity.ToString();
+                }
+            },
+            comparison = (a, b) => typeItems[a].Quantity.CompareTo(typeItems[b].Quantity)
+        };
+        listView.columns.Add(quantityColumn);
+
+        // Optional: Add debug logging for sorting changes
+        listView.columnSortingChanged += () =>
+        {
+            SBGDebug.LogInfo($"Sorting changed for {listView.name}", "InventoryMenu");
+            foreach (var sortedColumn in listView.sortedColumns)
+            {
+                SBGDebug.LogInfo($"Column {sortedColumn.columnName} sorted {sortedColumn.direction}", "InventoryMenu");
+            }
+        };
+
+        listView.itemsSource = typeItems;
+        listView.Rebuild();
+    }
+
+    private ItemType GetListViewType(MultiColumnListView listView)
+    {
+        return listView.name switch
+        {
+            "Misc-ListView" => ItemType.Misc,
+            "Materials-ListView" => ItemType.Material,
+            "Medical-ListView" => ItemType.Medical,
+            "Food-ListView" => ItemType.Food,
+            "Keys-ListView" => ItemType.Keys,
+            "Documents-ListView" => ItemType.Document,
+            "Phone-ListView" => ItemType.Phone,
+            "Tools-ListView" => ItemType.Tools,
+            _ => ItemType.Misc // Default case
+        };
+    }
+    #endregion
+
     private void Start()
     {
-        // Subscribe to inventory change events if you have any
-        SetupLayoutGroups();
-        inventoryCanvasGameObject.SetActive(false);
+        PopulateListViews();
     }
 
-    private void SetupLayoutGroups()
+    #region List Population
+    private async void PopulateListViews()
     {
-        // Ensure the content areas have proper layout groups
-        SetupVerticalLayoutGroup(typeListContent);
-        SetupVerticalLayoutGroup(itemListContent);
-    }
+        await Task.Run(() => new WaitUntil(() => InventoryManager.Instance.inventoryLoaded));
 
-    private void SetupVerticalLayoutGroup(Transform content)
-    {
-        if (content == null) return;
+        var playerInventory = InventoryManager.Instance.GetPlayerInventory();
+        var allItems = playerInventory.InventoryListViewItems;
 
-        // Add VerticalLayoutGroup if it doesn't exist
-        var layoutGroup = content.GetComponent<VerticalLayoutGroup>();
-        if (layoutGroup == null)
+        // Clear all existing items
+        foreach (var list in itemsByType.Values)
         {
-            layoutGroup = content.gameObject.AddComponent<VerticalLayoutGroup>();
+            list.Clear();
         }
 
-        // Configure the layout group
-        layoutGroup.childAlignment = TextAnchor.UpperCenter;
-        layoutGroup.childControlHeight = false;
-        layoutGroup.childControlWidth = true;
-        layoutGroup.childForceExpandHeight = false;
-        layoutGroup.childForceExpandWidth = true;
-        layoutGroup.spacing = 5f;
-
-        // Set padding
-        layoutGroup.padding = new RectOffset(10, 10, 10, 10);
-
-        // Add ContentSizeFitter if it doesn't exist
-        var sizeFitter = content.GetComponent<ContentSizeFitter>();
-        if (sizeFitter == null)
+        // Sort items into their respective type lists
+        foreach (var item in allItems)
         {
-            sizeFitter = content.gameObject.AddComponent<ContentSizeFitter>();
+            itemsByType[item.Item.Type].Add(item);
         }
 
-        // Configure the size fitter
-        sizeFitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
-        sizeFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-    }
-
-    public void Initialize(IInventory inventory)
-    {
-        currentInventory = inventory;
-        Debug.Log($"InventoryMenu initialized with inventory: {(inventory != null ? inventory.Name : "null")}");
-        if (inventory != null)
+        // Rebuild all list views to show the new data
+        var listViews = new List<MultiColumnListView>
         {
-            Debug.Log($"Inventory contains {inventory.GetItems().Length} unique item types");
-        }
-        RefreshInventory();
-    }
+            listViewMisc,
+            listViewMaterials,
+            listViewMedical,
+            listViewFood,
+            listViewKeys,
+            listViewDocuments,
+            listViewPhone,
+            listViewTools
+        };
 
-    public void RefreshInventory()
-    {
-        if (currentInventory == null)
+        foreach (var listView in listViews)
         {
-            Debug.LogWarning("Current inventory is null, cannot refresh.");
-            return;
-        }
-
-        Debug.Log($"Refreshing inventory: {currentInventory.Name}");
-
-        // Clear existing items
-        itemsByType.Clear();
-
-        // Group items by type
-        foreach (var item in currentInventory.GetItems())
-        {
-            if (!itemsByType.ContainsKey(item.Type))
+            if (listView != null)
             {
-                itemsByType[item.Type] = new List<IItem>();
-            }
-            itemsByType[item.Type].Add(item);
-        }
-
-        Debug.Log($"Grouped items into {itemsByType.Count} categories");
-        foreach (var kvp in itemsByType)
-        {
-            Debug.Log($"Category {kvp.Key}: {kvp.Value.Count} items");
-        }
-
-        // Refresh UI
-        RefreshItemTypeList();
-
-        // Select "All Items" by default
-        SelectItemType(null);
-    }
-    #endregion
-
-    #region Type List Mgmt
-    private void RefreshItemTypeList()
-    {
-        // Clear existing type buttons
-        foreach (Transform child in typeListContent)
-        {
-            Destroy(child.gameObject);
-        }
-
-        // Add "All Items" button
-        CreateItemTypeButton("All Items", null);
-
-        // Add buttons for each type that has items
-        foreach (var type in itemsByType.Keys)
-        {
-            CreateItemTypeButton(type.ToString(), type);
-        }
-    }
-
-    private void CreateItemTypeButton(string typeName, ItemType? type)
-    {
-        if (typeListContent == null)
-        {
-            Debug.LogError("typeListContent is null! Make sure it's assigned in the inspector.");
-            return;
-        }
-
-        if (typeButtonPrefab == null)
-        {
-            Debug.LogError("typeButtonPrefab is null! Make sure it's assigned in the inspector.");
-            return;
-        }
-
-        var buttonObj = Instantiate(typeButtonPrefab, typeListContent);
-        var button = buttonObj.GetComponent<Button>();
-        var typeButtonUI = buttonObj.GetComponent<TypeButtonUI>();
-
-        if (button == null)
-        {
-            Debug.LogError("Type button prefab doesn't have a Button component!");
-            return;
-        }
-
-        // Check if the prefab has TypeButtonUI component
-        if (typeButtonUI == null)
-        {
-            Debug.LogWarning("Type button prefab doesn't have TypeButtonUI component! Adding one...");
-            typeButtonUI = buttonObj.AddComponent<TypeButtonUI>();
-        }
-
-        // Use TypeButtonUI to set the type name
-        typeButtonUI.SetType(typeName);
-
-        button.onClick.AddListener(() => SelectItemType(type));
-
-        // Store the type with the button for reference
-        buttonObj.AddComponent<TypeButtonData>().Type = type;
-
-        Debug.Log($"Created type button: {typeName}");
-    }
-
-    private void SelectItemType(ItemType? type)
-    {
-        currentType = type ?? ItemType.Misc; // Default to Weapon if null (All Items)
-
-        // Update type button highlighting
-        UpdateItemTypeButtonHighlighting(type);
-
-        // Refresh item list
-        RefreshItemList(type);
-    }
-
-    private void UpdateItemTypeButtonHighlighting(ItemType? selectedType)
-    {
-        foreach (Transform child in typeListContent)
-        {
-            var buttonData = child.GetComponent<TypeButtonData>();
-            var typeButtonUI = child.GetComponent<TypeButtonUI>();
-
-            if (buttonData != null && typeButtonUI != null)
-            {
-                bool isSelected = (buttonData.Type == selectedType);
-                typeButtonUI.SetHighlighted(isSelected);
+                listView.Rebuild();
             }
         }
-    }
-    #endregion
-
-    #region Item List Mgmt
-    private void RefreshItemList(ItemType? type)
-    {
-        // Clear existing item buttons
-        foreach (Transform child in itemListContent)
-        {
-            Destroy(child.gameObject);
-        }
-
-        // Get items to display
-        IEnumerable<IItem> itemsToShow;
-        if (type == null)
-        {
-            // Show all items
-            itemsToShow = itemsByType.Values.SelectMany(x => x);
-        }
-        else
-        {
-            // Show items of selected type
-            itemsToShow = itemsByType.ContainsKey(type.Value) ? itemsByType[type.Value] : Enumerable.Empty<IItem>();
-        }
-
-        // Create buttons for items
-        foreach (var item in itemsToShow)
-        {
-            CreateItemButton(item);
-        }
-
-        // Select first item by default
-        var firstItem = itemsToShow.FirstOrDefault();
-        if (firstItem != null)
-        {
-            SelectItem(firstItem);
-        }
-        else
-        {
-            ClearItemDetails();
-        }
-    }
-
-    private void CreateItemButton(IItem item)
-    {
-        if (itemListContent == null)
-        {
-            Debug.LogError("itemListContent is null! Make sure it's assigned in the inspector.");
-            return;
-        }
-
-        if (itemButtonPrefab == null)
-        {
-            Debug.LogError("itemButtonPrefab is null! Make sure it's assigned in the inspector.");
-            return;
-        }
-
-        var buttonObj = Instantiate(itemButtonPrefab, itemListContent);
-        var button = buttonObj.GetComponent<Button>();
-        var itemButtonUI = buttonObj.GetComponent<ItemButtonUI>();
-
-        if (button == null)
-        {
-            Debug.LogError("Item button prefab doesn't have a Button component!");
-            return;
-        }
-
-        // Check if the prefab has ItemButtonUI component
-        if (itemButtonUI == null)
-        {
-            Debug.LogWarning("Item button prefab doesn't have ItemButtonUI component! Adding one...");
-            itemButtonUI = buttonObj.AddComponent<ItemButtonUI>();
-        }
-
-        // Use ItemButtonUI to set the item
-        itemButtonUI.SetItem(item);
-
-        button.onClick.AddListener(() => SelectItem(item));
-
-        // Store the item with the button for reference
-        buttonObj.AddComponent<ItemButtonData>().Item = item;
-
-        Debug.Log($"Created item button: {item.Name}");
-    }
-
-    private void SelectItem(IItem item)
-    {
-        currentItem = item;
-
-        // Update item button highlighting
-        UpdateItemButtonHighlighting(item);
-
-        // Update details panel
-        UpdateItemDetails(item);
-    }
-
-    private void UpdateItemButtonHighlighting(IItem selectedItem)
-    {
-        foreach (Transform child in itemListContent)
-        {
-            var buttonData = child.GetComponent<ItemButtonData>();
-            var itemButtonUI = child.GetComponent<ItemButtonUI>();
-
-            if (buttonData != null && itemButtonUI != null)
-            {
-                bool isSelected = (buttonData.Item == selectedItem);
-                itemButtonUI.SetHighlighted(isSelected);
-            }
-        }
-    }
-
-    private void UpdateItemDetails(IItem item)
-    {
-        if (item == null)
-        {
-            ClearItemDetails();
-            return;
-        }
-
-        //itemIcon.sprite = item.Icon;
-        itemNameText.text = item.Name;
-        itemDescriptionText.text = item.Description;
-        itemTypeText.text = $"Type: {item.Type}";
-        itemWeightText.text = $"Weight: {item.Weight}";
-    }
-
-    private void ClearItemDetails()
-    {
-        //itemIcon.sprite = null;
-        itemNameText.text = "";
-        itemDescriptionText.text = "";
-        itemTypeText.text = "";
-        itemWeightText.text = "";
-    }
-
-    #region Public Methods
-    public void ShowInventory()
-    {
-        inventoryCanvasGameObject.SetActive(true);
-        OnOpen?.Invoke();
-        isOpen = true;
-    }
-
-    public void HideInventory()
-    {
-        inventoryCanvasGameObject.SetActive(false);
-        OnClose?.Invoke();
-        isOpen = false;
     }
     #endregion
 }
-#endregion
 
-#region Helper Components
-// Helper component to store type data with buttons
-public class TypeButtonData : MonoBehaviour
+public struct InventoryListItem
 {
-    public ItemType? Type { get; set; }
+    public IItem Item;
+    public int Quantity;
 }
-
-// Helper component to store item data with buttons
-public class ItemButtonData : MonoBehaviour
-{
-    public IItem Item { get; set; }
-}
-
-
-#endregion
 #endregion

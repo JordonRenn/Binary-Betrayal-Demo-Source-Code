@@ -1,0 +1,35 @@
+.grid-background {
+    --grid-background-color: rgba(25, 25, 25, 1);
+    --line-color: rgba(0, 194, 113, 0.1);
+    --thick-line-color: rgba(0, 194, 113, 0.15);
+    --spacing: 15px;
+}
+
+.dialogue-toolbar {
+    background-color: var(--node-color);
+    border-bottom-width: 1px;
+    border-bottom-color: var(--divider-color);
+}
+
+.dialogue-toolbar .unity-text-field {
+    width: 200px;
+}
+
+.dialogue-toolbar .unity-text-field__input {
+    background-color: var(--input-background);
+    border-color: var(--input-border);
+    border-width: 1px;
+    border-radius: 3px;
+    padding: 2px 4px;
+    color: var(--text-color);
+}
+
+.dialogue-toolbar .unity-text-field__input:hover {
+    border-color: var(--input-hover-border);
+}
+
+.dialogue-toolbar .unity-toolbar-menu {
+    background-color: transparent;
+    border-color: transparent;
+    color: var(--text-color);
+}

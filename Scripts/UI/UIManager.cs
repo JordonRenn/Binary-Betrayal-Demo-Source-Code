@@ -54,7 +54,7 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] private UIDocument HUDDocument;
     private PauseMenu pauseMenu;
-    private _InventoryMenu inventoryMenu;
+    private InventoryMenu inventoryMenu;
     private JournalMenu journalMenu;
     private PlayerMenu playerMenu;
     /* private MapMenu mapMenu; */
@@ -88,7 +88,7 @@ public class UIManager : MonoBehaviour
 
         if (InventoryDocument != null)
         {
-            inventoryMenu = InventoryDocument.gameObject.GetComponent<_InventoryMenu>();
+            inventoryMenu = InventoryDocument.gameObject.GetComponent<InventoryMenu>();
             allMenuDocuments.Add(InventoryDocument);
         }
 

@@ -28,7 +28,7 @@ public static unsafe class QuestJsonParser
         for (int i = 0; i < questCount; i++)
         {
             var quest = new QuestData();
-            quest.quest_id = SimdJsonInterop.get_array_int(json, "quests", i, "quest_id");
+            quest.quest_id = SimdJsonInterop.GetArrayString(json, "quests", i, "quest_id");
             quest.type = (QuestType)SimdJsonInterop.get_array_int(json, "quests", i, "type");
             quest.title = SimdJsonInterop.GetArrayString(json, "quests", i, "title");
             quest.description = SimdJsonInterop.GetArrayString(json, "quests", i, "description");

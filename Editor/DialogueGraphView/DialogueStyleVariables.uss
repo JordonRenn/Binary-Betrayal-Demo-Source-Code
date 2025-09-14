@@ -1,0 +1,16 @@
+:root {
+    --node-color: #1D1D1D;
+    --node-border: #383838;
+    --node-selected-color: #2D2D2D;
+    --node-selected-border: #00C271;
+    --text-color: #FFFFFF;
+    --label-color: #989898;
+    --port-color: #00C271;
+    --input-background: #2D2D2D;
+    --input-border: #383838;
+    --input-hover-border: #00C271;
+    --button-color: #2D2D2D;
+    --button-hover: #383838;
+    --button-active: #00C271;
+    --divider-color: #383838;
+}

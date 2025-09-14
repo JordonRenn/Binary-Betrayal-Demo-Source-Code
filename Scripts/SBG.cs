@@ -204,12 +204,7 @@ public struct Notification
 #endregion
 
 #region Questing
-public enum QuestState
-{
-    Incomplete,
-    InProgress,
-    Complete
-}
+
 
 public enum QuestType
 {

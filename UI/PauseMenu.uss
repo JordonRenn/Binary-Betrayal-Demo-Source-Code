@@ -1,11 +1,9 @@
-
-
 .unity-button {
     -unity-font-definition: resource('Fonts/Frohburg');
     -unity-font-style: bold;
     color: var(--ui-button-text-color);
     border-top-left-radius: 15px;
-    text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.13);
+    text-shadow: 1px 1px 10px rgb(4, 75, 16);
     background-color: var(--ui-button-background-color);
     border-top-right-radius: 15px;
     border-bottom-right-radius: 15px;
@@ -18,6 +16,9 @@
     transition-property: scale;
     transition-duration: 0.05s;
     transition-timing-function: ease-in-out;
+    -unity-text-outline-color: rgba(255, 255, 255, 0.64);
+    -unity-text-outline-width: 2px;
+    letter-spacing: 30px;
 }
 
 .unity-button:hover {
