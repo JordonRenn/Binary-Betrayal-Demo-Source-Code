@@ -264,7 +264,7 @@ public class DialogueChoiceNode : DialogueBaseNode
 }
 #endregion
 
-#region Load New Node
+/* #region Load New Node
 public class DialogueLoadNewDialogueNode : DialogueBaseNode
 {
     public string nextDialogueId { get; set; }
@@ -289,7 +289,7 @@ public class DialogueLoadNewDialogueNode : DialogueBaseNode
 
     protected override void DrawAdditionalFields()
     {
-        /* NEXT DIALOGUE ID */
+        // NEXT DIALOGUE ID
 
         TextField nextDialogueIdField = new TextField("Next Dialogue ID:");
         nextDialogueIdField.AddToClassList("dialogue-node__next-dialogue-field");
@@ -299,4 +299,4 @@ public class DialogueLoadNewDialogueNode : DialogueBaseNode
         extensionContainer.Add(nextDialogueIdField);
     }
 }
-#endregion
+#endregion */

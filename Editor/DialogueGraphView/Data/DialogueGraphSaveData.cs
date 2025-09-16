@@ -18,13 +18,11 @@ public class DialogueNodeData
     public DialogueType type;
     public string characterName;
     public string message;
+    public string outputNodeId;
     public Vector2 position;
     
     // For choice nodes
     public List<ChoiceData> choices;
-    
-    // For load new dialogue nodes
-    public string nextDialogueId;
 }
 
 [Serializable]
@@ -39,7 +37,7 @@ public class DialogueConnectionData
 [Serializable]
 public class ChoiceData : Choice
 {
-    public string outputNodeId; // The ID of the node this choice connects to
+    // public string outputNodeId; // The ID of the node this choice connects to
     public string itemId;
     public int quantity;
     public string questId;

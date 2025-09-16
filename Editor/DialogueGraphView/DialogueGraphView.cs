@@ -5,6 +5,8 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 
+// removed load next dialogue Id nodes, its redundant.
+
 public class DialogueGraphView : GraphView
 {
     private StyleSheet backgroundStyleSheet;
@@ -14,13 +16,13 @@ public class DialogueGraphView : GraphView
         backgroundStyleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/Editor/DialogueGraphView/DialogueEditor.uss");
         AddGridBackground();
         AddManipulators();
-        
+
         // Add connection capabilities
         this.AddManipulator(new EdgeManipulator());
-        
+
         // Set up connection validation
         graphViewChanged += OnGraphViewChanged;
-        
+
         // Enable connections between ports
         SetupZoom(ContentZoomer.DefaultMinScale, ContentZoomer.DefaultMaxScale);
     }
@@ -73,20 +75,20 @@ public class DialogueGraphView : GraphView
     public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter)
     {
         var compatiblePorts = new List<Port>();
-        
+
         ports.ForEach((port) =>
         {
             // Don't connect to self
             if (startPort.node == port.node)
                 return;
-                
+
             // Don't connect input to input or output to output
             if (startPort.direction == port.direction)
                 return;
-                
+
             compatiblePorts.Add(port);
         });
-        
+
         return compatiblePorts;
     }
 
@@ -118,7 +120,7 @@ public class DialogueGraphView : GraphView
             Vector2 mousePosition = evt.localMousePosition;
             evt.menu.AppendAction("Create Node", action => AddElement(CreateNode(mousePosition)));
             evt.menu.AppendAction("Create Choice Node", action => AddElement(CreateChoiceNode(mousePosition)));
-            evt.menu.AppendAction("Create Load New Dialogue Node", action => AddElement(CreateLoadNewNode(mousePosition)));
+            /* evt.menu.AppendAction("Create Load New Dialogue Node", action => AddElement(CreateLoadNewNode(mousePosition))); */
         });
         return contextMenu;
     }
@@ -139,11 +141,11 @@ public class DialogueGraphView : GraphView
         return choiceNode;
     }
 
-    public DialogueBaseNode CreateLoadNewNode(Vector2 position = default)
+    /* public DialogueBaseNode CreateLoadNewNode(Vector2 position = default)
     {
         var loadNewNode = new DialogueLoadNewDialogueNode();
         loadNewNode.Initialize(position);
         loadNewNode.Draw();
         return loadNewNode;
-    }
+    } */
 }

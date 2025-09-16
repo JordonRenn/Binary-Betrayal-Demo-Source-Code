@@ -22,11 +22,10 @@ public partial class DialogueChoiceButton : Button
 
     public DialogueChoiceButton()
     {
-        // Create icon that only shows on hover
+        // Create icon
         hoverIcon = new Image();
         hoverIcon.image = Resources.Load<Texture2D>(ICON_PATH);
         hoverIcon.AddToClassList("choice-button-icon");
-        hoverIcon.style.display = DisplayStyle.None; // Hidden by default
 
         this.Add(hoverIcon);
         this.AddToClassList("choice-button");
@@ -34,10 +33,6 @@ public partial class DialogueChoiceButton : Button
         // Ensure the button can receive events
         this.focusable = true;
         this.pickingMode = PickingMode.Position;
-
-        // Set up hover behavior for icon
-        this.RegisterCallback<MouseEnterEvent>(OnMouseEnter);
-        this.RegisterCallback<MouseLeaveEvent>(OnMouseLeave);
 
         // Add debug logging
         this.RegisterCallback<ClickEvent>(OnDebugClick);
@@ -53,15 +48,5 @@ public partial class DialogueChoiceButton : Button
         SBGDebug.LogInfo($"DialogueChoiceButton received ClickEvent: {text}", "DialogueChoiceButton | OnDebugClick");
     }
 
-    private void OnMouseEnter(MouseEnterEvent evt)
-    {
-        SBGDebug.LogInfo($"Mouse entered button: {text}", "DialogueChoiceButton | OnMouseEnter");
-        hoverIcon.style.display = DisplayStyle.Flex;
-    }
-
-    private void OnMouseLeave(MouseLeaveEvent evt)
-    {
-        SBGDebug.LogInfo($"Mouse left button: {text}", "DialogueChoiceButton | OnMouseLeave");
-        hoverIcon.style.display = DisplayStyle.None;
-    }
+    // Removed OnMouseEnter/OnMouseLeave since we're handling icon visibility in CSS
 }

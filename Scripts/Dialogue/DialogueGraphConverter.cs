@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DialogueSystem.Data;
 
-namespace DialogueSystem.Graph
+namespace DialogueSystem
 {
     public static class DialogueGraphConverter
     {
@@ -28,6 +28,7 @@ namespace DialogueSystem.Graph
                         var choiceEntry = new DialogueEntryChoice
                         {
                             type = DialogueType.Choice,
+                            nodeId = nodeData.id,
                             characterName = nodeData.characterName,
                             message = nodeData.message,
                             choices = new List<Choice>()
@@ -42,7 +43,7 @@ namespace DialogueSystem.Graph
                                 {
                                     text = choiceData.text,
                                     choiceType = choiceData.choiceType,
-                                    nextDialogueId = choiceData.nextDialogueId
+                                    outputNodeId = choiceData.outputNodeId,
                                 };
 
                                 // Handle different choice types
@@ -55,7 +56,7 @@ namespace DialogueSystem.Graph
                                             text = choiceData.text,
                                             itemId = choiceData.itemId,
                                             quantity = choiceData.quantity,
-                                            nextDialogueId = choiceData.nextDialogueId
+                                            outputNodeId = choiceData.outputNodeId
                                         };
                                     }
                                     else if (choiceData.choiceType == ChoiceType.TakeItem)
@@ -65,7 +66,7 @@ namespace DialogueSystem.Graph
                                             text = choiceData.text,
                                             itemId = choiceData.itemId,
                                             quantity = choiceData.quantity,
-                                            nextDialogueId = choiceData.nextDialogueId
+                                            outputNodeId = choiceData.outputNodeId
                                         };
                                     }
                                 }
@@ -75,7 +76,7 @@ namespace DialogueSystem.Graph
                                     {
                                         text = choiceData.text,
                                         questId = choiceData.questId,
-                                        nextDialogueId = choiceData.nextDialogueId
+                                        outputNodeId = choiceData.outputNodeId
                                     };
                                 }
 
@@ -97,25 +98,18 @@ namespace DialogueSystem.Graph
                                 choiceEntry.choices.Add(choice);
                             }
                         }
-                        entry = choiceEntry;
-                        break;
 
-                    case DialogueType.LoadNewDialogue:
-                        entry = new DialogueEntryLoadNewDialogue
-                        {
-                            type = DialogueType.LoadNewDialogue,
-                            characterName = nodeData.characterName,
-                            message = nodeData.message,
-                            nextDialogueId = nodeData.nextDialogueId
-                        };
+                        entry = choiceEntry;
                         break;
 
                     default: // DialogueType.Text
                         entry = new DialogueEntry
                         {
                             type = DialogueType.Text,
+                            nodeId = nodeData.id,
                             characterName = nodeData.characterName,
-                            message = nodeData.message
+                            message = nodeData.message,
+                            outputNodeId = nodeData.outputNodeId
                         };
                         break;
                 }

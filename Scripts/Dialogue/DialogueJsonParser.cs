@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System;
 using DialogueSystem.Data;
-using DialogueSystem.Graph;
+using DialogueSystem;
 
 // Temporary structures for Unity JsonUtility fallback
 [Serializable]
@@ -16,11 +16,12 @@ public class TempDialogueData
 [Serializable]
 public class TempNodeData
 {
-    public string id;
-    public int type;
-    public string characterName;
-    public string message;
-    public TempChoiceData[] choices;
+    public string id;                 // Unique node identifier
+    public int type;                 // Node type (0=Text, 1=Choice, 2=LoadNewDialogue)
+    public string characterName;      // Name of speaking character
+    public string message;           // Dialogue text content
+    public string outputNodeId;      // ID of next node in dialogue flow
+    public TempChoiceData[] choices; // Choice options if this is a choice node
 }
 
 [Serializable]
@@ -60,7 +61,7 @@ public static unsafe class DialogueJsonParser
                 id = SimdJsonInterop.GetArrayString(jsonContent, "nodes", i, "id"),
                 characterName = SimdJsonInterop.GetArrayString(jsonContent, "nodes", i, "characterName"),
                 message = SimdJsonInterop.GetArrayString(jsonContent, "nodes", i, "message"),
-                nextDialogueId = SimdJsonInterop.GetArrayString(jsonContent, "nodes", i, "nextDialogueId")
+                outputNodeId = SimdJsonInterop.GetArrayString(jsonContent, "nodes", i, "outputNodeId") // Node's default next node
             };
 
             // Parse type as numeric value
@@ -98,7 +99,6 @@ public static unsafe class DialogueJsonParser
                                 var choiceData = new ChoiceData
                                 {
                                     text = tempChoice.text,
-                                    nextDialogueId = tempChoice.nextDialogueId,
                                     itemId = tempChoice.itemId,
                                     questId = tempChoice.questId,
                                     outputNodeId = tempChoice.outputNodeId,

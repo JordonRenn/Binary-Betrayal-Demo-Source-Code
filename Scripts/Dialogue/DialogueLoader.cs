@@ -95,6 +95,13 @@ public static class DialogueLoader
                 SBGDebug.LogError("DialogueJsonParser returned null", "DialogueLoader");
                 return null;
             }
+
+            // Validate dialogue structure
+            if (!ValidateDialogueData(dialogues))
+            {
+                SBGDebug.LogError($"Dialogue validation failed for {filePath}", "DialogueLoader");
+                return null;
+            }
             
             SBGDebug.LogInfo($"Parsed {dialogues.Length} dialogue(s)", "DialogueLoader");
             
@@ -134,6 +141,72 @@ public static class DialogueLoader
     /// <summary>
     /// Test method to debug dialogue loading issues
     /// </summary>
+    private static bool ValidateDialogueData(DialogueData[] dialogues)
+    {
+        if (dialogues == null || dialogues.Length == 0)
+        {
+            SBGDebug.LogError("No dialogues found in data", "DialogueLoader | ValidateDialogueData");
+            return false;
+        }
+
+        foreach (var dialogue in dialogues)
+        {
+            if (dialogue.entries == null || dialogue.entries.Count == 0)
+            {
+                SBGDebug.LogError($"Dialogue {dialogue.dialogueId} has no entries", "DialogueLoader | ValidateDialogueData");
+                return false;
+            }
+
+            // Verify all entries have valid nodeIds
+            var nodeIds = new HashSet<string>();
+            foreach (var entry in dialogue.entries)
+            {
+                if (string.IsNullOrEmpty(entry.nodeId))
+                {
+                    SBGDebug.LogError($"Entry in dialogue {dialogue.dialogueId} has no nodeId", "DialogueLoader | ValidateDialogueData");
+                    return false;
+                }
+                
+                if (!nodeIds.Add(entry.nodeId))
+                {
+                    SBGDebug.LogError($"Duplicate nodeId {entry.nodeId} found in dialogue {dialogue.dialogueId}", "DialogueLoader | ValidateDialogueData");
+                    return false;
+                }
+            }
+
+            // Verify choice node connections
+            foreach (var entry in dialogue.entries)
+            {
+                if (entry is DialogueEntryChoice choiceEntry)
+                {
+                    if (choiceEntry.choices == null || choiceEntry.choices.Count == 0)
+                    {
+                        SBGDebug.LogError($"Choice node {entry.nodeId} in dialogue {dialogue.dialogueId} has no choices", "DialogueLoader | ValidateDialogueData");
+                        return false;
+                    }
+
+                    // Verify each choice has either an outputNodeId or is an end node
+                    foreach (var choice in choiceEntry.choices)
+                    {
+                        if (!string.IsNullOrEmpty(choice.outputNodeId) && !nodeIds.Contains(choice.outputNodeId))
+                        {
+                            SBGDebug.LogError($"Choice in node {entry.nodeId} references invalid outputNodeId {choice.outputNodeId}", "DialogueLoader | ValidateDialogueData");
+                            return false;
+                        }
+                    }
+                }
+                else if (!string.IsNullOrEmpty(entry.outputNodeId) && !nodeIds.Contains(entry.outputNodeId))
+                {
+                    // Verify text node connections
+                    SBGDebug.LogError($"Text node {entry.nodeId} references invalid outputNodeId {entry.outputNodeId}", "DialogueLoader | ValidateDialogueData");
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
     public static void TestDialogueLoading(string dialogueId)
     {
         SBGDebug.LogInfo($"=== Testing dialogue loading for: {dialogueId} (graph format only) ===", "DialogueLoader");

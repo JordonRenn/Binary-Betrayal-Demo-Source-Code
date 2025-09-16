@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 
+#region Dialgue Editor
 public class DialogueEditorWindow : EditorWindow
 {
     private DialogueGraphView graphView;
@@ -20,11 +21,12 @@ public class DialogueEditorWindow : EditorWindow
         window.minSize = new Vector2(800, 600);
     }
 
+    #region UI Creation
     private void CreateGUI()
     {
         // Load styles
         variablesStyleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/Editor/DialogueGraphView/DialogueStyleVariables.uss");
-        
+
         GenerateToolbar();
         AddGraphView();
     }
@@ -44,15 +46,15 @@ public class DialogueEditorWindow : EditorWindow
     {
         var toolbar = new Toolbar();
         toolbar.AddToClassList("dialogue-toolbar");
-        
+
         // File Menu Dropdown
         var fileMenuDropdown = new ToolbarMenu { text = "File" };
-        
+
         fileMenuDropdown.menu.AppendAction("New", action => NewGraph());
         fileMenuDropdown.menu.AppendAction("Save", action => SaveGraph());
         fileMenuDropdown.menu.AppendAction("Save As", action => SaveGraphAs());
         fileMenuDropdown.menu.AppendAction("Load", action => LoadGraph());
-        
+
         toolbar.Add(fileMenuDropdown);
 
         // Add filename display
@@ -66,11 +68,12 @@ public class DialogueEditorWindow : EditorWindow
 
         rootVisualElement.Add(toolbar);
     }
+    #endregion
 
     private void NewGraph()
     {
-        if (EditorUtility.DisplayDialog("New Dialogue", 
-            "Are you sure you want to create a new dialogue? Any unsaved changes will be lost.", 
+        if (EditorUtility.DisplayDialog("New Dialogue",
+            "Are you sure you want to create a new dialogue? Any unsaved changes will be lost.",
             "Yes", "Cancel"))
         {
             fileName = "New Dialogue";
@@ -79,6 +82,7 @@ public class DialogueEditorWindow : EditorWindow
         }
     }
 
+    #region Save Graph
     private void SaveGraph()
     {
         if (string.IsNullOrEmpty(fileName) || fileName == "New Dialogue")
@@ -111,21 +115,34 @@ public class DialogueEditorWindow : EditorWindow
     {
         // Ensure directory exists
         Directory.CreateDirectory(Path.GetDirectoryName(path));
-        
+
         var graphData = new DialogueGraphData();
-        
+
         // Save nodes
         foreach (var node in graphView.nodes.ToList())
         {
             if (node is DialogueBaseNode dialogueNode)
             {
+                // Find the default output connection for this node
+                var mainOutputPort = dialogueNode.outputContainer.Q<Port>();
+                string connectedNodeId = null;
+                if (mainOutputPort != null && mainOutputPort.connections.Any())
+                {
+                    var connection = mainOutputPort.connections.First();
+                    if (connection.input.node is DialogueBaseNode connectedNode)
+                    {
+                        connectedNodeId = connectedNode.GUID;
+                    }
+                }
+
                 var nodeData = new DialogueNodeData
                 {
                     id = dialogueNode.GUID,
                     type = dialogueNode.Type,
                     characterName = dialogueNode.characterName,
                     message = dialogueNode.message,
-                    position = dialogueNode.GetPosition().position
+                    position = dialogueNode.GetPosition().position,
+                    outputNodeId = connectedNodeId
                 };
 
                 // Handle specific node types
@@ -139,15 +156,15 @@ public class DialogueEditorWindow : EditorWindow
                         {
                             choiceType = choice.choiceType,
                             text = choice.text,
-                            nextDialogueId = choice.nextDialogueId
+                            outputNodeId = choice.outputNodeId
                         };
 
                         // Find the connected node for this choice
                         string choicePortName = $"Choice {choiceIndex + 1} Output";
-                        var connectedEdge = graphView.edges.ToList().FirstOrDefault(edge => 
-                            edge.output.node == dialogueNode && 
+                        var connectedEdge = graphView.edges.ToList().FirstOrDefault(edge =>
+                            edge.output.node == dialogueNode &&
                             edge.output.portName == choicePortName);
-                        
+
                         if (connectedEdge != null && connectedEdge.input.node is DialogueBaseNode connectedNode)
                         {
                             choiceData.outputNodeId = connectedNode.GUID;
@@ -184,10 +201,6 @@ public class DialogueEditorWindow : EditorWindow
                         nodeData.choices.Add(choiceData);
                     }
                 }
-                else if (dialogueNode is DialogueLoadNewDialogueNode loadNode)
-                {
-                    nodeData.nextDialogueId = loadNode.nextDialogueId;
-                }
 
                 graphData.nodes.Add(nodeData);
             }
@@ -196,7 +209,7 @@ public class DialogueEditorWindow : EditorWindow
         // Save connections
         foreach (var edge in graphView.edges.ToList())
         {
-            if (edge.output.node is DialogueBaseNode outputNode && 
+            if (edge.output.node is DialogueBaseNode outputNode &&
                 edge.input.node is DialogueBaseNode inputNode)
             {
                 var connectionData = new DialogueConnectionData
@@ -215,7 +228,9 @@ public class DialogueEditorWindow : EditorWindow
         File.WriteAllText(path, jsonContent);
         Debug.Log($"Saved dialogue to: {path}");
     }
+    #endregion
 
+    #region Load Graph
     private void LoadGraph()
     {
         string path = EditorUtility.OpenFilePanel(
@@ -226,8 +241,8 @@ public class DialogueEditorWindow : EditorWindow
 
         if (!string.IsNullOrEmpty(path))
         {
-            if (EditorUtility.DisplayDialog("Load Dialogue", 
-                "Loading a new dialogue will replace the current graph. Any unsaved changes will be lost.", 
+            if (EditorUtility.DisplayDialog("Load Dialogue",
+                "Loading a new dialogue will replace the current graph. Any unsaved changes will be lost.",
                 "Continue", "Cancel"))
             {
                 fileName = Path.GetFileNameWithoutExtension(path);
@@ -297,19 +312,12 @@ public class DialogueEditorWindow : EditorWindow
                                     break;
                             }
                             choice.text = choiceData.text;
-                            choice.nextDialogueId = choiceData.nextDialogueId;
+                            // choice.outputNodeId = choiceData.outputNodeId; // not needed, choices have outputs
                             choiceNode.choices.Add(choice);
                         }
                     }
                     node = choiceNode;
                     break;
-
-                case DialogueType.LoadNewDialogue:
-                    var loadNode = new DialogueLoadNewDialogueNode();
-                    loadNode.nextDialogueId = nodeData.nextDialogueId;
-                    node = loadNode;
-                    break;
-
                 default:
                     node = new DialogueBaseNode();
                     break;
@@ -360,4 +368,6 @@ public class DialogueEditorWindow : EditorWindow
 
         Debug.Log($"Loaded dialogue from: {path}");
     }
+    #endregion
 }
+#endregion

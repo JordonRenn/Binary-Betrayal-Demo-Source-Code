@@ -17,12 +17,13 @@ namespace DialogueSystem.Data
     public class DialogueNodeData
     {
         public string id;
+        public string outputNodeId = "";
         public DialogueType type;
         public string characterName;
         public string message;
         public Vector2 position;
         public List<ChoiceData> choices;
-        public string nextDialogueId;
+        // public string nextDialogueId;
     }
 
     [Serializable]
@@ -37,7 +38,7 @@ namespace DialogueSystem.Data
     [Serializable]
     public class ChoiceData : Choice
     {
-        public string outputNodeId;
+        //public string outputNodeId;
         public string itemId;
         public int quantity;
         public string questId;

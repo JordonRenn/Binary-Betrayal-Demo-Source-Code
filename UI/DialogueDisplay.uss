@@ -41,44 +41,50 @@
 
 .choice-button {
     white-space: nowrap;
-    border: 2px solid lime;
-    background-color: rgba(0, 255, 0, 0.3);
+    border-width: 0;
+    background-color: transparent;
     width: 350px;
     min-width: 350px;
     min-height: 40px;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: flex-start;
+    align-items: center;
     padding: 10px;
     position: relative;
     z-index: 100;
     font-size: 24px;
     -unity-font-style: bold;
-    -unity-text-align: middle-left;
+    -unity-text-align: middle-right;
     -unity-text-outline-width: 2px;
     -unity-text-outline-color: rgb(255, 255, 255);
     -unity-font-definition: resource('FlatSkin/Font/Roboto-Bold');
 }
 
 .choice-button:hover {
-    background-color: rgba(255, 255, 255, 0.8);
-    border-radius: 5px;
-    border-color: yellow;
+    background-color: transparent;
+    border-width: 2px;
+    border-color: white;
 }
 
-.choice-button-label {
-    font-size: 24px;
-    -unity-font-style: bold;
-    -unity-text-align: upper-center;
-    -unity-text-outline-width: 2px;
-    -unity-text-outline-color: rgb(255, 255, 255);
-    -unity-font-definition: resource('FlatSkin/Font/Roboto-Bold');
+.choice-button > .unity-button__text {
+    flex-grow: 1;
+    -unity-text-align: middle-right;
+    margin-left: 42px; /* Icon width + some spacing */
 }
 
 .choice-button-icon {
+    --background-image-tint-color: white;
     width: 32px;
     height: 32px;
     min-width: 32px;
     min-height: 32px;
+    position: absolute;
+    left: 5px;
+    display: none;
+}
+
+.choice-button:hover .choice-button-icon {
+    display: flex;
 }
 
 .blurred-box {

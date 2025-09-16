@@ -1,14 +1,6 @@
 using System;
 using System.Collections.Generic;
 
-[Serializable]
-public class DialogueData
-{
-    public string dialogueId;
-    public bool freezePlayer = false;
-    public List<DialogueEntry> entries;
-}
-
 public enum DialogueType
 {
     Text,
@@ -25,9 +17,19 @@ public enum ChoiceType
 }
 
 [Serializable]
+public class DialogueData
+{
+    public string dialogueId;
+    public bool freezePlayer = false;
+    public List<DialogueEntry> entries;
+}
+
+[Serializable]
 public class DialogueEntry
 {
     public DialogueType type = DialogueType.Text;
+    public string nodeId;
+    public string outputNodeId; // this is the next entry index key, can be null to end dialogue or if its a choice node
     public string characterName;
     public string avatarPath;
     public string message;
@@ -74,15 +76,15 @@ public class DialogueEntryLoadNewDialogue : DialogueEntry
 public class Choice
 {
     public ChoiceType choiceType = ChoiceType.Dialogue;
+    public string outputNodeId; // The ID of the node this choice connects to // USE FOR NEXT ENTRY
     public string text;
-    public int nextEntryIndex; // Index in the entries array instead of a file ID
-    public string nextDialogueId; // ID of the next dialogue file if loading a new dialogue
+    public int nextEntryIndex;
 
     public Choice()
     {
         text = string.Empty;
         nextEntryIndex = -1;
-        nextDialogueId = string.Empty;
+        outputNodeId = string.Empty;
     }
 }
 
@@ -97,6 +99,7 @@ public class ChoiceGiveItem : Choice
         choiceType = ChoiceType.GiveItem;
         text = string.Empty;
         nextEntryIndex = -1;
+        outputNodeId = string.Empty;
         itemId = string.Empty;
         quantity = 0;
     }
@@ -113,6 +116,7 @@ public class ChoiceTakeItem : Choice
         choiceType = ChoiceType.TakeItem;
         text = string.Empty;
         nextEntryIndex = -1;
+        outputNodeId = string.Empty;
         itemId = string.Empty;
         quantity = 0;
     }
@@ -128,6 +132,7 @@ public class ChoiceStartQuest : Choice
         choiceType = ChoiceType.StartQuest;
         text = string.Empty;
         nextEntryIndex = -1;
+        outputNodeId = string.Empty;
         questId = string.Empty;
     }
 }

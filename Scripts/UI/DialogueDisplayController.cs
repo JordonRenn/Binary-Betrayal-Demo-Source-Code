@@ -1,17 +1,13 @@
 using UnityEngine;
-using DialogueSystem;
-using DialogueSystem.Data;
-using DialogueSystem.Graph;
 using UnityEngine.UIElements;
 using System.Collections.Generic;
+using System;
 
 /// <summary>
 /// Simplified dialogue display controller that handles text and choice dialogues
 /// </summary>
 public class DialogueDisplayController : MonoBehaviour
 {
-    #region Singleton
-
     private static DialogueDisplayController _instance;
     public static DialogueDisplayController Instance
     {
@@ -26,10 +22,6 @@ public class DialogueDisplayController : MonoBehaviour
         private set => _instance = value;
     }
 
-    #endregion
-
-    #region Fields
-
     [Header("UI References")]
     [SerializeField] private UIDocument dialogueUIDocument;
 
@@ -41,17 +33,15 @@ public class DialogueDisplayController : MonoBehaviour
 
     // Current dialogue state
     private DialogueData currentDialogue;
-    private int currentEntryIndex;
+    private string currentNodeId;
+    private DialogueEntry CurrentEntry;
     private List<DialogueChoiceButton> choiceButtons = new List<DialogueChoiceButton>();
 
-    #endregion
+    // Input state tracking
+    private InputState? previousInputState;
 
-    #region Properties
-
-    public bool IsDialogueActive => currentDialogue != null && currentEntryIndex < currentDialogue.entries.Count;
-    public DialogueEntry CurrentEntry => IsDialogueActive ? currentDialogue.entries[currentEntryIndex] : null;
-
-    #endregion
+    public bool IsDialogueActive => currentDialogue != null && CurrentEntry != null;
+    //public DialogueEntry CurrentEntry => IsDialogueActive ? dialogueEntryCache[dialogueEntryCache.Count - 1] : null;
 
     #region Unity Lifecycle
 
@@ -59,7 +49,8 @@ public class DialogueDisplayController : MonoBehaviour
     {
         if (this.InitializeSingleton(ref _instance, true) == this)
         {
-            currentEntryIndex = -1;
+            //currentEntryIndex = -1;
+            currentNodeId = null;
         }
     }
 
@@ -111,29 +102,27 @@ public class DialogueDisplayController : MonoBehaviour
     /// <summary>
     /// Start a dialogue with the given dialogue ID
     /// </summary>
-    public bool StartDialogue(string dialogueId)
+    public void StartDialogue(string dialogueId)
     {
         if (string.IsNullOrEmpty(dialogueId))
         {
             SBGDebug.LogError("Cannot start dialogue with null or empty ID", "DialogueDisplayController | StartDialogue");
-            return false;
+            return;
         }
 
         var dialogueData = DialogueLoader.LoadDialogue(dialogueId);
         if (dialogueData == null)
         {
             SBGDebug.LogError($"Failed to load dialogue: {dialogueId}", "DialogueDisplayController | StartDialogue");
-            return false;
+            return;
         }
 
         currentDialogue = dialogueData;
-        currentEntryIndex = 0;
+        CurrentEntry = dialogueData.entries[0];
+        currentNodeId = CurrentEntry.nodeId;
 
         GameMaster.Instance?.gm_DialogueStarted?.Invoke();
-        DisplayCurrentEntry();
-
-        SBGDebug.LogInfo($"Started dialogue: {dialogueId}", "DialogueDisplayController | StartDialogue");
-        return true;
+        DisplayEntry(CurrentEntry);
     }
 
     /// <summary>
@@ -148,7 +137,16 @@ public class DialogueDisplayController : MonoBehaviour
         ClearChoiceButtons();
 
         currentDialogue = null;
-        currentEntryIndex = -1;
+        CurrentEntry = null;
+        currentNodeId = null;
+
+        // Restore previous input state if we switched to UI for choice dialogue
+        if (previousInputState.HasValue)
+        {
+            if (previousInputState != InputState.UI) InputHandler.Instance.SetInputState(previousInputState.Value);
+            SBGDebug.LogInfo($"Restored input state to {previousInputState}", "DialogueDisplayController | EndDialogue");
+            previousInputState = null;
+        }
 
         GameMaster.Instance?.gm_DialogueEnded?.Invoke();
 
@@ -169,30 +167,21 @@ public class DialogueDisplayController : MonoBehaviour
             return;
         }
 
-        // Only advance for text and LoadNewDialogue entries, not choices
-        if (currentEntry.type == DialogueType.Text)
+        if (currentEntry.type == DialogueType.Choice)
         {
-            currentEntryIndex++;
-            if (currentEntryIndex >= currentDialogue.entries.Count)
-            {
-                EndDialogue();
-            }
-            else
-            {
-                DisplayCurrentEntry();
-            }
+            return;
         }
-        else if (currentEntry.type == DialogueType.LoadNewDialogue)
+
+        if (!string.IsNullOrEmpty(currentEntry.outputNodeId))
         {
-            var loadEntry = currentEntry as DialogueEntryLoadNewDialogue;
-            if (!string.IsNullOrEmpty(loadEntry?.nextDialogueId))
-            {
-                StartDialogue(loadEntry.nextDialogueId);
-            }
-            else
-            {
-                EndDialogue();
-            }
+            // load output node id
+            currentNodeId = currentEntry.outputNodeId;
+            var nextEntry = currentDialogue.entries.Find(e => e.nodeId == currentNodeId);
+            DisplayEntry(nextEntry);
+        }
+        else
+        {
+            EndDialogue();
         }
     }
 
@@ -212,25 +201,15 @@ public class DialogueDisplayController : MonoBehaviour
 
         var selectedChoice = currentEntry.choices[choiceIndex];
 
-        // Handle choice effects if any
-        // TODO: Add choice effects handling if needed
+        if (previousInputState != InputState.UI) InputHandler.Instance.SetInputState(previousInputState.Value);
 
-        // Check if choice leads to new dialogue or ends
-        if (!string.IsNullOrEmpty(selectedChoice.nextDialogueId))
+        previousInputState = null;
+
+        if (!string.IsNullOrEmpty(selectedChoice.outputNodeId))
         {
-            StartDialogue(selectedChoice.nextDialogueId);
-        }
-        else if (selectedChoice.nextEntryIndex >= 0)
-        {
-            currentEntryIndex = selectedChoice.nextEntryIndex;
-            if (currentEntryIndex >= currentDialogue.entries.Count)
-            {
-                EndDialogue();
-            }
-            else
-            {
-                DisplayCurrentEntry();
-            }
+            currentNodeId = selectedChoice.outputNodeId;
+            var nextEntry = currentDialogue.entries.Find(e => e.nodeId == currentNodeId);
+            DisplayEntry(nextEntry);
         }
         else
         {
@@ -289,7 +268,6 @@ public class DialogueDisplayController : MonoBehaviour
             AdvanceDialogue();
         }
     }
-
     private void OnInteractInputReceived()
     {
         if (!IsDialogueActive) return;
@@ -329,31 +307,25 @@ public class DialogueDisplayController : MonoBehaviour
         choiceButtons.Clear();
     }
 
-    private void DisplayCurrentEntry()
+    private void DisplayEntry(DialogueEntry entry)
     {
-        var currentEntry = CurrentEntry;
-        if (currentEntry == null)
-        {
-            EndDialogue();
-            return;
-        }
+        if (entry == null) { EndDialogue(); return; } 
 
-        switch (currentEntry.type)
+        CurrentEntry = entry;
+
+        switch (entry.type)
         {
             case DialogueType.Text:
-                DisplayTextEntry(currentEntry);
+                DisplayTextEntry(entry);
                 break;
 
             case DialogueType.Choice:
-                DisplayChoiceEntry(currentEntry as DialogueEntryChoice);
-                break;
-
-            case DialogueType.LoadNewDialogue:
-                DisplayLoadNewDialogueEntry(currentEntry as DialogueEntryLoadNewDialogue);
+                DisplayChoiceEntry(entry as DialogueEntryChoice);
                 break;
         }
     }
 
+    #region Display Text
     private void DisplayTextEntry(DialogueEntry entry)
     {
         if (dialogueLabel == null) return;
@@ -372,7 +344,9 @@ public class DialogueDisplayController : MonoBehaviour
 
         SBGDebug.LogInfo($"Displaying text entry: {entry.characterName}: {entry.message}", "DialogueDisplayController | DisplayTextEntry");
     }
+    #endregion
 
+    #region Display Choice
     private void DisplayChoiceEntry(DialogueEntryChoice choiceEntry)
     {
         if (choiceEntry?.choices == null || choiceEntry.choices.Count == 0)
@@ -383,6 +357,14 @@ public class DialogueDisplayController : MonoBehaviour
         }
 
         if (dialogueLabel == null) return;
+
+        // Cache current input state if not already UI and switch to UI state
+        if (InputHandler.Instance.currentState != InputState.UI)
+        {
+            previousInputState = InputHandler.Instance.currentState;
+            InputHandler.Instance.SetInputState(InputState.UI);
+            SBGDebug.LogInfo($"Switched to UI input state (from {previousInputState})", "DialogueDisplayController | DisplayChoiceEntry");
+        }
 
         // Display the dialogue text
         string displayText = choiceEntry.message;
@@ -402,65 +384,26 @@ public class DialogueDisplayController : MonoBehaviour
             var choiceButton = new DialogueChoiceButton();
             choiceButton.choiceText = choice.text;
 
-            // Store the choice index for the click handler
-            int choiceIndex = i; // Capture for closure
-            
+            int choiceIndex = i;
+
             // Use Button's built-in clicked event instead of ClickEvent
-            choiceButton.clicked += () => {
+            choiceButton.clicked += () =>
+            {
                 SBGDebug.LogInfo($"Choice button clicked: {choiceIndex}", "DialogueDisplayController | DisplayChoiceEntry");
                 SelectChoice(choiceIndex);
             };
 
-            // Add debug logging for mouse events (these should work now)
-            choiceButton.RegisterCallback<MouseEnterEvent>(evt => {
-                SBGDebug.LogInfo($"Mouse entered choice button {choiceIndex}", "DialogueDisplayController | DisplayChoiceEntry");
-            });
-
-            choiceButton.RegisterCallback<MouseLeaveEvent>(evt => {
-                SBGDebug.LogInfo($"Mouse left choice button {choiceIndex}", "DialogueDisplayController | DisplayChoiceEntry");
-            });
-
-            // Add styling for centered, vertically stacked buttons
             choiceButton.style.alignSelf = Align.Center;
             choiceButton.style.marginBottom = 5; // Small gap between buttons
 
             choiceListView.Add(choiceButton);
             choiceButtons.Add(choiceButton);
-            
-            SBGDebug.LogInfo($"Added choice button {choiceIndex}: {choice.text} - Parent: {choiceButton.parent?.name}", "DialogueDisplayController | DisplayChoiceEntry");
         }
 
-        // Debug the hierarchy
-        SBGDebug.LogInfo($"ChoiceListView children count: {choiceListView.childCount}", "DialogueDisplayController | DisplayChoiceEntry");
-        SBGDebug.LogInfo($"ChoiceBox children count: {choiceBox.childCount}", "DialogueDisplayController | DisplayChoiceEntry");
-
-        // Show both dialogue and choice boxes
         SetDialogueBoxVisible(true);
         SetChoiceBoxVisible(true);
-
-        SBGDebug.LogInfo($"Displaying choice entry: {choiceEntry.characterName}: {choiceEntry.message} ({choiceEntry.choices.Count} choices)",
-            "DialogueDisplayController | DisplayChoiceEntry");
     }
-
-    private void DisplayLoadNewDialogueEntry(DialogueEntryLoadNewDialogue loadEntry)
-    {
-        if (dialogueLabel == null) return;
-
-        string displayText = loadEntry.message;
-        if (!string.IsNullOrEmpty(loadEntry.characterName))
-        {
-            displayText = $"{loadEntry.characterName}: {loadEntry.message}";
-        }
-
-        dialogueLabel.text = displayText;
-
-        SetDialogueBoxVisible(true);
-        SetChoiceBoxVisible(false);
-        ClearChoiceButtons();
-
-        SBGDebug.LogInfo($"Displaying load dialogue entry: {loadEntry.characterName}: {loadEntry.message} (loads: {loadEntry.nextDialogueId})",
-            "DialogueDisplayController | DisplayLoadNewDialogueEntry");
-    }
+    #endregion
 
     #endregion
 
