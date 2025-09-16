@@ -1,10 +1,19 @@
 {
-    "dialogueID": "container_locked_hasKey_firstTime",
-    "entries": [
+    "dialogueId": "container_locked_hasKey_firstTime",
+    "freezePlayer": false,
+    "nodes": [
         {
+            "id": "r8s9t0u1-v2w3-64x5-y6z7-a8b9c0d1e2f3",
+            "type": 0,
             "characterName": "Player",
-            "avatarPath": "john",
-            "message": "Está asegurado, ¡pero tengo lo que necesito para abrirlo!"
+            "message": "Está asegurado, ¡pero tengo lo que necesito para abrirlo!",
+            "outputNodeId": "",
+            "position": {
+                "x": 200.0,
+                "y": 200.0
+            },
+            "choices": []
         }
-    ]
+    ],
+    "connections": []
 }

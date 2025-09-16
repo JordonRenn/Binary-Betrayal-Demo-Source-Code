@@ -1,10 +1,19 @@
 {
-    "dialogueID": "container_locked_keyNeeded_firstTime",
-    "entries": [
+    "dialogueId": "container_locked_keyNeeded_firstTime",
+    "freezePlayer": false,
+    "nodes": [
         {
+            "id": "s9t0u1v2-w3x4-65y6-z7a8-b9c0d1e2f3g4",
+            "type": 0,
             "characterName": "Player",
-            "avatarPath": "john",
-            "message": "Está bien cerrado. Necesito encontrar la llave correcta."
+            "message": "Está bien cerrado. Necesito encontrar la llave correcta.",
+            "outputNodeId": "",
+            "position": {
+                "x": 200.0,
+                "y": 200.0
+            },
+            "choices": []
         }
-    ]
+    ],
+    "connections": []
 }

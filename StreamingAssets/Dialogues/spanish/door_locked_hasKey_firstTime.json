@@ -1,10 +1,19 @@
 {
-    "dialogueID": "door_locked_hasKey_firstTime",
-    "entries": [
+    "dialogueId": "door_locked_hasKey_firstTime",
+    "freezePlayer": false,
+    "nodes": [
         {
+            "id": "v2w3x4y5-z6a7-68b9-c0d1-e2f3g4h5i6j7",
+            "type": 0,
             "characterName": "Player",
-            "avatarPath": "john",
-            "message": "Está cerrado, ¡pero tengo la llave!"
+            "message": "Está cerrado, ¡pero tengo la llave!",
+            "outputNodeId": "",
+            "position": {
+                "x": 200.0,
+                "y": 200.0
+            },
+            "choices": []
         }
-    ]
+    ],
+    "connections": []
 }

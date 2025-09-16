@@ -1,10 +1,19 @@
 {
-    "dialogueID": "container_locked_stillLocked",
-    "entries": [
+    "dialogueId": "container_locked_stillLocked",
+    "freezePlayer": false,
+    "nodes": [
         {
+            "id": "t0u1v2w3-x4y5-66z7-a8b9-c0d1e2f3g4h5",
+            "type": 0,
             "characterName": "Player",
-            "avatarPath": "john",
-            "message": "Todavía cerrado. Necesito la llave para abrirlo."
+            "message": "Todavía cerrado. Necesito la llave para abrirlo.",
+            "outputNodeId": "",
+            "position": {
+                "x": 200.0,
+                "y": 200.0
+            },
+            "choices": []
         }
-    ]
+    ],
+    "connections": []
 }

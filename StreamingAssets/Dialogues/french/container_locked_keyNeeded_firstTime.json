@@ -1,10 +1,19 @@
 {
-    "dialogueID": "container_locked_keyNeeded_firstTime",
-    "entries": [
+    "dialogueId": "container_locked_keyNeeded_firstTime",
+    "freezePlayer": false,
+    "nodes": [
         {
+            "id": "k1l2m3n4-o5p6-57q8-r9s0-t1u2v3w4x5y6",
+            "type": 0,
             "characterName": "Player",
-            "avatarPath": "john",
-            "message": "C'est bien verrouillé. Je dois trouver la bonne clé."
+            "message": "C'est bien verrouillé. Je dois trouver la bonne clé.",
+            "outputNodeId": "",
+            "position": {
+                "x": 200.0,
+                "y": 200.0
+            },
+            "choices": []
         }
-    ]
+    ],
+    "connections": []
 }

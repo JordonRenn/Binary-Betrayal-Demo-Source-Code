@@ -1,10 +1,19 @@
 {
-    "dialogueID": "door_locked_hasKey_firstTime",
-    "entries": [
+    "dialogueId": "door_locked_hasKey_firstTime",
+    "freezePlayer": false,
+    "nodes": [
         {
+            "id": "n4o5p6q7-r8s9-60t1-u2v3-w4x5y6z7a8b9",
+            "type": 0,
             "characterName": "Player",
-            "avatarPath": "john",
-            "message": "C'est verrouillé, mais j'ai la clé !"
+            "message": "C'est verrouillé, mais j'ai la clé !",
+            "outputNodeId": "",
+            "position": {
+                "x": 200.0,
+                "y": 200.0
+            },
+            "choices": []
         }
-    ]
+    ],
+    "connections": []
 }

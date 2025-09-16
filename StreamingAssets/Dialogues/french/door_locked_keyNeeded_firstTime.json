@@ -1,10 +1,19 @@
 {
-    "dialogueID": "door_locked_keyNeeded_firstTime",
-    "entries": [
+    "dialogueId": "door_locked_keyNeeded_firstTime",
+    "freezePlayer": false,
+    "nodes": [
         {
+            "id": "o5p6q7r8-s9t0-61u2-v3w4-x5y6z7a8b9c0",
+            "type": 0,
             "characterName": "Player",
-            "avatarPath": "john",
-            "message": "J'ai besoin d'une clé pour déverrouiller cette porte. Je ne peux pas la crocheter."
+            "message": "J'ai besoin d'une clé pour déverrouiller cette porte. Je ne peux pas la crocheter.",
+            "outputNodeId": "",
+            "position": {
+                "x": 200.0,
+                "y": 200.0
+            },
+            "choices": []
         }
-    ]
+    ],
+    "connections": []
 }

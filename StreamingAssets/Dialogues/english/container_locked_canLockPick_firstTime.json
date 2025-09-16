@@ -1,10 +1,19 @@
 {
-    "dialogueID": "container_locked_canLockPick_firstTime",
-    "entries": [
+    "dialogueId": "container_locked_canLockPick_firstTime",
+    "freezePlayer": false,
+    "nodes": [
         {
+            "id": "a1b2c3d4-e5f6-47g8-h9i0-j1k2l3m4n5o6",
+            "type": 0,
             "characterName": "Player",
-            "avatarPath": "john",
-            "message": "Locked... but this looks like something I can pick open."
+            "message": "Locked... but this looks like something I can pick open.",
+            "outputNodeId": "",
+            "position": {
+                "x": 200.0,
+                "y": 200.0
+            },
+            "choices": []
         }
-    ]
+    ],
+    "connections": []
 }

@@ -1,10 +1,19 @@
 {
-    "dialogueID": "door_locked_stillLocked",
-    "entries": [
+    "dialogueId": "door_locked_stillLocked",
+    "freezePlayer": false,
+    "nodes": [
         {
+            "id": "p6q7r8s9-t0u1-62v3-w4x5-y6z7a8b9c0d1",
+            "type": 0,
             "characterName": "Player",
-            "avatarPath": "john",
-            "message": "C'est toujours verrouillé. J'ai besoin d'une clé."
+            "message": "C'est toujours verrouillé. J'ai besoin d'une clé.",
+            "outputNodeId": "",
+            "position": {
+                "x": 200.0,
+                "y": 200.0
+            },
+            "choices": []
         }
-    ]
+    ],
+    "connections": []
 }

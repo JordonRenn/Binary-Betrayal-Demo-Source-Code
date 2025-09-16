@@ -1,10 +1,19 @@
 {
-    "dialogueID": "container_locked_hasKey_firstTime",
-    "entries": [
+    "dialogueId": "container_locked_hasKey_firstTime",
+    "freezePlayer": false,
+    "nodes": [
         {
+            "id": "b2c3d4e5-f6g7-48h9-i0j1-k2l3m4n5o6p7",
+            "type": 0,
             "characterName": "Player",
-            "avatarPath": "john",
-            "message": "It's secured, but I have what I need to open it!"
+            "message": "It's secured, but I have what I need to open it!",
+            "outputNodeId": "",
+            "position": {
+                "x": 200.0,
+                "y": 200.0
+            },
+            "choices": []
         }
-    ]
+    ],
+    "connections": []
 }

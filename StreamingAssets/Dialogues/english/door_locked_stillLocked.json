@@ -1,10 +1,19 @@
 {
-    "dialogueID": "door_locked_stillLocked",
-    "entries": [
+    "dialogueId": "door_locked_stillLocked",
+    "freezePlayer": false,
+    "nodes": [
         {
+            "id": "h8i9j0k1-l2m3-54n5-o6p7-q8r9s0t1u2v3",
+            "type": 0,
             "characterName": "Player",
-            "avatarPath": "john",
-            "message": "It's still locked. I need a key."
+            "message": "It's still locked. I need a key.",
+            "outputNodeId": "",
+            "position": {
+                "x": 200.0,
+                "y": 200.0
+            },
+            "choices": []
         }
-    ]
+    ],
+    "connections": []
 }

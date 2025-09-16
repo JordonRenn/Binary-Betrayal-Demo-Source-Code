@@ -1,10 +1,19 @@
 {
-    "dialogueID": "door_locked_keyNeeded_firstTime",
-    "entries": [
+    "dialogueId": "door_locked_keyNeeded_firstTime",
+    "freezePlayer": false,
+    "nodes": [
         {
+            "id": "w3x4y5z6-a7b8-69c0-d1e2-f3g4h5i6j7k8",
+            "type": 0,
             "characterName": "Player",
-            "avatarPath": "john",
-            "message": "Necesito una llave para abrir esta puerta. No puedo forzarla."
+            "message": "Necesito una llave para abrir esta puerta. No puedo forzarla.",
+            "outputNodeId": "",
+            "position": {
+                "x": 200.0,
+                "y": 200.0
+            },
+            "choices": []
         }
-    ]
+    ],
+    "connections": []
 }

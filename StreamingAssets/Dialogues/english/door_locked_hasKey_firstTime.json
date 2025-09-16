@@ -1,10 +1,19 @@
 {
-    "dialogueID": "door_locked_hasKey_firstTime",
-    "entries": [
+    "dialogueId": "door_locked_hasKey_firstTime",
+    "freezePlayer": false,
+    "nodes": [
         {
+            "id": "f6g7h8i9-j0k1-52l3-m4n5-o6p7q8r9s0t1",
+            "type": 0,
             "characterName": "Player",
-            "avatarPath": "john",
-            "message": "It's locked, but I have the key!"
+            "message": "It's locked, but I have the key!",
+            "outputNodeId": "",
+            "position": {
+                "x": 200.0,
+                "y": 200.0
+            },
+            "choices": []
         }
-    ]
+    ],
+    "connections": []
 }

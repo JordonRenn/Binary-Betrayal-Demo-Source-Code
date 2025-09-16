@@ -1,10 +1,19 @@
 {
-    "dialogueID": "door_locked_stillLocked",
-    "entries": [
+    "dialogueId": "door_locked_stillLocked",
+    "freezePlayer": false,
+    "nodes": [
         {
+            "id": "x4y5z6a7-b8c9-70d1-e2f3-g4h5i6j7k8l9",
+            "type": 0,
             "characterName": "Player",
-            "avatarPath": "john",
-            "message": "Todavía está cerrado. Necesito una llave."
+            "message": "Todavía está cerrado. Necesito una llave.",
+            "outputNodeId": "",
+            "position": {
+                "x": 200.0,
+                "y": 200.0
+            },
+            "choices": []
         }
-    ]
+    ],
+    "connections": []
 }

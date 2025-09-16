@@ -1,10 +1,19 @@
 {
-    "dialogueID": "container_locked_canLockPick_firstTime",
-    "entries": [
+    "dialogueId": "container_locked_canLockPick_firstTime",
+    "freezePlayer": false,
+    "nodes": [
         {
+            "id": "q7r8s9t0-u1v2-63w4-x5y6-z7a8b9c0d1e2",
+            "type": 0,
             "characterName": "Player",
-            "avatarPath": "john",
-            "message": "Cerrado... pero parece algo que puedo forzar."
+            "message": "Cerrado... pero parece algo que puedo forzar.",
+            "outputNodeId": "",
+            "position": {
+                "x": 200.0,
+                "y": 200.0
+            },
+            "choices": []
         }
-    ]
+    ],
+    "connections": []
 }

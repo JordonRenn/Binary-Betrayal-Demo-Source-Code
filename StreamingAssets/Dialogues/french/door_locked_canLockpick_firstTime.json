@@ -1,10 +1,19 @@
 {
-    "dialogueID": "door_locked_canLockpick_firstTime",
-    "entries": [
+    "dialogueId": "door_locked_canLockpick_firstTime",
+    "freezePlayer": false,
+    "nodes": [
         {
+            "id": "m3n4o5p6-q7r8-59s0-t1u2-v3w4x5y6z7a8",
+            "type": 0,
             "characterName": "Player",
-            "avatarPath": "john",
-            "message": "C'est verrouillé... mais je peux le crocheter !"
+            "message": "C'est verrouillé... mais je peux le crocheter !",
+            "outputNodeId": "",
+            "position": {
+                "x": 200.0,
+                "y": 200.0
+            },
+            "choices": []
         }
-    ]
+    ],
+    "connections": []
 }

@@ -1,10 +1,19 @@
 {
-    "dialogueID": "container_locked_canLockPick_firstTime",
-    "entries": [
+    "dialogueId": "container_locked_canLockPick_firstTime",
+    "freezePlayer": false,
+    "nodes": [
         {
+            "id": "i9j0k1l2-m3n4-55o6-p7q8-r9s0t1u2v3w4",
+            "type": 0,
             "characterName": "Player",
-            "avatarPath": "john",
-            "message": "Verrouillé... mais ça ressemble à quelque chose que je peux crocheter."
+            "message": "Verrouillé... mais ça ressemble à quelque chose que je peux crocheter.",
+            "outputNodeId": "",
+            "position": {
+                "x": 200.0,
+                "y": 200.0
+            },
+            "choices": []
         }
-    ]
+    ],
+    "connections": []
 }

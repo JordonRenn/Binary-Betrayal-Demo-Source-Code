@@ -1,10 +1,19 @@
 {
-    "dialogueID": "door_locked_keyNeeded_firstTime",
-    "entries": [
+    "dialogueId": "door_locked_keyNeeded_firstTime",
+    "freezePlayer": false,
+    "nodes": [
         {
+            "id": "g7h8i9j0-k1l2-53m4-n5o6-p7q8r9s0t1u2",
+            "type": 0,
             "characterName": "Player",
-            "avatarPath": "john",
-            "message": "I need a key to unlock this door. I can't pick it."
+            "message": "I need a key to unlock this door. I can't pick it.",
+            "outputNodeId": "",
+            "position": {
+                "x": 200.0,
+                "y": 200.0
+            },
+            "choices": []
         }
-    ]
+    ],
+    "connections": []
 }

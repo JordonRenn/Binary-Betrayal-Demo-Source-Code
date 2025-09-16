@@ -1,10 +1,19 @@
 {
-    "dialogueID": "container_locked_keyNeeded_firstTime",
-    "entries": [
+    "dialogueId": "container_locked_keyNeeded_firstTime",
+    "freezePlayer": false,
+    "nodes": [
         {
+            "id": "c3d4e5f6-g7h8-49i0-j1k2-l3m4n5o6p7q8",
+            "type": 0,
             "characterName": "Player",
-            "avatarPath": "john",
-            "message": "This is locked tight. I need to find the right key."
+            "message": "This is locked tight. I need to find the right key.",
+            "outputNodeId": "",
+            "position": {
+                "x": 200.0,
+                "y": 200.0
+            },
+            "choices": []
         }
-    ]
+    ],
+    "connections": []
 }

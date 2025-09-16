@@ -1,10 +1,19 @@
 {
-    "dialogueID": "door_locked_canLockpick_firstTime",
-    "entries": [
+    "dialogueId": "door_locked_canLockpick_firstTime",
+    "freezePlayer": false,
+    "nodes": [
         {
+            "id": "u1v2w3x4-y5z6-67a8-b9c0-d1e2f3g4h5i6",
+            "type": 0,
             "characterName": "Player",
-            "avatarPath": "john",
-            "message": "Está bloqueado... pero puedo abrirlo."
+            "message": "Está bloqueado... pero puedo abrirlo.",
+            "outputNodeId": "",
+            "position": {
+                "x": 200.0,
+                "y": 200.0
+            },
+            "choices": []
         }
-    ]
+    ],
+    "connections": []
 }
