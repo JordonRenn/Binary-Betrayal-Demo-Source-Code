@@ -3,6 +3,7 @@ using FMODUnity;
 using DG.Tweening;
 using System.Collections;
 using System;
+using GlobalEvents;
 
 /* 
 Only use this class for Misc items that do not fit into other categories and need no extra properties.
@@ -60,15 +61,22 @@ public class PickUpItem : SauceObject
         playerLayer = LayerMask.GetMask(PLAYER_LAYER_NAME);
         pickUpTrigger = GetComponent<Collider>();
 
-        GameMaster.Instance?.globalTick.AddListener(() =>
-        {
-            playerInRange = CheckPlayerDistance();
-        });
+        Events.Tick += OnTick;
+    }
+
+    private void OnDestroy()
+    {
+        Events.Tick -= OnTick;
     }
 
     void Update()
     {
         if (playerInRange) AnimateObject();
+    }
+
+    private void OnTick()
+    {
+        playerInRange = CheckPlayerDistance();
     }
 
     private bool CheckPlayerDistance()

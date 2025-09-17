@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using GlobalEvents;
 
 /* 
     First Person Controller Hierarchy:
@@ -120,17 +121,18 @@ public class CharacterMovement : MonoBehaviour
 			SBGDebug.LogInfo("Registered player object with GameMaster", "CharacterMovement");
 		}
 	}
-	
-    void Start()
-    {
-        StartCoroutine(Init(initDelay));
-		GameMaster.Instance.gm_PlayerSpawned.Invoke();
+
+	void Start()
+	{
+		StartCoroutine(Init(initDelay));
+		// GameMaster.Instance.gm_PlayerSpawned.Invoke();
     }
 
     IEnumerator Init(float delay)
     {
         yield return new WaitForSeconds(delay);
-		GameMaster.Instance.gm_PlayerSpawned.Invoke();
+		//GameMaster.Instance.gm_PlayerSpawned.Invoke();
+		LevelEvents.RaisePlayerControllerInstantiated();
         SubscribeToEvents();
         controller = GetComponent<CharacterController>();
     }
@@ -415,8 +417,6 @@ public class CharacterMovement : MonoBehaviour
 
     public void SetMovementDir()
 	{
-		// Replace old Input system with new input system through InputHandler
-		// Previous code: x = Input.GetAxis("Horizontal"); z = Input.GetAxis("Vertical");
 		moveX = InputHandler.Instance.MoveInput.x;
 		moveZ = InputHandler.Instance.MoveInput.y;
 	}

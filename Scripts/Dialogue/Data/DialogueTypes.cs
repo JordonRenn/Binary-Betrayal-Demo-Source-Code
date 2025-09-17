@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 
+[Serializable]
 public enum DialogueType
 {
     Text,
@@ -8,6 +9,7 @@ public enum DialogueType
     LoadNewDialogue
 }
 
+[Serializable]
 public enum ChoiceType
 {
     Dialogue,

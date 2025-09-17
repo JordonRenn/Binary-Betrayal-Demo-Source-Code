@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Cinemachine;
 using FMODUnity;
+using GlobalEvents;
 
 public class PS_Main : SauceObject
 {
     /* private FPSS_WeaponHUD c_WeaponHud; */
-    private FPSS_ReticleSystem c_ReticleSystem;
+    // private FPSS_ReticleSystem c_ReticleSystem;
     private GameObject playerObj;
     private CharacterMovement characterMovement;
 
@@ -55,10 +56,8 @@ public class PS_Main : SauceObject
     {
         SBGDebug.LogInfo($"PAY PHONE | {this.gameObject.transform.position} | Instantiated", "PS_Main");
 
-        GameMaster.Instance.gm_PlayerSpawned.AddListener(_GetPlayer);
-        GameMaster.Instance.gm_ReticleSystemSpawned.AddListener(_GetReticle);
-        GameMaster.Instance.gm_WeaponHudSpawned.AddListener(_GetWeaponHUD);
-        GameMaster.Instance.gm_DialogueEnded.AddListener(OnDialogueEnded);
+        LevelEvents.PlayerControllerInstantiated += _GetPlayer;
+        DialogueEvents.DialogueEnded += OnDialogueEnded;
     }
 
     void Start()
@@ -80,15 +79,9 @@ public class PS_Main : SauceObject
             yield return null;
         }
 
-        while (c_ReticleSystem == null && Time.time - initTime < initTimeout) // RETICLE SYSTEM
+        /* while (c_ReticleSystem == null && Time.time - initTime < initTimeout) // RETICLE SYSTEM
         {
             SBGDebug.LogDebug($"PAY PHONE | {this.gameObject.transform.position} | Searching for RETICLE SYSTEM", "PS_Main");
-            yield return null;
-        }
-
-        /* while (c_WeaponHud == null && Time.time - initTime < initTimeout) // WEAPON HUD
-        {
-            SBGDebug.LogDebug($"PAY PHONE | {this.gameObject.transform.position} | Searching for WEAPON HUD", "PS_Main");
             yield return null;
         } */
 
@@ -100,16 +93,6 @@ public class PS_Main : SauceObject
     {
         playerObj = GameObject.FindWithTag("Player");
         characterMovement = playerObj.GetComponent<CharacterMovement>();
-    }
-
-    private void _GetReticle()
-    {
-        c_ReticleSystem = FindFirstObjectByType<FPSS_ReticleSystem>();
-    }
-
-    private void _GetWeaponHUD()
-    {
-        /* c_WeaponHud = FindFirstObjectByType<FPSS_WeaponHUD>(); */
     }
     #endregion
 
@@ -297,7 +280,8 @@ public class PS_Main : SauceObject
         {
             yield return new WaitForSeconds(rickBackLength);
 
-            GameMaster.Instance?.oe_PhoneCallEvent?.Invoke(phoneID, number, PhoneCallEvent.Outgoing);
+            // GameMaster.Instance?.oe_PhoneCallEvent?.Invoke(phoneID, number, PhoneCallEvent.Outgoing);
+            PhoneEvents.RaisePhoneCallMade(phoneID, number, PhoneCallEvent.Outgoing);
 
             try
             {
@@ -402,17 +386,15 @@ public class PS_Main : SauceObject
             DeactivePhone();
         }
     }
-    
+
     #endregion
-    
+
     private void OnDestroy()
     {
         RuntimeManager.StudioSystem.getBus("bus:/Pay Phone", out FMOD.Studio.Bus phoneBank);
         phoneBank.stopAllEvents(FMOD.Studio.STOP_MODE.IMMEDIATE);
-        
-        GameMaster.Instance.gm_PlayerSpawned.RemoveListener(_GetPlayer);
-        GameMaster.Instance.gm_ReticleSystemSpawned.RemoveListener(_GetReticle);
-        GameMaster.Instance.gm_WeaponHudSpawned.RemoveListener(_GetWeaponHUD);
-        GameMaster.Instance.gm_DialogueEnded.RemoveListener(OnDialogueEnded);
+
+        LevelEvents.PlayerControllerInstantiated -= _GetPlayer;
+        DialogueEvents.DialogueEnded -= OnDialogueEnded;
     }
 }

@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using GlobalEvents;
 
 #region Container Lockable
 public class ContainerLockable : ContainerBase
@@ -33,7 +34,9 @@ public class ContainerLockable : ContainerBase
     #region Interaction
     public override void Interact()
     {
-        GameMaster.Instance?.oe_InteractionEvent?.Invoke(this.objectID);
+        // GameMaster.Instance?.oe_InteractionEvent?.Invoke(this.objectID);
+        SauceObjectEvents.RaiseInteractionEvent(this.objectID);
+
 
         if (lockState == DoorLockState.Unlocked)
         {
@@ -140,7 +143,8 @@ public class ContainerLockable : ContainerBase
         void OnDialogueEnded()
         {
             dialogueEnded = true;
-            GameMaster.Instance.gm_DialogueEnded.RemoveListener(OnDialogueEnded);
+            // GameMaster.Instance.gm_DialogueEnded.RemoveListener(OnDialogueEnded);
+            DialogueEvents.DialogueEnded -= OnDialogueEnded;
 
             if (v == LockedDoorDialogueVariation.LockedHasKey)
             {
@@ -157,7 +161,8 @@ public class ContainerLockable : ContainerBase
                 InputHandler.Instance.SetInputState(InputState.FirstPerson);
             }
         }
-        GameMaster.Instance.gm_DialogueEnded.AddListener(OnDialogueEnded);
+        // GameMaster.Instance.gm_DialogueEnded.AddListener(OnDialogueEnded);
+        DialogueEvents.DialogueEnded += OnDialogueEnded;
 
         yield return new WaitUntil(() => dialogueEnded);
     }

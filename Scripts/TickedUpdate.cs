@@ -1,5 +1,5 @@
-using System.Collections;
 using UnityEngine;
+using GlobalEvents;
 
 public class TickedUpdateBehavior : MonoBehaviour
 {
@@ -28,6 +28,7 @@ public class TickedUpdateBehavior : MonoBehaviour
 
     protected virtual void TickedUpdate()
     {
-        gameMaster.globalTick.Invoke();
+        // gameMaster.globalTick.Invoke();
+        Events.RaiseTick();
     }
 }

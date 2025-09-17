@@ -1,17 +1,23 @@
 using UnityEngine;
 using System.Collections;
 
-public class Gun_AK47 : WPO_Gun, IWPO_Gun //inherits from FPSS_WeaponSlotObject and implements WPO_Gun
+public class Gun_Handgun :  WPO_Gun, IWPO_Gun //inherits from FPSS_WeaponSlotObject and implements WPO_Gun
 {
+    /* void Awake()
+    {
+        OnFire.AddListener(Fire);
+        OnReload.AddListener(Reload);
+    } */
+    
     public override void Fire()
     {
-        Debug.Log("Fire AK47");
+        Debug.Log("Fire Handgun");
         if (isActive && !isReloading) 
         {
             StartCoroutine(FireBullet());
         }
     }
-    
+
     private IEnumerator FireBullet()
     {
         if (currentClip > 0 && canFire)
@@ -19,14 +25,15 @@ public class Gun_AK47 : WPO_Gun, IWPO_Gun //inherits from FPSS_WeaponSlotObject 
             canFire = false;
             
             PlaySfx(sfx_Fire, pos_GunAudio.position);
-            animator.Play("Fire", 0, 0f); // Play from beginning with no blending
+            animator.Play("Fire", 0, 0f); // Play from beginning with specific layer
             
             // Decrement ammo count BEFORE calling FireHitScan
             currentClip--;
             
             FireHitScan();
 
-            FPSS_ReticleSystem.Instance.GunFire(reticleFallOffSpeed);
+            // FPSS_ReticleSystem.Instance?.GunFire(reticleFallOffSpeed);
+            ReticleSystem.Instance?.Impulse(0.1f, 0.5f);
             
             ApplySpread();
             
@@ -34,11 +41,6 @@ public class Gun_AK47 : WPO_Gun, IWPO_Gun //inherits from FPSS_WeaponSlotObject 
 
             yield return new WaitForSeconds(fireRate);
             canFire = true;
-
-            if (InputHandler.Instance.FireInput && !isReloading)
-            {
-                StartCoroutine(FireBullet());
-            }
         }
         else
         {
@@ -48,7 +50,7 @@ public class Gun_AK47 : WPO_Gun, IWPO_Gun //inherits from FPSS_WeaponSlotObject 
 
     public override void Reload()
     {
-        Debug.Log("Reload AK47");
+        Debug.Log("Reload Handgun");
         if (isReloading) return;
         if (!canReload) return;
 
@@ -57,7 +59,6 @@ public class Gun_AK47 : WPO_Gun, IWPO_Gun //inherits from FPSS_WeaponSlotObject 
 
     private IEnumerator ReloadSequence()
     {
-        isReloading = true;
         yield return ReloadWeapon();
         isReloading = false;
         canReload = true;

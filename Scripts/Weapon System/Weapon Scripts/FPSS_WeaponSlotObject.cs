@@ -104,22 +104,10 @@ public abstract class FPSS_WeaponSlotObject : MonoBehaviour
         bool allDependenciesLoaded = false;
         while (!allDependenciesLoaded && Time.time - initTime <= initTimeout)
         {
-            bool reticleSystemReady = FPSS_ReticleSystem.Instance != null;
-            //bool weaponHUDReady = FPSS_WeaponHUD.Instance != null;
             bool poolReady = WeaponPool.Instance != null;
             bool camControllerReady = FirstPersonCamController.Instance != null;
 
-            // uncomment for testing if needed
-            /* if (!reticleSystemReady)
-                SBGDebug.LogInfo("Waiting for ''Reticle System'' ....", "FPSS_WeaponSlotObject | Initialization");
-            if (!weaponHUDReady)
-                SBGDebug.LogInfo("Waiting for ''Weapon HUD'' ....", "FPSS_WeaponSlotObject | Initialization");
-            if (!poolReady)
-                SBGDebug.LogInfo("Waiting for ''Weapon Pool'' ....", "FPSS_WeaponSlotObject | Initialization");
-            if (!mainReady)
-                SBGDebug.LogInfo("Waiting for ''FPS Main'' ....", "FPSS_WeaponSlotObject | Initialization"); */
-
-            allDependenciesLoaded = reticleSystemReady /* && weaponHUDReady */ && poolReady && camControllerReady;
+            allDependenciesLoaded =  poolReady && camControllerReady;
 
             if (!allDependenciesLoaded)
                 yield return null;

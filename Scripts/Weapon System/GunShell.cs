@@ -1,9 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-
-//FIX LIST:
-//1. shells fall through floor
 
 public class GunShell : MonoBehaviour
 {

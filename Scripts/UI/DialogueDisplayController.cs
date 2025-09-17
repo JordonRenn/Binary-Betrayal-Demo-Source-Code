@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using System.Collections.Generic;
 using System;
+using GlobalEvents;
 
 /// <summary>
 /// Simplified dialogue display controller that handles text and choice dialogues
@@ -58,12 +59,8 @@ public class DialogueDisplayController : MonoBehaviour
     {
         InitializeUIElements();
 
-        // Subscribe to game events
-        if (GameMaster.Instance != null)
-        {
-            GameMaster.Instance.gm_DialogueStarted?.AddListener(OnDialogueStartedEvent);
-            GameMaster.Instance.gm_DialogueEnded?.AddListener(OnDialogueEndedEvent);
-        }
+        DialogueEvents.DialogueTriggered += StartDialogue;
+        DialogueEvents.DialogueEnded += EndDialogue;
 
         // Subscribe to input events for dialogue advancement
         if (InputHandler.Instance != null)
@@ -78,12 +75,8 @@ public class DialogueDisplayController : MonoBehaviour
 
     private void OnDestroy()
     {
-        // Unsubscribe from events
-        if (GameMaster.Instance != null)
-        {
-            GameMaster.Instance.gm_DialogueStarted?.RemoveListener(OnDialogueStartedEvent);
-            GameMaster.Instance.gm_DialogueEnded?.RemoveListener(OnDialogueEndedEvent);
-        }
+        DialogueEvents.DialogueTriggered -= StartDialogue;
+        DialogueEvents.DialogueEnded -= EndDialogue;
 
         if (InputHandler.Instance != null)
         {
@@ -121,7 +114,8 @@ public class DialogueDisplayController : MonoBehaviour
         CurrentEntry = dialogueData.entries[0];
         currentNodeId = CurrentEntry.nodeId;
 
-        GameMaster.Instance?.gm_DialogueStarted?.Invoke();
+        // GameMaster.Instance?.gm_DialogueStarted?.Invoke();
+        DialogueEvents.RaiseDialogueStarted();
         DisplayEntry(CurrentEntry);
     }
 
@@ -148,7 +142,8 @@ public class DialogueDisplayController : MonoBehaviour
             previousInputState = null;
         }
 
-        GameMaster.Instance?.gm_DialogueEnded?.Invoke();
+        // GameMaster.Instance?.gm_DialogueEnded?.Invoke();
+        DialogueEvents.RaiseDialogueEnded();
 
         SBGDebug.LogInfo("Ended dialogue", "DialogueDisplayController | EndDialogue");
     }

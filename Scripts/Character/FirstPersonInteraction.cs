@@ -1,5 +1,7 @@
 using UnityEngine;
 using TMPro;
+using GlobalEvents;
+using UnityEngine.UIElements;
 
 /* 
     First Person Controller Hierarchy: 
@@ -37,7 +39,8 @@ public class FirstPersonInteraction : MonoBehaviour
     [SerializeField] float interactionCooldown = 0.25f;
     [SerializeField] float reachDistance = 3f;
     private InputHandler input;
-    private TMP_Text objctInfoText;
+    // private TMP_Text objctInfoText;
+    private Label hoverInfoText;
     private float lastInteractionTime = 0f;
 
     private Ray ray;
@@ -56,7 +59,8 @@ public class FirstPersonInteraction : MonoBehaviour
     void Start()
     {
         input = InputHandler.Instance;
-        objctInfoText = FPSS_ReticleSystem.Instance.objectInfoText;
+        // objctInfoText = FPSS_ReticleSystem.Instance.objectInfoText;
+        hoverInfoText = ReticleSystem.Instance.HoverInfoText;
     }
 
     /// <summary>
@@ -71,9 +75,10 @@ public class FirstPersonInteraction : MonoBehaviour
             AttemptInteraction();
             lastInteractionTime = Time.time;
         }
-        else if (objctInfoText == null)
+        else if (hoverInfoText == null)
         {
-            objctInfoText = FPSS_ReticleSystem.Instance.objectInfoText;
+            // objctInfoText = FPSS_ReticleSystem.Instance.objectInfoText;
+            hoverInfoText = ReticleSystem.Instance.HoverInfoText;
         }
         else
         {
@@ -102,7 +107,9 @@ public class FirstPersonInteraction : MonoBehaviour
 
         if (sauceObject != null)
         {
-            GameMaster.Instance?.oe_InteractionEvent?.Invoke(sauceObject.objectID);
+            // GameMaster.Instance?.oe_InteractionEvent?.Invoke(sauceObject.objectID);
+            SauceObjectEvents.RaiseInteractionEvent(sauceObject.objectID);
+
             sauceObject.Interact();
         }
         else
@@ -126,8 +133,8 @@ public class FirstPersonInteraction : MonoBehaviour
         }
         else
         {
-            objctInfoText.text = "";
-            objctInfoText.gameObject.SetActive(false);
+            hoverInfoText.text = "";
+            hoverInfoText.style.display = DisplayStyle.None;
         }
     }
 
@@ -137,15 +144,14 @@ public class FirstPersonInteraction : MonoBehaviour
     /// <param name="interactable">The interactable object to show information for.</param>
     private void ShowObjectInfo(SauceObject obj)
     {
-        if (objctInfoText != null)
+        if (hoverInfoText != null)
         {
-            objctInfoText.text = obj.GetObjectDisplayName();
-            objctInfoText.gameObject.SetActive(true);
+            hoverInfoText.text = obj.GetObjectDisplayName();
+            hoverInfoText.style.display = DisplayStyle.Flex;
         }
         else
         {
-            Debug.LogWarning("Object Info Text is not assigned in FPSS_Interaction.");
-            objctInfoText.text = "Interact";
+            Debug.LogWarning("Hover Info Text is not assigned in FPSS_Interaction.");
         }
     }
 }

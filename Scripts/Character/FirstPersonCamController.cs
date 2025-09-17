@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using GlobalEvents;
 
 /* 
     First Person Controller Hierarchy:
@@ -77,7 +78,8 @@ public class FirstPersonCamController : MonoBehaviour
         UpdateFromSettings();
 
         // Subscribe to settings change event
-        GameMaster.Instance.gm_SettingsChanged.AddListener(UpdateFromSettings);
+        // GameMaster.Instance.gm_SettingsChanged.AddListener(UpdateFromSettings);
+        ConfigEvents.SettingsChanged += UpdateFromSettings;
 
         initialized = true;
     }
@@ -133,7 +135,8 @@ public class FirstPersonCamController : MonoBehaviour
     {
         if (GameMaster.Instance != null)
         {
-            GameMaster.Instance.gm_SettingsChanged.RemoveListener(UpdateFromSettings);
+            // GameMaster.Instance.gm_SettingsChanged.RemoveListener(UpdateFromSettings);
+            ConfigEvents.SettingsChanged -= UpdateFromSettings;
         }
     }
 }

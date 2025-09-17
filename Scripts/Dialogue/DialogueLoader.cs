@@ -2,7 +2,12 @@ using UnityEngine;
 using System.IO;
 using System;
 using System.Collections.Generic;
+using GlobalEvents;
 
+#region Dialogue Loader
+/// <summary>
+/// Responsible for loading and managing dialogue data.
+/// </summary>
 public static class DialogueLoader
 {
     private const string DIALOGUE_FOLDER = "Dialogues";
@@ -10,10 +15,15 @@ public static class DialogueLoader
     private static Dictionary<string, DialogueData> cachedDialogues = new Dictionary<string, DialogueData>();
     private static bool isInitialized = false;
 
+    static DialogueLoader()
+    {
+        EnsureInitialized();
+    }
+
     private static void EnsureInitialized()
     {
         if (isInitialized) return;
-        
+
         string dialoguePath = Path.Combine(Application.streamingAssetsPath, DIALOGUE_FOLDER);
         if (!Directory.Exists(dialoguePath))
         {
@@ -21,27 +31,29 @@ public static class DialogueLoader
             SBGDebug.LogInfo($"Created dialogue directory at: {dialoguePath}", "DialogueLoader");
         }
 
-        // Initialize with current language from GameMaster if available
+        try
+        {
+            UpdateLanguage(GameMaster.Instance.GetSettings().language);
+
+            ConfigEvents.LanguageSettingsChanged -= OnLanguageSettingsChanged; // Prevent double-subscription
+            ConfigEvents.LanguageSettingsChanged += OnLanguageSettingsChanged;
+        }
+        catch (System.Exception e)
+        {
+            SBGDebug.LogWarning($"Could not initialize language from GameMaster: {e.Message}", "DialogueLoader");
+            // Continue with default language
+        }
+
+        isInitialized = true;
+    }
+
+    #region Language
+    private static void OnLanguageSettingsChanged()
+    {
         if (GameMaster.Instance != null)
         {
-            try 
-            {
-                UpdateLanguage(GameMaster.Instance.GetSettings().language);
-                
-                // Subscribe to language changes
-                GameMaster.Instance.gm_GameUnpaused.AddListener(() =>
-                {
-                    UpdateLanguage(GameMaster.Instance.GetSettings().language);
-                });
-            }
-            catch (System.Exception e)
-            {
-                SBGDebug.LogWarning($"Could not initialize language from GameMaster: {e.Message}", "DialogueLoader");
-                // Continue with default language
-            }
+            UpdateLanguage(GameMaster.Instance.GetSettings().language);
         }
-        
-        isInitialized = true;
     }
 
     private static void UpdateLanguage(Language language)
@@ -54,22 +66,24 @@ public static class DialogueLoader
             Directory.CreateDirectory(langPath);
             SBGDebug.LogInfo($"Created language directory at: {langPath}", "DialogueLoader");
         }
-        
+
         // Clear cache when language changes
         cachedDialogues.Clear();
     }
+    #endregion
 
+    #region Public API
     public static DialogueData LoadDialogue(string dialogueId)
     {
         EnsureInitialized();
-        
+
         // Check cache first
         if (cachedDialogues.TryGetValue(dialogueId, out DialogueData cachedDialogue))
         {
             SBGDebug.LogInfo($"Loading dialogue from cache: {dialogueId}", "DialogueLoader");
             return cachedDialogue;
         }
-        
+
         string filePath = Path.Combine(Application.streamingAssetsPath, DIALOGUE_FOLDER, currentLanguage, $"{dialogueId}.json");
 
         if (!File.Exists(filePath))
@@ -84,12 +98,12 @@ public static class DialogueLoader
             byte[] fileBytes = File.ReadAllBytes(filePath);
             string jsonContent = System.Text.Encoding.UTF8.GetString(fileBytes);
             TextAsset jsonAsset = new TextAsset(jsonContent);
-            
+
             SBGDebug.LogInfo($"Loading dialogue file: {filePath} (graph format only)", "DialogueLoader");
-            
+
             // Parse using our SimdJsonSharp parser
             var dialogues = DialogueJsonParser.ParseDialogueData(jsonAsset);
-            
+
             if (dialogues == null)
             {
                 SBGDebug.LogError("DialogueJsonParser returned null", "DialogueLoader");
@@ -102,26 +116,26 @@ public static class DialogueLoader
                 SBGDebug.LogError($"Dialogue validation failed for {filePath}", "DialogueLoader");
                 return null;
             }
-            
+
             SBGDebug.LogInfo($"Parsed {dialogues.Length} dialogue(s)", "DialogueLoader");
-            
+
             if (dialogues.Length > 0)
             {
                 var dialogue = dialogues[0];
-                
+
                 if (dialogue.entries == null)
                 {
                     SBGDebug.LogError("Parsed dialogue has null entries list", "DialogueLoader");
                     return null;
                 }
-                
+
                 SBGDebug.LogInfo($"Dialogue '{dialogueId}' loaded with {dialogue.entries.Count} entries", "DialogueLoader");
-                
+
                 // Cache the result
                 cachedDialogues[dialogueId] = dialogue;
                 return dialogue;
             }
-            
+
             SBGDebug.LogError($"No dialogues found in file: {dialogueId}", "DialogueLoader");
             return null;
         }
@@ -137,7 +151,9 @@ public static class DialogueLoader
         cachedDialogues.Clear();
         SBGDebug.LogInfo("Dialogue cache cleared", "DialogueLoader");
     }
+    #endregion
 
+    #region Debugging
     /// <summary>
     /// Test method to debug dialogue loading issues
     /// </summary>
@@ -166,7 +182,7 @@ public static class DialogueLoader
                     SBGDebug.LogError($"Entry in dialogue {dialogue.dialogueId} has no nodeId", "DialogueLoader | ValidateDialogueData");
                     return false;
                 }
-                
+
                 if (!nodeIds.Add(entry.nodeId))
                 {
                     SBGDebug.LogError($"Duplicate nodeId {entry.nodeId} found in dialogue {dialogue.dialogueId}", "DialogueLoader | ValidateDialogueData");
@@ -206,8 +222,9 @@ public static class DialogueLoader
 
         return true;
     }
+    #endregion
 
-    public static void TestDialogueLoading(string dialogueId)
+    /* public static void TestDialogueLoading(string dialogueId)
     {
         SBGDebug.LogInfo($"=== Testing dialogue loading for: {dialogueId} (graph format only) ===", "DialogueLoader");
         
@@ -246,5 +263,6 @@ public static class DialogueLoader
         }
         
         SBGDebug.LogInfo("=== End dialogue loading test ===", "DialogueLoader");
-    }
+    } */
 }
+#endregion

@@ -1,17 +1,14 @@
 using System.Collections;
 using UnityEngine;
 using FMODUnity;
+using GlobalEvents;
 
 /* 
 INHERITANCE HIERARCHY:
 MonoBehaviour
-    |
-    +-- SauceObject                                 // Nav Tracking + Interactablity
-        |
+    +-- SauceObject                                 // Compass Tracking + Interactablity
         +-- Door (abstract class)
-            |
             +-- DoorGeneric (concrete class)        // Just Open/Close logic + Player Position Consideration
-                |
                 +-- DoorLockable (concrete class)   // Adds Lock/Unlock logic
 
 MORE INFO:
@@ -64,7 +61,8 @@ public class DoorGeneric : Door
     #region Door Actions
     public override void Interact()
     {
-        GameMaster.Instance?.oe_InteractionEvent?.Invoke(this.objectID);
+        // GameMaster.Instance?.oe_InteractionEvent?.Invoke(this.objectID);
+        SauceObjectEvents.RaiseInteractionEvent(this.objectID);
         
         if (doorState == DoorState.Closed)
         {

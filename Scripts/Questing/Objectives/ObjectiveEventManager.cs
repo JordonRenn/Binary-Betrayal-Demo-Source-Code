@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
+using GlobalEvents;
 
 /* 
 888     888 888b    888 88888888888 8888888888 .d8888b. 88888888888 8888888888 8888888b.  
@@ -67,12 +68,23 @@ public static class ObjectiveEventManager
             //GameMaster.Instance.objective_NPCKilled.AddListener(ValidateKillEvent);
 
             //UPDATED
-            GameMaster.Instance.oe_ItemAdded.AddListener(ValidateItemAddEvent);
+            /* GameMaster.Instance.oe_ItemAdded.AddListener(ValidateItemAddEvent);
             GameMaster.Instance.oe_ItemRemoved.AddListener(ValidateItemRemoveEvent);
             GameMaster.Instance.oe_DoorLockEvent.AddListener(ValidateDoorLockEvent);
             GameMaster.Instance.oe_TalkEvent.AddListener(ValidateTalkEvent);
             GameMaster.Instance.oe_PhoneCallEvent.AddListener(ValidatePhoneCallEvent);
-            GameMaster.Instance.oe_InteractionEvent.AddListener(ValidateInteractionEvent);
+            GameMaster.Instance.oe_InteractionEvent.AddListener(ValidateInteractionEvent); */
+
+            InventoryEvents.ItemAdded += ValidateItemAddEvent;
+            InventoryEvents.ItemRemoved += ValidateItemRemoveEvent;
+
+            DoorEvents.DoorLockStateChanged += ValidateDoorLockEvent;
+
+            DialogueEvents.DialogueTriggered += ValidateTalkEvent;
+
+            PhoneEvents.PhoneCallMade += ValidatePhoneCallEvent;
+
+            SauceObjectEvents.InteractionEvent += ValidateInteractionEvent;
         }
         else
         {

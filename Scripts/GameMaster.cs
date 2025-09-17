@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using GlobalEvents;
 
 public class GameMaster : MonoBehaviour
 {
@@ -26,79 +27,58 @@ public class GameMaster : MonoBehaviour
     [SerializeField] private PlayerSettings playerSettings = new PlayerSettings();
     private const string SETTINGS_KEY = "PlayerSettings";
 
-    #region Game Events
+    /* #region Game Events
     //Player Object Instantiations
+    [Obsolete()]
     [HideInInspector] public UnityEvent gm_PlayerSpawned;
+    [Obsolete()]
     [HideInInspector] public UnityEvent gm_WeaponHudSpawned;
+    [Obsolete()]
     [HideInInspector] public UnityEvent gm_ReticleSystemSpawned;
-    [HideInInspector] public UnityEvent gm_WeaponPoolSpawned;
-    [HideInInspector] public UnityEvent gm_FPSMainSpawned;
+    // [HideInInspector] public UnityEvent gm_WeaponPoolSpawned;
+    // [HideInInspector] public UnityEvent gm_FPSMainSpawned;
 
     //Game Play Events
-    [HideInInspector] public UnityEvent gm_GamePaused;
+    // [HideInInspector] public UnityEvent gm_GamePaused;
+    [Obsolete()]
     [HideInInspector] public UnityEvent gm_GameUnpaused;
-    [HideInInspector] public UnityEvent gm_ReturnToMainMenu;
+    // [HideInInspector] public UnityEvent gm_ReturnToMainMenu;
 
     //tick event
+    [Obsolete()]
     [HideInInspector] public UnityEvent globalTick;
 
     //Settings Events
+    [Obsolete()]
     [HideInInspector] public UnityEvent gm_SettingsChanged;
-    [HideInInspector] public UnityEvent gm_PlayerInventoryUpdated;
-    [HideInInspector] public UnityEvent gm_InventoryOpened;
+    // [HideInInspector] public UnityEvent gm_PlayerInventoryUpdated;
+    //[Obsolete()]
+    //[HideInInspector] public UnityEvent gm_InventoryOpened;
 
-    [HideInInspector] public UnityEvent gm_InventoryClosed;
+    //[Obsolete()]
+    //[HideInInspector] public UnityEvent gm_InventoryClosed;
 
     // Dialogue Events
+    [Obsolete()]
     [HideInInspector] public UnityEvent gm_DialogueStarted;
+    [Obsolete()]
     [HideInInspector] public UnityEvent gm_DialogueEnded;
     #endregion
 
-    #region UI Events
-    [HideInInspector] public UnityEvent uie_HUDInitialized;
 
-    /// <summary>
-    /// Event triggered when the HUD is hidden.
-    /// Params: bool (isHidden)
-    /// </summary>
-    [HideInInspector] public UnityEvent<bool> uie_HUDHidden;
-    /// <summary>
-    /// Event triggered when the inventory is closed.
-    /// Params: bool (isClosed)
-    /// </summary>
-    [HideInInspector] public UnityEvent<bool> uie_InventoryClosed;
-    /// <summary>
-    /// Event triggered when the dialogue is closed.
-    /// Params: bool (isClosed)
-    /// </summary>
-    [HideInInspector] public UnityEvent<bool> uie_DialogueClosed;
-    /// <summary>
-    /// Event triggered when the pause menu is closed.
-    /// Params: bool (isClosed)
-    /// </summary>
-    [HideInInspector] public UnityEvent<bool> uie_PauseMenuClosed;
-    /// <summary>
-    /// Event triggered when the journal is closed.
-    /// Params: bool (isClosed)
-    /// </summary>
-    [HideInInspector] public UnityEvent<bool> uie_JournalClosed;
-    /// <summary>
-    /// Event triggered when the player stats menu is closed.
-    /// Params: bool (isClosed)
-    /// </summary>
-    [HideInInspector] public UnityEvent<bool> uie_PlayerStatsClosed;
-    #endregion
 
     #region Objective Events
     /// <summary>
     /// Event triggered when an item is added to the inventory.
     /// Parameters: InventoryType (inventory type), string (itemID), string (display name)
     /// </summary>
+    [Obsolete()]
     [HideInInspector] public UnityEvent<InventoryType, string, string> oe_ItemAdded;
     /// <summary>
     /// Event triggered when an item is removed from the inventory.
     /// Parameters: InventoryType (inventory type), string (itemID), string (display  name)
     /// </summary>
+    [Obsolete()]
     [HideInInspector] public UnityEvent<InventoryType, string, string> oe_ItemRemoved;
     /// <summary>
     /// Event triggered when a specific dialogue is triggered.
@@ -109,25 +89,18 @@ public class GameMaster : MonoBehaviour
     /// Event triggered when a door lock state changes.
     /// Parameters: string (objectID), DoorLockState (lock state)
     /// </summary>
+    [Obsolete()]
     [HideInInspector] public UnityEvent<string, DoorLockState> oe_DoorLockEvent; //invoked in DoorLockable
     /// <summary>
     /// Event triggered when a phone call is made.
     /// Parameters: string (objectID), string (phone number), PhoneCallEvent (event type)
     /// </summary>
+    [Obsolete()]
     [HideInInspector] public UnityEvent<string, string, PhoneCallEvent> oe_PhoneCallEvent;
     [HideInInspector] public UnityEvent<string> oe_InteractionEvent;
-
-    /* [Obsolete()]
-    [HideInInspector] public UnityEvent<string, string> objective_ItemUsed; //invoked in specific item classes
-    [Obsolete()]
-    [HideInInspector] public UnityEvent<string, string> objective_NPCTalkedTo;
-    [Obsolete()]
-    [HideInInspector] public UnityEvent<string, string> objective_ExploredLocation;
-    [Obsolete()]
-    [HideInInspector] public UnityEvent<string, string> objective_NPCKilled; */
     #endregion
 
-    //Settings Management
+    //Settings Management */
     
 
     void Awake() 
@@ -199,7 +172,7 @@ public class GameMaster : MonoBehaviour
             SBGDebug.LogError($"Failed to save settings: {e.Message}", "GameMaster");
         }
     }
-    
+
     /// <summary>
     /// Applies settings changes to relevant systems
     /// </summary>
@@ -212,7 +185,8 @@ public class GameMaster : MonoBehaviour
         }
 
         // Notify all listeners that settings have changed
-        gm_SettingsChanged.Invoke();
+        // gm_SettingsChanged.Invoke();
+        ConfigEvents.RaiseSettingsChanged();
     }
 
     /// <summary>
@@ -230,7 +204,7 @@ public class GameMaster : MonoBehaviour
 /// <summary>
 /// Class to store player-specific settings
 /// </summary>
-[System.Serializable]
+[Serializable]
 public class PlayerSettings
 {
     // Default language is English

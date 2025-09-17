@@ -175,6 +175,16 @@ public static class SBGDebug
         }
     }
 
+    public static void LogEvent(string message, string context)
+    {
+        if (CurrentLogLevel >= LogLevel.Info)
+        {
+            string formattedMessage = FormatLogMessage($"EVENT: {message}", context, LogLevel.Info);
+            Debug.Log($"<color=purple>EVENT: {message}</color> | <color=yellow>{context}</color>");
+            WriteToFile(formattedMessage);
+        }
+    }
+
     /// <summary>
     /// Logs an exception with stack trace
     /// </summary>

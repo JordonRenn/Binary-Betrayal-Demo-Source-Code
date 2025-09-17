@@ -1,14 +1,16 @@
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class MiniMapController : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    private UIDocument _document;
+    private VisualElement _root;
     void Start()
     {
-        
+        _document = GetComponent<UIDocument>();
+        _root = _document.rootVisualElement;
     }
 
-    // Update is called once per frame
     void Update()
     {
         

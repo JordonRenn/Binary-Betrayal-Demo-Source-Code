@@ -1,8 +1,6 @@
 using UnityEngine;
 using UnityEngine.UIElements;
-using System.Collections.Generic;
-using DG.Tweening;
-using System.Linq;
+using GlobalEvents;
 
 public class CompassController : MonoBehaviour
 {
@@ -15,7 +13,7 @@ public class CompassController : MonoBehaviour
 
         _compassMask.texture.wrapMode = TextureWrapMode.Repeat;
 
-        GameMaster.Instance.gm_PlayerSpawned.AddListener(GetPlayer);
+        LevelEvents.PlayerControllerInstantiated += GetPlayer;
     }
 
     private void Update()
@@ -34,6 +32,6 @@ public class CompassController : MonoBehaviour
 
     private void OnDestroy()
     {
-        GameMaster.Instance?.gm_PlayerSpawned?.RemoveListener(GetPlayer);
+        LevelEvents.PlayerControllerInstantiated -= GetPlayer;
     }
 }

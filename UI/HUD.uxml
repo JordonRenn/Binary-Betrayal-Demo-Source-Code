@@ -4,7 +4,10 @@
     <ui:VisualElement name="HUD-MapConatiner" class="hud-map__container">
         <ui:Image name="HUD-MapRenderTexture" class="map__render-txture" style="width: 100%; height: 100%;" />
     </ui:VisualElement>
-    <ui:VisualElement name="HUD-NotificationContainer" class="hud-notification__container" />
+    <ui:VisualElement name="HUD-NotificationContainer" class="hud-notification__container">
+        <ui:Label text="+12 more..." name="NotificationOverFlowLabel" class="notification__overflow-label" />
+        <ui:VisualElement name="NotificationContainer" style="flex-grow: 1;" />
+    </ui:VisualElement>
     <ui:VisualElement name="HUD-WeaponContainer" class="hud-weapon__container">
         <ui:VisualElement name="WeaponAmmoContainer" class="weapon__ammo-container" style="align-self: flex-end; flex-direction: row; justify-content: flex-end;">
             <ui:Label text="18&#10;" name="WeaponAmmoCurrentMag" class="weapon__ammo-label__current-mag" />

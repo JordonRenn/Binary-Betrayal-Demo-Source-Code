@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using GlobalEvents;
 
 /* 
 INHERITANCE HIERARCHY:
@@ -53,7 +54,8 @@ public class DoorLockable : DoorGeneric
     #region Interaction
     public override void Interact()
     {
-        GameMaster.Instance?.oe_InteractionEvent?.Invoke(this.objectID);
+        // GameMaster.Instance?.oe_InteractionEvent?.Invoke(this.objectID);
+        SauceObjectEvents.RaiseInteractionEvent(this.objectID);
 
         // If door is open, close it
         if (doorState != DoorState.Closed)
@@ -165,7 +167,8 @@ public class DoorLockable : DoorGeneric
         void OnDialogueEnded()
         {
             dialogueEnded = true;
-            GameMaster.Instance.gm_DialogueEnded.RemoveListener(OnDialogueEnded);
+            // GameMaster.Instance.gm_DialogueEnded.RemoveListener(OnDialogueEnded);
+            DialogueEvents.DialogueEnded -= OnDialogueEnded;
 
             if (v == LockedDoorDialogueVariation.LockedHasKey)
             {
@@ -184,7 +187,8 @@ public class DoorLockable : DoorGeneric
                 InputHandler.Instance.SetInputState(InputState.FirstPerson);
             }
         }
-        GameMaster.Instance.gm_DialogueEnded.AddListener(OnDialogueEnded);
+        // GameMaster.Instance.gm_DialogueEnded.AddListener(OnDialogueEnded);
+        DialogueEvents.DialogueEnded += OnDialogueEnded;
 
         yield return new WaitUntil(() => dialogueEnded);
     }
@@ -198,14 +202,17 @@ public class DoorLockable : DoorGeneric
         {
             doorLockState = DoorLockState.Locked;
             // Trigger locked event for objectives
-            GameMaster.Instance.oe_DoorLockEvent?.Invoke(objectID, DoorLockState.Locked);
+            // GameMaster.Instance.oe_DoorLockEvent?.Invoke(objectID, DoorLockState.Locked);
+            DoorEvents.RaiseDoorLockStateChanged(this.objectID, DoorLockState.Locked);
+
         }
         else
         {
             PlayUnlock_SFX();
             doorLockState = DoorLockState.Unlocked;
             // Trigger unlocked event for objectives
-            GameMaster.Instance.oe_DoorLockEvent?.Invoke(objectID, DoorLockState.Unlocked);
+            // GameMaster.Instance.oe_DoorLockEvent?.Invoke(objectID, DoorLockState.Unlocked);
+            DoorEvents.RaiseDoorLockStateChanged(this.objectID, DoorLockState.Unlocked);
         }
     }
     

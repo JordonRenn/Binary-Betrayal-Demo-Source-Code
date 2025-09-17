@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using GlobalEvents;
 
 /* 
 INHERITANCE STRUCTURE:
@@ -58,19 +59,10 @@ public abstract class InventoryBase : IInventory
                 InventoryListViewItems.Add(new InventoryListItem { Item = item, Quantity = quantity });
             }
 
-            if (NotificationSystem.Instance != null)
-            {
-                Notification notification = new Notification
-                {
-                    message = $"Added {quantity}x {item.Name} to your inventory.",
-                    type = NotificationType.Normal
-                };
-                NotificationSystem.Instance.DisplayNotification(notification);
-            }
-
             if (GameMaster.Instance != null)
             {
-                GameMaster.Instance?.oe_ItemAdded?.Invoke(Type, item.ItemId, item.Name);
+                // GameMaster.Instance?.oe_ItemAdded?.Invoke(Type, item.ItemId, item.Name);
+                InventoryEvents.RaiseItemAdded(Type, item.ItemId, item.Name);
             }
 
             SBGDebug.LogInfo($"Item added: {item.Name} x{quantity}. Total in inventory: {Items[item]}", $"class: InventoryBase | inventoryId:  {InventoryId}");
@@ -99,23 +91,14 @@ public abstract class InventoryBase : IInventory
                     InventoryListViewItems.Add(new InventoryListItem { Item = item, Quantity = Items[item] });
                 }
             }
-            
+
             if (Items[item] <= 0)
             {
                 Items.Remove(item);
             }
 
-            GameMaster.Instance?.oe_ItemRemoved?.Invoke(Type, item.ItemId, item.Name);
-        }
-
-        if (NotificationSystem.Instance != null)
-        {
-            Notification notification = new Notification
-            {
-                message = $"Removed {quantity}x {item.Name} from your inventory.",
-                type = NotificationType.Normal
-            };
-            NotificationSystem.Instance.DisplayNotification(notification);
+            // GameMaster.Instance?.oe_ItemRemoved?.Invoke(Type, item.ItemId, item.Name);
+            InventoryEvents.RaiseItemRemoved(Type, item.ItemId, item.Name);
         }
     }
 
