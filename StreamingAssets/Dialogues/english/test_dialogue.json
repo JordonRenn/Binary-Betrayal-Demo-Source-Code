@@ -2,45 +2,56 @@
     "dialogueId": "",
     "freezePlayer": false,
     "nodes": [
+        
         {
-            "id": "6ce48a43-d6c2-4d5d-bba0-108943eb8bad",
+            "id": "efc644f1-c234-41d6-81c3-0e6fd0fcc2c3",
             "type": 0,
-            "characterName": "john",
-            "message": "This is John",
-            "outputNodeId": "340b7451-c503-4198-85ac-4f3b75c57a75",
+            "characterName": "Sarah",
+            "message": "John?",
+            "outputNodeId": "6e06c109-0e90-4425-9f24-2f87cddbced2",
             "position": {
-                "x": -160.0,
-                "y": 352.0
+                "x": 84.0,
+                "y": 367.0
             },
             "choices": []
         },
         {
-            "id": "f9b03380-5e60-47c0-81cf-9569ba2878cc",
+            "id": "6e06c109-0e90-4425-9f24-2f87cddbced2",
+            "type": 0,
+            "characterName": "John",
+            "message": "Hey... Sarah",
+            "outputNodeId": "882612d9-2f85-471e-b730-4d2def8cf93e",
+            "position": {
+                "x": 540.0,
+                "y": 368.0
+            },
+            "choices": []
+        },
+        {
+            "id": "882612d9-2f85-471e-b730-4d2def8cf93e",
             "type": 1,
-            "characterName": "sarah",
-            "message": "Whatchya need?",
+            "characterName": "Sarah",
+            "message": "What do you need for the first choice?",
             "outputNodeId": "",
             "position": {
-                "x": 603.0,
-                "y": 274.0
+                "x": 860.0,
+                "y": 346.0
             },
             "choices": [
                 {
                     "choiceType": 0,
+                    "outputNodeId": "db0179bb-0460-4f9c-ad78-ecd985cd06d0",
                     "text": "Option A",
                     "nextEntryIndex": -1,
-                    "nextDialogueId": "",
-                    "outputNodeId": "d44813e6-0de3-4e9e-a7cf-2ce85cad533a",
                     "itemId": "",
                     "quantity": 0,
                     "questId": ""
                 },
                 {
                     "choiceType": 0,
+                    "outputNodeId": "1794f7f7-a756-480c-add1-e7d8f20b34aa",
                     "text": "Option B",
                     "nextEntryIndex": -1,
-                    "nextDialogueId": "",
-                    "outputNodeId": "f41cbb26-bdb1-46ad-90f1-9e4c0541a571",
                     "itemId": "",
                     "quantity": 0,
                     "questId": ""
@@ -48,106 +59,209 @@
             ]
         },
         {
-            "id": "340b7451-c503-4198-85ac-4f3b75c57a75",
-            "type": 0,
-            "characterName": "sarah",
-            "message": "Good evening, John",
-            "outputNodeId": "f9b03380-5e60-47c0-81cf-9569ba2878cc",
-            "position": {
-                "x": 173.0,
-                "y": 342.0
-            },
-            "choices": []
-        },
-        {
-            "id": "d44813e6-0de3-4e9e-a7cf-2ce85cad533a",
+            "id": "1794f7f7-a756-480c-add1-e7d8f20b34aa",
             "type": 0,
             "characterName": "John",
-            "message": "I need option A",
-            "outputNodeId": "721e78a0-0584-4eb3-80cc-521ef41d8c46",
+            "message": "Option B is what i need",
+            "outputNodeId": "5553407d-aed5-45da-bf56-c057c690ced8",
             "position": {
-                "x": 1177.0,
-                "y": 303.0
-            },
-            "choices": []
-        },
-        {
-            "id": "f41cbb26-bdb1-46ad-90f1-9e4c0541a571",
-            "type": 0,
-            "characterName": "John",
-            "message": "I need option B",
-            "outputNodeId": "721e78a0-0584-4eb3-80cc-521ef41d8c46",
-            "position": {
-                "x": 1183.0,
+                "x": 1390.0,
                 "y": 702.0
             },
             "choices": []
         },
         {
-            "id": "721e78a0-0584-4eb3-80cc-521ef41d8c46",
+            "id": "db0179bb-0460-4f9c-ad78-ecd985cd06d0",
             "type": 0,
-            "characterName": "Sarah",
-            "message": "There ya go!",
-            "outputNodeId": "0e539592-5d5c-4787-aa3d-7da6b2edec95",
+            "characterName": "John",
+            "message": "I'll take Option A",
+            "outputNodeId": "d5283af8-e1fa-4bc2-8931-03af19fc6985",
             "position": {
-                "x": 1663.0,
-                "y": 518.0
+                "x": 1351.0,
+                "y": 367.0
             },
             "choices": []
         },
         {
-            "id": "0e539592-5d5c-4787-aa3d-7da6b2edec95",
+            "id": "d5283af8-e1fa-4bc2-8931-03af19fc6985",
             "type": 0,
-            "characterName": "john",
-            "message": "Bye!",
+            "characterName": "Sarah",
+            "message": "How original...",
+            "outputNodeId": "5553407d-aed5-45da-bf56-c057c690ced8",
+            "position": {
+                "x": 1706.0,
+                "y": 374.0
+            },
+            "choices": []
+        },
+        {
+            "id": "5553407d-aed5-45da-bf56-c057c690ced8",
+            "type": 0,
+            "characterName": "John",
+            "message": "What else you got for me?",
+            "outputNodeId": "e960f59c-39d9-4302-989b-45334ffb7fe5",
+            "position": {
+                "x": 2026.0,
+                "y": 566.0
+            },
+            "choices": []
+        },
+        {
+            "id": "e960f59c-39d9-4302-989b-45334ffb7fe5",
+            "type": 1,
+            "characterName": "Sarah",
+            "message": "You gonna do this Mission?",
             "outputNodeId": "",
             "position": {
-                "x": 2031.0,
-                "y": 528.0
+                "x": 2432.0,
+                "y": 367.0
+            },
+            "choices": [
+                {
+                    "choiceType": 3,
+                    "outputNodeId": "77bd0bc2-8233-4b5b-b618-2070bf50bbd1",
+                    "text": "Start Mission",
+                    "nextEntryIndex": -1,
+                    "itemId": "",
+                    "quantity": 0,
+                    "questId": "test_quest"
+                },
+                {
+                    "choiceType": 0,
+                    "outputNodeId": "9bbd59bc-b05b-43d3-9588-34e77ec6ec24",
+                    "text": "Repick Option",
+                    "nextEntryIndex": -1,
+                    "itemId": "",
+                    "quantity": 0,
+                    "questId": ""
+                }
+            ]
+        },
+        {
+            "id": "77bd0bc2-8233-4b5b-b618-2070bf50bbd1",
+            "type": 0,
+            "characterName": "John",
+            "message": "I accept the mission",
+            "outputNodeId": "2d1ca6c2-3e62-441f-ba96-f54f80190ab0",
+            "position": {
+                "x": 2949.0,
+                "y": 381.0
+            },
+            "choices": []
+        },
+        {
+            "id": "2d1ca6c2-3e62-441f-ba96-f54f80190ab0",
+            "type": 0,
+            "characterName": "Sarah",
+            "message": "Good, now get on with it",
+            "outputNodeId": "c0cc7158-9e8c-4426-95f2-d29682c00121",
+            "position": {
+                "x": 3335.0,
+                "y": 381.0
+            },
+            "choices": []
+        },
+        {
+            "id": "c0cc7158-9e8c-4426-95f2-d29682c00121",
+            "type": 0,
+            "characterName": "John",
+            "message": "Thanks Queen",
+            "outputNodeId": "",
+            "position": {
+                "x": 3686.0,
+                "y": 381.0
+            },
+            "choices": []
+        },
+        {
+            "id": "9bbd59bc-b05b-43d3-9588-34e77ec6ec24",
+            "type": 0,
+            "characterName": "John",
+            "message": "What was that question earlier?",
+            "outputNodeId": "882612d9-2f85-471e-b730-4d2def8cf93e",
+            "position": {
+                "x": 3028.0,
+                "y": 730.0
             },
             "choices": []
         }
     ],
     "connections": [
         {
-            "outputNodeId": "340b7451-c503-4198-85ac-4f3b75c57a75",
-            "inputNodeId": "f9b03380-5e60-47c0-81cf-9569ba2878cc",
+            "outputNodeId": "efc644f1-c234-41d6-81c3-0e6fd0fcc2c3",
+            "inputNodeId": "6e06c109-0e90-4425-9f24-2f87cddbced2",
             "outputPortName": "Output",
             "inputPortName": "Input"
         },
         {
-            "outputNodeId": "d44813e6-0de3-4e9e-a7cf-2ce85cad533a",
-            "inputNodeId": "721e78a0-0584-4eb3-80cc-521ef41d8c46",
+            "outputNodeId": "6e06c109-0e90-4425-9f24-2f87cddbced2",
+            "inputNodeId": "882612d9-2f85-471e-b730-4d2def8cf93e",
             "outputPortName": "Output",
             "inputPortName": "Input"
         },
         {
-            "outputNodeId": "f41cbb26-bdb1-46ad-90f1-9e4c0541a571",
-            "inputNodeId": "721e78a0-0584-4eb3-80cc-521ef41d8c46",
-            "outputPortName": "Output",
-            "inputPortName": "Input"
-        },
-        {
-            "outputNodeId": "f9b03380-5e60-47c0-81cf-9569ba2878cc",
-            "inputNodeId": "d44813e6-0de3-4e9e-a7cf-2ce85cad533a",
+            "outputNodeId": "882612d9-2f85-471e-b730-4d2def8cf93e",
+            "inputNodeId": "db0179bb-0460-4f9c-ad78-ecd985cd06d0",
             "outputPortName": "Choice 1 Output",
             "inputPortName": "Input"
         },
         {
-            "outputNodeId": "f9b03380-5e60-47c0-81cf-9569ba2878cc",
-            "inputNodeId": "f41cbb26-bdb1-46ad-90f1-9e4c0541a571",
+            "outputNodeId": "882612d9-2f85-471e-b730-4d2def8cf93e",
+            "inputNodeId": "1794f7f7-a756-480c-add1-e7d8f20b34aa",
             "outputPortName": "Choice 2 Output",
             "inputPortName": "Input"
         },
         {
-            "outputNodeId": "6ce48a43-d6c2-4d5d-bba0-108943eb8bad",
-            "inputNodeId": "340b7451-c503-4198-85ac-4f3b75c57a75",
+            "outputNodeId": "db0179bb-0460-4f9c-ad78-ecd985cd06d0",
+            "inputNodeId": "d5283af8-e1fa-4bc2-8931-03af19fc6985",
             "outputPortName": "Output",
             "inputPortName": "Input"
         },
         {
-            "outputNodeId": "721e78a0-0584-4eb3-80cc-521ef41d8c46",
-            "inputNodeId": "0e539592-5d5c-4787-aa3d-7da6b2edec95",
+            "outputNodeId": "d5283af8-e1fa-4bc2-8931-03af19fc6985",
+            "inputNodeId": "5553407d-aed5-45da-bf56-c057c690ced8",
+            "outputPortName": "Output",
+            "inputPortName": "Input"
+        },
+        {
+            "outputNodeId": "1794f7f7-a756-480c-add1-e7d8f20b34aa",
+            "inputNodeId": "5553407d-aed5-45da-bf56-c057c690ced8",
+            "outputPortName": "Output",
+            "inputPortName": "Input"
+        },
+        {
+            "outputNodeId": "5553407d-aed5-45da-bf56-c057c690ced8",
+            "inputNodeId": "e960f59c-39d9-4302-989b-45334ffb7fe5",
+            "outputPortName": "Output",
+            "inputPortName": "Input"
+        },
+        {
+            "outputNodeId": "e960f59c-39d9-4302-989b-45334ffb7fe5",
+            "inputNodeId": "77bd0bc2-8233-4b5b-b618-2070bf50bbd1",
+            "outputPortName": "Choice 1 Output",
+            "inputPortName": "Input"
+        },
+        {
+            "outputNodeId": "e960f59c-39d9-4302-989b-45334ffb7fe5",
+            "inputNodeId": "9bbd59bc-b05b-43d3-9588-34e77ec6ec24",
+            "outputPortName": "Choice 2 Output",
+            "inputPortName": "Input"
+        },
+        {
+            "outputNodeId": "2d1ca6c2-3e62-441f-ba96-f54f80190ab0",
+            "inputNodeId": "c0cc7158-9e8c-4426-95f2-d29682c00121",
+            "outputPortName": "Output",
+            "inputPortName": "Input"
+        },
+        {
+            "outputNodeId": "77bd0bc2-8233-4b5b-b618-2070bf50bbd1",
+            "inputNodeId": "2d1ca6c2-3e62-441f-ba96-f54f80190ab0",
+            "outputPortName": "Output",
+            "inputPortName": "Input"
+        },
+        {
+            "outputNodeId": "9bbd59bc-b05b-43d3-9588-34e77ec6ec24",
+            "inputNodeId": "882612d9-2f85-471e-b730-4d2def8cf93e",
             "outputPortName": "Output",
             "inputPortName": "Input"
         }

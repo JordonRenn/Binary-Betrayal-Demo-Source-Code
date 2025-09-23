@@ -24,7 +24,6 @@ public class DialogueEditorWindow : EditorWindow
     #region UI Creation
     private void CreateGUI()
     {
-        // Load styles
         variablesStyleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/Editor/DialogueGraphView/DialogueStyleVariables.uss");
 
         GenerateToolbar();
@@ -47,7 +46,6 @@ public class DialogueEditorWindow : EditorWindow
         var toolbar = new Toolbar();
         toolbar.AddToClassList("dialogue-toolbar");
 
-        // File Menu Dropdown
         var fileMenuDropdown = new ToolbarMenu { text = "File" };
 
         fileMenuDropdown.menu.AppendAction("New", action => NewGraph());
@@ -57,7 +55,6 @@ public class DialogueEditorWindow : EditorWindow
 
         toolbar.Add(fileMenuDropdown);
 
-        // Add filename display
         var fileNameTextField = new TextField("File Name:")
         {
             value = fileName,
@@ -113,12 +110,10 @@ public class DialogueEditorWindow : EditorWindow
 
     private void SaveToFile(string path)
     {
-        // Ensure directory exists
         Directory.CreateDirectory(Path.GetDirectoryName(path));
 
         var graphData = new DialogueGraphData();
 
-        // Save nodes
         foreach (var node in graphView.nodes.ToList())
         {
             if (node is DialogueBaseNode dialogueNode)
@@ -264,109 +259,138 @@ public class DialogueEditorWindow : EditorWindow
         graphView.DeleteElements(graphView.edges.ToList());
 
         // Load and parse JSON
-        string jsonContent = File.ReadAllText(path);
-        var graphData = JsonUtility.FromJson<DialogueGraphData>(jsonContent);
-
-        // Dictionary to store nodes for connection later
-        var nodeLookup = new Dictionary<string, DialogueBaseNode>();
-
-        // Create nodes
-        foreach (var nodeData in graphData.nodes)
+        try 
         {
-            DialogueBaseNode node = null;
+            string jsonContent = File.ReadAllText(path);
+            var graphData = JsonUtility.FromJson<DialogueGraphData>(jsonContent);
 
-            // Create the appropriate node type
-            switch (nodeData.type)
+            // Dictionary to store nodes for connection later
+            var nodeLookup = new Dictionary<string, DialogueBaseNode>();
+
+            // Create nodes
+            foreach (var nodeData in graphData.nodes)
             {
-                case DialogueType.Choice:
-                    var choiceNode = new DialogueChoiceNode();
-                    if (nodeData.choices != null)
-                    {
-                        foreach (var choiceData in nodeData.choices)
+                DialogueBaseNode node = null;
+
+                // Create the appropriate node type
+                switch (nodeData.type)
+                {
+                    case DialogueType.Choice:
+                        var choiceNode = new DialogueChoiceNode();
+                        if (nodeData.choices != null)
                         {
-                            Choice choice = null;
-                            switch (choiceData.choiceType)
+                            foreach (var choiceData in nodeData.choices)
                             {
-                                case ChoiceType.GiveItem:
-                                    choice = new ChoiceGiveItem
-                                    {
-                                        itemId = choiceData.itemId,
-                                        quantity = choiceData.quantity
-                                    };
-                                    break;
-                                case ChoiceType.TakeItem:
-                                    choice = new ChoiceTakeItem
-                                    {
-                                        itemId = choiceData.itemId,
-                                        quantity = choiceData.quantity
-                                    };
-                                    break;
-                                case ChoiceType.StartQuest:
-                                    choice = new ChoiceStartQuest
-                                    {
-                                        questId = choiceData.questId
-                                    };
-                                    break;
-                                default:
-                                    choice = new Choice();
-                                    break;
+                                Choice choice = null;
+                                switch (choiceData.choiceType)
+                                {
+                                    case ChoiceType.GiveItem:
+                                        choice = new ChoiceGiveItem
+                                        {
+                                            itemId = choiceData.itemId,
+                                            quantity = choiceData.quantity
+                                        };
+                                        break;
+                                    case ChoiceType.TakeItem:
+                                        choice = new ChoiceTakeItem
+                                        {
+                                            itemId = choiceData.itemId,
+                                            quantity = choiceData.quantity
+                                        };
+                                        break;
+                                    case ChoiceType.StartQuest:
+                                        choice = new ChoiceStartQuest
+                                        {
+                                            questId = choiceData.questId
+                                        };
+                                        break;
+                                    default:
+                                        choice = new Choice();
+                                        break;
+                                }
+                                choice.text = choiceData.text;
+                                // choice.outputNodeId = choiceData.outputNodeId; // not needed, choices have outputs
+                                choiceNode.choices.Add(choice);
                             }
-                            choice.text = choiceData.text;
-                            // choice.outputNodeId = choiceData.outputNodeId; // not needed, choices have outputs
-                            choiceNode.choices.Add(choice);
                         }
-                    }
-                    node = choiceNode;
-                    break;
-                default:
-                    node = new DialogueBaseNode();
-                    break;
+                        node = choiceNode;
+                        node.title = "Choice Node";
+                        break;
+                    default:
+                        node = new DialogueBaseNode();
+                        node.title = "Dialogue Node";
+                        break;
+                }
+
+                // Set common properties
+                node.GUID = nodeData.id;
+                node.Type = nodeData.type;
+                node.characterName = nodeData.characterName;
+                node.message = nodeData.message;
+
+                // Add node to graph
+                node.Initialize(nodeData.position);
+                node.Draw();
+                graphView.AddElement(node);
+
+                // Store for connections
+                nodeLookup[node.GUID] = node;
             }
 
-            // Set common properties
-            node.GUID = nodeData.id;
-            node.Type = nodeData.type;
-            node.characterName = nodeData.characterName;
-            node.message = nodeData.message;
-
-            // Add node to graph
-            node.Initialize(nodeData.position);
-            node.Draw();
-            graphView.AddElement(node);
-
-            // Store for connections
-            nodeLookup[node.GUID] = node;
-        }
-
-        // Create connections
-        foreach (var connectionData in graphData.connections)
-        {
-            if (nodeLookup.TryGetValue(connectionData.outputNodeId, out var outputNode) &&
-                nodeLookup.TryGetValue(connectionData.inputNodeId, out var inputNode))
+            // Create connections
+            foreach (var connectionData in graphData.connections)
             {
-                // Find the correct ports
-                var outputPort = outputNode.outputContainer.Children()
-                    .OfType<Port>()
-                    .FirstOrDefault(p => p.portName == connectionData.outputPortName);
-                var inputPort = inputNode.inputContainer.Children()
-                    .OfType<Port>()
-                    .FirstOrDefault(p => p.portName == connectionData.inputPortName);
-
-                if (outputPort != null && inputPort != null)
+                if (nodeLookup.TryGetValue(connectionData.outputNodeId, out var outputNode) &&
+                    nodeLookup.TryGetValue(connectionData.inputNodeId, out var inputNode))
                 {
-                    var edge = new Edge
+                    // Find the correct ports
+                    var outputPort = outputNode.outputContainer.Children()
+                        .OfType<Port>()
+                        .FirstOrDefault(p => p.portName == connectionData.outputPortName);
+                    var inputPort = inputNode.inputContainer.Children()
+                        .OfType<Port>()
+                        .FirstOrDefault(p => p.portName == connectionData.inputPortName);
+
+                    if (outputPort != null && inputPort != null)
                     {
-                        output = outputPort,
-                        input = inputPort
-                    };
-                    edge.input.Connect(edge);
-                    edge.output.Connect(edge);
-                    graphView.AddElement(edge);
+                        var edge = new Edge
+                        {
+                            output = outputPort,
+                            input = inputPort
+                        };
+                        edge.input.Connect(edge);
+                        edge.output.Connect(edge);
+                        graphView.AddElement(edge);
+                    }
                 }
             }
-        }
 
         Debug.Log($"Loaded dialogue from: {path}");
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError($"Error loading dialogue: {ex}");
+            EditorUtility.DisplayDialog("Error", "Failed to load dialogue file. Check console for details.", "OK");
+        }
+    }
+
+    private Port FindPortInContainer(VisualElement container, string portName)
+    {
+        return container.Children()
+            .OfType<Port>()
+            .FirstOrDefault(p => p.portName == portName);
+    }
+
+    private void ConnectPorts(Port output, Port input)
+    {
+        var edge = new Edge
+        {
+            output = output,
+            input = input
+        };
+        edge.input.Connect(edge);
+        edge.output.Connect(edge);
+        graphView.AddElement(edge);
     }
     #endregion
 }
