@@ -26,7 +26,7 @@ public abstract class ObjectiveBase : IObjective
             IsCompleted = true;
             Progress = 1f;
             Status = success ? ObjectiveStatus.CompletedSuccess : ObjectiveStatus.CompletedFailure;
-            SBGDebug.LogInfo($"Objective {ObjectiveID} completed with status {Status}: {Message}", GetType().Name);
+            // SBGDebug.LogInfo($"Objective {ObjectiveID} completed with status {Status}: {Message}", GetType().Name);
         }
     }
 
@@ -35,7 +35,7 @@ public abstract class ObjectiveBase : IObjective
         IsCompleted = true;
         Progress = 1f;
         Status = status;
-        SBGDebug.LogInfo($"Objective {ObjectiveID} force completed with status {Status}: {Message}", GetType().Name);
+        // SBGDebug.LogInfo($"Objective {ObjectiveID} force completed with status {Status}: {Message}", GetType().Name);
     }
 
     protected void UpdateProgress(float currentValue, float targetValue)

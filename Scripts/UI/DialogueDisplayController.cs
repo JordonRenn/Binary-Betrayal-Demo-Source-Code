@@ -138,14 +138,14 @@ public class DialogueDisplayController : MonoBehaviour
         if (previousInputState.HasValue)
         {
             if (previousInputState != InputState.UI) InputHandler.Instance.SetInputState(previousInputState.Value);
-            SBGDebug.LogInfo($"Restored input state to {previousInputState}", "DialogueDisplayController | EndDialogue");
+            // SBGDebug.LogInfo($"Restored input state to {previousInputState}", "DialogueDisplayController | EndDialogue");
             previousInputState = null;
         }
 
         // GameMaster.Instance?.gm_DialogueEnded?.Invoke();
         DialogueEvents.RaiseDialogueEnded();
 
-        SBGDebug.LogInfo("Ended dialogue", "DialogueDisplayController | EndDialogue");
+        // SBGDebug.LogInfo("Ended dialogue", "DialogueDisplayController | EndDialogue");
     }
 
     /// <summary>
@@ -250,7 +250,7 @@ public class DialogueDisplayController : MonoBehaviour
         // Add click handler for advancing dialogue
         dialogueBox.RegisterCallback<ClickEvent>(OnDialogueBoxClicked);
 
-        SBGDebug.LogInfo("UI elements initialized successfully", "DialogueDisplayController | InitializeUIElements");
+        // SBGDebug.LogInfo("UI elements initialized successfully", "DialogueDisplayController | InitializeUIElements");
     }
 
     private void OnDialogueBoxClicked(ClickEvent evt)
@@ -337,7 +337,7 @@ public class DialogueDisplayController : MonoBehaviour
         SetChoiceBoxVisible(false);
         ClearChoiceButtons();
 
-        SBGDebug.LogInfo($"Displaying text entry: {entry.characterName}: {entry.message}", "DialogueDisplayController | DisplayTextEntry");
+        // SBGDebug.LogInfo($"Displaying text entry: {entry.characterName}: {entry.message}", "DialogueDisplayController | DisplayTextEntry");
     }
     #endregion
 
@@ -358,7 +358,7 @@ public class DialogueDisplayController : MonoBehaviour
         {
             previousInputState = InputHandler.Instance.currentState;
             InputHandler.Instance.SetInputState(InputState.UI);
-            SBGDebug.LogInfo($"Switched to UI input state (from {previousInputState})", "DialogueDisplayController | DisplayChoiceEntry");
+            // SBGDebug.LogInfo($"Switched to UI input state (from {previousInputState})", "DialogueDisplayController | DisplayChoiceEntry");
         }
 
         // Display the dialogue text
@@ -384,7 +384,7 @@ public class DialogueDisplayController : MonoBehaviour
             // Use Button's built-in clicked event instead of ClickEvent
             choiceButton.clicked += () =>
             {
-                SBGDebug.LogInfo($"Choice button clicked: {choiceIndex}", "DialogueDisplayController | DisplayChoiceEntry");
+                // SBGDebug.LogInfo($"Choice button clicked: {choiceIndex}", "DialogueDisplayController | DisplayChoiceEntry");
                 SelectChoice(choiceIndex);
             };
 
@@ -405,12 +405,12 @@ public class DialogueDisplayController : MonoBehaviour
     #region Event Handlers
     private void OnDialogueStartedEvent()
     {
-        SBGDebug.LogInfo("Dialogue started event received", "DialogueDisplayController | OnDialogueStartedEvent");
+        // SBGDebug.LogInfo("Dialogue started event received", "DialogueDisplayController | OnDialogueStartedEvent");
     }
 
     private void OnDialogueEndedEvent()
     {
-        SBGDebug.LogInfo("Dialogue ended event received", "DialogueDisplayController | OnDialogueEndedEvent");
+        // SBGDebug.LogInfo("Dialogue ended event received", "DialogueDisplayController | OnDialogueEndedEvent");
     }
     #endregion
 }

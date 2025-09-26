@@ -113,12 +113,12 @@ public class CharacterMovement : MonoBehaviour
     [HideInInspector] public float lastDropDistance = 0f; // Always calculated for future fall damage
 	void Awake()
 	{
-		Debug.Log("CHARACTER MOVEMENT | Instantiated");
+		// Debug.Log("CHARACTER MOVEMENT | Instantiated");
 
 		if (GameMaster.Instance != null)
 		{
 			GameMaster.Instance.playerObject = this.gameObject;
-			SBGDebug.LogInfo("Registered player object with GameMaster", "CharacterMovement");
+			// SBGDebug.LogInfo("Registered player object with GameMaster", "CharacterMovement");
 		}
 	}
 
@@ -226,7 +226,7 @@ public class CharacterMovement : MonoBehaviour
         // Optional: Log combined metrics if any logging is enabled
         if (logJumpMetrics && (jumpLength > 0.1f || jumpHeight > 0.1f || dropDistance > 0.1f))
         {
-            Debug.Log($"[Jump Metrics] Start: {startPos}, End: {endPos}, Length: {jumpLength:F2}, Height: {jumpHeight:F2}, Drop: {dropDistance:F2}");
+            // SBGDebug.Log($"[Jump Metrics] Start: {startPos}, End: {endPos}, Length: {jumpLength:F2}, Height: {jumpHeight:F2}, Drop: {dropDistance:F2}", "CharacterMovement | CalculateJumpMetrics");
         }
     }
 

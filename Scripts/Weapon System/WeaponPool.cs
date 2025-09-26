@@ -298,7 +298,7 @@ public class WeaponPool : MonoBehaviour
         }
         else
         {
-            SBGDebug.LogInfo($"Cannot swap to {targetSlot} - no weapon in that slot", "WeaponPool | SwapPrimarySecondary");
+            // SBGDebug.LogInfo($"Cannot swap to {targetSlot} - no weapon in that slot", "WeaponPool | SwapPrimarySecondary");
         }
     }
 
@@ -310,7 +310,7 @@ public class WeaponPool : MonoBehaviour
         // Don't switch if trying to switch to the already active slot
         if (slot == activeSlot)
         {
-            SBGDebug.LogInfo($"Already using weapon slot {slot}, ignoring switch request", "WeaponPool | UpdateActiveWeaponSlot");
+            // SBGDebug.LogInfo($"Already using weapon slot {slot}, ignoring switch request", "WeaponPool | UpdateActiveWeaponSlot");
             yield break;
         }
         
@@ -323,7 +323,7 @@ public class WeaponPool : MonoBehaviour
         }
 
         isSwitching = true;
-        SBGDebug.LogInfo($"Switching weapon to {slot}", "WeaponPool | UpdateActiveWeaponSlot");
+        // SBGDebug.LogInfo($"Switching weapon to {slot}", "WeaponPool | UpdateActiveWeaponSlot");
 
         // Save previous WSO for deactivation
         FPSS_WeaponSlotObject previousWSO = activeWSO;
@@ -335,7 +335,7 @@ public class WeaponPool : MonoBehaviour
         if (previousWSO.firstPersonMeshObject != null)
         {
             previousWSO.firstPersonMeshObject.SetActive(false);
-            SBGDebug.LogInfo($"Forced deactivation of {previousWSO.weaponData.displayName} mesh", "WeaponPool | UpdateActiveWeaponSlot");
+            // SBGDebug.LogInfo($"Forced deactivation of {previousWSO.weaponData.displayName} mesh", "WeaponPool | UpdateActiveWeaponSlot");
         }
         
         // Activate the new weapon slot (setting activeWSO to the new weapon)

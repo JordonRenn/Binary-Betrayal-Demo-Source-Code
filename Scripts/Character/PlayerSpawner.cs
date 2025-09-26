@@ -14,7 +14,7 @@ public class PlayerSpawner : MonoBehaviour
 
     void Awake()
     {
-        Debug.Log("PLAYER SPAWNER | Instantiated");
+        // Debug.Log("PLAYER SPAWNER | Instantiated");
         
         if (Instance == null)
         {
@@ -32,7 +32,7 @@ public class PlayerSpawner : MonoBehaviour
     /// </summary>
     public void SpawnPlayer()
     {
-        Debug.Log("PLAYER SPAWNER | Spawning player");
+        // Debug.Log("PLAYER SPAWNER | Spawning player");
         Instantiate(player, spawnPoint.position, spawnPoint.rotation);
     }
 }

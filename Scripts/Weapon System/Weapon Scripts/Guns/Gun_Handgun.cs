@@ -11,7 +11,7 @@ public class Gun_Handgun :  WPO_Gun, IWPO_Gun //inherits from FPSS_WeaponSlotObj
     
     public override void Fire()
     {
-        Debug.Log("Fire Handgun");
+        // Debug.Log("Fire Handgun");
         if (isActive && !isReloading) 
         {
             StartCoroutine(FireBullet());
@@ -50,7 +50,7 @@ public class Gun_Handgun :  WPO_Gun, IWPO_Gun //inherits from FPSS_WeaponSlotObj
 
     public override void Reload()
     {
-        Debug.Log("Reload Handgun");
+        // Debug.Log("Reload Handgun");
         if (isReloading) return;
         if (!canReload) return;
 

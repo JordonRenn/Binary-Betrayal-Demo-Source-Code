@@ -9,12 +9,16 @@
 - Textures
 - config and settings files
 
-Code is formatted to be used with Doxygen. 
-Doxygen Unity Intergration ["Doxygen Generator"](https://github.com/CaseyHofland/DoxygenGenerator) by Casey Hofland, JacobPennock, and Brogrammar.
 
 ### Made with:
 - Unity 6000.0.23f
 - Input System 1.11.1 (Unity)
-- GraphView (Unity)
+- Unity GraphView
 - DOTween Pro 1.0.380
 - FMOD for Unity 2.02.24
+- UMotion Pro 1.29p04
+- SimdJson (C++ Library)
+
+#### Links:
+["SimdJson"](https://github.com/simdjson/simdjson) </br>
+Doxygen Unity Intergration ["Doxygen Generator"](https://github.com/CaseyHofland/DoxygenGenerator) </br>

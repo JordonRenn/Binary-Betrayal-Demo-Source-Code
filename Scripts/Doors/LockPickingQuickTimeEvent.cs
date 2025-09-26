@@ -104,7 +104,7 @@ public class LockPickingQuickTimeEvent : MonoBehaviour // : SauceObject
         successAreaMinAngle = successAreaStartAngle;
         successAreaMaxAngle = successAreaStartAngle + successAreaAngle;
 
-        Debug.Log($"New Success Area - Start: {successAreaStartAngle}, Angle: {successAreaAngle}, End: {successAreaMaxAngle}");
+        // Debug.Log($"New Success Area - Start: {successAreaStartAngle}, Angle: {successAreaAngle}, End: {successAreaMaxAngle}");
 
         // Ensure the success area image has a material with the custom radial mask shader
         Material material = img_SuccessArea.material;
@@ -144,7 +144,7 @@ public class LockPickingQuickTimeEvent : MonoBehaviour // : SauceObject
 
     void UnlockDoor()
     {
-        Debug.Log("Door Unlocked");
+        // SBGDebug.LogInfo("Door Unlocked", "LockPickingQuickTimeEvent | UnlockDoor");
         door.LockDoor(false);
         door.OpenDoor();
     }

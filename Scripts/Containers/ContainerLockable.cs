@@ -176,12 +176,12 @@ public class ContainerLockable : ContainerBase
             var id = "key_" + keyId;
             if (InventoryManager.Instance.playerInventory.HasItemById(id, 1))
             {
-                SBGDebug.LogInfo($"Key {id} found in inventory", $"class: DoorLockable | object: {objectDisplayName}");
+                // SBGDebug.LogInfo($"Key {id} found in inventory", $"class: DoorLockable | object: {objectDisplayName}");
                 return true;
             }
             else
             {
-                SBGDebug.LogInfo($"Key {id} not found in inventory", $"class: DoorLockable | {objectDisplayName}");
+                // SBGDebug.LogInfo($"Key {id} not found in inventory", $"class: DoorLockable | {objectDisplayName}");
             }
         }
         return false;

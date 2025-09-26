@@ -24,7 +24,7 @@ public static class GameSettings
             {
                 string json = PlayerPrefs.GetString(SETTINGS_KEY);
                 playerSettings = JsonUtility.FromJson<PlayerSettings>(json);
-                SBGDebug.LogInfo("Settings loaded successfully", "GameMaster");
+                // SBGDebug.LogInfo("Settings loaded successfully", "GameMaster");
             }
             catch (System.Exception e)
             {
@@ -35,7 +35,7 @@ public static class GameSettings
         else
         {
             playerSettings = new PlayerSettings();
-            SBGDebug.LogInfo("Using default settings", "GameMaster");
+            // SBGDebug.LogInfo("Using default settings", "GameMaster");
         }
     }
 
@@ -66,7 +66,7 @@ public static class GameSettings
             string json = JsonUtility.ToJson(playerSettings);
             PlayerPrefs.SetString(SETTINGS_KEY, json);
             PlayerPrefs.Save();
-            SBGDebug.LogInfo("Settings saved successfully", "GameMaster");
+            // SBGDebug.LogInfo("Settings saved successfully", "GameMaster");
         }
         catch (Exception e)
         {

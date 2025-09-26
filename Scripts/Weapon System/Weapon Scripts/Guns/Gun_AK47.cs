@@ -5,7 +5,7 @@ public class Gun_AK47 : WPO_Gun, IWPO_Gun //inherits from FPSS_WeaponSlotObject 
 {
     public override void Fire()
     {
-        Debug.Log("Fire AK47");
+        // Debug.Log("Fire AK47");
         if (isActive && !isReloading) 
         {
             StartCoroutine(FireBullet());
@@ -49,7 +49,7 @@ public class Gun_AK47 : WPO_Gun, IWPO_Gun //inherits from FPSS_WeaponSlotObject 
 
     public override void Reload()
     {
-        Debug.Log("Reload AK47");
+        // Debug.Log("Reload AK47");
         if (isReloading) return;
         if (!canReload) return;
 

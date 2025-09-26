@@ -721,7 +721,7 @@ public class InputHandler : MonoBehaviour
             verticalSensitivityMultiplier = settings.GetVerticalSensitivityMultiplier();
             invertYAxis = settings.invertYAxis;
 
-            SBGDebug.LogInfo($"Mouse sensitivity updated - H: {horizontalSensitivityMultiplier}, V: {verticalSensitivityMultiplier}, InvertY: {invertYAxis}", "FPS_InputHandler");
+            // SBGDebug.LogInfo($"Mouse sensitivity updated - H: {horizontalSensitivityMultiplier}, V: {verticalSensitivityMultiplier}, InvertY: {invertYAxis}", "FPS_InputHandler");
         }
     }
     #endregion

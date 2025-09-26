@@ -53,7 +53,7 @@ public class FirstPersonCamController : MonoBehaviour
 
     void Awake()
     {
-        Debug.Log("FIRST PERSON CAM CONTROLLER | Instantiated");
+        // Debug.Log("FIRST PERSON CAM CONTROLLER | Instantiated");
 
         if (Instance != null && Instance != this)
         {

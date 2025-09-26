@@ -50,7 +50,7 @@ public static class ItemFactory
                 }
             }
             databaseLoaded = true;
-            SBGDebug.LogInfo($"Loaded {itemDatabase.Count} items from ItemMaster.csv", "ItemFactory | LoadItemDatabase");
+            // SBGDebug.LogInfo($"Loaded {itemDatabase.Count} items from ItemMaster.csv", "ItemFactory | LoadItemDatabase");
         }
         catch (Exception ex)
         {

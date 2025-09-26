@@ -125,7 +125,7 @@ public class DoorGeneric : Door
     public override void CloseDoor()
     {
         //play close sound
-        SBGDebug.LogInfo("Door is closing", "DoorGeneric");
+        // SBGDebug.LogInfo("Door is closing", "DoorGeneric");
 
         if (doorState == DoorState.OpenExt)
         {

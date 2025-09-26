@@ -18,7 +18,7 @@ public static class InventoryJsonParser
         try
         {
             string json = jsonTextAsset.text;
-            SBGDebug.LogInfo($"Parsing inventory. Asset name: {jsonTextAsset.name}", "InventoryJsonParser | ParseInventoryContext");
+            // SBGDebug.LogInfo($"Parsing inventory. Asset name: {jsonTextAsset.name}", "InventoryJsonParser | ParseInventoryContext");
 
             InventoryContextData contextData = new InventoryContextData
             {

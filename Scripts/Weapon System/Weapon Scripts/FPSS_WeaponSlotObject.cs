@@ -163,7 +163,7 @@ public abstract class FPSS_WeaponSlotObject : MonoBehaviour
                 if (clipInfo.Length > 0)
                 {
                     waitTime = clipInfo[0].clip.length;
-                    SBGDebug.LogInfo($"Arm animation length: {waitTime}s for {weaponData.displayName}", "FPSS_WeaponSlotObject");
+                    // SBGDebug.LogInfo($"Arm animation length: {waitTime}s for {weaponData.displayName}", "FPSS_WeaponSlotObject");
                 }
             }
         }
@@ -215,7 +215,7 @@ public abstract class FPSS_WeaponSlotObject : MonoBehaviour
                 if (clipInfo.Length > 0)
                 {
                     waitTime = clipInfo[0].clip.length;
-                    SBGDebug.LogInfo($"Disarm animation length: {waitTime}s for {weaponData.displayName}", "FPSS_WeaponSlotObject");
+                    // SBGDebug.LogInfo($"Disarm animation length: {waitTime}s for {weaponData.displayName}", "FPSS_WeaponSlotObject");
                 }
             }
         }
@@ -234,7 +234,7 @@ public abstract class FPSS_WeaponSlotObject : MonoBehaviour
 
         if (!firstPersonMeshObject)
         {
-            SBGDebug.LogInfo("Deactivated First Person Mesh Object", $"WeaponSlotObject: {weaponData.displayName}");
+            // SBGDebug.LogInfo("Deactivated First Person Mesh Object", $"WeaponSlotObject: {weaponData.displayName}");
         }
     }
 

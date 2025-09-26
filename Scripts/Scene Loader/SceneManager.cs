@@ -44,11 +44,11 @@ public class CustomSceneManager : MonoBehaviour
         // Editor-time validation
         if (fadeCanvasGroup == null)
         {
-            Debug.LogWarning($"{nameof(CustomSceneManager)}: CanvasGroup reference is required for scene transitions!");
+            SBGDebug.LogWarning($"{nameof(CustomSceneManager)}: CanvasGroup reference is required for scene transitions!", "SceneManager | OnValidate");
         }
         if (fadeImgObj == null)
         {
-            Debug.LogWarning($"{nameof(CustomSceneManager)}: Fade image GameObject reference is required!");
+            SBGDebug.LogWarning($"{nameof(CustomSceneManager)}: Fade image GameObject reference is required!", "SceneManager | OnValidate");
         }
         
         // Validate scene name constants are set in build settings
@@ -80,7 +80,7 @@ public class CustomSceneManager : MonoBehaviour
         }
         if (!sceneExists)
         {
-            Debug.LogWarning($"{nameof(CustomSceneManager)}: Scene '{sceneName}' ({description}) is not added to build settings!");
+            SBGDebug.LogWarning($"{nameof(CustomSceneManager)}: Scene '{sceneName}' ({description}) is not added to build settings!", "SceneManager | OnValidate");
         }
     }
 #endif
@@ -89,11 +89,11 @@ public class CustomSceneManager : MonoBehaviour
     {
         loader = GetComponent<ContentLoader>();
         if (loader == null)
-            Debug.LogError($"{nameof(CustomSceneManager)}: Required ContentLoader component is missing!");
+            SBGDebug.LogError($"{nameof(CustomSceneManager)}: Required ContentLoader component is missing!", "SceneManager | ValidateRequiredComponents");
         if (fadeCanvasGroup == null)
-            Debug.LogError($"{nameof(CustomSceneManager)}: Required CanvasGroup for fading is missing!");
+            SBGDebug.LogError($"{nameof(CustomSceneManager)}: Required CanvasGroup for fading is missing!", "SceneManager | ValidateRequiredComponents");
         if (fadeImgObj == null)
-            Debug.LogError($"{nameof(CustomSceneManager)}: Required fade image GameObject is missing!");
+            SBGDebug.LogError($"{nameof(CustomSceneManager)}: Required fade image GameObject is missing!", "SceneManager | ValidateRequiredComponents");
 
         ValidateSceneNames();
     }
@@ -120,18 +120,18 @@ public class CustomSceneManager : MonoBehaviour
                 SceneManager.LoadScene(scene_C01_02);
                 break;
             case SceneName.C01_03:
-                Debug.Log("CUSTOM SCENE MANAGER | Attempting Scene activation: {scene_C01_03}");
+                // Debug.Log("CUSTOM SCENE MANAGER | Attempting Scene activation: {scene_C01_03}");
                 
                 fadeCanvasGroup.DOFade(1f, fadeDuration)
                     .OnComplete(() => {
-                        Debug.Log("CUSTOM SCENE MANAGER | Scene fade to black complete");
+                        // Debug.Log("CUSTOM SCENE MANAGER | Scene fade to black complete");
                         SceneManager.LoadScene(scene_C01_03);
-                        Debug.Log("CUSTOM SCENE MANAGER | Scene loaded");
+                        // Debug.Log("CUSTOM SCENE MANAGER | Scene loaded");
                         StartCoroutine(ACTIVATESCENE_DEV1(scene_C01_03));
-                        Debug.Log("CUSTOM SCENE MANAGER | Scene Activation Coroutine Started");
+                        // Debug.Log("CUSTOM SCENE MANAGER | Scene Activation Coroutine Started");
                         DOVirtual.DelayedCall(2f, () => {fadeCanvasGroup.DOFade(0f, fadeDuration)
                             .OnComplete(() => {
-                                Debug.Log("CUSTOM SCENE MANAGER | Scene fade from black complete");
+                                // Debug.Log("CUSTOM SCENE MANAGER | Scene fade from black complete");
                                 fadeImgObj.SetActive(false);
                                 });
                         });
@@ -144,19 +144,18 @@ public class CustomSceneManager : MonoBehaviour
                 SceneManager.LoadScene(scene_EndCredits);
                 break;
             case SceneName.Dev_1:
-                //FadeScreen();
-                Debug.Log("CUSTOM SCENE MANAGER | Attempting Scene activation: {scene_Dev_1}");
+                // Debug.Log("CUSTOM SCENE MANAGER | Attempting Scene activation: {scene_Dev_1}");
 
                 fadeCanvasGroup.DOFade(1f, fadeDuration)
                     .OnComplete(() => {
-                        Debug.Log("CUSTOM SCENE MANAGER | Scene fade to black complete");
+                        // Debug.Log("CUSTOM SCENE MANAGER | Scene fade to black complete");
                         SceneManager.LoadScene(scene_Dev_1);
-                        Debug.Log("CUSTOM SCENE MANAGER | Scene loaded");
+                        // Debug.Log("CUSTOM SCENE MANAGER | Scene loaded");
                         StartCoroutine(ACTIVATESCENE_DEV1(scene_Dev_1));
-                        Debug.Log("CUSTOM SCENE MANAGER | Scene Activation Coroutine Started");
+                        // Debug.Log("CUSTOM SCENE MANAGER | Scene Activation Coroutine Started");
                         DOVirtual.DelayedCall(2f, () => {fadeCanvasGroup.DOFade(0f, fadeDuration)
                             .OnComplete(() => {
-                                Debug.Log("CUSTOM SCENE MANAGER | Scene fade from black complete");
+                                // Debug.Log("CUSTOM SCENE MANAGER | Scene fade from black complete");
                                 fadeImgObj.SetActive(false);
                                 });
                         });
@@ -171,14 +170,14 @@ public class CustomSceneManager : MonoBehaviour
 
     private IEnumerator ACTIVATESCENE_MAINMENU(string sceneName)
     {
-        Debug.Log("CUSTOM SCENE MANAGER | Scene Activation started");
+        // Debug.Log("CUSTOM SCENE MANAGER | Scene Activation started");
         yield return new WaitForSeconds(0.05f);
         
         Scene scene = SceneManager.GetSceneByName(sceneName);
-        Debug.Log($"CUSTOM SCENE MANAGER | Scene found be name: {sceneName}");
+        // Debug.Log($"CUSTOM SCENE MANAGER | Scene found be name: {sceneName}");
 
         SceneManager.SetActiveScene(scene);
-        Debug.Log($"CUSTOM SCENE MANAGER | Scene activated: {sceneName}");
+        // Debug.Log($"CUSTOM SCENE MANAGER | Scene activated: {sceneName}");
 
         ContentLoader.Instance.LoadScene(SceneName.MainMenu);
 
@@ -187,40 +186,40 @@ public class CustomSceneManager : MonoBehaviour
 
     private IEnumerator ACTIVATESCENE_DEV1(string sceneName)
     {
-        Debug.Log("CUSTOM SCENE MANAGER | Scene Activation started");
+        // Debug.Log("CUSTOM SCENE MANAGER | Scene Activation started");
         yield return new WaitForSeconds(0.25f);
         
         Scene scene = SceneManager.GetSceneByName(sceneName);
-        Debug.Log($"CUSTOM SCENE MANAGER | Scene found be name: {sceneName}");
+        // Debug.Log($"CUSTOM SCENE MANAGER | Scene found be name: {sceneName}");
 
         SceneManager.SetActiveScene(scene);
-        Debug.Log($"CUSTOM SCENE MANAGER | Scene activated: {sceneName}");
+        // Debug.Log($"CUSTOM SCENE MANAGER | Scene activated: {sceneName}");
 
 
         ContentLoader.Instance.LoadScene(SceneName.Dev_1);
-        Debug.Log($"CUSTOM SCENE MANAGER | Calling content loader to load content for scene: {sceneName}");
+        // Debug.Log($"CUSTOM SCENE MANAGER | Calling content loader to load content for scene: {sceneName}");
 
         InputHandler.Instance.SetInputState(InputState.FirstPerson);
-        Debug.Log("CUSTOM SCENE MANAGER | Calling ''PlayerSpawner'' to spawn the Player");
+        // Debug.Log("CUSTOM SCENE MANAGER | Calling ''PlayerSpawner'' to spawn the Player");
         PlayerSpawner.Instance.SpawnPlayer();
     }
 
     private IEnumerator ACTIVATESCENE_C01_03(string sceneName)
     {
-        Debug.Log("CUSTOM SCENE MANAGER | Scene Activation started");
+        // Debug.Log("CUSTOM SCENE MANAGER | Scene Activation started");
         yield return new WaitForSeconds(0.25f);
         
         Scene scene = SceneManager.GetSceneByName(sceneName);
-        Debug.Log($"CUSTOM SCENE MANAGER | Scene found be name: {sceneName}");
+        // Debug.Log($"CUSTOM SCENE MANAGER | Scene found be name: {sceneName}");
 
         SceneManager.SetActiveScene(scene);
-        Debug.Log($"CUSTOM SCENE MANAGER | Scene activated: {sceneName}");
+        // Debug.Log($"CUSTOM SCENE MANAGER | Scene activated: {sceneName}");
 
         ContentLoader.Instance.LoadScene(SceneName.C01_03);
-        Debug.Log($"CUSTOM SCENE MANAGER | Calling content loader to load content for scene: {sceneName}");
+        // Debug.Log($"CUSTOM SCENE MANAGER | Calling content loader to load content for scene: {sceneName}");
 
         InputHandler.Instance.SetInputState(InputState.FirstPerson);
-        Debug.Log("CUSTOM SCENE MANAGER | Calling ''PlayerSpawner'' to spawn the Player");
+        // Debug.Log("CUSTOM SCENE MANAGER | Calling ''PlayerSpawner'' to spawn the Player");
         PlayerSpawner.Instance.SpawnPlayer();
     }
 }

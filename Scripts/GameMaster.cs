@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 using GlobalEvents;
 
 public class GameMaster : MonoBehaviour
@@ -28,7 +27,10 @@ public class GameMaster : MonoBehaviour
     {
         if (this.InitializeSingleton(ref _instance, true) == this)
         {
-            /* LoadSettings(); */
+            SBGDebug.LogVerbose("GameMaster instance initialized.", "GameMaster | Awake");
+            DontDestroyOnLoad(this.gameObject);
+
+            SystemEvents.RaiseGameMasterInitialized();
         }
     }
 } 

@@ -120,7 +120,7 @@ public class DoorLockable : DoorGeneric
             // Key not required, allow lock picking
             if (qte_LockPick != null && qte_LockPick.IsPickable())
             {
-                SBGDebug.LogInfo("Triggering LockPick QTE", "DoorLockable");
+                // SBGDebug.LogInfo("Triggering LockPick QTE", "DoorLockable");
                 qte_LockPick.Interact();
             }
         }
@@ -179,7 +179,7 @@ public class DoorLockable : DoorGeneric
             }
             else if (v == LockedDoorDialogueVariation.LockedCanLockPick && qte_LockPick != null && qte_LockPick.IsPickable())
             {
-                SBGDebug.LogInfo("Triggering LockPick QTE after dialogue", "DoorLockable");
+                // SBGDebug.LogInfo("Triggering LockPick QTE after dialogue", "DoorLockable");
                 qte_LockPick.Interact();
             }
             else
@@ -224,12 +224,12 @@ public class DoorLockable : DoorGeneric
             if (InventoryManager.Instance.playerInventory.HasItemById(id, 1))
             {
                 playerHasKey = true;
-                SBGDebug.LogInfo($"Key {id} found in inventory", $"class: DoorLockable | object: {objectDisplayName}");
+                // SBGDebug.LogInfo($"Key {id} found in inventory", $"class: DoorLockable | object: {objectDisplayName}");
                 return true;
             }
             else
             {
-                SBGDebug.LogInfo($"Key {id} not found in inventory", $"class: DoorLockable | {objectDisplayName}");
+                // SBGDebug.LogInfo($"Key {id} not found in inventory", $"class: DoorLockable | {objectDisplayName}");
             }
         }
         return false;

@@ -65,13 +65,13 @@ public class InventoryManager : MonoBehaviour
         else if (GenerateEmptyInventory)
         {
             SetPlayerInventory(new Inv_Player("PlayerInventory", "Player Inventory", 100));
-            Debug.Log("Generated empty player inventory.");
+            // Debug.Log("Generated empty player inventory.");
 
             inventoryLoaded = true; // I guess? might break some stuff.. idk
         }
         else
         {
-            Debug.LogWarning("HEY DUMBASS, YOU NEED TO LOAD A GOD DAMN INVENTORY FOR THE PLAYER, OR THEY WON'T HAVE ONE. FIX IT.");
+            SBGDebug.LogWarning("HEY DUMBASS, YOU NEED TO LOAD A GOD DAMN INVENTORY FOR THE PLAYER, OR THEY WON'T HAVE ONE. FIX IT.", "InventoryManager | Start");
         }
     }
 
@@ -81,12 +81,9 @@ public class InventoryManager : MonoBehaviour
     /// </summary>
     public void SetPlayerInventory(IInventory inventory)
     {
-        // Clear any existing inventory reference
         playerInventory = null;
-
-        // Set the new inventory
         playerInventory = inventory;
-        Debug.Log($"Player inventory set: {inventory.Name} with {inventory.GetItems().Length} unique item types");
+        // Debug.Log($"Player inventory set: {inventory.Name} with {inventory.GetItems().Length} unique item types");
         inventoryLoaded = true;
     }
 
@@ -105,14 +102,13 @@ public class InventoryManager : MonoBehaviour
     {
         if (playerInventory != null)
         {
-            Debug.Log($"Adding item to player inventory: {item.Name} x{quantity}");
+            // Debug.Log($"Adding item to player inventory: {item.Name} x{quantity}");
             playerInventory.AddItem(item, quantity);
-            SBGDebug.LogInfo($"Item {item.Name} added to inventory. Total count: {quantity}", "InventoryManager");
-            //GameMaster.Instance?.gm_ItemAdded?.Invoke(InventoryType.Player, item.ItemId, item.Name);
+            // SBGDebug.LogInfo($"Item {item.Name} added to inventory. Total count: {quantity}", "InventoryManager");
         }
         else
         {
-            Debug.LogError($"Cannot add item {item.Name} - player inventory is null!");
+            SBGDebug.LogError($"Cannot add item {item.Name} - player inventory is null!", "InventoryManager | AddItemToPlayer");
         }
     }
 
@@ -135,11 +131,11 @@ public class InventoryManager : MonoBehaviour
         if (playerInventory != null)
         {
             SetPlayerInventory(playerInventory);
-            Debug.Log("Dummy inventory loaded from JSON.");
+            // Debug.Log("Dummy inventory loaded from JSON.");
         }
         else
         {
-            Debug.LogError("Failed to load dummy inventory from JSON.");
+            SBGDebug.LogError("Failed to load dummy inventory from JSON.", "InventoryManager | GenerateDummyInventories");
         }
     }
     #endregion
@@ -149,7 +145,7 @@ public class InventoryManager : MonoBehaviour
     {
         try
         {
-            SBGDebug.LogInfo($"Begin attempt to load inventory from JSON: {inventoryId}", "InventoryManager | LoadInventoryFromJSON");
+            // SBGDebug.LogInfo($"Begin attempt to load inventory from JSON: {inventoryId}", "InventoryManager | LoadInventoryFromJSON");
 
             string filePath = Path.Combine(Application.streamingAssetsPath, JSON_INVENTORY_FILE_PATH, $"{inventoryId}.json");
             if (!File.Exists(filePath))
@@ -188,7 +184,7 @@ public class InventoryManager : MonoBehaviour
                 return null;
             }
 
-            SBGDebug.LogInfo($"Successfully loaded inventory: {inventoryContextData.InventoryId} with {inventoryContextData.Items?.Count ?? 0} items", "InventoryManager | LoadInventoryFromJSON");
+            // SBGDebug.LogInfo($"Successfully loaded inventory: {inventoryContextData.InventoryId} with {inventoryContextData.Items?.Count ?? 0} items", "InventoryManager | LoadInventoryFromJSON");
 
             var loadedInventory = InventoryFactory.CreateInventory(loadedContextInventory);
             if (loadedInventory == null)
@@ -237,7 +233,7 @@ public class InventoryManager : MonoBehaviour
     public void ConnectInventory(IInventory inventory)
     {
         connectedInventory = inventory;
-        Debug.Log($"Connected to inventory: {inventory.Name}");
+        // Debug.Log($"Connected to inventory: {inventory.Name}");
         //GameMaster.Instance?.gm_InventoryConnected?.Invoke();
     }
 }

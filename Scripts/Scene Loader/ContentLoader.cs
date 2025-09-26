@@ -13,7 +13,7 @@ public class ContentLoader : MonoBehaviour
         {
             if (_instance == null)
             {
-                Debug.LogError($"Attempting to access {nameof(ContentLoader)} before it is initialized.");
+                SBGDebug.LogError($"Attempting to access {nameof(ContentLoader)} before it is initialized.", "ContentLoader");
             }
             return _instance;
         }
@@ -48,13 +48,13 @@ public class ContentLoader : MonoBehaviour
     private void ValidateRequiredComponents()
     {
         if (!inputHandler)
-            Debug.LogError($"{nameof(ContentLoader)}: Input Handler prefab is missing!");
+            SBGDebug.LogError($"{nameof(ContentLoader)}: Input Handler prefab is missing!", "ContentLoader | ValidateRequiredComponents");
         if (!GlobalVolume)
-            Debug.LogError($"{nameof(ContentLoader)}: Global Volume prefab is missing!");
+            SBGDebug.LogError($"{nameof(ContentLoader)}: Global Volume prefab is missing!", "ContentLoader | ValidateRequiredComponents");
         if (!UI_Master)
-            Debug.LogError($"{nameof(ContentLoader)}: UI Master prefab is missing!");
+            SBGDebug.LogError($"{nameof(ContentLoader)}: UI Master prefab is missing!", "ContentLoader | ValidateRequiredComponents");
         if (!NotificationSystem)
-            Debug.LogError($"{nameof(ContentLoader)}: Notification System prefab is missing!");
+            SBGDebug.LogError($"{nameof(ContentLoader)}: Notification System prefab is missing!", "ContentLoader | ValidateRequiredComponents");
         /* if (!PauseMenu)
             Debug.LogError($"{nameof(ContentLoader)}: Pause Menu prefab is missing!"); */
     }
@@ -73,7 +73,7 @@ public class ContentLoader : MonoBehaviour
         if (inputHandler && InputHandler.Instance == null)
         {
             Instantiate(inputHandler);
-            Debug.Log($"CONTENT LOADER | InputHandler Instantiated");
+            // Debug.Log($"CONTENT LOADER | InputHandler Instantiated");
         }
         
         if (GlobalVolume)
@@ -84,36 +84,36 @@ public class ContentLoader : MonoBehaviour
 
     public void LoadScene(SceneName sceneName)
     {
-        Debug.Log("CONTENT LOADER | Beginning scene content loading");
+        // Debug.Log("CONTENT LOADER | Beginning scene content loading");
         
         switch (sceneName)
         {
             case SceneName.MainMenu:
-                Debug.Log($"CONTENT LOADER | Begin Loading Content for Scene: {sceneName.ToString()}");
+                // Debug.Log($"CONTENT LOADER | Begin Loading Content for Scene: {sceneName.ToString()}");
                 //StartCoroutine(LOAD_SAMPLESCENE());
                 break;
             case SceneName.C01_01:
-                Debug.Log($"CONTENT LOADER | Begin Loading Content for Scene: {sceneName.ToString()}");
+                // Debug.Log($"CONTENT LOADER | Begin Loading Content for Scene: {sceneName.ToString()}");
                 //StartCoroutine(LOAD_SAMPLESCENE());
                 break;
             case SceneName.C01_02:
-                Debug.Log($"CONTENT LOADER | Begin Loading Content for Scene: {sceneName.ToString()}");
+                // Debug.Log($"CONTENT LOADER | Begin Loading Content for Scene: {sceneName.ToString()}");
                 //StartCoroutine(LOAD_SAMPLESCENE());
                 break;
             case SceneName.C01_03:
-                Debug.Log($"CONTENT LOADER | Begin Loading Content for Scene: {sceneName.ToString()}");
+                // Debug.Log($"CONTENT LOADER | Begin Loading Content for Scene: {sceneName.ToString()}");
                 //StartCoroutine(LOAD_SAMPLESCENE());
                 break;
             case SceneName.C01_04:
-                Debug.Log($"CONTENT LOADER | Begin Loading Content for Scene: {sceneName.ToString()}");
+                // Debug.Log($"CONTENT LOADER | Begin Loading Content for Scene: {sceneName.ToString()}");
                 //StartCoroutine(LOAD_SAMPLESCENE());
                 break;
             case SceneName.EndCredits:
-                Debug.Log($"CONTENT LOADER | Begin Loading Content for Scene: {sceneName.ToString()}");
+                // Debug.Log($"CONTENT LOADER | Begin Loading Content for Scene: {sceneName.ToString()}");
                 //StartCoroutine(LOAD_SAMPLESCENE());
                 break;
             case SceneName.Dev_1:
-                Debug.Log($"CONTENT LOADER | Begin Loading Content for Scene: {sceneName.ToString()}");
+                // Debug.Log($"CONTENT LOADER | Begin Loading Content for Scene: {sceneName.ToString()}");
                 StartCoroutine(LOAD_SAMPLESCENE());
                 break;
         }
@@ -130,10 +130,10 @@ public class ContentLoader : MonoBehaviour
 
         //load other singleton classes
         Instantiate(UI_Master);
-        Debug.Log($"CONTENT LOADER | UI_Master Instantiated");
+        // Debug.Log($"CONTENT LOADER | UI_Master Instantiated");
 
         Instantiate(NotificationSystem);
-        Debug.Log($"CONTENT LOADER | NotificationSystem Instantiated");
+        // Debug.Log($"CONTENT LOADER | NotificationSystem Instantiated");
 
         SceneManager.LoadScene("ItemViewer", LoadSceneMode.Additive);
     }

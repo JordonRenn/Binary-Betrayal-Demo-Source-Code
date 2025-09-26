@@ -47,20 +47,20 @@ public static class WeaponInventory
                     }
                     else
                     {
-                        Debug.LogWarning($"Failed to parse weapon ID: {weaponIDString}");
+                        SBGDebug.LogWarning($"Failed to parse weapon ID: {weaponIDString}", "WeaponInventory | LoadInventory");
                     }
                 }
 
-                Debug.Log($"Loaded {weaponInventory.Count} weapons to inventory");
+                // SBGDebug.LogInfo($"Loaded {weaponInventory.Count} weapons to inventory", "WeaponInventory | LoadInventory");
             }
             else
             {
-                Debug.LogError($"Weapon inventory file not found at {filePath}");
+                SBGDebug.LogError($"Weapon inventory file not found at {filePath}", "WeaponInventory | LoadInventory");
             }
         }
         catch (Exception e)
         {
-            Debug.LogError($"Error loading weapon inventory: {e.Message}");
+            SBGDebug.LogError($"Error loading weapon inventory: {e.Message}", "WeaponInventory | LoadInventory");
         }
 
         inventoryLoaded = true;
@@ -89,12 +89,12 @@ public static class WeaponInventory
             // Write to file
             File.WriteAllText(filePath, jsonData);
 
-            Debug.Log($"Saved {weaponInventory.Count} weapons to inventory file at {filePath}");
+            // SBGDebug.LogInfo($"Saved {weaponInventory.Count} weapons to inventory file at {filePath}", "WeaponInventory | SaveInventory");
             return true;
         }
         catch (Exception e)
         {
-            Debug.LogError($"Error saving weapon inventory: {e.Message}");
+            SBGDebug.LogError($"Error saving weapon inventory: {e.Message}", "WeaponInventory | SaveInventory");
             return false;
         }
     }
@@ -119,7 +119,7 @@ public static class WeaponInventory
             }
             else
             {
-                Debug.LogError($"Failed to load WeaponData for {weaponID}. Make sure the asset is in Resources/WeaponData/ folder.");
+                SBGDebug.LogError($"Failed to load WeaponData for {weaponID}. Make sure the asset is in Resources/WeaponData/ folder.", "WeaponInventory | GetCurrentWeaponDatas");
             }
         }
 

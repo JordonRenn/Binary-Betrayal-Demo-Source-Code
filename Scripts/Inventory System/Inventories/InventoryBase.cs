@@ -65,7 +65,7 @@ public abstract class InventoryBase : IInventory
                 InventoryEvents.RaiseItemAdded(Type, item.ItemId, item.Name);
             }
 
-            SBGDebug.LogInfo($"Item added: {item.Name} x{quantity}. Total in inventory: {Items[item]}", $"class: InventoryBase | inventoryId:  {InventoryId}");
+            // SBGDebug.LogInfo($"Item added: {item.Name} x{quantity}. Total in inventory: {Items[item]}", $"class: InventoryBase | inventoryId:  {InventoryId}");
 
             // Optionally, you can also handle item-specific logic here
         }

@@ -286,7 +286,7 @@ public class UIManager : MonoBehaviour
         var input = InputHandler.Instance;
         if (input == null) return;
 
-        SBGDebug.LogInfo($"Current Input State: {input.currentState}", "UIManager | MenuEntranceCheck");
+        // SBGDebug.LogInfo($"Current Input State: {input.currentState}", "UIManager | MenuEntranceCheck");
 
         if (input.currentState == InputState.FirstPerson)
         {
@@ -309,7 +309,7 @@ public class UIManager : MonoBehaviour
         var input = InputHandler.Instance;
         if (input == null) return;
 
-        SBGDebug.LogInfo($"Current Input State: {input.currentState}", "UIManager | MenuExitCheck");
+        // SBGDebug.LogInfo($"Current Input State: {input.currentState}", "UIManager | MenuExitCheck");
 
         if (input.currentState == InputState.UI)
         {

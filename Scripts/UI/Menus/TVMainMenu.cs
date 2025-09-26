@@ -41,11 +41,11 @@ public class TVMainMenu : MonoBehaviour
         // Wait until InputHandler is available
         while (InputHandler.Instance == null)
         {
-            SBGDebug.LogInfo("Waiting for InputHandler to be available...", "TVMainMenu | WaitForInputHandler");
+            // SBGDebug.LogInfo("Waiting for InputHandler to be available...", "TVMainMenu | WaitForInputHandler");
             yield return null;
         }
         
-        SBGDebug.LogInfo("InputHandler is now available, proceeding with menu setup...", "TVMainMenu | WaitForInputHandler");
+        // SBGDebug.LogInfo("InputHandler is now available, proceeding with menu setup...", "TVMainMenu | WaitForInputHandler");
         // Now safely subscribe to events
         InputHandler.Instance.OnUI_NavigateInput.AddListener(OnMenuMove);
     }
@@ -80,20 +80,20 @@ public class TVMainMenu : MonoBehaviour
 
     private void OnMenuSelction()
     {
-        Debug.Log($"Menu Selction Made; Current state = {currentState}");
+        // Debug.Log($"Menu Selction Made; Current state = {currentState}");
 
         switch (currentState)
         {
             case MainMenuState.Play:
-                SBGDebug.LogInfo("Starting game...", "TVMainMenu | OnMenuSelection");
+                // SBGDebug.LogInfo("Starting game...", "TVMainMenu | OnMenuSelection");
                 StartCoroutine(TransitionToState(MainMenuState.StartingGame));
                 break;
             case MainMenuState.Settings:
-                SBGDebug.LogInfo("Opening settings...", "TVMainMenu | OnMenuSelection");
+                // SBGDebug.LogInfo("Opening settings...", "TVMainMenu | OnMenuSelection");
                 StartCoroutine(TransitionToState(MainMenuState.Settings));
                 break;
             case MainMenuState.Credits:
-                SBGDebug.LogInfo("Opening credits...", "TVMainMenu | OnMenuSelection");
+                // SBGDebug.LogInfo("Opening credits...", "TVMainMenu | OnMenuSelection");
                 StartCoroutine(TransitionToState(MainMenuState.Credits));
                 break;
             case MainMenuState.StartingGame:
@@ -125,7 +125,7 @@ public class TVMainMenu : MonoBehaviour
 
     private IEnumerator TransitionToState(MainMenuState newState)
     {
-        Debug.Log($"Transitioning menu to {newState}");
+        // Debug.Log($"Transitioning menu to {newState}");
         
         isTransitioning = true;
         
@@ -140,24 +140,24 @@ public class TVMainMenu : MonoBehaviour
         switch (newState)
         {
             case MainMenuState.Main:
-                SBGDebug.LogInfo("Transitioning to Main Menu...", "TVMainMenu | TransitionToState");
+                // SBGDebug.LogInfo("Transitioning to Main Menu...", "TVMainMenu | TransitionToState");
                 videoPlayer.clip = clip_Main;
                 InputSystem.onAnyButtonPress.CallOnce(ctrl => EnterMenu());
                 break;
             case MainMenuState.Play:
-                SBGDebug.LogInfo("Transitioning to Play Menu...", "TVMainMenu | TransitionToState");    
+                // SBGDebug.LogInfo("Transitioning to Play Menu...", "TVMainMenu | TransitionToState");
                 videoPlayer.clip = clip_Play;
                 break;
             case MainMenuState.Settings:
-                SBGDebug.LogInfo("Transitioning to Settings Menu...", "TVMainMenu | TransitionToState");
+                // SBGDebug.LogInfo("Transitioning to Settings Menu...", "TVMainMenu | TransitionToState");
                 videoPlayer.clip = clip_Settings;
                 break;
             case MainMenuState.Credits:
-                SBGDebug.LogInfo("Transitioning to Credits Menu...", "TVMainMenu | TransitionToState");
+                // SBGDebug.LogInfo("Transitioning to Credits Menu...", "TVMainMenu | TransitionToState");
                 videoPlayer.clip = clip_Credits;
                 break;
             case MainMenuState.StartingGame:
-                SBGDebug.LogInfo("Transitioning to Starting Game...", "TVMainMenu | TransitionToState");
+                // SBGDebug.LogInfo("Transitioning to Starting Game...", "TVMainMenu | TransitionToState");
                 videoPlayer.clip = clip_StaticLong;
                 yield return new WaitForSeconds((float)clip_StaticLong.length * 0.5f);
                 CustomSceneManager.Instance.LoadScene(SceneName.Dev_1);
@@ -171,7 +171,7 @@ public class TVMainMenu : MonoBehaviour
 
     void EnterMenu()
     {
-        SBGDebug.LogInfo("Entering Main Menu...", "TVMainMenu | EnterMenu");
+        // SBGDebug.LogInfo("Entering Main Menu...", "TVMainMenu | EnterMenu");
 
         if (currentState == MainMenuState.Main)
         {

@@ -103,7 +103,7 @@ public class PauseMenu : MonoBehaviour
     private void OnExitClicked()
     {
         // Logic to exit to main menu or quit game
-        Debug.Log("Exit button clicked");
+        // Debug.Log("Exit button clicked");
         QuitGame();
     }
 

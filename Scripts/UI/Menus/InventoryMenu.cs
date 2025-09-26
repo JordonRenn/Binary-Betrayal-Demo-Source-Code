@@ -135,15 +135,14 @@ public class InventoryMenu : MonoBehaviour
         };
         listView.columns.Add(quantityColumn);
 
-        // Optional: Add debug logging for sorting changes
-        listView.columnSortingChanged += () =>
+        /* listView.columnSortingChanged += () =>
         {
-            SBGDebug.LogInfo($"Sorting changed for {listView.name}", "InventoryMenu");
+            // SBGDebug.LogInfo($"Sorting changed for {listView.name}", "InventoryMenu");
             foreach (var sortedColumn in listView.sortedColumns)
             {
-                SBGDebug.LogInfo($"Column {sortedColumn.columnName} sorted {sortedColumn.direction}", "InventoryMenu");
+                // SBGDebug.LogInfo($"Column {sortedColumn.columnName} sorted {sortedColumn.direction}", "InventoryMenu");
             }
-        };
+        }; */
 
         listView.itemsSource = typeItems;
         
@@ -158,7 +157,7 @@ public class InventoryMenu : MonoBehaviour
             {
                 ItemType listType = GetListViewType(listView);
                 var selectedItem = itemsByType[listType][selectedIndex];
-                SBGDebug.LogInfo($"Selection changed - Selected item: {selectedItem.Item.Name} from {listType} list", "InventoryMenu");
+                // SBGDebug.LogInfo($"Selection changed - Selected item: {selectedItem.Item.Name} from {listType} list", "InventoryMenu");
                 ShowItemDetails(selectedItem.Item);
             }
         };
@@ -166,7 +165,7 @@ public class InventoryMenu : MonoBehaviour
         // Add click event handling as backup
         listView.RegisterCallback<ClickEvent>(evt =>
         {
-            SBGDebug.LogInfo($"Click detected on {listView.name}", "InventoryMenu");
+            // SBGDebug.LogInfo($"Click detected on {listView.name}", "InventoryMenu");
         });
         
         listView.Rebuild();
@@ -182,7 +181,7 @@ public class InventoryMenu : MonoBehaviour
                 var selectedItem = itemsByType[listType][index];
                 
                 // Log selection for debugging
-                SBGDebug.LogInfo($"Selected item: {selectedItem.Item.Name} from {listType} list", "InventoryMenu");
+                // SBGDebug.LogInfo($"Selected item: {selectedItem.Item.Name} from {listType} list", "InventoryMenu");
                 
                 ShowItemDetails(selectedItem.Item);
             }
@@ -197,7 +196,7 @@ public class InventoryMenu : MonoBehaviour
             return;
         }
 
-        SBGDebug.LogInfo($"Displaying details for item: {item.Name}", "InventoryMenu");
+        // SBGDebug.LogInfo($"Displaying details for item: {item.Name}", "InventoryMenu");
 
         var itemViewer = FindFirstObjectByType<ItemViewerController>();
         if (itemViewer != null)

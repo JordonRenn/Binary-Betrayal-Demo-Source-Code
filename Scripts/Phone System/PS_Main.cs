@@ -54,7 +54,7 @@ public class PS_Main : SauceObject
     #region Initialization
     void Awake()
     {
-        SBGDebug.LogInfo($"PAY PHONE | {this.gameObject.transform.position} | Instantiated", "PS_Main");
+        // SBGDebug.LogInfo($"PAY PHONE | {this.gameObject.transform.position} | Instantiated", "PS_Main");
 
         LevelEvents.PlayerControllerInstantiated += _GetPlayer;
         DialogueEvents.DialogueEnded += OnDialogueEnded;
@@ -67,7 +67,7 @@ public class PS_Main : SauceObject
 
     private IEnumerator Init()
     {
-        SBGDebug.LogInfo($"PAY PHONE | {this.gameObject.transform.position} | Initialization started", "PS_Main");
+        // SBGDebug.LogInfo($"PAY PHONE | {this.gameObject.transform.position} | Initialization started", "PS_Main");
 
         //yield return new WaitForSeconds(initDelay);
 
@@ -75,7 +75,7 @@ public class PS_Main : SauceObject
 
         while (playerObj == null && Time.time - initTime < initTimeout) // PLAYER OBJECT
         {
-            SBGDebug.LogDebug($"PAY PHONE | {this.gameObject.transform.position} | Searching for PLAYER OBJECT", "PS_Main");
+            // SBGDebug.LogDebug($"PAY PHONE | {this.gameObject.transform.position} | Searching for PLAYER OBJECT", "PS_Main");
             yield return null;
         }
 
@@ -86,7 +86,7 @@ public class PS_Main : SauceObject
         } */
 
         initialized = true;
-        SBGDebug.LogInfo($"PAY PHONE | {this.gameObject.transform.position} | Initialization COMPLETE", "PS_Main");
+        // SBGDebug.LogInfo($"PAY PHONE | {this.gameObject.transform.position} | Initialization COMPLETE", "PS_Main");
     }
 
     private void _GetPlayer()
@@ -244,7 +244,7 @@ public class PS_Main : SauceObject
             return false;
         }
 
-        SBGDebug.LogInfo($"Dialing {number} for dialogue: {dialogueId}", "PS_Main");
+        // SBGDebug.LogInfo($"Dialing {number} for dialogue: {dialogueId}", "PS_Main");
         
         // Use the new dialogue system
         if (DialogueDisplayController.Instance != null)
@@ -266,7 +266,7 @@ public class PS_Main : SauceObject
         try
         {
             RuntimeManager.PlayOneShot(phoneRingbackTone, transform.position);
-            SBGDebug.LogInfo($"Calling {number}...", "PS_Main");
+            // SBGDebug.LogInfo($"Calling {number}...", "PS_Main");
             callSuccess = true;
         }
         catch (System.Exception e)
@@ -285,7 +285,7 @@ public class PS_Main : SauceObject
 
             try
             {
-                SBGDebug.LogInfo($"Connected to {number}. Loading dialogue...", "PS_Main");
+                // SBGDebug.LogInfo($"Connected to {number}. Loading dialogue...", "PS_Main");
                 if (DialogueDisplayController.Instance != null)
                 {
                     DialogueDisplayController.Instance.StartDialogue(phoneNumbers[number]);
@@ -368,7 +368,7 @@ public class PS_Main : SauceObject
 
         FirstPersonCamController.Instance.AllowOverride(false);
 
-        SBGDebug.LogInfo("Player teleported to: " + playerTeleportPoint.position, "PS_Main");
+        // SBGDebug.LogInfo("Player teleported to: " + playerTeleportPoint.position, "PS_Main");
     }
     #endregion
     
@@ -382,7 +382,7 @@ public class PS_Main : SauceObject
         // If we're using the phone and dialogue ends, we should deactivate the phone
         if (usingPhone)
         {
-            SBGDebug.LogInfo("Dialogue ended while using phone - deactivating phone", "PS_Main");
+            // SBGDebug.LogInfo("Dialogue ended while using phone - deactivating phone", "PS_Main");
             DeactivePhone();
         }
     }

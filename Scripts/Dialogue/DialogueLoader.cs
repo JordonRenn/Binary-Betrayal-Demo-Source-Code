@@ -28,7 +28,7 @@ public static class DialogueLoader
         if (!Directory.Exists(dialoguePath))
         {
             Directory.CreateDirectory(dialoguePath);
-            SBGDebug.LogInfo($"Created dialogue directory at: {dialoguePath}", "DialogueLoader");
+            // SBGDebug.LogInfo($"Created dialogue directory at: {dialoguePath}", "DialogueLoader");
         }
 
         try
@@ -64,7 +64,7 @@ public static class DialogueLoader
         if (!Directory.Exists(langPath))
         {
             Directory.CreateDirectory(langPath);
-            SBGDebug.LogInfo($"Created language directory at: {langPath}", "DialogueLoader");
+            // SBGDebug.LogInfo($"Created language directory at: {langPath}", "DialogueLoader");
         }
 
         // Clear cache when language changes
@@ -80,7 +80,7 @@ public static class DialogueLoader
         // Check cache first
         if (cachedDialogues.TryGetValue(dialogueId, out DialogueData cachedDialogue))
         {
-            SBGDebug.LogInfo($"Loading dialogue from cache: {dialogueId}", "DialogueLoader");
+            // SBGDebug.LogInfo($"Loading dialogue from cache: {dialogueId}", "DialogueLoader");
             return cachedDialogue;
         }
 
@@ -99,7 +99,7 @@ public static class DialogueLoader
             string jsonContent = System.Text.Encoding.UTF8.GetString(fileBytes);
             TextAsset jsonAsset = new TextAsset(jsonContent);
 
-            SBGDebug.LogInfo($"Loading dialogue file: {filePath} (graph format only)", "DialogueLoader");
+            // SBGDebug.LogInfo($"Loading dialogue file: {filePath} (graph format only)", "DialogueLoader");
 
             // Parse using our SimdJsonSharp parser
             var dialogues = DialogueJsonParser.ParseDialogueData(jsonAsset);
@@ -117,7 +117,7 @@ public static class DialogueLoader
                 return null;
             }
 
-            SBGDebug.LogInfo($"Parsed {dialogues.Length} dialogue(s)", "DialogueLoader");
+            // SBGDebug.LogInfo($"Parsed {dialogues.Length} dialogue(s)", "DialogueLoader");
 
             if (dialogues.Length > 0)
             {
@@ -129,7 +129,7 @@ public static class DialogueLoader
                     return null;
                 }
 
-                SBGDebug.LogInfo($"Dialogue '{dialogueId}' loaded with {dialogue.entries.Count} entries", "DialogueLoader");
+                // SBGDebug.LogInfo($"Dialogue '{dialogueId}' loaded with {dialogue.entries.Count} entries", "DialogueLoader");
 
                 // Cache the result
                 cachedDialogues[dialogueId] = dialogue;
@@ -149,7 +149,7 @@ public static class DialogueLoader
     public static void ClearCache()
     {
         cachedDialogues.Clear();
-        SBGDebug.LogInfo("Dialogue cache cleared", "DialogueLoader");
+        // SBGDebug.LogInfo("Dialogue cache cleared", "DialogueLoader");
     }
     #endregion
 
@@ -223,46 +223,5 @@ public static class DialogueLoader
         return true;
     }
     #endregion
-
-    /* public static void TestDialogueLoading(string dialogueId)
-    {
-        SBGDebug.LogInfo($"=== Testing dialogue loading for: {dialogueId} (graph format only) ===", "DialogueLoader");
-        
-        EnsureInitialized();
-        
-        string filePath = Path.Combine(Application.streamingAssetsPath, DIALOGUE_FOLDER, currentLanguage, $"{dialogueId}.json");
-        SBGDebug.LogInfo($"File path: {filePath}", "DialogueLoader");
-        SBGDebug.LogInfo($"File exists: {File.Exists(filePath)}", "DialogueLoader");
-        
-        if (File.Exists(filePath))
-        {
-            string jsonContent = File.ReadAllText(filePath);
-            SBGDebug.LogInfo($"JSON content length: {jsonContent.Length} characters", "DialogueLoader");
-            SBGDebug.LogInfo($"JSON preview: {jsonContent.Substring(0, Math.Min(200, jsonContent.Length))}...", "DialogueLoader");
-            
-            try
-            {
-                TextAsset jsonAsset = new TextAsset(jsonContent);
-                var result = DialogueJsonParser.ParseDialogueData(jsonAsset);
-                
-                if (result != null && result.Length > 0)
-                {
-                    SBGDebug.LogInfo($"Graph parsing successful! Got {result.Length} dialogue(s)", "DialogueLoader");
-                    SBGDebug.LogInfo($"First dialogue ID: {result[0].dialogueId}", "DialogueLoader");
-                    SBGDebug.LogInfo($"First dialogue entries count: {result[0].entries?.Count ?? 0}", "DialogueLoader");
-                }
-                else
-                {
-                    SBGDebug.LogError("Graph parsing failed - got null or empty result", "DialogueLoader");
-                }
-            }
-            catch (Exception e)
-            {
-                SBGDebug.LogException(e, "DialogueLoader | TestDialogueLoading");
-            }
-        }
-        
-        SBGDebug.LogInfo("=== End dialogue loading test ===", "DialogueLoader");
-    } */
 }
 #endregion

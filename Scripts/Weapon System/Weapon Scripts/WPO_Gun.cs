@@ -215,7 +215,7 @@ public class WPO_Gun : FPSS_WeaponSlotObject
 
     public void EjectShell()
     {
-        Debug.Log("Ejecting shell");
+        // Debug.Log("Ejecting shell");
 
         StartCoroutine(PlaySfxDelay(sfx_gun_shell, sfx_ShellDelay, pos_GunAudio.position)); //??? Posittioning will need to get fixed, lazy temp fix
         GameObject shell = Instantiate(shellObject, pos_ShellEject.position, pos_ShellEject.rotation);

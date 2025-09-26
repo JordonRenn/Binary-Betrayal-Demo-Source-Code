@@ -10,6 +10,20 @@ namespace GlobalEvents
             Tick?.Invoke();
         }
     }
+
+    #region System Events
+    public static class SystemEvents
+    {
+        public static event Action GameMasterInitialized;
+
+        internal static void RaiseGameMasterInitialized()
+        {
+            GameMasterInitialized?.Invoke();
+            SBGDebug.LogEvent("GameMaster Initialized", nameof(SystemEvents));
+        }
+    }
+    #endregion
+
     #region Sauce Object Events
     public static class SauceObjectEvents
     {

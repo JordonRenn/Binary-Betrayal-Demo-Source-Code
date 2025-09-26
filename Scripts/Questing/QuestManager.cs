@@ -56,7 +56,7 @@ public static class QuestManager
             {
                 string jsonContent = File.ReadAllText(questFilePath);
                 questJSON = new TextAsset(jsonContent);
-                SBGDebug.LogInfo($"Successfully loaded quest file from {questFilePath}", "QuestManager");
+                // SBGDebug.LogInfo($"Successfully loaded quest file from {questFilePath}", "QuestManager");
             }
             else
             {
@@ -83,7 +83,7 @@ public static class QuestManager
             {
                 AddQuest(questData);
             }
-            SBGDebug.LogInfo($"Loaded {questDataArray.Length} quests successfully", "QuestManager");
+            // SBGDebug.LogInfo($"Loaded {questDataArray.Length} quests successfully", "QuestManager");
         }
         catch (System.Exception e)
         {
@@ -139,7 +139,7 @@ public static class QuestManager
             }
             completedQuests[questId] = quest;
 
-            SBGDebug.LogInfo($"Quest {questId} marked as complete", "QuestManager");
+            // SBGDebug.LogInfo($"Quest {questId} marked as complete", "QuestManager");
         }
     }
 
@@ -151,7 +151,7 @@ public static class QuestManager
             {
                 quest.Start();
                 activeQuests.Add(quest);
-                SBGDebug.LogInfo($"Started quest: {quest.Title}", "QuestManager");
+                // SBGDebug.LogInfo($"Started quest: {quest.Title}", "QuestManager");
             }
             else if (completedQuests.ContainsKey(questID))
             {
@@ -218,7 +218,7 @@ public static class QuestManager
             if (objective != null)
             {
                 objective.ForceComplete(status);
-                SBGDebug.LogInfo($"Objective {objectiveID} completed with status {status} in quest {quest.ID}.", "QuestManager");
+                // SBGDebug.LogInfo($"Objective {objectiveID} completed with status {status} in quest {quest.ID}.", "QuestManager");
                 CheckIfAllObjectivesAreComplete(quest);
                 return;
             }
@@ -245,11 +245,11 @@ public static class QuestManager
             if (status == ObjectiveStatus.Abandoned)
             {
                 activeQuests.Remove(quest);
-                SBGDebug.LogInfo($"Quest {questID} abandoned.", "QuestManager");
+                // SBGDebug.LogInfo($"Quest {questID} abandoned.", "QuestManager");
             }
             else
             {
-                SBGDebug.LogInfo($"Quest {questID} completed with status {status}.", "QuestManager");
+                // SBGDebug.LogInfo($"Quest {questID} completed with status {status}.", "QuestManager");
             }
         }
     }
