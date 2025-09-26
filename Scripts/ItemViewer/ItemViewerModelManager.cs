@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -13,6 +12,7 @@ public static class ItemViewerModelManager
         SceneManager.sceneUnloaded += OnSceneUnloaded;
     }
 
+    #region Public API
     public static void RegisterController(ItemViewerController controller)
     {
         _controller = controller;
@@ -48,5 +48,6 @@ public static class ItemViewerModelManager
     {
         _controller = null;
     }
+    #endregion
 }
 

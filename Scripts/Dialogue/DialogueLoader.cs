@@ -33,7 +33,7 @@ public static class DialogueLoader
 
         try
         {
-            UpdateLanguage(GameMaster.Instance.GetSettings().language);
+            UpdateLanguage(GameSettings.GetSettings().language);
 
             ConfigEvents.LanguageSettingsChanged -= OnLanguageSettingsChanged; // Prevent double-subscription
             ConfigEvents.LanguageSettingsChanged += OnLanguageSettingsChanged;
@@ -52,7 +52,7 @@ public static class DialogueLoader
     {
         if (GameMaster.Instance != null)
         {
-            UpdateLanguage(GameMaster.Instance.GetSettings().language);
+            UpdateLanguage(GameSettings.GetSettings().language);
         }
     }
 

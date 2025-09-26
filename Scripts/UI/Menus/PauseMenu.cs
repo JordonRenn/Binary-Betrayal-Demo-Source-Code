@@ -120,7 +120,7 @@ public class PauseMenu : MonoBehaviour
     {
         // You might want to add specific apply logic here
         // For example, if you want to batch-apply changes or show a confirmation
-        GameMaster.Instance.SaveAndApplySettings();
+        GameSettings.SaveAndApplySettings();
     }
     #endregion
 
@@ -151,9 +151,9 @@ public class PauseMenu : MonoBehaviour
             if (invertYSwitch != null)
             {
                 invertYSwitch.onValueChanged = (value) => {
-                    var settings = GameMaster.Instance.GetSettings();
+                    var settings = GameSettings.GetSettings();
                     settings.invertYAxis = value;
-                    GameMaster.Instance.SaveAndApplySettings();
+                    GameSettings.SaveAndApplySettings();
                 };
             }
         }
@@ -166,9 +166,9 @@ public class PauseMenu : MonoBehaviour
             {
                 languageDropdown.choices = System.Enum.GetNames(typeof(Language)).ToList();
                 languageDropdown.RegisterValueChangedCallback(evt => {
-                    var settings = GameMaster.Instance.GetSettings();
+                    var settings = GameSettings.GetSettings();
                     settings.language = (Language)languageDropdown.index;
-                    GameMaster.Instance.SaveAndApplySettings();
+                    GameSettings.SaveAndApplySettings();
                 });
             }
         }
@@ -183,12 +183,12 @@ public class PauseMenu : MonoBehaviour
         
         slider.RegisterValueChangedCallback(evt => {
             valueLabel.text = $"{evt.newValue:F0}%";
-            var settings = GameMaster.Instance.GetSettings();
+            var settings = GameSettings.GetSettings();
             if (isVertical)
                 settings.mouseSensitivityVertical = evt.newValue;
             else
                 settings.mouseSensitivityHorizontal = evt.newValue;
-            GameMaster.Instance.SaveAndApplySettings();
+            GameSettings.SaveAndApplySettings();
         });
     }
 
@@ -196,7 +196,7 @@ public class PauseMenu : MonoBehaviour
     {
         await Task.Run(() => new WaitUntil(() => GameMaster.Instance != null));
 
-        var settings = GameMaster.Instance.GetSettings();
+        var settings = GameSettings.GetSettings();
         var controlsPanel = root.Q<VisualElement>("Controls-Panel");
         var gameplayPanel = root.Q<VisualElement>("Gameplay-Panel");
         

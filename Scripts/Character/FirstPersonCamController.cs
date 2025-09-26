@@ -88,7 +88,7 @@ public class FirstPersonCamController : MonoBehaviour
     {
         if (GameMaster.Instance != null)
         {
-            var settings = GameMaster.Instance.GetSettings();
+            var settings = GameSettings.GetSettings();
             sensitivityX = baseSensitivity * settings.GetHorizontalSensitivityMultiplier();
             sensitivityY = baseSensitivity * settings.GetVerticalSensitivityMultiplier();
             invertY = settings.invertYAxis;

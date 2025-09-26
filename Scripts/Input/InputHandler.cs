@@ -716,7 +716,7 @@ public class InputHandler : MonoBehaviour
     {
         if (GameMaster.Instance != null)
         {
-            PlayerSettings settings = GameMaster.Instance.GetSettings();
+            PlayerSettings settings = GameSettings.GetSettings();
             horizontalSensitivityMultiplier = settings.GetHorizontalSensitivityMultiplier();
             verticalSensitivityMultiplier = settings.GetVerticalSensitivityMultiplier();
             invertYAxis = settings.invertYAxis;
