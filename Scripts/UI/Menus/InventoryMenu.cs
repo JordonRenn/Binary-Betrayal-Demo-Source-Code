@@ -146,7 +146,68 @@ public class InventoryMenu : MonoBehaviour
         };
 
         listView.itemsSource = typeItems;
+        
+        // Setup selection handling
+        listView.selectionType = SelectionType.Single;
+        
+        // Register for both selection and click events to ensure we catch the interaction
+        listView.selectedIndicesChanged += (selected) =>
+        {
+            var selectedIndex = listView.selectedIndex;
+            if (selectedIndex >= 0)
+            {
+                ItemType listType = GetListViewType(listView);
+                var selectedItem = itemsByType[listType][selectedIndex];
+                SBGDebug.LogInfo($"Selection changed - Selected item: {selectedItem.Item.Name} from {listType} list", "InventoryMenu");
+                ShowItemDetails(selectedItem.Item);
+            }
+        };
+        
+        // Add click event handling as backup
+        listView.RegisterCallback<ClickEvent>(evt =>
+        {
+            SBGDebug.LogInfo($"Click detected on {listView.name}", "InventoryMenu");
+        });
+        
         listView.Rebuild();
+    }
+
+    private void HandleItemSelection(MultiColumnListView listView, IEnumerable<object> items)
+    {
+        foreach (var item in items)
+        {
+            if (item is int index)
+            {
+                ItemType listType = GetListViewType(listView);
+                var selectedItem = itemsByType[listType][index];
+                
+                // Log selection for debugging
+                SBGDebug.LogInfo($"Selected item: {selectedItem.Item.Name} from {listType} list", "InventoryMenu");
+                
+                ShowItemDetails(selectedItem.Item);
+            }
+        }
+    }
+
+    private void ShowItemDetails(IItem item)
+    {
+        if (item == null)
+        {
+            SBGDebug.LogError("Attempted to show details for null item", "InventoryMenu");
+            return;
+        }
+
+        SBGDebug.LogInfo($"Displaying details for item: {item.Name}", "InventoryMenu");
+
+        var itemViewer = FindFirstObjectByType<ItemViewerController>();
+        if (itemViewer != null)
+        {
+            itemViewer.ShowItemById(item.ItemId);
+        }
+        else
+        {
+            SBGDebug.LogError("ItemViewerController not found in scene", "InventoryMenu");
+        }
     }
 
     private ItemType GetListViewType(MultiColumnListView listView)

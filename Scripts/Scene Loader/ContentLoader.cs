@@ -135,8 +135,7 @@ public class ContentLoader : MonoBehaviour
         Instantiate(NotificationSystem);
         Debug.Log($"CONTENT LOADER | NotificationSystem Instantiated");
 
-        /* Instantiate(PauseMenu);
-        Debug.Log($"CONTENT LOADER | PauseMenu Instantiated"); */
+        SceneManager.LoadScene("ItemViewer", LoadSceneMode.Additive);
     }
 
     private IEnumerator LOAD_SAMPLESCENE()

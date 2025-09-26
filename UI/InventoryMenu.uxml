@@ -78,7 +78,9 @@
             </ui:TabView>
         </ui:VisualElement>
         <ui:VisualElement name="ItemView" class="item-view" style="flex-grow: 1; margin-top: 2.5%; margin-right: 2.5%; margin-bottom: 2.5%; margin-left: 2.5%;">
-            <ui:VisualElement name="ItemViewContainer" class="item-view-container" style="flex-grow: 1;" />
+            <ui:VisualElement name="ItemViewContainer" class="item-view-container" style="flex-grow: 1;">
+                <ViewBox3D width="512" height="512" style="align-self: center;" />
+            </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
     <ui:VisualElement name="MenuFooter" class="bb-menu-footer" style="flex-grow: 1; height: 10%; max-height: 10%;" />
