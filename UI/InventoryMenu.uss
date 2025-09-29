@@ -3,16 +3,11 @@
     border-radius: 15px;
     border-width: 3px;
     border-color: var(--ui-container-border-color);
-}
-
-.item-view-container {
-    padding: 10px;
-}
-
-.inventory-view {
-}
-
-.item-view-container {
+    flex-grow: 1;
+    margin-top: 2.5%;
+    margin-right: 2.5%;
+    margin-bottom: 2.5%;
+    margin-left: 2.5%;
 }
 
 .unity-tab {
@@ -30,7 +25,7 @@
 }
 
 .unity-tab__header {
-    background-color: rgba(0, 0, 0, 0.04);
+    background-color: var(--ui-container-background-color);
     max-height: 100%;
     height: 100%;
     width: 100%;
@@ -159,4 +154,107 @@
     height: 100%;
     max-height: 100%;
     min-height: 90%;
+}
+
+.unity-multi-column-header__column {
+    padding: 5px;
+    font-size: 20px;
+    flex-direction: row-reverse;
+    white-space: nowrap;
+}
+
+.unity-multi-column-list-view__column {
+    padding: 5px;
+    font-size: 18px;
+}
+
+.inventory-view {
+    flex-grow: 1;
+    margin-top: 2.5%;
+    margin-right: 2.5%;
+    margin-bottom: 2.5%;
+    margin-left: 2.5%;
+    max-width: 50%;
+}
+
+.unity-collection-view__item {
+}
+
+.unity-collection-view__item--selected {
+    background-color: var(--ui-list-item-selected-background-color);
+}
+
+.unity-collection-view__item--hover {
+    background-color: var(--ui-list-item-hover-background-color);
+}
+
+.unity-scroll-view__content-container {
+    height: 100%;
+}
+
+.item-view-container {
+    flex-grow: 1;
+}
+
+.item-view-container__header {
+    -unity-text-align: middle-center;
+    font-size: 40px;
+    -unity-font-style: bold;
+    -unity-font-definition: resource('Fonts/Frohburg');
+    color: rgb(255, 255, 255);
+    -unity-text-outline-width: 2px;
+    -unity-text-outline-color: rgb(0, 0, 0);
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.item-view-container__item-view-box {
+    background-color: rgba(0, 0, 0, 0.1);
+    border-top-width: 3px;
+    border-right-width: 3px;
+    border-bottom-width: 3px;
+    border-left-width: 3px;
+    border-left-color: rgba(0, 0, 0, 0.26);
+    border-right-color: rgba(0, 0, 0, 0.26);
+    border-top-color: rgba(0, 0, 0, 0.26);
+    border-bottom-color: rgba(0, 0, 0, 0.26);
+}
+
+.item-view-container__item-details-container {
+    align-self: center;
+    width: 512px;
+    flex-grow: 1;
+    margin-top: 15px;
+    margin-bottom: 35px;
+}
+
+.item-view-container__button {
+    position: absolute;
+    width: 70px;
+    -unity-font-style: bold;
+    -unity-font-definition: resource('Fonts/Frohburg');
+    color: rgb(255, 255, 255);
+    font-size: 18px;
+    -unity-text-outline-width: 2px;
+    -unity-text-outline-color: rgb(0, 0, 0);
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    border-top-width: 3px;
+    border-right-width: 3px;
+    border-bottom-width: 3px;
+    border-left-width: 3px;
+    border-left-color: rgb(103, 101, 101);
+    border-right-color: rgb(103, 101, 101);
+    border-top-color: rgb(103, 101, 101);
+    border-bottom-color: rgb(103, 101, 101);
+    bottom: 5px;
+}
+
+.item-view-container__description {
+    flex-grow: 1;
+    font-size: 18px;
+    -unity-font-style: bold;
+    color: rgb(0, 0, 0);
 }

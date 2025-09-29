@@ -50,14 +50,16 @@ public class UIManager : MonoBehaviour
     [SerializeField] private UIDocument InventoryDocument;
     [SerializeField] private UIDocument JournalDocument;
     [SerializeField] private UIDocument PlayerStatsDocument;
-    /* [SerializeField] private UIDocument MapDocument; */
-
+    // [SerializeField] private UIDocument MapDocument;
+    [SerializeField] private UIDocument reticleDocument;
     [SerializeField] private UIDocument HUDDocument;
+
     private PauseMenu pauseMenu;
     private InventoryMenu inventoryMenu;
     private JournalMenu journalMenu;
     private PlayerMenu playerMenu;
-    /* private MapMenu mapMenu; */
+    // private MapMenu mapMenu; 
+    // private ReticleSystem reticle;
 
     private HUDController hudController;
 
@@ -293,6 +295,7 @@ public class UIManager : MonoBehaviour
             ClearAllMenuListeners();
             input.SetInputState(InputState.UI);
             HideAllHUD(true);
+            reticleDocument.rootVisualElement.style.display = DisplayStyle.None;
 
             // Add UI state listeners - using local async lambdas
             input.OnUI_CancelInput.AddListener(() => { _ = HideAllMenus(); });
@@ -316,6 +319,7 @@ public class UIManager : MonoBehaviour
             ClearAllMenuListeners();
             input.SetInputState(InputState.FirstPerson);
             HideAllHUD(false);
+            reticleDocument.rootVisualElement.style.display = DisplayStyle.Flex;
 
             // Add FirstPerson state listener
             input.OnPauseMenuInput?.AddListener(() => { _ = ShowPauseMenu(); });

@@ -1,1 +1,110 @@
-VisualElement {}
+.reticle {
+    background-color: rgb(255, 255, 255);
+    border-color: rgb(255, 255, 255);
+    border-width: 0;
+}
+
+.reticle__center-dot {
+    flex-grow: 1;
+    width: 4px;
+    height: 4px;
+    max-height: 4px;
+    max-width: 4px;
+    background-color: rgb(255, 255, 255);
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
+    border-bottom-left-radius: 2px;
+    align-content: center;
+    justify-content: center;
+    left: 50%;
+    bottom: -50%;
+    top: 50%;
+    right: -50%;
+}
+
+.reticle__line-top {
+    flex-grow: 1;
+    width: 2px;
+    height: 13px;
+    max-height: 30px;
+    max-width: 10px;
+    background-color: rgb(255, 255, 255);
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
+    border-bottom-left-radius: 2px;
+    position: absolute;
+    bottom: 10px;
+    align-self: center;
+}
+
+.reticle__line-right {
+    flex-grow: 1;
+    width: 13px;
+    height: 2px;
+    max-height: 10px;
+    max-width: 30px;
+    background-color: rgb(255, 255, 255);
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
+    border-bottom-left-radius: 2px;
+    position: absolute;
+    left: 10px;
+    align-self: center;
+}
+
+.reticle__line-bottom {
+    flex-grow: 1;
+    width: 2px;
+    height: 13px;
+    max-height: 30px;
+    max-width: 10px;
+    background-color: rgb(255, 255, 255);
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
+    border-bottom-left-radius: 2px;
+    position: absolute;
+    align-self: center;
+    top: 10px;
+}
+
+.reticle__line-left {
+    flex-grow: 1;
+    width: 13px;
+    height: 2px;
+    max-height: 10px;
+    max-width: 30px;
+    background-color: rgb(255, 255, 255);
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
+    border-bottom-left-radius: 2px;
+    position: absolute;
+    right: 10px;
+    align-self: center;
+}
+
+.reticle__hover-text {
+    flex-grow: 1;
+    flex-shrink: 1;
+    position: absolute;
+    bottom: 15px;
+    left: 15px;
+    width: 250px;
+    -unity-font-style: bold;
+    font-size: 20px;
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    color: rgba(164, 3, 0, 0.47);
+    letter-spacing: 10px;
+    text-overflow: ellipsis;
+}

@@ -6,12 +6,13 @@ public class ItemViewerController : MonoBehaviour
 {
     [SerializeField] private Camera _previewCamera;
     [SerializeField] private Transform _previewPivot;
+    [SerializeField] private GameObject _spotLight;
 
     private static Dictionary<string, GameObject> _itemModelPrefabCache = new Dictionary<string, GameObject>();
-    private const string ItemModelsFolderPath = "Assets/Prefabs/ItemViewModels/";
-    private const string DefaultItemId = "error";
-    private const float ZoomLimit = 10f;
-    private const float ZoomSpeed = 6f;
+    private const string PATH_ITEM_MODELS = "Assets/Prefabs/ItemViewModels/";
+    private const string NAME_ERROR_MODEL = "error";
+    private const float ZOOM_LIMIT = 10f;
+    private const float ZOOM_SPEED = 6f;
 
     void Awake()
     {
@@ -30,7 +31,7 @@ public class ItemViewerController : MonoBehaviour
 
     private void LoadItemModels()
     {
-        var itemModelGuids = AssetDatabase.FindAssets("t:Prefab", new[] { ItemModelsFolderPath });
+        var itemModelGuids = AssetDatabase.FindAssets("t:Prefab", new[] { PATH_ITEM_MODELS });
         foreach (var guid in itemModelGuids)
         {
             var path = AssetDatabase.GUIDToAssetPath(guid);
@@ -41,9 +42,9 @@ public class ItemViewerController : MonoBehaviour
             }
         }
 
-        if (!_itemModelPrefabCache.ContainsKey(DefaultItemId))
+        if (!_itemModelPrefabCache.ContainsKey(NAME_ERROR_MODEL))
         {
-            Debug.LogError($"Default item model ({DefaultItemId}) not found in {ItemModelsFolderPath}");
+            Debug.LogError($"Default item model ({NAME_ERROR_MODEL}) not found in {PATH_ITEM_MODELS}");
         }
     }
 
@@ -72,6 +73,7 @@ public class ItemViewerController : MonoBehaviour
     {
         _previewPivot.rotation = Quaternion.identity;
         _previewPivot.localPosition = Vector3.zero;
+        _spotLight.transform.localPosition = Vector3.zero;
     }
 
     public void RotateModel(Vector2 rotation)
@@ -83,9 +85,10 @@ public class ItemViewerController : MonoBehaviour
     public void AdjustZoom(float zoomDelta)
     {
         Vector3 position = _previewPivot.localPosition;
-        float scaledDelta = zoomDelta * ZoomSpeed;
-        position.z = Mathf.Clamp(position.z + scaledDelta, -ZoomLimit, ZoomLimit);
+        float scaledDelta = zoomDelta * ZOOM_SPEED;
+        position.z = Mathf.Clamp(position.z + scaledDelta, -ZOOM_LIMIT, ZOOM_LIMIT);
         _previewPivot.localPosition = position;
+        _spotLight.transform.localPosition = position;
     }
 
     public void ShowItemById(string itemId)
@@ -100,14 +103,14 @@ public class ItemViewerController : MonoBehaviour
             instance.transform.localScale = Vector3.one * 1.0f; // Adjust scale as needed
             ResetView();
         }
-        else if (normalizedId != DefaultItemId)
+        else if (normalizedId != NAME_ERROR_MODEL)
         {   
             Debug.LogWarning($"Item with ID '{itemId}' not found in prefab cache. Showing default item view model.");
-            ShowItemById(DefaultItemId);
+            ShowItemById(NAME_ERROR_MODEL);
         }
         else
         {
-            Debug.LogError($"Default item model not found in prefab cache! Please ensure a prefab named 'error' exists in {ItemModelsFolderPath}");
+            Debug.LogError($"Default item model not found in prefab cache! Please ensure a prefab named 'error' exists in {PATH_ITEM_MODELS}");
         }
     }
     #endregion

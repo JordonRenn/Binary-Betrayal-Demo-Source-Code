@@ -10,7 +10,7 @@
         </ui:VisualElement>
     </ui:VisualElement>
     <ui:VisualElement name="InventoryContainer" class="panel" style="flex-grow: 1; flex-direction: row; margin-right: 5%; margin-bottom: 0; margin-left: 5%;">
-        <ui:VisualElement name="InventoryView" class="inventory-view" style="flex-grow: 1; margin-top: 2.5%; margin-right: 2.5%; margin-bottom: 2.5%; margin-left: 2.5%; max-width: 50%;">
+        <ui:VisualElement name="InventoryView" class="inventory-view">
             <ui:TabView name="InventoryTabs" style="height: 100%; max-height: 100%;">
                 <ui:Tab label="FavoritesTab" icon-image="project://database/Assets/UI/Icons/01_Favorites.PNG?fileID=2800000&amp;guid=3197f48590810bf4590810eadcaa51cc&amp;type=3#01_Favorites" name="FavoriteTabContainer">
                     <ui:VisualElement name="VisualElement" class="inventory-list-panel">
@@ -77,9 +77,16 @@
                 </ui:Tab>
             </ui:TabView>
         </ui:VisualElement>
-        <ui:VisualElement name="ItemView" class="item-view" style="flex-grow: 1; margin-top: 2.5%; margin-right: 2.5%; margin-bottom: 2.5%; margin-left: 2.5%;">
-            <ui:VisualElement name="ItemViewContainer" class="item-view-container" style="flex-grow: 1;">
-                <ViewBox3D width="512" height="512" style="align-self: center;" />
+        <ui:VisualElement name="ItemView" class="item-view">
+            <ui:VisualElement name="ItemViewContainer" class="item-view-container">
+                <ui:Label text="Item Name" name="ItemNameLabel" class="item-view-container__header" />
+                <ViewBox3D width="512" height="512" name="ViewBox3D" class="item-view-container__item-view-box" style="align-self: center; width: 512px;">
+                    <ui:Button text="Use" name="Button-Use" class="item-view-container__button" style="left: 5px;" />
+                    <ui:Button text="Drop" name="Button-Drop" class="item-view-container__button" style="position: absolute; right: 5px;" />
+                </ViewBox3D>
+                <ui:VisualElement name="ItemDetailsContainer" class="item-view-container__item-details-container">
+                    <ui:Label text="Item description" name="ItemDescriptionLabel" class="item-view-container__description" />
+                </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>

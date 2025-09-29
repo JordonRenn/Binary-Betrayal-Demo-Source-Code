@@ -84,7 +84,7 @@ public class ContentLoader : MonoBehaviour
 
     public void LoadScene(SceneName sceneName)
     {
-        // Debug.Log("CONTENT LOADER | Beginning scene content loading");
+        Debug.Log("CONTENT LOADER | Beginning scene content loading");
         
         switch (sceneName)
         {
@@ -113,7 +113,7 @@ public class ContentLoader : MonoBehaviour
                 //StartCoroutine(LOAD_SAMPLESCENE());
                 break;
             case SceneName.Dev_1:
-                // Debug.Log($"CONTENT LOADER | Begin Loading Content for Scene: {sceneName.ToString()}");
+                Debug.Log($"CONTENT LOADER | Begin Loading Content for Scene: {sceneName.ToString()}");
                 StartCoroutine(LOAD_SAMPLESCENE());
                 break;
         }
@@ -128,12 +128,12 @@ public class ContentLoader : MonoBehaviour
 
         freshGame = false;
 
-        //load other singleton classes
+        // Load other singleton classes
         Instantiate(UI_Master);
-        // Debug.Log($"CONTENT LOADER | UI_Master Instantiated");
+        Debug.Log($"CONTENT LOADER | UI_Master Instantiated");
 
         Instantiate(NotificationSystem);
-        // Debug.Log($"CONTENT LOADER | NotificationSystem Instantiated");
+        Debug.Log($"CONTENT LOADER | NotificationSystem Instantiated");
 
         SceneManager.LoadScene("ItemViewer", LoadSceneMode.Additive);
     }

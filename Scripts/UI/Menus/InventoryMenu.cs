@@ -3,6 +3,12 @@ using UnityEngine.UIElements;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
+public struct InventoryListItem
+{
+    public IItem Item;
+    public int Quantity;
+}
+
 #region Inventory Menu
 public class InventoryMenu : MonoBehaviour
 {
@@ -17,6 +23,12 @@ public class InventoryMenu : MonoBehaviour
     private MultiColumnListView listViewDocuments;
     private MultiColumnListView listViewPhone;
     private MultiColumnListView listViewTools;
+
+    private Label itemNameLabel;
+    private Label itemDescriptionLabel;
+
+    private Button useButton;
+    private Button dropButton;
 
     private Dictionary<ItemType, List<InventoryListItem>> itemsByType = new Dictionary<ItemType, List<InventoryListItem>>();
     private List<InventoryListItem> favorites = new List<InventoryListItem>();
@@ -43,6 +55,12 @@ public class InventoryMenu : MonoBehaviour
         listViewDocuments = root.Q<MultiColumnListView>("Documents-ListView");
         listViewPhone = root.Q<MultiColumnListView>("Phone-ListView");
         listViewTools = root.Q<MultiColumnListView>("Tools-ListView");
+
+        itemNameLabel = root.Q<Label>("ItemNameLabel");
+        itemDescriptionLabel = root.Q<Label>("ItemDescriptionLabel");
+
+        useButton = root.Q<Button>("Button-Use");
+        dropButton = root.Q<Button>("Button-Drop");
 
         var listViews = new List<MultiColumnListView>
         {
@@ -135,20 +153,11 @@ public class InventoryMenu : MonoBehaviour
         };
         listView.columns.Add(quantityColumn);
 
-        /* listView.columnSortingChanged += () =>
-        {
-            // SBGDebug.LogInfo($"Sorting changed for {listView.name}", "InventoryMenu");
-            foreach (var sortedColumn in listView.sortedColumns)
-            {
-                // SBGDebug.LogInfo($"Column {sortedColumn.columnName} sorted {sortedColumn.direction}", "InventoryMenu");
-            }
-        }; */
-
         listView.itemsSource = typeItems;
-        
+
         // Setup selection handling
         listView.selectionType = SelectionType.Single;
-        
+
         // Register for both selection and click events to ensure we catch the interaction
         listView.selectedIndicesChanged += (selected) =>
         {
@@ -161,77 +170,15 @@ public class InventoryMenu : MonoBehaviour
                 ShowItemDetails(selectedItem.Item);
             }
         };
-        
-        // Add click event handling as backup
-        listView.RegisterCallback<ClickEvent>(evt =>
-        {
-            // SBGDebug.LogInfo($"Click detected on {listView.name}", "InventoryMenu");
-        });
-        
+
         listView.Rebuild();
     }
-
-    private void HandleItemSelection(MultiColumnListView listView, IEnumerable<object> items)
-    {
-        foreach (var item in items)
-        {
-            if (item is int index)
-            {
-                ItemType listType = GetListViewType(listView);
-                var selectedItem = itemsByType[listType][index];
-                
-                // Log selection for debugging
-                // SBGDebug.LogInfo($"Selected item: {selectedItem.Item.Name} from {listType} list", "InventoryMenu");
-                
-                ShowItemDetails(selectedItem.Item);
-            }
-        }
-    }
-
-    private void ShowItemDetails(IItem item)
-    {
-        if (item == null)
-        {
-            SBGDebug.LogError("Attempted to show details for null item", "InventoryMenu");
-            return;
-        }
-
-        // SBGDebug.LogInfo($"Displaying details for item: {item.Name}", "InventoryMenu");
-
-        var itemViewer = FindFirstObjectByType<ItemViewerController>();
-        if (itemViewer != null)
-        {
-            itemViewer.ShowItemById(item.ItemId);
-        }
-        else
-        {
-            SBGDebug.LogError("ItemViewerController not found in scene", "InventoryMenu");
-        }
-    }
-
-    private ItemType GetListViewType(MultiColumnListView listView)
-    {
-        return listView.name switch
-        {
-            "Misc-ListView" => ItemType.Misc,
-            "Materials-ListView" => ItemType.Material,
-            "Medical-ListView" => ItemType.Medical,
-            "Food-ListView" => ItemType.Food,
-            "Keys-ListView" => ItemType.Keys,
-            "Documents-ListView" => ItemType.Document,
-            "Phone-ListView" => ItemType.Phone,
-            "Tools-ListView" => ItemType.Tools,
-            _ => ItemType.Misc // Default case
-        };
-    }
-    #endregion
 
     private void Start()
     {
         PopulateListViews();
     }
 
-    #region List Population
     private async void PopulateListViews()
     {
         await Task.Run(() => new WaitUntil(() => InventoryManager.Instance.inventoryLoaded));
@@ -273,11 +220,73 @@ public class InventoryMenu : MonoBehaviour
         }
     }
     #endregion
-}
 
-public struct InventoryListItem
-{
-    public IItem Item;
-    public int Quantity;
+    private ItemType GetListViewType(MultiColumnListView listView)
+    {
+        return listView.name switch
+        {
+            "Misc-ListView" => ItemType.Misc,
+            "Materials-ListView" => ItemType.Material,
+            "Medical-ListView" => ItemType.Medical,
+            "Food-ListView" => ItemType.Food,
+            "Keys-ListView" => ItemType.Keys,
+            "Documents-ListView" => ItemType.Document,
+            "Phone-ListView" => ItemType.Phone,
+            "Tools-ListView" => ItemType.Tools,
+            _ => ItemType.Misc // Default case
+        };
+    }
+
+    #region ItemView
+    private void ShowItemDetails(IItem item)
+    {
+        if (item == null)
+        {
+            SBGDebug.LogError("Attempted to show details for null item", "InventoryMenu");
+            return;
+        }
+
+        ItemViewerModelManager.ShowItem(item.ItemId);
+
+        itemNameLabel.text = item.Name;
+        itemDescriptionLabel.text = item.Description;
+        // itemWeightLabel.text = item.Weight.ToString();
+        // itemQuantityLabel.text = item.Quantity.ToString();
+
+        RegisterItemViewButtons();
+    }
+
+    private void RegisterItemViewButtons()
+    {
+        useButton.clicked -= OnUseButtonClicked;
+        useButton.clicked += OnUseButtonClicked;
+
+        dropButton.clicked -= OnDropButtonClicked;
+        dropButton.clicked += OnDropButtonClicked;
+    }
+
+    private void OnUseButtonClicked()
+    {
+        SBGDebug.LogInfo("Use button clicked", "InventoryMenu");
+        // FUTURE IMPLEMENTATION: Use item logic
+    }
+
+    private void OnDropButtonClicked()
+    {
+        SBGDebug.LogInfo("Drop button clicked", "InventoryMenu");
+        // FUTURE IMPLEMENTATION: Drop item logic
+    }
+
+    private void ClearItemDetails()
+    {
+        itemNameLabel.text = "";
+        itemDescriptionLabel.text = "";
+        // itemWeightLabel.text = "";
+        // itemQuantityLabel.text = "";
+
+        useButton.clicked -= OnUseButtonClicked;
+        dropButton.clicked -= OnDropButtonClicked;
+    }
+    #endregion
 }
 #endregion

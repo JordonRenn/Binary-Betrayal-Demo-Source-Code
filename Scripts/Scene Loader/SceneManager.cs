@@ -144,22 +144,44 @@ public class CustomSceneManager : MonoBehaviour
                 SceneManager.LoadScene(scene_EndCredits);
                 break;
             case SceneName.Dev_1:
-                // Debug.Log("CUSTOM SCENE MANAGER | Attempting Scene activation: {scene_Dev_1}");
+                SceneManager.LoadScene(scene_Dev_1);
+                StartCoroutine(ACTIVATESCENE_DEV1(scene_Dev_1));
+                /* Debug.Log("CUSTOM SCENE MANAGER | Attempting Scene activation: {scene_Dev_1}");
 
-                fadeCanvasGroup.DOFade(1f, fadeDuration)
+                fadeImgObj.SetActive(true); // Ensure fade object is active
+                Debug.Log("CUSTOM SCENE MANAGER | Starting fade to black");
+                
+                // Kill any existing tweens on the CanvasGroup
+                fadeCanvasGroup.DOKill(true);
+                
+                // Store the tween and set its settings
+                Tween fadeTween = fadeCanvasGroup.DOFade(1f, fadeDuration)
+                    .SetUpdate(true) // Update even if time is paused
+                    .OnStart(() => {
+                        Debug.Log("CUSTOM SCENE MANAGER | Fade tween started");
+                    })
                     .OnComplete(() => {
-                        // Debug.Log("CUSTOM SCENE MANAGER | Scene fade to black complete");
+                        Debug.Log("CUSTOM SCENE MANAGER | Scene fade to black complete");
                         SceneManager.LoadScene(scene_Dev_1);
-                        // Debug.Log("CUSTOM SCENE MANAGER | Scene loaded");
+                        Debug.Log("CUSTOM SCENE MANAGER | Scene loaded");
                         StartCoroutine(ACTIVATESCENE_DEV1(scene_Dev_1));
-                        // Debug.Log("CUSTOM SCENE MANAGER | Scene Activation Coroutine Started");
-                        DOVirtual.DelayedCall(2f, () => {fadeCanvasGroup.DOFade(0f, fadeDuration)
-                            .OnComplete(() => {
-                                // Debug.Log("CUSTOM SCENE MANAGER | Scene fade from black complete");
-                                fadeImgObj.SetActive(false);
+                        Debug.Log("CUSTOM SCENE MANAGER | Scene Activation Coroutine Started");
+                        
+                        // Add a small delay before fading back
+                        DOVirtual.DelayedCall(2f, () => {
+                            Debug.Log("CUSTOM SCENE MANAGER | Starting fade from black");
+                            fadeCanvasGroup.DOKill(true); // Kill any existing tweens
+                            fadeCanvasGroup.DOFade(0f, fadeDuration)
+                                .SetUpdate(true)
+                                .OnComplete(() => {
+                                    Debug.Log("CUSTOM SCENE MANAGER | Scene fade from black complete");
+                                    fadeImgObj.SetActive(false);
                                 });
-                        });
+                        }).SetUpdate(true); // Ensure the delay works even if time is paused
                     });
+                
+                // Play the tween
+                fadeTween.Play(); */
                 break;
             default:
                 Debug.LogError("Scene not found");
@@ -170,14 +192,14 @@ public class CustomSceneManager : MonoBehaviour
 
     private IEnumerator ACTIVATESCENE_MAINMENU(string sceneName)
     {
-        // Debug.Log("CUSTOM SCENE MANAGER | Scene Activation started");
+        Debug.Log("CUSTOM SCENE MANAGER | Scene Activation started");
         yield return new WaitForSeconds(0.05f);
         
         Scene scene = SceneManager.GetSceneByName(sceneName);
-        // Debug.Log($"CUSTOM SCENE MANAGER | Scene found be name: {sceneName}");
+        Debug.Log($"CUSTOM SCENE MANAGER | Scene found be name: {sceneName}");
 
-        SceneManager.SetActiveScene(scene);
-        // Debug.Log($"CUSTOM SCENE MANAGER | Scene activated: {sceneName}");
+        /* SceneManager.SetActiveScene(scene);
+        Debug.Log($"CUSTOM SCENE MANAGER | Scene activated: {sceneName}"); */
 
         ContentLoader.Instance.LoadScene(SceneName.MainMenu);
 
@@ -186,28 +208,28 @@ public class CustomSceneManager : MonoBehaviour
 
     private IEnumerator ACTIVATESCENE_DEV1(string sceneName)
     {
-        // Debug.Log("CUSTOM SCENE MANAGER | Scene Activation started");
-        yield return new WaitForSeconds(0.25f);
+        Debug.Log("CUSTOM SCENE MANAGER | Scene Activation started");
+        yield return new WaitForSecondsRealtime(0.25f);
         
         Scene scene = SceneManager.GetSceneByName(sceneName);
-        // Debug.Log($"CUSTOM SCENE MANAGER | Scene found be name: {sceneName}");
+        Debug.Log($"CUSTOM SCENE MANAGER | Scene found be name: {sceneName}");
 
         SceneManager.SetActiveScene(scene);
-        // Debug.Log($"CUSTOM SCENE MANAGER | Scene activated: {sceneName}");
+        Debug.Log($"CUSTOM SCENE MANAGER | Scene activated: {sceneName}");
 
 
         ContentLoader.Instance.LoadScene(SceneName.Dev_1);
-        // Debug.Log($"CUSTOM SCENE MANAGER | Calling content loader to load content for scene: {sceneName}");
+        Debug.Log($"CUSTOM SCENE MANAGER | Calling content loader to load content for scene: {sceneName}");
 
         InputHandler.Instance.SetInputState(InputState.FirstPerson);
-        // Debug.Log("CUSTOM SCENE MANAGER | Calling ''PlayerSpawner'' to spawn the Player");
+        Debug.Log("CUSTOM SCENE MANAGER | Calling ''PlayerSpawner'' to spawn the Player");
         PlayerSpawner.Instance.SpawnPlayer();
     }
 
     private IEnumerator ACTIVATESCENE_C01_03(string sceneName)
     {
         // Debug.Log("CUSTOM SCENE MANAGER | Scene Activation started");
-        yield return new WaitForSeconds(0.25f);
+        yield return new WaitForSecondsRealtime(0.25f);
         
         Scene scene = SceneManager.GetSceneByName(sceneName);
         // Debug.Log($"CUSTOM SCENE MANAGER | Scene found be name: {sceneName}");
