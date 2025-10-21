@@ -2,6 +2,7 @@ using System.Collections;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using BinaryBetrayal.InputManagement;
 public class CustomSceneManager : MonoBehaviour
 {
     private static CustomSceneManager _instance;
@@ -38,7 +39,7 @@ public class CustomSceneManager : MonoBehaviour
     [SerializeField] private const string scene_EndCredits = "_EndCredits";
     [SerializeField] private const string scene_Dev_1 = "SampleScene";
 
-#if UNITY_EDITOR
+// #if UNITY_EDITOR
     private void OnValidate()
     {
         // Editor-time validation
@@ -83,7 +84,7 @@ public class CustomSceneManager : MonoBehaviour
             SBGDebug.LogWarning($"{nameof(CustomSceneManager)}: Scene '{sceneName}' ({description}) is not added to build settings!", "SceneManager | OnValidate");
         }
     }
-#endif
+// #endif
 
     private void ValidateRequiredComponents()
     {
@@ -194,7 +195,7 @@ public class CustomSceneManager : MonoBehaviour
     {
         Debug.Log("CUSTOM SCENE MANAGER | Scene Activation started");
         yield return new WaitForSeconds(0.05f);
-        
+
         Scene scene = SceneManager.GetSceneByName(sceneName);
         Debug.Log($"CUSTOM SCENE MANAGER | Scene found be name: {sceneName}");
 
@@ -203,7 +204,8 @@ public class CustomSceneManager : MonoBehaviour
 
         ContentLoader.Instance.LoadScene(SceneName.MainMenu);
 
-        InputHandler.Instance.SetInputState(InputState.UI);
+        // InputHandler.Instance.SetInputState(InputState.UI);
+        InputSystem.SetInputState(InputState.UI);
     }
 
     private IEnumerator ACTIVATESCENE_DEV1(string sceneName)
@@ -221,7 +223,8 @@ public class CustomSceneManager : MonoBehaviour
         ContentLoader.Instance.LoadScene(SceneName.Dev_1);
         Debug.Log($"CUSTOM SCENE MANAGER | Calling content loader to load content for scene: {sceneName}");
 
-        InputHandler.Instance.SetInputState(InputState.FirstPerson);
+        // InputHandler.Instance.SetInputState(InputState.FirstPerson);
+        InputSystem.SetInputState(InputState.FirstPerson);
         Debug.Log("CUSTOM SCENE MANAGER | Calling ''PlayerSpawner'' to spawn the Player");
         PlayerSpawner.Instance.SpawnPlayer();
     }
@@ -240,7 +243,8 @@ public class CustomSceneManager : MonoBehaviour
         ContentLoader.Instance.LoadScene(SceneName.C01_03);
         // Debug.Log($"CUSTOM SCENE MANAGER | Calling content loader to load content for scene: {sceneName}");
 
-        InputHandler.Instance.SetInputState(InputState.FirstPerson);
+        // InputHandler.Instance.SetInputState(InputState.FirstPerson);
+        InputSystem.SetInputState(InputState.FirstPerson);
         // Debug.Log("CUSTOM SCENE MANAGER | Calling ''PlayerSpawner'' to spawn the Player");
         PlayerSpawner.Instance.SpawnPlayer();
     }

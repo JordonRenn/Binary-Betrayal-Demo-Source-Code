@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using GlobalEvents;
+using BinaryBetrayal.InputManagement;
 
 #region Container Lockable
 public class ContainerLockable : ContainerBase
@@ -10,7 +11,6 @@ public class ContainerLockable : ContainerBase
 
     [SerializeField] private bool isKeyRequired = false;
     [SerializeField] private string keyId = "";
-    [SerializeField] private KeyType keyType = KeyType.Key;
     [SerializeField] private DoorLockState lockState = DoorLockState.Locked;
 
     private const string FILE_DIALOGUE_ID_KEYNEEDED = "container_locked_keyNeeded_firstTime";
@@ -108,7 +108,7 @@ public class ContainerLockable : ContainerBase
     public IEnumerator ContainerLockDialogueSequence(LockedDoorDialogueVariation v)
     {
         // Lock input during dialogue to prevent interference
-        InputHandler.Instance.SetInputState(InputState.Focus);
+        InputSystem.SetInputState(InputState.Focus);
 
         string dialogueId = "";
         switch (v)
@@ -135,7 +135,7 @@ public class ContainerLockable : ContainerBase
         else
         {
             SBGDebug.LogError("DialogueDisplayController.Instance is null", "ContainerLockable");
-            InputHandler.Instance.SetInputState(InputState.FirstPerson);
+            InputSystem.SetInputState(InputState.FirstPerson);
             yield break;
         }
 
@@ -148,7 +148,7 @@ public class ContainerLockable : ContainerBase
 
             if (v == LockedDoorDialogueVariation.LockedHasKey)
             {
-                InputHandler.Instance.SetInputState(InputState.FirstPerson);
+                InputSystem.SetInputState(InputState.FirstPerson);
 
                 HandleContainerOpen();
             }
@@ -158,7 +158,7 @@ public class ContainerLockable : ContainerBase
             }
             else
             {
-                InputHandler.Instance.SetInputState(InputState.FirstPerson);
+                InputSystem.SetInputState(InputState.FirstPerson);
             }
         }
         // GameMaster.Instance.gm_DialogueEnded.AddListener(OnDialogueEnded);

@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UIElements;
 using System.Collections.Generic;
-using System;
+using BinaryBetrayal.InputManagement;
 using GlobalEvents;
 
 /// <summary>
@@ -63,14 +63,19 @@ public class DialogueDisplayController : MonoBehaviour
         DialogueEvents.DialogueEnded += EndDialogue;
 
         // Subscribe to input events for dialogue advancement
-        if (InputHandler.Instance != null)
-        {
-            InputHandler.Instance.OnInteractInput.AddListener(OnInteractInputReceived);
-            InputHandler.Instance.OnFocus_InteractInput.AddListener(OnInteractInputReceived);
-            InputHandler.Instance.OnUI_SubmitInput.AddListener(OnInteractInputReceived);
-            InputHandler.Instance.OnUI_ClickInput.AddListener(OnInteractInputReceived);
-            InputHandler.Instance.OnUI_InteractInput.AddListener(OnInteractInputReceived);
-        }
+        SubscribeToInputEvents();
+    }
+
+    private void SubscribeToInputEvents()
+    {
+        // FirstPerson and Focus inputs for advancing dialogue
+        InputSystem.OnInteractDown_fp += OnInteractInputReceived;
+        InputSystem.OnInteractDown_focus += OnInteractInputReceived;
+        
+        // UI inputs for advancing dialogue and selecting choices
+        InputSystem.OnSubmitDown_ui += OnInteractInputReceived;
+        InputSystem.OnClickDown_ui += OnInteractInputReceived;
+        InputSystem.OnInteractDown_ui += OnInteractInputReceived;
     }
 
     private void OnDestroy()
@@ -78,14 +83,17 @@ public class DialogueDisplayController : MonoBehaviour
         DialogueEvents.DialogueTriggered -= StartDialogue;
         DialogueEvents.DialogueEnded -= EndDialogue;
 
-        if (InputHandler.Instance != null)
-        {
-            InputHandler.Instance.OnInteractInput.RemoveListener(OnInteractInputReceived);
-            InputHandler.Instance.OnFocus_InteractInput.RemoveListener(OnInteractInputReceived);
-            InputHandler.Instance.OnUI_SubmitInput.RemoveListener(OnInteractInputReceived);
-            InputHandler.Instance.OnUI_ClickInput.RemoveListener(OnInteractInputReceived);
-            InputHandler.Instance.OnUI_InteractInput.RemoveListener(OnInteractInputReceived);
-        }
+        UnsubscribeFromInputEvents();
+    }
+
+    private void UnsubscribeFromInputEvents()
+    {
+        // Unsubscribe from all input events
+        InputSystem.OnInteractDown_fp -= OnInteractInputReceived;
+        InputSystem.OnInteractDown_focus -= OnInteractInputReceived;
+        InputSystem.OnSubmitDown_ui -= OnInteractInputReceived;
+        InputSystem.OnClickDown_ui -= OnInteractInputReceived;
+        InputSystem.OnInteractDown_ui -= OnInteractInputReceived;
     }
 
     #endregion
@@ -137,7 +145,10 @@ public class DialogueDisplayController : MonoBehaviour
         // Restore previous input state if we switched to UI for choice dialogue
         if (previousInputState.HasValue)
         {
-            if (previousInputState != InputState.UI) InputHandler.Instance.SetInputState(previousInputState.Value);
+            if (previousInputState != InputState.UI)
+            {
+                InputSystem.SetInputState(previousInputState.Value);
+            }
             // SBGDebug.LogInfo($"Restored input state to {previousInputState}", "DialogueDisplayController | EndDialogue");
             previousInputState = null;
         }
@@ -196,7 +207,10 @@ public class DialogueDisplayController : MonoBehaviour
 
         var selectedChoice = currentEntry.choices[choiceIndex];
 
-        if (previousInputState != InputState.UI) InputHandler.Instance.SetInputState(previousInputState.Value);
+        if (previousInputState != InputState.UI)
+        {
+            InputSystem.SetInputState(previousInputState.Value);
+        }
 
         previousInputState = null;
 
@@ -354,10 +368,10 @@ public class DialogueDisplayController : MonoBehaviour
         if (dialogueLabel == null) return;
 
         // Cache current input state if not already UI and switch to UI state
-        if (InputHandler.Instance.currentState != InputState.UI)
+        if (InputSystem.currentState != InputState.UI)
         {
-            previousInputState = InputHandler.Instance.currentState;
-            InputHandler.Instance.SetInputState(InputState.UI);
+            previousInputState = InputSystem.currentState;
+            InputSystem.SetInputState(InputState.UI);
             // SBGDebug.LogInfo($"Switched to UI input state (from {previousInputState})", "DialogueDisplayController | DisplayChoiceEntry");
         }
 

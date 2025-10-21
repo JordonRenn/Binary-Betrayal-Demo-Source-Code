@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using GlobalEvents;
+using BinaryBetrayal.InputManagement;
 
 /* 
 INHERITANCE HIERARCHY:
@@ -23,7 +24,6 @@ public class DoorLockable : DoorGeneric
     [Tooltip("If true, a key is required and cannot be lockpicked. If false, the door can be lockpicked.")]
     [SerializeField] private bool isKeyRequired = false;
     [SerializeField] private string keyId = "";
-    [SerializeField] private KeyType keyType = KeyType.Key;
 
     [Header("Lock State")]
     [Space(10)]
@@ -37,7 +37,6 @@ public class DoorLockable : DoorGeneric
 
     private LockPickingQuickTimeEvent qte_LockPick;
     private bool hasBeenInteractedWith = false;
-    private bool playerHasKey = false;
 
     void Awake()
     {
@@ -132,7 +131,7 @@ public class DoorLockable : DoorGeneric
     public IEnumerator DoorLockDialogueSequence(LockedDoorDialogueVariation v)
     {
         // Lock input during dialogue to prevent interference
-        InputHandler.Instance.SetInputState(InputState.Focus);
+        InputSystem.SetInputState(InputState.Focus);
 
         string dialogueId = "";
         switch (v)
@@ -159,7 +158,7 @@ public class DoorLockable : DoorGeneric
         else
         {
             SBGDebug.LogError("DialogueDisplayController.Instance is null", "DoorLockable");
-            InputHandler.Instance.SetInputState(InputState.FirstPerson);
+            InputSystem.SetInputState(InputState.FirstPerson);
             yield break;
         }
 
@@ -172,7 +171,7 @@ public class DoorLockable : DoorGeneric
 
             if (v == LockedDoorDialogueVariation.LockedHasKey)
             {
-                InputHandler.Instance.SetInputState(InputState.FirstPerson);
+                InputSystem.SetInputState(InputState.FirstPerson);
 
                 LockDoor(false);
                 HandleDoorOpen();
@@ -184,7 +183,7 @@ public class DoorLockable : DoorGeneric
             }
             else
             {
-                InputHandler.Instance.SetInputState(InputState.FirstPerson);
+                InputSystem.SetInputState(InputState.FirstPerson);
             }
         }
         // GameMaster.Instance.gm_DialogueEnded.AddListener(OnDialogueEnded);
@@ -223,8 +222,6 @@ public class DoorLockable : DoorGeneric
             var id = "key_" + keyId;
             if (InventoryManager.Instance.playerInventory.HasItemById(id, 1))
             {
-                playerHasKey = true;
-                // SBGDebug.LogInfo($"Key {id} found in inventory", $"class: DoorLockable | object: {objectDisplayName}");
                 return true;
             }
             else

@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using System.Collections;
 using FMODUnity;
 using DG.Tweening;
+using BinaryBetrayal.InputManagement;
 
 // previous declarations:
 // public class DoorLock1 : Interactable
@@ -59,8 +60,6 @@ public class LockPickingQuickTimeEvent : MonoBehaviour // : SauceObject
     private bool isInQTE1Phase = false;
     private bool isInQTE2Phase = false;
     private bool isPicking = false;
-    //InputState prevInputState;
-    private float totalRotation = 0f;
     private float continuousAngle = 0f; 
 
     #region Init
@@ -131,8 +130,8 @@ public class LockPickingQuickTimeEvent : MonoBehaviour // : SauceObject
     {
         if (door.doorLockState != DoorLockState.Unlocked && isPickable)
         {
-            //prevInputState = InputHandler.Instance.currentState;
-            InputHandler.Instance.SetInputState(InputState.Focus);
+            //prevInputState = InputSystem.currentState;
+            InputSystem.SetInputState(InputState.Focus);
 
             StartCoroutine(OpenLockGUI());
         }
@@ -166,7 +165,7 @@ public class LockPickingQuickTimeEvent : MonoBehaviour // : SauceObject
         if (UIManager.Instance != null) UIManager.Instance.HideAllHUD(true);
         if (WeaponPool.Instance != null) WeaponPool.Instance.activeWSO.SetCurrentWeaponActive(false);
 
-        InputHandler.Instance.SetInputState(InputState.Focus);
+        InputSystem.SetInputState(InputState.Focus);
 
         isPicking = true;
 
@@ -186,8 +185,8 @@ public class LockPickingQuickTimeEvent : MonoBehaviour // : SauceObject
         }
         canvasGroup.alpha = 1;
 
-        InputHandler.Instance.OnFocus_InteractInput.AddListener(StartInitialQTE1);
-        InputHandler.Instance.OnFocus_CancelInput.AddListener(ResetLockPicking);
+        InputSystem.OnInteractDown_focus += StartInitialQTE1;
+        InputSystem.OnCancelDown_focus += ResetLockPicking;
     }
 
     private void StartPickWiggle()
@@ -206,7 +205,7 @@ public class LockPickingQuickTimeEvent : MonoBehaviour // : SauceObject
     void StartInitialQTE1()
     {
         // Remove initial listener
-        InputHandler.Instance.OnFocus_InteractInput.RemoveListener(StartInitialQTE1);
+        InputSystem.OnInteractDown_focus -= StartInitialQTE1;
         QTE_1();
     }
 
@@ -214,14 +213,13 @@ public class LockPickingQuickTimeEvent : MonoBehaviour // : SauceObject
     {
         img_Indicator.rectTransform.anchoredPosition = Vector2.zero;
         img_Indicator.rectTransform.localRotation = Quaternion.identity;
-        totalRotation = 0f;
     }
 
     void CleanupEventListeners()
     {
-        InputHandler.Instance.OnFocus_InteractInput.RemoveListener(StartInitialQTE1);
-        InputHandler.Instance.OnFocus_InteractInput.RemoveListener(QTE_2_Check);
-        InputHandler.Instance.OffFocus_InteractInput.RemoveListener(QTE_1_Check);
+        InputSystem.OnInteractDown_focus -= StartInitialQTE1;
+        InputSystem.OnInteractDown_focus -= QTE_2_Check;
+        InputSystem.OnInteractUp_focus -= QTE_1_Check;
     }
 
     void ResetLockPicking()
@@ -272,7 +270,7 @@ public class LockPickingQuickTimeEvent : MonoBehaviour // : SauceObject
 
         if (WeaponPool.Instance != null) WeaponPool.Instance.activeWSO.SetCurrentWeaponActive(true);
         if (UIManager.Instance != null) UIManager.Instance.HideAllHUD(false);
-        InputHandler.Instance.SetInputState(InputState.FirstPerson);
+        InputSystem.SetInputState(InputState.FirstPerson);
     }
 
     #region QTEs
@@ -330,13 +328,13 @@ public class LockPickingQuickTimeEvent : MonoBehaviour // : SauceObject
         isInQTE1Phase = true;
         isInQTE2Phase = false;
 
-        InputHandler.Instance.OffFocus_InteractInput.AddListener(QTE_1_Check);
+        InputSystem.OnInteractUp_focus += QTE_1_Check;
     }
 
     void QTE_1_Check()
     {
         isInQTE1Phase = false;
-        InputHandler.Instance.OffFocus_InteractInput.RemoveListener(QTE_1_Check);
+        InputSystem.OnInteractUp_focus -= QTE_1_Check;
 
         float currentRotation = continuousAngle % 360f;
         if (currentRotation < 0) currentRotation += 360f;
@@ -356,12 +354,12 @@ public class LockPickingQuickTimeEvent : MonoBehaviour // : SauceObject
     void QTE_2()
     {
         isInQTE2Phase = true;
-        InputHandler.Instance.OnFocus_InteractInput.AddListener(QTE_2_Check);
+        InputSystem.OnInteractDown_focus += QTE_2_Check;
     }
 
     void QTE_2_Check()
     {
-        InputHandler.Instance.OnFocus_InteractInput.RemoveListener(QTE_2_Check);
+        InputSystem.OnInteractDown_focus -= QTE_2_Check;
 
         float currentRotation;
         currentRotation = continuousAngle % 360f;
@@ -406,7 +404,6 @@ public class LockPickingQuickTimeEvent : MonoBehaviour // : SauceObject
 
         img_Indicator.rectTransform.localRotation = Quaternion.identity;
         img_SuccessArea.rectTransform.localRotation = Quaternion.identity;
-        totalRotation = 0f;
 
         SetSuccessArea(difficulty);
         ResetIndicators();

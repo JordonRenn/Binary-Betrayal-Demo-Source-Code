@@ -17,7 +17,6 @@ public class SauceObject : MonoBehaviour
     [SerializeField] public string objectDisplayName;
 
     [Space(10)]
-    [SerializeField] private bool isInteractable = false;
     [SerializeField] private bool isTrackable = false;
 
     //#region Tracking

@@ -6,7 +6,6 @@ public abstract class ContainerBase : SauceObject
     [Space(10)]
     
     [SerializeField] private string containerInventoryID; //will be used to load inventory from json
-    [SerializeField] private int containerInventoryCapacity = 10;
 
     private const string FILE_ITEM_MASTER = "streamingassets/ItemMaster.csv"; // maybe used to generate random items?
     private IInventory inventory;

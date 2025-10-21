@@ -4,6 +4,7 @@ using UnityEngine;
 using Unity.Cinemachine;
 using FMODUnity;
 using GlobalEvents;
+using BinaryBetrayal.InputManagement;
 
 public class PS_Main : SauceObject
 {
@@ -114,8 +115,8 @@ public class PS_Main : SauceObject
 
         WeaponPool.Instance.activeWSO.SetCurrentWeaponActive(false);
         characterMovement.moveDisabled = true; //needed to stop Update loop from running so controller can be disabled so player can teleport
-        InputHandler.Instance.SetInputState(InputState.Focus);
-        InputHandler.Instance.OnFocus_CancelInput.AddListener(DeactivePhone);
+        InputSystem.SetInputState(InputState.Focus);
+        InputSystem.OnCancelDown_focus += DeactivePhone;
         interactCollider.enabled = false;
 
         UIManager.Instance.HideAllHUD(true);
@@ -150,7 +151,7 @@ public class PS_Main : SauceObject
     private IEnumerator DeactivePhoneRoutine()
     {
         c_Keypad.enabled = false;
-        InputHandler.Instance.OnFocus_CancelInput.RemoveListener(DeactivePhone);
+        InputSystem.OnCancelDown_focus -= DeactivePhone;
 
         // Only play hangup animation and sound if we haven't already
         if (usingPhone)
@@ -188,7 +189,7 @@ public class PS_Main : SauceObject
 
         // Re-enable movement and input
         characterMovement.moveDisabled = false;
-        InputHandler.Instance.SetInputState(InputState.FirstPerson);
+        InputSystem.SetInputState(InputState.FirstPerson);
 
         UIManager.Instance.HideAllHUD(false);
     }

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
@@ -13,6 +14,7 @@ public enum InputState
 /// Singleton class to handle all the input actions for the FPS system.
 /// </summary>
 #region Input Handler
+[Obsolete("InputHandler is deprecated. Use static InputSystem instead")]
 public class InputHandler : MonoBehaviour
 {
     private static InputHandler _instance;

@@ -24,10 +24,7 @@ Y88b. .d88P 888   Y8888     888     888       Y88b  d88P    888     888        8
 public static class ObjectiveEventManager
 {
     private static string validationLogFilePath = "Assets/Logs/ObjectiveValidationLog.txt";
-    private static bool isInitialized = false;
     private static List<ObjectiveType> activeObjectiveTypes = new List<ObjectiveType>();
-
-    private static float subscriptionTimeOut = 5f;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     public static async void Init()

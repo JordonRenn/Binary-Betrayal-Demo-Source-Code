@@ -1,4 +1,4 @@
-using System;
+using BinaryBetrayal.InputManagement;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -41,7 +41,6 @@ public class WeaponPool : MonoBehaviour
     public FPSS_WeaponSlotObject activeWSO { get; private set; } 
     public WeaponSlot activeSlot { get; private set; }  = WeaponSlot.Secondary; //SHOULD BE UNARMED BUT NEED TO IMPLEMENT IN UNITY FIRST
 
-    private bool initialized = false;
     public bool poolFilled { get; private set; } = false;
     private bool isSwitching = false;
 
@@ -71,7 +70,6 @@ public class WeaponPool : MonoBehaviour
         yield return StartCoroutine(activeWSO.SetWeaponActive());
         
         SubscribeToEvents();
-        initialized = true;
     }
 
     private void LoadWeaponInventory()
@@ -213,16 +211,42 @@ public class WeaponPool : MonoBehaviour
 
     private static void SubscribeToEvents()
     {
-        InputHandler.Instance.OnFireInput.AddListener(Instance.Fire);
-        InputHandler.Instance.OnReloadInput.AddListener(Instance.Reload);
+        // Subscribe to FirstPerson input events
+        InputSystem.OnFireDown_fp += Instance.Fire;
+        InputSystem.OnReloadDown_fp += Instance.Reload;
 
-        InputHandler.Instance.OnSlot1Input.AddListener(() => Instance.SelectPrimary());
-        InputHandler.Instance.OnSlot2Input.AddListener(() => Instance.SelectSecondary());
-        InputHandler.Instance.OnMeleeInput.AddListener(() => Instance.SelectMelee());
-        InputHandler.Instance.OnUtilityInput.AddListener(() => Instance.SelectUtility());
-        InputHandler.Instance.OnUnarmedInput.AddListener(() => Instance.SelectUnarmed());
+        InputSystem.OnEquipWeaponPrimaryDown_fp += Instance.SelectPrimary;
+        InputSystem.OnEquipWeaponSecondaryDown_fp += Instance.SelectSecondary;
+        InputSystem.OnEquipMeleeDown_fp += Instance.SelectMelee;
+        InputSystem.OnEquipUtilityDown_fp += Instance.SelectUtility;
+        InputSystem.OnEquipUnarmedDown_fp += Instance.SelectUnarmed;
 
-        InputHandler.Instance.OnSwapInput.AddListener(() => Instance.SwapPrimarySecondary());
+        InputSystem.OnSwapEquipedWeaponDown_fp += Instance.SwapPrimarySecondary;
+    }
+
+    private void OnDestroy()
+    {
+        if (_instance == this)
+        {
+            UnsubscribeFromEvents();
+        }
+    }
+
+    private static void UnsubscribeFromEvents()
+    {
+        if (Instance == null) return;
+
+        // Unsubscribe from FirstPerson input events
+        InputSystem.OnFireDown_fp -= Instance.Fire;
+        InputSystem.OnReloadDown_fp -= Instance.Reload;
+
+        InputSystem.OnEquipWeaponPrimaryDown_fp -= Instance.SelectPrimary;
+        InputSystem.OnEquipWeaponSecondaryDown_fp -= Instance.SelectSecondary;
+        InputSystem.OnEquipMeleeDown_fp -= Instance.SelectMelee;
+        InputSystem.OnEquipUtilityDown_fp -= Instance.SelectUtility;
+        InputSystem.OnEquipUnarmedDown_fp -= Instance.SelectUnarmed;
+
+        InputSystem.OnSwapEquipedWeaponDown_fp -= Instance.SwapPrimarySecondary;
     }
     #endregion
 

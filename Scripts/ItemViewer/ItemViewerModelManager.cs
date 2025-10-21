@@ -22,6 +22,8 @@ public static class ItemViewerModelManager
     public static void RegisterSharedTexture(RenderTexture texture)
     {
         SharedRenderTexture = texture;
+        // If controller is already registered, assign the texture to it
+        _controller?.RegisterTextureWithPreviewCamera(SharedRenderTexture);
     }
 
     public static void RotateModel(Vector2 rotation)

@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using GlobalEvents;
 using UnityEngine.UIElements;
+using BinaryBetrayal.InputManagement;
 
 /* 
     First Person Controller Hierarchy: 
@@ -38,7 +39,6 @@ public class FirstPersonInteraction : MonoBehaviour
 
     [SerializeField] float interactionCooldown = 0.25f;
     [SerializeField] float reachDistance = 3f;
-    private InputHandler input;
     // private TMP_Text objctInfoText;
     private Label hoverInfoText;
     private float lastInteractionTime = 0f;
@@ -58,7 +58,6 @@ public class FirstPersonInteraction : MonoBehaviour
 
     void Start()
     {
-        input = InputHandler.Instance;
         // objctInfoText = FPSS_ReticleSystem.Instance.objectInfoText;
         hoverInfoText = ReticleSystem.Instance.HoverInfoText;
     }
@@ -70,7 +69,7 @@ public class FirstPersonInteraction : MonoBehaviour
     {
         ray = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
 
-        if (input.InteractInput && Time.time >= lastInteractionTime + interactionCooldown)
+        if (InputSystem.InteractInput && Time.time >= lastInteractionTime + interactionCooldown)
         {
             AttemptInteraction();
             lastInteractionTime = Time.time;

@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using GlobalEvents;
+using BinaryBetrayal.InputManagement;
 
 
 public static class GameSettings
@@ -79,14 +80,8 @@ public static class GameSettings
     /// </summary>
     private static void ApplySettings()
     {
-        // Notify any systems that need to update when settings change
-        if (InputHandler.Instance != null)
-        {
-            InputHandler.Instance.UpdateSensitivitySettings();
-        }
+        InputSystem.UpdateInputSettings();
 
-        // Notify all listeners that settings have changed
-        // gm_SettingsChanged.Invoke();
         ConfigEvents.RaiseSettingsChanged();
     }
 

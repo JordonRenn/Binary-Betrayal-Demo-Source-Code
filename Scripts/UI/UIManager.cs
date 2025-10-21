@@ -1,10 +1,12 @@
 // new UI manager that leverages UI builder / toolkit
-using System;
+
+using BinaryBetrayal.InputManagement;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UIElements;
 using FMODUnity;
 using System.Collections.Generic;
+using InputSys = BinaryBetrayal.InputManagement.InputSystem;
 
 // rename once existing UIManager can be replaced by this
 #region UIManager
@@ -64,6 +66,9 @@ public class UIManager : MonoBehaviour
     private HUDController hudController;
 
     private List<UIDocument> allMenuDocuments = new List<UIDocument>();
+    
+    // Track which menu is currently open
+    private UIDocument currentlyOpenMenu = null;
 
     #region Initialization
     void Awake()
@@ -82,35 +87,57 @@ public class UIManager : MonoBehaviour
 
     private void GetComponents()
     {
+        // Load PanelSettings if not assigned
+        PanelSettings panelSettings = Resources.Load<PanelSettings>("UI Toolkit/PanelSettings");
+        if (panelSettings == null)
+        {
+            Debug.LogError("[UIManager] PanelSettings not found in Resources/UI Toolkit/PanelSettings - UI Toolkit may not work properly");
+        }
+        // IMPORTANT: In the Unity Inspector, set PanelSettings "Update Mode" to "Unscaled Time" for UI to work with Time.timeScale = 0
+
         if (PauseMenuDocument != null)
         {
             pauseMenu = PauseMenuDocument.gameObject.GetComponent<PauseMenu>();
             allMenuDocuments.Add(PauseMenuDocument);
+            if (PauseMenuDocument.panelSettings == null && panelSettings != null)
+            {
+                PauseMenuDocument.panelSettings = panelSettings;
+                Debug.Log("[UIManager] Assigned PanelSettings to PauseMenuDocument");
+            }
         }
 
         if (InventoryDocument != null)
         {
             inventoryMenu = InventoryDocument.gameObject.GetComponent<InventoryMenu>();
             allMenuDocuments.Add(InventoryDocument);
+            if (InventoryDocument.panelSettings == null && panelSettings != null)
+            {
+                InventoryDocument.panelSettings = panelSettings;
+                Debug.Log("[UIManager] Assigned PanelSettings to InventoryDocument");
+            }
         }
 
         if (JournalDocument != null)
         {
             journalMenu = JournalDocument.gameObject.GetComponent<JournalMenu>();
             allMenuDocuments.Add(JournalDocument);
+            if (JournalDocument.panelSettings == null && panelSettings != null)
+            {
+                JournalDocument.panelSettings = panelSettings;
+                Debug.Log("[UIManager] Assigned PanelSettings to JournalDocument");
+            }
         }
 
         if (PlayerStatsDocument != null)
         {
             playerMenu = PlayerStatsDocument.gameObject.GetComponent<PlayerMenu>();
             allMenuDocuments.Add(PlayerStatsDocument);
+            if (PlayerStatsDocument.panelSettings == null && panelSettings != null)
+            {
+                PlayerStatsDocument.panelSettings = panelSettings;
+                Debug.Log("[UIManager] Assigned PanelSettings to PlayerStatsDocument");
+            }
         }
-
-        /* if (MapDocument != null)
-        {
-            mapMenu = MapDocument.gameObject.GetComponent<MapMenu>();
-            allMenuDocuments.Add(MapDocument);
-        } */
 
         hudController = HUDDocument?.gameObject.GetComponent<HUDController>();
 
@@ -130,8 +157,11 @@ public class UIManager : MonoBehaviour
                 if (evt.target is Button ||
                     (evt.target is VisualElement element &&
                      (element.ClassListContains("hoverable") ||
-                      element.ClassListContains("unity-tab__header"))) ||
-                    evt.target is TabButton)
+                      element.ClassListContains("unity-tab__header")))
+/* #if UNITY_EDITOR
+                    || evt.target is TabButton
+#endif */
+                    )
                 {
                     RuntimeManager.PlayOneShot(mouseHoverSound);
                 }
@@ -171,13 +201,89 @@ public class UIManager : MonoBehaviour
     {
         await Task.Run(() => new WaitUntil(() => InventoryManager.Instance != null && GameMaster.Instance != null));
 
-        InputHandler.Instance?.OnPauseMenuInput?.AddListener(async () => await ShowPauseMenu());
-        InputHandler.Instance?.OnInventoryMenuInput?.AddListener(async () => await ShowInventoryMenu());
-        InputHandler.Instance?.OnPlayerMenuInput?.AddListener(async () => await ShowPlayerMenu());
-        InputHandler.Instance?.OnJournalMenuInput?.AddListener(async () => await ShowJournalMenu());
+        // Global input map is always active - subscribe once and handle menu toggling
+        InputSys.OnPauseMenuDown_global += HandlePauseMenuToggle;
+        InputSys.OnInventoryDown_global += HandleInventoryMenuToggle;
+        InputSys.OnPlayerMenuDown_global += HandlePlayerMenuToggle;
+        InputSys.OnJournalDown_global += HandleJournalMenuToggle;
     }
 
     #region Menu Switching
+    // Toggle handlers for global input
+    private async void HandlePauseMenuToggle()
+    {
+        // Only respond to menu toggles from FirstPerson or if toggling the currently open menu
+        if (InputSys.currentState == InputState.FirstPerson)
+        {
+            await ShowPauseMenu();
+        }
+        else if (InputSys.currentState == InputState.UI && currentlyOpenMenu == PauseMenuDocument)
+        {
+            await HideAllMenus();
+        }
+        // Ignore if in UI state but different menu is open
+    }
+
+    private async void HandleInventoryMenuToggle()
+    {
+        if (InputSys.currentState == InputState.FirstPerson)
+        {
+            await ShowInventoryMenu();
+        }
+        else if (InputSys.currentState == InputState.UI)
+        {
+            if (currentlyOpenMenu == InventoryDocument)
+            {
+                await HideAllMenus();
+            }
+            else
+            {
+                // Switch to inventory from another menu
+                await ShowInventoryMenu();
+            }
+        }
+    }
+
+    private async void HandleJournalMenuToggle()
+    {
+        if (InputSys.currentState == InputState.FirstPerson)
+        {
+            await ShowJournalMenu();
+        }
+        else if (InputSys.currentState == InputState.UI)
+        {
+            if (currentlyOpenMenu == JournalDocument)
+            {
+                await HideAllMenus();
+            }
+            else
+            {
+                // Switch to journal from another menu
+                await ShowJournalMenu();
+            }
+        }
+    }
+
+    private async void HandlePlayerMenuToggle()
+    {
+        if (InputSys.currentState == InputState.FirstPerson)
+        {
+            await ShowPlayerMenu();
+        }
+        else if (InputSys.currentState == InputState.UI)
+        {
+            if (currentlyOpenMenu == PlayerStatsDocument)
+            {
+                await HideAllMenus();
+            }
+            else
+            {
+                // Switch to player menu from another menu
+                await ShowPlayerMenu();
+            }
+        }
+    }
+
     private async Task ShowPauseMenu()
     {
         foreach (var document in allMenuDocuments)
@@ -192,6 +298,9 @@ public class UIManager : MonoBehaviour
         await MenuEntranceCheck();
 
         PauseMenuDocument.rootVisualElement.style.display = DisplayStyle.Flex;
+        PauseMenuDocument.rootVisualElement.pickingMode = PickingMode.Position;
+        Debug.Log($"[UIManager] Pause Menu Shown - PickingMode: {PauseMenuDocument.rootVisualElement.pickingMode}, Enabled: {PauseMenuDocument.rootVisualElement.enabledSelf}");
+        currentlyOpenMenu = PauseMenuDocument;
     }
 
     private async Task ShowInventoryMenu()
@@ -208,6 +317,8 @@ public class UIManager : MonoBehaviour
         await MenuEntranceCheck();
 
         InventoryDocument.rootVisualElement.style.display = DisplayStyle.Flex;
+        InventoryDocument.rootVisualElement.pickingMode = PickingMode.Position;
+        currentlyOpenMenu = InventoryDocument;
     }
 
     private async Task ShowJournalMenu()
@@ -224,6 +335,7 @@ public class UIManager : MonoBehaviour
         await MenuEntranceCheck();
 
         JournalDocument.rootVisualElement.style.display = DisplayStyle.Flex;
+        currentlyOpenMenu = JournalDocument;
     }
 
     private async Task ShowPlayerMenu()
@@ -240,6 +352,7 @@ public class UIManager : MonoBehaviour
         await MenuEntranceCheck();
 
         PlayerStatsDocument.rootVisualElement.style.display = DisplayStyle.Flex;
+        currentlyOpenMenu = PlayerStatsDocument;
     }
 
     /* private async Task ShowMapMenu()
@@ -267,41 +380,25 @@ public class UIManager : MonoBehaviour
             document.rootVisualElement.style.display = DisplayStyle.None;
         }
 
+        currentlyOpenMenu = null;
         await MenuExitCheck();
     }
 
     /* async so we can animate in future */
     private void ClearAllMenuListeners()
     {
-        var input = InputHandler.Instance;
-        if (input == null) return;
-
-        input.OnPauseMenuInput?.RemoveAllListeners();
-        input.OnUI_CancelInput?.RemoveAllListeners();
-        input.OnUI_InventoryInput?.RemoveAllListeners();
-        input.OnUI_JournalInput?.RemoveAllListeners();
-        input.OnUI_PlayerInput?.RemoveAllListeners();
+        // No longer needed - global input map handles everything
+        // Events are subscribed once in SubscribeToEvents() and never unsubscribed
     }
 
     private async Task MenuEntranceCheck()
     {
-        var input = InputHandler.Instance;
-        if (input == null) return;
-
-        // SBGDebug.LogInfo($"Current Input State: {input.currentState}", "UIManager | MenuEntranceCheck");
-
-        if (input.currentState == InputState.FirstPerson)
+        if (InputSys.currentState == InputState.FirstPerson)
         {
-            ClearAllMenuListeners();
-            input.SetInputState(InputState.UI);
+            // Switch to UI input state
+            InputSys.SetInputState(InputState.UI);
             HideAllHUD(true);
             reticleDocument.rootVisualElement.style.display = DisplayStyle.None;
-
-            // Add UI state listeners - using local async lambdas
-            input.OnUI_CancelInput.AddListener(() => { _ = HideAllMenus(); });
-            input.OnUI_InventoryInput.AddListener(() => { _ = ShowInventoryMenu(); });
-            input.OnUI_JournalInput.AddListener(() => { _ = ShowJournalMenu(); });
-            input.OnUI_PlayerInput.AddListener(() => { _ = ShowPlayerMenu(); });
 
             await Task.Delay(10); // simulate animation time
         }
@@ -309,20 +406,14 @@ public class UIManager : MonoBehaviour
 
     private async Task MenuExitCheck()
     {
-        var input = InputHandler.Instance;
-        if (input == null) return;
+        // SBGDebug.LogInfo($"Current Input State: {InputSystem.currentState}", "UIManager | MenuExitCheck");
 
-        // SBGDebug.LogInfo($"Current Input State: {input.currentState}", "UIManager | MenuExitCheck");
-
-        if (input.currentState == InputState.UI)
+        if (InputSys.currentState == InputState.UI)
         {
-            ClearAllMenuListeners();
-            input.SetInputState(InputState.FirstPerson);
+            // Switch back to FirstPerson input state
+            InputSys.SetInputState(InputState.FirstPerson);
             HideAllHUD(false);
             reticleDocument.rootVisualElement.style.display = DisplayStyle.Flex;
-
-            // Add FirstPerson state listener
-            input.OnPauseMenuInput?.AddListener(() => { _ = ShowPauseMenu(); });
 
             await Task.Delay(10); // simulate animation time
 

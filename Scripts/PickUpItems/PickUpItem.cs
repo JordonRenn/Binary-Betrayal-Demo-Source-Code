@@ -32,8 +32,8 @@ public class PickUpItem : SauceObject
     private protected LayerMask playerLayer;
     private const string PLAYER_LAYER_NAME = "playerObject";
 
-    private protected EventReference sfx_PickUp;
-    private const string SFX_REFERENCE = "event:/Player/player_PickUp";
+    [SerializeField] private protected EventReference sfx_PickUp;
+    // private const string SFX_REFERENCE = "event:/Player/player_PickUp";
 
     private protected Collider pickUpTrigger;
 
@@ -57,7 +57,7 @@ public class PickUpItem : SauceObject
         // Create item for misc items using ItemFactory
         CreateItem();
 
-        sfx_PickUp = EventReference.Find(SFX_REFERENCE);
+        // sfx_PickUp = EventReference.Find(SFX_REFERENCE);
         playerLayer = LayerMask.GetMask(PLAYER_LAYER_NAME);
         pickUpTrigger = GetComponent<Collider>();
 

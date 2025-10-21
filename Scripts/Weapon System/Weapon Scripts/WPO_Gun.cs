@@ -2,13 +2,16 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.Events;
 using FMODUnity;
+using BinaryBetrayal.InputManagement;
 
+[RequireComponent(typeof(WeaponStimEmitter))]
 public class WPO_Gun : FPSS_WeaponSlotObject
 {
     [Header("Gun Properties")]
     [Space(10)]
 
     [SerializeField] public WeaponFireMode fireMode;
+    private WeaponStimEmitter emitter;
     [SerializeField] private bool hasScope;
 
     [Header("Ammunition")]
@@ -77,6 +80,7 @@ public class WPO_Gun : FPSS_WeaponSlotObject
         //base.Awake();
         spreadPatternArrayLength = spreadPattern.Length;
         ConstructSpreadPattern();
+        emitter = GetComponent<WeaponStimEmitter>();
     }
 
     void Update()
@@ -92,7 +96,7 @@ public class WPO_Gun : FPSS_WeaponSlotObject
             CalculateSpread(); //find a way to get this the hell out of the Update loop
         }
 
-        if (!InputHandler.Instance.FireInput) //seems jank but works, i guess..
+        if (!InputSystem.FireInput) //Reset spread pattern when not firing
         {
             spreadIndex = 0;
         }
@@ -136,10 +140,11 @@ public class WPO_Gun : FPSS_WeaponSlotObject
     {
         EjectShell();
 
-        Transform camTransform = cam.transform;     
-        Ray ray = new Ray(camTransform.position, camTransform.forward); 
+        Transform camTransform = cam.transform;
+        Ray ray = new Ray(camTransform.position, camTransform.forward);
 
         RaycastHit hit;
+        
 
         if (Physics.Raycast(ray, out hit, range))
         {
@@ -147,7 +152,9 @@ public class WPO_Gun : FPSS_WeaponSlotObject
 
             StartCoroutine(ApplyBulletVisualEffects(targetPos));
 
-            CalculateDamage(hit.point);
+            emitter.GunFireStimulus(pos_Muzzle.position, CalculateDamage(hit.point), hit);
+
+            // CalculateDamage(hit.point);
 
             ApplyHitSurfaceEffects(ray, out hit);
         }

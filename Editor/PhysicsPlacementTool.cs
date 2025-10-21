@@ -87,7 +87,7 @@ public class PhysicsPlacementTool : EditorWindow
         rb.maxAngularVelocity = 7f; // Limit rotation speed
         
         Time.timeScale = 0.5f; // Slow down physics simulation
-        Physics.autoSimulation = false;
+        Physics.simulationMode = UnityEngine.SimulationMode.Script;
 
         isSimulating = true;
         EditorApplication.update += SimulatePhysics;
@@ -124,7 +124,7 @@ public class PhysicsPlacementTool : EditorWindow
         }
 
         Time.timeScale = 1f; // Reset time scale
-        Physics.autoSimulation = true;
+        Physics.simulationMode = UnityEngine.SimulationMode.FixedUpdate;
         isSimulating = false;
         rb = null;
         EditorApplication.update -= SimulatePhysics;

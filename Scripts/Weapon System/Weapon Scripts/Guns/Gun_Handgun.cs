@@ -1,18 +1,12 @@
 using UnityEngine;
 using System.Collections;
 
-public class Gun_Handgun :  WPO_Gun, IWPO_Gun //inherits from FPSS_WeaponSlotObject and implements WPO_Gun
+public class Gun_Handgun : WPO_Gun, IWPO_Gun //inherits from FPSS_WeaponSlotObject and implements WPO_Gun
 {
-    /* void Awake()
-    {
-        OnFire.AddListener(Fire);
-        OnReload.AddListener(Reload);
-    } */
-    
     public override void Fire()
     {
         // Debug.Log("Fire Handgun");
-        if (isActive && !isReloading) 
+        if (isActive && !isReloading)
         {
             StartCoroutine(FireBullet());
         }
@@ -23,20 +17,19 @@ public class Gun_Handgun :  WPO_Gun, IWPO_Gun //inherits from FPSS_WeaponSlotObj
         if (currentClip > 0 && canFire)
         {
             canFire = false;
-            
+
             PlaySfx(sfx_Fire, pos_GunAudio.position);
             animator.Play("Fire", 0, 0f); // Play from beginning with specific layer
-            
+
             // Decrement ammo count BEFORE calling FireHitScan
             currentClip--;
-            
+
             FireHitScan();
 
-            // FPSS_ReticleSystem.Instance?.GunFire(reticleFallOffSpeed);
             ReticleSystem.Instance?.Impulse(0.1f, 0.5f);
-            
+
             ApplySpread();
-            
+
             camShake.Shake(camShakeIntensity, 2f);
 
             yield return new WaitForSeconds(fireRate);

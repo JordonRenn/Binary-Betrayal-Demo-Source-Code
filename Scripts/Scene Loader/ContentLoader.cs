@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.SocialPlatforms;
 
 [RequireComponent(typeof(SceneManager))]
 
@@ -70,11 +71,11 @@ public class ContentLoader : MonoBehaviour
 
     void Start()
     {
-        if (inputHandler && InputHandler.Instance == null)
+        /* if (inputHandler && InputHandler.Instance == null)
         {
             Instantiate(inputHandler);
             // Debug.Log($"CONTENT LOADER | InputHandler Instantiated");
-        }
+        } */
         
         if (GlobalVolume)
         {
@@ -135,7 +136,7 @@ public class ContentLoader : MonoBehaviour
         Instantiate(NotificationSystem);
         Debug.Log($"CONTENT LOADER | NotificationSystem Instantiated");
 
-        SceneManager.LoadScene("ItemViewer", LoadSceneMode.Additive);
+        SceneManager.LoadScene("ItemViewer", new LoadSceneParameters(LoadSceneMode.Additive, LocalPhysicsMode.Physics3D));
     }
 
     private IEnumerator LOAD_SAMPLESCENE()

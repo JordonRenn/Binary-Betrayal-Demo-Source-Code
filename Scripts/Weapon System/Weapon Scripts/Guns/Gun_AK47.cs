@@ -1,7 +1,8 @@
 using UnityEngine;
 using System.Collections;
+using BinaryBetrayal.InputManagement;
 
-public class Gun_AK47 : WPO_Gun, IWPO_Gun //inherits from FPSS_WeaponSlotObject and implements WPO_Gun
+public class Gun_AK47 : WPO_Gun, IWPO_Gun
 {
     public override void Fire()
     {
@@ -26,7 +27,6 @@ public class Gun_AK47 : WPO_Gun, IWPO_Gun //inherits from FPSS_WeaponSlotObject 
             
             FireHitScan();
 
-            // FPSS_ReticleSystem.Instance.GunFire(reticleFallOffSpeed);
             ReticleSystem.Instance?.Impulse(0.5f, 0.5f);
             
             ApplySpread();
@@ -36,7 +36,7 @@ public class Gun_AK47 : WPO_Gun, IWPO_Gun //inherits from FPSS_WeaponSlotObject 
             yield return new WaitForSeconds(fireRate);
             canFire = true;
 
-            if (InputHandler.Instance.FireInput && !isReloading)
+            if (InputSystem.FireInput && !isReloading)
             {
                 StartCoroutine(FireBullet());
             }

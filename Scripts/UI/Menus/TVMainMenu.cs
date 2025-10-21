@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.Video;
-using System.Collections;
+using BinaryBetrayal.InputManagement;
 
 public class TVMainMenu : MonoBehaviour
 {
@@ -13,53 +13,26 @@ public class TVMainMenu : MonoBehaviour
         videoPlayer.clip = clip_Main;
         videoPlayer.Play();
 
-        // Wait for InputHandler to be available
-        /* StartCoroutine(WaitForInputHandler()); */
+        // Subscribe to input events
+        InputSystem.OnInteractDown_fp += OnInteractPressed;
+        InputSystem.OnInteractDown_focus += OnInteractPressed;
+        InputSystem.OnInteractDown_ui += OnInteractPressed;
     }
-
-    void Update()
-    {
-        if (InputHandler.Instance.UI_InteractInput == true && !switching)
-        {
-            switching = true;
-            StartGame();
-        }
-
-        if (InputHandler.Instance.InteractInput == true && !switching)
-        {
-            switching = true;
-            StartGame();
-        }
-
-        if (InputHandler.Instance.F_InteractInput == true && !switching)
-        {
-            switching = true;
-            StartGame();
-        }
-    }
-
-    /* private IEnumerator WaitForInputHandler()
-    {
-        while (InputHandler.Instance == null)
-        {
-            yield return null;
-        }
-
-        // Subscribe to interact input to load game
-        InputHandler.Instance.OnInteractInput.AddListener(StartGame);
-        InputHandler.Instance.OnFocus_InteractInput.AddListener(StartGame);
-        InputHandler.Instance.OnUI_InteractInput.AddListener(StartGame);
-
-    } */
 
     void OnDestroy()
     {
-        /* if (InputHandler.Instance != null)
+        InputSystem.OnInteractDown_fp -= OnInteractPressed;
+        InputSystem.OnInteractDown_focus -= OnInteractPressed;
+        InputSystem.OnInteractDown_ui -= OnInteractPressed;
+    }
+
+    private void OnInteractPressed()
+    {
+        if (!switching)
         {
-            InputHandler.Instance.OnInteractInput.RemoveListener(StartGame);
-            InputHandler.Instance.OnFocus_InteractInput.RemoveListener(StartGame);
-            InputHandler.Instance.OnUI_InteractInput.RemoveListener(StartGame);
-        } */
+            switching = true;
+            StartGame();
+        }
     }
 
     private void StartGame()

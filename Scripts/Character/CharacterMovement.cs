@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using GlobalEvents;
+using BinaryBetrayal.InputManagement;
 
 /* 
     First Person Controller Hierarchy:
@@ -138,8 +139,9 @@ public class CharacterMovement : MonoBehaviour
     }
 
 	void SubscribeToEvents()
-    {
-        InputHandler.Instance.OnJumpInput.AddListener(Jump);
+	{
+		// InputHandler.Instance.OnJumpInput.AddListener(Jump);
+		InputSystem.OnJumpDown_fp += Jump;
     }
 
     void Update()
@@ -259,7 +261,7 @@ public class CharacterMovement : MonoBehaviour
 
 		SetMovementDir();
 
-		wishdir = new Vector3(InputHandler.Instance.MoveInput.x, 0, InputHandler.Instance.MoveInput.y);
+		wishdir = new Vector3(InputSystem.MoveInput.x, 0, InputSystem.MoveInput.y);
 
 		wishdir = transform.TransformDirection(wishdir);
 		
@@ -267,7 +269,7 @@ public class CharacterMovement : MonoBehaviour
 		moveDirectionNorm = wishdir;
 
 		wishspeed = wishdir.magnitude;
-		wishspeed *= moveSpeed * (InputHandler.Instance.SlowWalkInput ? slowWalkSpeedMultiplier : 1.0f);
+		wishspeed *= moveSpeed * (InputSystem.SlowWalkInput ? slowWalkSpeedMultiplier : 1.0f);
 
 		Accelerate(wishdir, wishspeed, runAcceleration);
 
@@ -316,23 +318,23 @@ public class CharacterMovement : MonoBehaviour
 		SetMovementDir();
 
         // Get mouse movement delta from the input system and make it frame-rate independent
-        float mouseDelta = InputHandler.Instance.LookInput.x;
+        float mouseDelta = InputSystem.LookInput.x;
         float frameIndependentDelta = mouseDelta * Time.fixedDeltaTime * 60f; // Normalize to 60fps feel
 
-		wishdir = new Vector3(InputHandler.Instance.MoveInput.x, 0, InputHandler.Instance.MoveInput.y);
+		wishdir = new Vector3(InputSystem.MoveInput.x, 0, InputSystem.MoveInput.y);
 
 		wishdir = transform.TransformDirection(wishdir);
 
         // Apply mouse movement influence when strafing
-        if (InputHandler.Instance.MoveInput.x != 0 && Mathf.Abs(mouseDelta) > 0.1f)
+        if (InputSystem.MoveInput.x != 0 && Mathf.Abs(mouseDelta) > 0.1f)
         {
             // Adjust direction based on mouse movement - strafe in the direction you're looking
-            float mouseInfluence = Mathf.Sign(InputHandler.Instance.MoveInput.x) * frameIndependentDelta * airControl * airStrafeInfluence; // Configurable scale factor
+            float mouseInfluence = Mathf.Sign(InputSystem.MoveInput.x) * frameIndependentDelta * airControl * airStrafeInfluence; // Configurable scale factor
             wishdir = Quaternion.Euler(0, mouseInfluence, 0) * wishdir;
         }
 
 		wishspeed = wishdir.magnitude;
-		wishspeed *= moveSpeed * (InputHandler.Instance.SlowWalkInput ? slowWalkSpeedMultiplier : 1.0f);
+		wishspeed *= moveSpeed * (InputSystem.SlowWalkInput ? slowWalkSpeedMultiplier : 1.0f);
 
 		wishdir.Normalize();
 		moveDirectionNorm = wishdir;
@@ -345,7 +347,7 @@ public class CharacterMovement : MonoBehaviour
 			accel = airAcceleration;
 
 		// If the player is ONLY strafing left or right
-		if (InputHandler.Instance.MoveInput.x == 0 && InputHandler.Instance.MoveInput.y != 0)
+		if (InputSystem.MoveInput.x == 0 && InputSystem.MoveInput.y != 0)
 		{
 			if (wishspeed > sideStrafeSpeed)
 				wishspeed = sideStrafeSpeed;
@@ -370,7 +372,7 @@ public class CharacterMovement : MonoBehaviour
 		void AirControl(Vector3 wishdir, float wishspeed)
 		{
 			// Can't control movement if not moving forward or backward
-			if (InputHandler.Instance.MoveInput.x == 0 || wishspeed == 0)
+			if (InputSystem.MoveInput.x == 0 || wishspeed == 0)
 				return;
 
 			zspeed = playerVelocity.y;
@@ -417,8 +419,8 @@ public class CharacterMovement : MonoBehaviour
 
     public void SetMovementDir()
 	{
-		moveX = InputHandler.Instance.MoveInput.x;
-		moveZ = InputHandler.Instance.MoveInput.y;
+		moveX = InputSystem.MoveInput.x;
+		moveZ = InputSystem.MoveInput.y;
 	}
 
     void GroundCheck()

@@ -256,11 +256,13 @@ public abstract class FPSS_WeaponSlotObject : MonoBehaviour
     #endregion
 
     #region damage
-    protected void CalculateDamage(Vector3 hitPoint)
+    protected float CalculateDamage(Vector3 hitPoint)
     {
         float distance = Vector3.Distance(cam.transform.position, hitPoint);
-        float falloffMultiplier = damageFalloff.Evaluate(distance / range);
+        float falloffMultiplier = damageFalloff.Evaluate(distance / range); // ???? wtf 
         float damage = baseDamage * falloffMultiplier;
+
+        return damage;
     }
     #endregion
 

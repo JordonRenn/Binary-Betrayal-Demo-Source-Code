@@ -89,15 +89,19 @@ public enum WallSectionType { Blank, Door, Window }
                 }
             }
         }
+#endif
 
         public void Refresh()
         {
+#if UNITY_EDITOR
             // Called when the RectTransform dimensions change
             // You can add code here to handle the change if needed
+#endif
         }
 
         public void Clear()
         {
+#if UNITY_EDITOR
             // Destroys all instantiated objects and clears references
             if (currentInstance != null)
             {
@@ -121,10 +125,12 @@ public enum WallSectionType { Blank, Door, Window }
                 if (decor != null) DestroyImmediate(decor);
 
             currentDecors.Clear();
+#endif
         }
 
         public void Flatten()
         {
+#if UNITY_EDITOR
             // removes this component from game object
             // leaves instantiated objects intact
             // rename object in hierarchy to match the wall prefab name
@@ -134,7 +140,7 @@ public enum WallSectionType { Blank, Door, Window }
                 gameObject.name = "WallSmartObject_Flattened";
 
             DestroyImmediate(this);
-        }
 #endif
+        }
     }
 }

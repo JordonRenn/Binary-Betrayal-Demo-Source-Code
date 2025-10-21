@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using GlobalEvents;
+using BinaryBetrayal.InputManagement;
 
 /* 
     First Person Controller Hierarchy:
@@ -99,7 +100,7 @@ public class FirstPersonCamController : MonoBehaviour
     {
         if (!initialized || isOverridden) { return; }
 
-        lookInput = InputHandler.Instance.LookInput;
+        lookInput = InputSystem.LookInput;
 
         // Direct mouse-to-view conversion, scaled by sensitivity and deltaTime
         yRotation += lookInput.x * sensitivityX * Time.deltaTime;
