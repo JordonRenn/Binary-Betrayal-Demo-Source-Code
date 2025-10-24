@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace HierarchyTool
+namespace Saus.HierarchyColorTool
 {
     [InitializeOnLoad]
     public class HierarchyColorTool
@@ -76,7 +76,7 @@ namespace HierarchyTool
             return persistentID.ID;
         }
 
-        [MenuItem("GameObject/Hierarchy Colors/Set Background Color", false, 0)]
+        [MenuItem("GameObject/Saus/Hierarchy Colors/Set Background Color", false, 0)]
         static void SetSelectedObjectsColor()
         {
             var selectedObjects = Selection.gameObjects;
@@ -99,7 +99,7 @@ namespace HierarchyTool
             }, Color.white);
         }
 
-        [MenuItem("GameObject/Hierarchy Colors/Set Text Color", false, 1)]
+        [MenuItem("GameObject/Saus/Hierarchy Colors/Set Text Color", false, 1)]
         static void SetSelectedObjectsTextColor()
         {
             var selectedObjects = Selection.gameObjects;
@@ -117,7 +117,7 @@ namespace HierarchyTool
             }, Color.white);
         }
 
-        [MenuItem("GameObject/Hierarchy Colors/Set Icon", false, 2)]
+        [MenuItem("GameObject/Saus/Hierarchy Colors/Set Icon", false, 2)]
         static void SetSelectedObjectsIcon()
         {
             var selectedObjects = Selection.gameObjects;
@@ -138,7 +138,7 @@ namespace HierarchyTool
             });
         }
 
-        [MenuItem("GameObject/Hierarchy Colors/Clear Colors", false, 2)]
+        [MenuItem("GameObject/Saus/Hierarchy Colors/Clear Colors", false, 2)]
         static void ClearSelectedObjectsColors()
         {
             var selectedObjects = Selection.gameObjects;
@@ -154,7 +154,7 @@ namespace HierarchyTool
             EditorApplication.RepaintHierarchyWindow();
         }
 
-        [MenuItem("GameObject/Hierarchy Colors/Reload Saved Colors", false, 3)]
+        [MenuItem("GameObject/Saus/Hierarchy Colors/Reload Saved Colors", false, 3)]
         static void ReloadSavedColors()
         {
             LoadColorData();

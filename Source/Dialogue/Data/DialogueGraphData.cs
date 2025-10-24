@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using SBG.DialogueSystem.Data;
 
-namespace SBG.DialogueSystem.Tools
+namespace SBG.DialogueSystem.Data
 {
     [Serializable]
     public class DialogueGraphData
@@ -18,14 +17,13 @@ namespace SBG.DialogueSystem.Tools
     public class DialogueNodeData
     {
         public string id;
+        public string outputNodeId = "";
         public DialogueType type;
         public string characterName;
         public string message;
-        public string outputNodeId;
         public Vector2 position;
-
-        // For choice nodes
         public List<ChoiceData> choices;
+        // public string nextDialogueId;
     }
 
     [Serializable]
@@ -33,14 +31,14 @@ namespace SBG.DialogueSystem.Tools
     {
         public string outputNodeId;
         public string inputNodeId;
-        public string outputPortName; // For choice nodes, this will be "Choice X Output"
+        public string outputPortName;
         public string inputPortName;
     }
 
     [Serializable]
     public class ChoiceData : Choice
     {
-        // public string outputNodeId; // The ID of the node this choice connects to
+        //public string outputNodeId;
         public string itemId;
         public int quantity;
         public string questId;

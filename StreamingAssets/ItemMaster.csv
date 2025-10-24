@@ -4,6 +4,7 @@ food_cannedBeans,Canned Beans,Nutritious canned food,2,Food,CannedFood,BoostHeal
 food_Chips_01,Sweet Beet Chips,Bag of chips,0,Food,Snack,BoostHealth,15,Ordinary,Consumable,5,
 food_Chips_02,Salted Carrot Chips,Bag of chips,0,Food,Snack,BoostHealth,15,Ordinary,Consumable,5,
 food_energyDrink,Energy Drink,Caffeinated beverage,2,Food,Drink,BoostSpeed,20,Common,Consumable,6,
+food_Soda_01,Can of Bepsi,Caffeinated Cola,2,Food,Drink,BoostSpeed,5,Common,Consumable,2,
 food_mealRation,Meal Ration,Military-style preserved meal,3,Food,Ration,RestoreHealth,1000,Common,Consumable,12,
 food_proteinBar,Protein Bar,High-energy nutrition bar,2,Food,Snack,BoostStamina,30,Common,Consumable,8,
 food_staminaPills,Stamina Pills,Energy-boosting supplements,2,Food,Snack,BoostStaminaRegen,25,Uncommon,Consumable,12,
